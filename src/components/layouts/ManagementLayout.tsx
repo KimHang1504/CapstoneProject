@@ -56,7 +56,7 @@ export default function ManagementLayout({
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center text-white font-bold">
                   CM
                 </div>
-                <span className="font-semibold text-gray-800 text-sm">CoupleMood Admin</span>
+                <span className="font-semibold text-gray-800 text-sm">CoupleMood</span>
               </div>
             )}
             <button
