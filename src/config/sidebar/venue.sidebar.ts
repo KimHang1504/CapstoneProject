@@ -6,6 +6,23 @@
 import { SidebarConfig } from '@/types/sidebar';
 
 export const venueSidebarConfig: SidebarConfig = {
+  sections: [
+    {
+      title: 'Địa điểm',
+      items: [
+        {
+          label: 'Đăng ký địa điểm',
+          href: '/venue/location/register',
+        },
+        {
+          label: 'Quản lý địa điểm',
+          href: '/venue/location/mylocation',
+        },
+      ],
+    },
+  ],
+
+
   tabs: [
     {
       label: 'Dashboard',

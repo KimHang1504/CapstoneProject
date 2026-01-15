@@ -8,6 +8,12 @@ export type SidebarTab = {
   icon?: React.ComponentType<{ className?: string }>;
 };
 
+export type SidebarSection = {
+  title: string;
+  items: SidebarTab[];
+};
+
 export type SidebarConfig = {
   tabs: SidebarTab[];
+    sections?: SidebarSection[];
 };
