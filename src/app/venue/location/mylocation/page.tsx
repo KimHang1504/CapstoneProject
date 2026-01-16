@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Location() {
   return (
     <div>
@@ -17,6 +19,11 @@ export default function Location() {
           <p className="text-3xl font-bold mt-2">$12,450</p>
         </div>
       </div>
+      <Link href="/venue/location/create">
+      <button className="p-5 bg-purple-600">
+        Tạo mới địa điểm
+      </button>
+      </Link>
     </div>
   );
 }

@@ -12,7 +12,7 @@ export const venueSidebarConfig: SidebarConfig = {
       items: [
         {
           label: 'Đăng ký địa điểm',
-          href: '/venue/location/register',
+          href: '/venue/location/subscriptions',
         },
         {
           label: 'Quản lý địa điểm',
