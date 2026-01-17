@@ -4,17 +4,32 @@
 const TYPES = ["giải trí", "ăn uống", "vui chơi", "khác"] as const
 const MOOD_TAGS = ["Thư giãn", "Lãng mạn", "Thân mật", "Ấm cúng", "Năng động", "Yêu thương"] as const
 
-type FormData = {
+export type VenueFormData = {
+  // Info (step 1)
   name: string
   description: string
   email: string
   type: (typeof TYPES)[number]
   mood: (typeof MOOD_TAGS)[number]
+  // Contact (step 2)
+  address: string
+  googleMapUrl: string
+  hotline: string
+  website: string
+  openTime: string
+  openDays: string
+  //Media (step3)
+  coverImage?: File | null
+  avatarImage?: File | null
+  interiorImages: File[]
+  menuImages: File[]
+  introVideo?: File | null
 }
 
+
 type Props = {
-  formData: FormData
-  setFormData: React.Dispatch<React.SetStateAction<FormData>>
+  formData: VenueFormData
+  setFormData: React.Dispatch<React.SetStateAction<VenueFormData>>
 }
 
 

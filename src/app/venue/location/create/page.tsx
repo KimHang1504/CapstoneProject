@@ -5,26 +5,34 @@ import Info from "@/app/venue/location/create/Info";
 import Contact from "@/app/venue/location/create/Contact";
 import Media from "@/app/venue/location/create/Media";
 import LocationVerify from "@/app/venue/location/create/LocationVerify";
+import { VenueFormData } from "@/app/venue/location/create/Info";
 
 
 const steps = [Info, Contact, Media, LocationVerify]
 export default function CreatePage() {
   const [step, setStep] = useState(1)
 
- type FormData = {
-  name: string
-  description: string
-  email: string
-  type: "giải trí" | "ăn uống" | "vui chơi" | "khác"
-  mood: "Thư giãn" | "Lãng mạn" | "Thân mật" | "Ấm cúng" | "Năng động" | "Yêu thương"
-}
-const [formData, setFormData] = useState<FormData>({
-  name: "",
-  description: "",
-  email: "",
-  type: "giải trí",
-  mood: "Thư giãn",
-})
+
+
+  const [formData, setFormData] = useState<VenueFormData>({
+    name: "",
+    description: "",
+    email: "",
+    type: "giải trí",
+    mood: "Thư giãn",
+    address: "",
+    googleMapUrl: "",
+    hotline: "",
+    website: "",
+    openTime: "",
+    openDays: "",
+    coverImage: null,
+    avatarImage: null,
+    interiorImages: [],
+    menuImages: [],
+    introVideo: null,
+  })
+
 
   const CurrentStep = steps[step - 1]
 
@@ -51,6 +59,7 @@ const [formData, setFormData] = useState<FormData>({
         formData={formData}
         setFormData={setFormData}
       />
+
 
       <div className="flex justify-between mt-6">
         <button
