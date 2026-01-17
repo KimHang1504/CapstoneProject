@@ -6,25 +6,33 @@ const MOOD_TAGS = ["Thư giãn", "Lãng mạn", "Thân mật", "Ấm cúng", "N�
 
 export type VenueFormData = {
   // Info (step 1)
-  name: string
-  description: string
-  email: string
-  type: (typeof TYPES)[number]
-  mood: (typeof MOOD_TAGS)[number]
+  name: string;
+  description: string;
+  email: string;
+  type: (typeof TYPES)[number];
+  mood: (typeof MOOD_TAGS)[number];
+
   // Contact (step 2)
-  address: string
-  googleMapUrl: string
-  hotline: string
-  website: string
-  openTime: string
-  openDays: string
-  //Media (step3)
-  coverImage?: File | null
-  avatarImage?: File | null
-  interiorImages: File[]
-  menuImages: File[]
-  introVideo?: File | null
-}
+  address: string;
+  googleMapUrl: string;
+  hotline: string;
+  website: string;
+  openTime: string;
+  openDays: string;
+
+  // Media (step 3)
+  coverImage?: File | null;
+  avatarImage?: File | null;
+  interiorImages: File[];
+  menuImages: File[];
+  introVideo?: File | null;
+
+  // Owner verify (step 4)
+  ownerFullName: string;
+  frontIdCard?: File | null;
+  backIdCard?: File | null;
+  businessLicense?: File | null;
+};
 
 
 type Props = {
@@ -108,8 +116,8 @@ export default function Info({ formData, setFormData }: Props) {
                     setFormData({ ...formData, mood: tag })
                   }
                   className={`rounded-2xl px-4 py-2 text-sm font-medium shadow-sm transition ${active
-                      ? "bg-[#C9A7FF] text-white"
-                      : "bg-white text-gray-700"
+                    ? "bg-[#C9A7FF] text-white"
+                    : "bg-white text-gray-700"
                     }`}
                 >
                   {tag}

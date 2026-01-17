@@ -20,18 +20,26 @@ export default function CreatePage() {
     email: "",
     type: "giải trí",
     mood: "Thư giãn",
+
     address: "",
     googleMapUrl: "",
     hotline: "",
     website: "",
     openTime: "",
     openDays: "",
+
     coverImage: null,
     avatarImage: null,
     interiorImages: [],
     menuImages: [],
     introVideo: null,
-  })
+
+    ownerFullName: "",
+    frontIdCard: null,
+    backIdCard: null,
+    businessLicense: null,
+  });
+
 
 
   const CurrentStep = steps[step - 1]
