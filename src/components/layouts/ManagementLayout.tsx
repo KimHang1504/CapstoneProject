@@ -149,7 +149,7 @@ export default function ManagementLayout({
           ))}
 
           {/* Fallback for tabs without sections */}
-          {!sidebarConfig.sections && (
+          {sidebarConfig.tabs && (
             <div className="space-y-1">
               {sidebarConfig.tabs.map((tab) => {
                 const isActive = pathname === tab.href;
