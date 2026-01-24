@@ -2,7 +2,9 @@
 
 import { useState, useMemo } from 'react';
 import { MOCK_LOCATION } from '@/config/mock/location';
-import { Search } from 'lucide-react';
+import { ChevronRight, Clock, Search } from 'lucide-react';
+import Link from 'next/link';
+import Image from 'next/image';
 
 type Status = 'all' | 'active' | 'inactive' | 'pending';
 
@@ -34,37 +36,75 @@ export default function MyLocationPage() {
 
   return (
     <div className="flex gap-10 justify-between p-8">
-      {/* ================= LEFT ================= */}
       <div className="flex-2 space-y-4">
 
 
-        {/* LOCATION LIST */}
+        {/* thẻ location */}
         {locations.map(loc => (
           <div
             key={loc.id}
-            className="bg-white rounded-xl border p-4 hover:shadow-md transition"
+            className="relative flex gap-4 bg-white rounded-2xl p-4 border border-violet-100
+             hover:shadow-md hover:border-violet-200 transition cursor-pointer"
           >
-            <div className="flex justify-between items-start mb-2">
-              <h3 className="font-semibold">{loc.name}</h3>
-              <span
-                className={`text-xs px-2 py-1 rounded-full
-                  ${loc.status === 'active' && 'bg-green-100 text-green-700'}
-                  ${loc.status === 'inactive' && 'bg-red-100 text-red-700'}
-                  ${loc.status === 'pending' && 'bg-yellow-100 text-yellow-700'}
-                `}
-              >
-                {loc.status}
-              </span>
+            <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0">
+              <Image
+                src={loc.image}
+                alt={loc.name}
+                fill
+                className="object-cover"
+              />
             </div>
 
-            <p className="text-sm text-gray-600">{loc.address}</p>
-            <p className="text-sm text-gray-500 mt-1">{loc.description}</p>
+            <div className="flex-1 pr-10">
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-lg text-gray-900">
+                  {loc.name}
+                </h3>
 
-            <p className="text-xs text-gray-400 mt-3">
-              Mood: {loc.mood}
-            </p>
+                <span
+                  className={`text-xs px-2 py-0.5 rounded-full font-medium
+            ${loc.status === "active" && "bg-green-100 text-green-700"}
+            ${loc.status === "inactive" && "bg-red-100 text-red-700"}
+            ${loc.status === "pending" && "bg-yellow-100 text-yellow-700"}
+          `}
+                >
+                  {loc.status}
+                </span>
+              </div>
+
+              <p className="text-sm text-gray-500 mt-0.5">
+                {loc.address}
+              </p>
+
+              <p className="text-sm text-gray-600 mt-1 line-clamp-2">
+                {loc.description}
+              </p>
+              <span className="flex items-center gap-1 text-xs text-gray-500">
+                <Clock size={14} />
+                Thứ {loc.workingDays.from}–{loc.workingDays.to}
+                <span className="mx-1 text-gray-300">•</span>
+                {loc.workingHours.open} – {loc.workingHours.close}
+              </span>
+
+
+
+              <div className="flex items-center gap-2 mt-2">
+                <span className="text-xs px-3 py-1 rounded-full bg-purple-100 text-purple-700 font-medium capitalize">
+                  {loc.mood}
+                </span>
+
+              </div>
+            </div>
+
+            <div className="absolute bottom-4 right-4">
+              <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600
+               group-hover:bg-violet-200">
+                <ChevronRight size={18} color="#7C5CFC" />
+              </div>
+            </div>
           </div>
         ))}
+
 
         {locations.length === 0 && (
           <div className="text-center text-gray-500 py-10">
@@ -96,7 +136,7 @@ export default function MyLocationPage() {
             onClick={() => setStatusFilter(item.key as Status)}
             className={`relative cursor-pointer rounded-[20px] p-5 transition
     ${statusFilter === item.key
-                ? 'bg-[#d2c7ff] shadow-[0_10px_20px_rgba(0,0,0,0.25)] -translate-y-0.5'
+                ? 'bg-[#d2c7ff]'
                 : 'bg-[#F8EAFB] hover:bg-[#F3ECFF]'
               }
   `}
@@ -116,31 +156,24 @@ export default function MyLocationPage() {
             </p>
           </div>
         ))}
-        <button
-          className="
-    w-full flex items-center gap-4
-    rounded-[28px]
-    bg-[#EFE7FF]
-    px-5 py-4
-]
-    transition-all
-  "
-        >
-          {/* ICON */}
-          <div className="
-    w-14 h-14 rounded-full
-    bg-[#A78BFA]
-    flex items-center justify-center
-    text-white text-3xl
-  ">
-            +
+        <Link href="/venue/location/mylocation/create">
+          <div className="relative w-full rounded-full p-0.5 bg-linear-to-r from-[#A78BFA] via-[#7DD3FC] to-[#F472B6]
+           shadow-[0_6px_16px_rgba(167,139,250,0.45)]">
+            <button className="relative cursor-pointer w-full h-18 flex items-center rounded-full bg-white pl-24 pr-6 transition-all">
+              <div className="absolute -left-1 w-23 h-23 rounded-full bg-linear-to-r from-[#A78BFA] via-[#7DD3FC] to-[#F472B6] flex items-center justify-center
+               text-white text-3xl shadow-lg">
+                <div className="rounded-full bg-white w-15 h-15">
+                  <div className="flex items-center justify-center w-full h-full text-[#A78BFA]">
+                  +
+                  </div>
+                </div>
+              </div>
+              <span className="text-[#6B4EFF] font-medium text-lg">
+                Thêm địa điểm ngay
+              </span>
+            </button>
           </div>
-
-          {/* TEXT */}
-          <span className="text-[#6B4EFF] font-medium">
-            Thêm địa điểm ngay
-          </span>
-        </button>
+        </Link>
 
       </div>
     </div>
