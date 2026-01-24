@@ -19,13 +19,11 @@ export default function LocationRegisterPage() {
           >
             
             <div
-            className={`relative  flex flex-col p-8 shadow-md text-white bg-[#B388EB]`}>
+            className={`flex flex-col p-8 shadow-md text-white bg-[#B388EB]`}>
             {/* Tên gói */}
-           <div className="absolute top-0 left-1/2 -translate-x-1/2 rounded-md bg-white/95 px-5 py-1 shadow-md">
-              <span className="text-xs font-semibold uppercase tracking-wide text-[#6C3EB5]">
+              <span className="text-xl text-white font-semibold mb-5 ">
                 {pkg.namePackage}
               </span>
-            </div>
 
 
             {/* Giá */}

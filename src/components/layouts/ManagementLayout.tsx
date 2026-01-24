@@ -4,12 +4,12 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarConfig } from '@/types/sidebar';
 import { useState } from 'react';
-import { 
-  Menu, 
-  X, 
-  ChevronDown, 
-  Search, 
-  Bell, 
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Search,
+  Bell,
   User,
   Download,
   Filter
@@ -31,37 +31,37 @@ export default function ManagementLayout({
   const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
   const toggleSection = (section: string) => {
-    setExpandedSections(prev => 
-      prev.includes(section) 
+    setExpandedSections(prev =>
+      prev.includes(section)
         ? prev.filter(s => s !== section)
         : [...prev, section]
     );
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50">
+    <div className="min-h-screen flex ">
       {/* Sidebar */}
-      <aside 
+      <aside
         className={`
           ${isSidebarOpen ? 'w-64' : 'w-20'} 
-          bg-white shadow-xl flex flex-col transition-all duration-300 ease-in-out
+          bg-[#8093F1] flex flex-col transition-all duration-300 ease-in-out
           border-r border-purple-100
         `}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-purple-100 bg-gradient-to-r from-purple-50 to-pink-50">
+        <div className="p-4 border-b border-purple-100 bg-[#8093F1]">
           <div className="flex items-center justify-between">
             {isSidebarOpen && (
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center text-white font-bold">
                   CM
                 </div>
-                <span className="font-semibold text-gray-800 text-sm">CoupleMood</span>
+                <span className="font-semibold text-white text-sm">CoupleMood</span>
               </div>
             )}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 hover:bg-purple-100 rounded-lg transition-all duration-200 text-purple-600"
+              className="p-2 hover:bg-purple-100 rounded-lg transition-all duration-200 text-white"
             >
               {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -95,25 +95,27 @@ export default function ManagementLayout({
               {isSidebarOpen && (
                 <button
                   onClick={() => toggleSection(section.title)}
-                  className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-gray-500 hover:text-purple-600 transition-colors"
+                  className="w-full flex items-center justify-between px-3 py-2 font-semibold text-white transition-colors"
                 >
+                  <div className="flex items-center gap-2">
+                    {section.icon && <section.icon className="w-5 h-5" />}
                   <span>{section.title}</span>
-                  <ChevronDown 
-                    className={`w-4 h-4 transition-transform duration-200 ${
-                      expandedSections.includes(section.title) ? 'rotate-180' : ''
-                    }`}
+                  </div>
+                  
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${expandedSections.includes(section.title) ? 'rotate-180' : ''
+                      }`}
                   />
                 </button>
               )}
-              
-              <div className={`space-y-1 ${
-                isSidebarOpen && !expandedSections.includes(section.title) 
-                  ? 'hidden' 
+
+              <div className={`space-y-1 ${isSidebarOpen && !expandedSections.includes(section.title)
+                  ? 'hidden'
                   : ''
-              }`}>
+                }`}>
                 {section.items.map((item) => {
-                  const isActive = pathname === item.href;
-                  const Icon = item.icon;
+                  const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                   const Icon = item.icon;
 
                   return (
                     <Link
@@ -121,19 +123,17 @@ export default function ManagementLayout({
                       href={item.href}
                       className={`
                         flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                        group relative overflow-hidden
-                        ${
-                          isActive
-                            ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
-                            : 'text-gray-600 hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
+                        group relative overflow-hidden ml-7
+                        ${isActive
+                          ? 'bg-linear-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
+                          : 'text-white hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
                         }
                       `}
                       title={!isSidebarOpen ? item.label : undefined}
                     >
                       {Icon && (
-                        <Icon className={`w-5 h-5 transition-transform duration-200 ${
-                          !isActive ? 'group-hover:scale-110' : ''
-                        }`} />
+                        <Icon className={`w-5 h-5 transition-transform duration-200 ${!isActive ? 'group-hover:scale-110' : ''
+                          }`} />
                       )}
                       {isSidebarOpen && (
                         <span className="font-medium text-sm">{item.label}</span>
@@ -160,12 +160,11 @@ export default function ManagementLayout({
                     key={tab.href}
                     href={tab.href}
                     className={`
-                      flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                      flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 mb-4
                       group relative overflow-hidden
-                      ${
-                        isActive
-                          ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
-                          : 'text-gray-600 hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
+                      ${isActive
+                        ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
+                        : 'text-white hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
                       }
                     `}
                   >
@@ -179,7 +178,7 @@ export default function ManagementLayout({
         </nav>
 
         {/* Footer */}
-        <div className="p-3 border-t border-purple-100 bg-gradient-to-r from-purple-50 to-pink-50">
+        {/* <div className="p-3 border-t border-purple-100 bg-gradient-to-r from-purple-50 to-pink-50">
           <button className={`
             w-full px-3 py-2.5 text-sm font-medium text-gray-600 
             hover:bg-white hover:text-purple-600 rounded-xl transition-all duration-200
@@ -188,19 +187,19 @@ export default function ManagementLayout({
             <User className="w-4 h-4" />
             {isSidebarOpen && <span>Đăng xuất</span>}
           </button>
-        </div>
+        </div> */}
       </aside>
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
-        <header className="bg-white border-b border-purple-100 shadow-sm">
+        <header className="bg-white border-b border-purple-100">
           <div className="px-8 py-4">
             <div className="flex items-center justify-between">
               {/* Left side - Title */}
               <div>
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                  {title || 'Management'}
+                <h1 className="text-2xl font-bold text-black">
+                  {title || 'Chủ địa điểm'}
                 </h1>
               </div>
 
@@ -217,21 +216,21 @@ export default function ManagementLayout({
                 </div>
 
                 {/* Filter Button */}
-                <button className="p-2 hover:bg-purple-50 rounded-xl transition-all duration-200 text-gray-600 hover:text-purple-600 relative group">
+                {/* <button className="p-2 hover:bg-purple-50 rounded-xl transition-all duration-200 text-gray-600 hover:text-purple-600 relative group">
                   <Filter className="w-5 h-5" />
                   <span className="absolute -top-1 -right-1 w-2 h-2 bg-pink-400 rounded-full"></span>
-                </button>
+                </button> */}
 
                 {/* Export Button */}
-                <button className="p-2 hover:bg-purple-50 rounded-xl transition-all duration-200 text-gray-600 hover:text-purple-600">
+                {/* <button className="p-2 hover:bg-purple-50 rounded-xl transition-all duration-200 text-gray-600 hover:text-purple-600">
                   <Download className="w-5 h-5" />
-                </button>
+                </button> */}
 
                 {/* Notifications */}
-                <button className="p-2 hover:bg-purple-50 rounded-xl transition-all duration-200 text-gray-600 hover:text-purple-600 relative">
+                {/* <button className="p-2 hover:bg-purple-50 rounded-xl transition-all duration-200 text-gray-600 hover:text-purple-600 relative">
                   <Bell className="w-5 h-5" />
                   <span className="absolute top-1 right-1 w-2 h-2 bg-pink-500 rounded-full animate-pulse"></span>
-                </button>
+                </button> */}
 
                 {/* User Profile */}
                 <div className="flex items-center gap-3 pl-4 border-l border-purple-200">

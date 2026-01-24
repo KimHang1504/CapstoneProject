@@ -11,6 +11,7 @@ export type SidebarTab = {
 export type SidebarSection = {
   title: string;
   items: SidebarTab[];
+  icon?: React.ComponentType<{ className?: string }>;
 };
 
 export type SidebarConfig = {
