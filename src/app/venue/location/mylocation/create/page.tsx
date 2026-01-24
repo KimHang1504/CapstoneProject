@@ -1,11 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import Info from "@/app/venue/location/create/Info";
-import Contact from "@/app/venue/location/create/Contact";
-import Media from "@/app/venue/location/create/Media";
-import LocationVerify from "@/app/venue/location/create/LocationVerify";
-import { VenueFormData } from "@/app/venue/location/create/Info";
+import Info from "@/app/venue/location/mylocation/create/Info";
+import Contact from "@/app/venue/location/mylocation/create/Contact";
+import Media from "@/app/venue/location/mylocation/create/Media";
+import LocationVerify from "@/app/venue/location/mylocation/create/LocationVerify";
+import { VenueFormData } from "@/app/venue/location/mylocation/create/Info";
 
 
 const steps = [Info, Contact, Media, LocationVerify]

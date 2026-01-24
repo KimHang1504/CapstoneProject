@@ -1,6 +1,6 @@
 "use client"
 
-import { VenueFormData } from "@/app/venue/location/create/Info"
+import { VenueFormData } from "@/app/venue/location/mylocation/create/Info"
 
 type Props = {
   formData: VenueFormData
