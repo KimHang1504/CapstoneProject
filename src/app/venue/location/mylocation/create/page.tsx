@@ -1,43 +1,44 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+
 import Info from "@/app/venue/location/mylocation/create/Info";
 import Contact from "@/app/venue/location/mylocation/create/Contact";
 import Media from "@/app/venue/location/mylocation/create/Media";
-import LocationVerify from "@/app/venue/location/mylocation/create/LocationVerify";
+// import LocationVerify from "@/app/venue/location/mylocation/create/LocationVerify";
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info";
+import { uploadImage } from "@/api/upload";
+import { registerVenueLocation } from "@/api/venue/location/api";
 
 
-const steps = [Info, Contact, Media, LocationVerify]
+const steps = [Info, Contact, Media]
 export default function CreatePage() {
   const [step, setStep] = useState(1)
-
-
+  const router = useRouter()
 
   const [formData, setFormData] = useState<VenueFormData>({
     name: "",
     description: "",
-    email: "",
-    type: "giải trí",
-    mood: "Thư giãn",
 
     address: "",
-    googleMapUrl: "",
-    hotline: "",
-    website: "",
-    openTime: "",
-    openDays: "",
+    latitude: 0,
+    longitude: 0,
 
-    coverImage: null,
-    avatarImage: null,
-    interiorImages: [],
-    menuImages: [],
-    introVideo: null,
+    email: "",
+    phoneNumber: "",
+    websiteUrl: "",
 
-    ownerFullName: "",
-    frontIdCard: null,
-    backIdCard: null,
-    businessLicense: null,
+    priceMin: 0,
+    priceMax: 0,
+
+    coverImage: null as File | null,
+    interiorImage: [] as File[],
+    fullPageMenuImage: [] as File[],
+
+    selectedMoods: [],
+    selectedStyles: [],
+
   });
 
 
@@ -52,13 +53,69 @@ export default function CreatePage() {
     if (step > 1) setStep((s) => s - 1)
   }
 
-  function handleSubmit() {
-    // chỗ này bạn gọi API hoặc console.log(formData)
-    console.log("Submit data:", formData)
+  async function handleSubmit() {
+    try {
+      const coverUrl = formData.coverImage
+        ? await uploadImage(formData.coverImage)
+        : null
+
+      const interiorUrls = await Promise.all(
+        formData.interiorImage.map(uploadImage)
+      )
+
+      const menuUrls = await Promise.all(
+        formData.fullPageMenuImage.map(uploadImage)
+      )
+      if (!formData.selectedMoods.length) {
+        alert("Vui lòng chọn ít nhất 1 tâm trạng");
+        return;
+      }
+
+      if (!formData.selectedStyles.length) {
+        alert("Vui lòng chọn ít nhất 1 tính cách");
+        return;
+      }
+
+      const venueTags = formData.selectedMoods.flatMap(moodId =>
+        formData.selectedStyles.map(styleId => ({
+          coupleMoodTypeId: moodId,
+          couplePersonalityTypeId: styleId,
+        }))
+      );
+
+
+
+      await registerVenueLocation({
+        name: formData.name,
+        description: formData.description,
+        address: formData.address,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        email: formData.email,
+        phoneNumber: formData.phoneNumber,
+        websiteUrl: formData.websiteUrl,
+        priceMin: formData.priceMin,
+        priceMax: formData.priceMax,
+
+        isOwnerVerified: true,
+
+        coverImage: coverUrl ? [coverUrl] : [],
+        interiorImage: interiorUrls,
+        fullPageMenuImage: menuUrls,
+
+        venueTags,
+      })
+
+      router.push("/venue/location/mylocation")
+    } catch (e) {
+      console.error(e)
+      alert("Tạo địa điểm thất bại")
+    }
   }
 
   return (
     <div>
+      <h1 className="text-center text-2xl font-bold text-gray-900 mb-4">Tạo địa điểm mới</h1>
       <p className="text-blue-900 mb-4 text-center">
         Bước {step} / {steps.length}
       </p>

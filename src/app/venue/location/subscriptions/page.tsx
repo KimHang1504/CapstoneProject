@@ -14,55 +14,53 @@ export default function LocationRegisterPage() {
         {MOCK_SUBSCRIPTION_PACKAGES.map((pkg) => (
           <div
             key={pkg.subscriptionId}
-            className={`flex flex-col rounded-xl bg-[#B388EB]`}
-            style={{overflow: 'hidden', height: 'fit-content'}}
+            className="flex flex-col h-full rounded-xl overflow-hidden bg-[#B388EB]"
           >
-            
             <div
-            className={`flex flex-col p-8 shadow-md text-white bg-[#B388EB]`}>
-            {/* Tên gói */}
-              <span className="text-xl text-white font-semibold mb-5 ">
-                {pkg.namePackage}
-              </span>
+              key={pkg.subscriptionId}
+              className="flex flex-col h-full rounded-xl overflow-hidden bg-[#B388EB]"
+            >
+              {/* CONTENT */}
+              <div className="flex flex-col flex-1 p-8 shadow-md text-white">
+                {/* Tên gói */}
+                <span className="text-xl font-semibold mb-5">
+                  {pkg.namePackage}
+                </span>
 
+                {/* Giá */}
+                <div className="mb-6">
+                  <p className="text-3xl font-bold">
+                    {pkg.price.toLocaleString('vi-VN')} VND
+                  </p>
+                  <p>/ {pkg.durationDays} ngày</p>
+                </div>
 
-            {/* Giá */}
-            <div className="mb-6">
-              <p className="text-3xl text-white font-bold">
-                {pkg.price.toLocaleString('vi-VN')} VND
-              </p>
-              <p className={'text-white'}>
-                / {pkg.durationDays} ngày
-              </p>
+                {/* Nút mua */}
+                <button
+                  className="mb-6 rounded-md py-3 text-sm font-semibold bg-white text-[#B388EB] hover:bg-[#fdeaf9]"
+                >
+                  Mua
+                </button>
+
+                {/* FEATURES – đẩy xuống dưới nếu cần */}
+                <ul className="space-y-2 text-sm">
+                  {pkg.features.map(feature => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <Check className="text-[#FDC5F5]" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* FOOTER */}
+              <button
+                className="bg-[#FDC5F5] py-4 text-gray-800 hover:bg-[#f79fea]"
+              >
+                Xem chi tiết
+              </button>
             </div>
 
-            {/* Nút Mua */}
-            <button
-              className='mb-6 rounded-md py-3 text-center text-sm font-semibol bg-white text-[#B388EB] cursor-pointer hover:bg-[#fdeaf9]'
-            >
-              Mua
-            </button>
-
-            {/* Features */}
-            <ul className="mb-6 space-y-2 text-sm ">
-              {pkg.features.map((feature) => (
-                <li key={feature} className="flex items-start gap-2">
-                  <Check className='text-[#FDC5F5]'/>
-                  <span className= 'text-white'>
-                    {feature}
-                  </span>
-                </li>
-              ))}
-            </ul>
-              
-            </div>
-
-            {/* Xem chi tiết */}
-            <button
-              className='bg-[#FDC5F5] w-full flex-1 py-4 text-gray-800 cursor-pointer hover:bg-[#f79fea]'
-            >
-              Xem chi tiết
-            </button>
           </div>
         ))}
       </div>

@@ -3,6 +3,7 @@
  * Sử dụng: apiClient.get('/api/users'), apiClient.post('/api/users', { name: 'John' })
  */
 
+import { DEV_ACCESS_TOKEN } from "@/api/dev-auth";
 type RequestOptions = {
   headers?: Record<string, string>;
   params?: Record<string, string>;
@@ -10,14 +11,17 @@ type RequestOptions = {
 };
 
 class ApiClient {
-  private baseURL: string;
+  private NEXT_PUBLIC_API_URL: string;
   private defaultHeaders: Record<string, string>;
 
   constructor(baseURL = '') {
-    this.baseURL = baseURL;
+    this.NEXT_PUBLIC_API_URL = baseURL;
     this.defaultHeaders = {
       'Content-Type': 'application/json',
     };
+    if (typeof window !== "undefined" && DEV_ACCESS_TOKEN) {
+      this.defaultHeaders["Authorization"] = `Bearer ${DEV_ACCESS_TOKEN}`;
+    }
   }
 
   // Thêm token vào header (dùng khi đã login)
@@ -36,7 +40,7 @@ class ApiClient {
     method: string,
     options?: RequestOptions
   ): Promise<T> {
-    const url = new URL(endpoint, this.baseURL || window.location.origin);
+    const url = new URL(endpoint, this.NEXT_PUBLIC_API_URL || window.location.origin);
 
     // Thêm query params nếu có
     if (options?.params) {
@@ -104,4 +108,6 @@ class ApiClient {
 }
 
 // Export instance để sử dụng trong toàn bộ app
-export const apiClient = new ApiClient();
+export const apiClient = new ApiClient(
+  process.env.NEXT_PUBLIC_API_URL
+);
