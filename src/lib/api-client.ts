@@ -6,7 +6,7 @@
 import { DEV_ACCESS_TOKEN } from "@/api/dev-auth";
 type RequestOptions = {
   headers?: Record<string, string>;
-  params?: Record<string, string>;
+params?: Record<string, string | number | boolean | undefined>
   body?: any;
 };
 
@@ -45,7 +45,9 @@ class ApiClient {
     // Thêm query params nếu có
     if (options?.params) {
       Object.entries(options.params).forEach(([key, value]) => {
-        url.searchParams.append(key, value);
+        if (value !== undefined) {
+          url.searchParams.append(key, String(value));
+        }
       });
     }
 

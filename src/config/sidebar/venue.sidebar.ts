@@ -11,9 +11,27 @@ import {
   TicketPercent,
   ShoppingBag,
   BarChart3,
+  MessageSquareMore ,
 } from 'lucide-react';
 
 export const venueSidebarConfig: SidebarConfig = {
+    tabs: [
+    {
+      label: 'Dashboard',
+      href: '/venue',
+      icon: LayoutDashboard,
+    },
+    {
+      label: 'Hồ sơ',
+      href: '/venue/profile',
+      icon: User,
+    },
+    {
+      label: 'Đánh giá',
+      href: '/venue/review',
+      icon: MessageSquareMore,
+    },
+  ],
   sections: [
     {
       title: 'Địa điểm',
@@ -28,33 +46,6 @@ export const venueSidebarConfig: SidebarConfig = {
           href: '/venue/location/mylocation',
         },
       ],
-    },
-  ],
-  tabs: [
-    {
-      label: 'Dashboard',
-      href: '/venue',
-      icon: LayoutDashboard,
-    },
-    {
-      label: 'Hồ sơ',
-      href: '/venue/profile',
-      icon: User,
-    },
-    {
-      label: 'Voucher',
-      href: '/venue/vouchers',
-      icon: TicketPercent,
-    },
-    {
-      label: 'Đơn hàng',
-      href: '/venue/orders',
-      icon: ShoppingBag,
-    },
-    {
-      label: 'Thống kê',
-      href: '/venue/analytics',
-      icon: BarChart3,
     },
   ],
 };
