@@ -1,29 +1,55 @@
-"use client";
+"use client"
 
-import { useEffect } from "react";
-import { getMyReviews } from "@/api/venue/review/api";
+import { useEffect, useState } from "react"
+import { getMyReviews } from "@/api/venue/review/api"
+import Statistic from "@/app/venue/review/component/Statistic"
+import Filter from "@/app/venue/review/component/Filter"
+import ReviewList from "@/app/venue/review/component/ReviewList"
+import { ReviewSummary, Review } from "@/api/venue/review/type"
 
 export default function ReviewPage() {
+  const [summary, setSummary] = useState<ReviewSummary | null>(null)
+  const [reviews, setReviews] = useState<Review[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filterParams, setFilterParams] = useState({})
+
   useEffect(() => {
-    const fetchReviews = async () => {
+    const fetchData = async () => {
+      setLoading(true)
+
       try {
         const res = await getMyReviews({
           venueId: 1,
           page: 1,
           pageSize: 10,
-        });
+          sortDescending: true,
+          ...filterParams,
+        })
 
-        console.log("FULL RESPONSE:", res);
-        console.log("DATA:", res.data);
-        console.log("SUMMARY:", res.data.summary);
-        console.log("REVIEWS:", res.data.reviews.items);
+        setSummary(res.data.summary)
+        setReviews(res.data.reviews.items)
       } catch (error) {
-        console.error("Fetch reviews error:", error);
+        console.error(error)
+      } finally {
+        setLoading(false)
       }
-    };
+    }
 
-    fetchReviews();
-  }, []);
+    fetchData()
+  }, [filterParams])
 
-  return <div>Review Page – check console</div>;
+  if (loading && !summary) return <div>Loading...</div>
+
+  return (
+    <div className="p-6 space-y-6">
+      {summary && <Statistic summary={summary} />}
+
+      <Filter onChange={setFilterParams} />
+
+      <ReviewList
+        reviews={reviews}
+        isLoading={loading}
+      />
+    </div>
+  )
 }

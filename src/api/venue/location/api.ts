@@ -26,3 +26,4 @@ export const getVenueLocationDetail = (id: number) => {
     `/api/VenueLocation/${id}`
   );
 };
+

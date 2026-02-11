@@ -113,6 +113,7 @@ export default function Info({ formData, setFormData }: Props) {
             className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
           />
         </div>
+        
 
         <div className="mb-6">
           <label className="mb-3 block text-sm font-medium">
