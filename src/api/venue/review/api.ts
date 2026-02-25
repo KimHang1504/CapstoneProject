@@ -1,5 +1,5 @@
 import { apiClient } from "@/lib/api-client";
-import { GetVenueReviewsParams, GetVenueReviewsResponse } from "./type";
+import { GetVenueReviewsParams, GetVenueReviewsResponse, ReplyReviewResponse, ReviewReply } from "./type";
 
 
 export const getMyReviews = (params: GetVenueReviewsParams) => {
@@ -18,5 +18,22 @@ export const getMyReviews = (params: GetVenueReviewsParams) => {
   )
 }
 
+export const replyReview = (
+  reviewId: number,
+  body: { content: string }
+) => {
+  return apiClient.post<ReplyReviewResponse>(
+    `/api/Review/${reviewId}/reply`,
+    body
+  )
+}
 
-
+export const updateReply = (
+  reviewId: number,
+  body: { content: string }
+) => {
+  return apiClient.put<{ data: ReviewReply }>(
+    `/api/Review/${reviewId}/reply`,
+    body
+  )
+}

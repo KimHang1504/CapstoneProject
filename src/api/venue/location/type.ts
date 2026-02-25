@@ -1,14 +1,17 @@
+import { LocationTag } from '@/api/locationtag/type';
+
 export type WorkingDays = {
-  from: number; // 2 = Thứ 2
-  to: number;   // 6 = Thứ 6
+  from: number; // 2 = Monday
+  to: number;   // 6 = Friday
 };
 
 export type WorkingTime = {
-  day: number;       // 2 = Thứ 2 ... 8 = Chủ nhật
+  day: number;       // 2 = Monday ... 8 = Sunday
   openTime: string;  // "09:00"
   closeTime: string; // "22:00"
   enabled: boolean;
 };
+
 
 export type VenueTag = {
   coupleMoodTypeId: number;
@@ -16,9 +19,54 @@ export type VenueTag = {
 };
 
 
-export type VenueLocation = {
+export type MyVenueLocation = {
   id: number;
 
+  name: string;
+  description: string;
+  address: string;
+
+  email: string | null;
+  phoneNumber: string;
+  websiteUrl: string | null;
+
+  priceMin: number;
+  priceMax: number;
+
+  latitude: number;
+  longitude: number;
+
+  area: string | null;
+
+  averageRating: number;
+  avarageCost: number;
+  reviewCount: number;
+
+  status: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DRAFTED';
+
+  coverImage: string[] | null;
+  interiorImage: string[] | null;
+  fullPageMenuImage: string[] | null;
+
+  category: string | null;
+
+  isOwnerVerified: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+
+  locationTags: LocationTag[];
+};
+
+export type GetMyVenueLocationsResponse = {
+  message: string;
+  code: number;
+  data: MyVenueLocation[];
+  traceId?: string;
+  timestamp?: string;
+};
+
+export type VenueLocationBase = {
   name: string;
   description: string;
   address: string;
@@ -42,6 +90,14 @@ export type VenueLocation = {
   venueTags: VenueTag[];
 };
 
+
+export type VenueLocation = VenueLocationBase & {
+  id: number;
+};
+
+
+export type RegisterVenueLocationRequest = VenueLocationBase;
+export type UpdateVenueLocationRequest = VenueLocationBase;
 
 
 export type CreateVenueLocationResponse = {
@@ -52,48 +108,32 @@ export type CreateVenueLocationResponse = {
   timestamp?: string;
 };
 
-
-export type RegisterVenueLocationRequest = {
-  name: string;
-  description: string;
-  address: string;
-
-  email: string;
-  phoneNumber: string;
-  websiteUrl?: string;
-
-  priceMin: number;
-  priceMax: number;
-
-  latitude: number;
-  longitude: number;
-
-  coverImage?: string[];
-  interiorImage?: string[];
-  fullPageMenuImage?: string[];
-
-  isOwnerVerified: boolean;
-
-  venueTags: VenueTag[];
+export type UpdateVenueLocationResponse = {
+  message: string;
+  code: number;
+  data: VenueLocation;
+  traceId?: string;
+  timestamp?: string;
 };
 
 
+export type OpeningHour = {
+  day: number;
+  openTime: string;
+  closeTime: string;
+  enabled: boolean;
+};
 
-export type VenueLocationDetail = {
+export type TodayOpeningHour = {
   id: number;
-  name: string;
-  description: string;
-  address: string;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+  status: string;
+};
 
-  email: string;
-  phoneNumber: string;
-  websiteUrl?: string;
-
-  priceMin: number;
-  priceMax: number;
-
-  latitude: number;
-  longitude: number;
+export type VenueLocationDetail = VenueLocationBase & {
+  id: number;
 
   averageRating: number;
   avarageCost: number;
@@ -105,8 +145,6 @@ export type VenueLocationDetail = {
   coverImage?: string[] | null;
   interiorImage?: string[] | null;
   fullPageMenuImage?: string[] | null;
-
-  isOwnerVerified: boolean;
 
   createdAt: string;
   updatedAt: string;
@@ -133,10 +171,9 @@ export type VenueLocationDetail = {
   };
 
   todayDayName: string | null;
-  todayOpeningHour: string | null;
-  openingHours: any[] | null;
+  todayOpeningHour: TodayOpeningHour | null;
+  openingHours: OpeningHour[] | null;
 };
-
 
 export type GetVenueLocationDetailResponse = {
   message: string;
@@ -144,11 +181,14 @@ export type GetVenueLocationDetailResponse = {
   data: VenueLocationDetail;
 };
 
+// ================= LIST =================
+
 export type VenueLocationListItem = {
   id: number;
 
   name: string;
   address: string;
+  description: string;
 
   latitude: number;
   longitude: number;
@@ -165,10 +205,58 @@ export type VenueLocationListItem = {
   updatedAt: string;
 };
 
-export type GetMyVenueLocationsResponse = {
+export type GetVenueLocationListResponse = {
   message: string;
   code: number;
   data: VenueLocationListItem[];
+  traceId?: string;
+  timestamp?: string;
+};
+
+// ================= PAYMENT =================
+
+export type SubmitVenueWithPaymentRequest = {
+  packageId: number;
+  quantity: number;
+};
+
+export type SubmitVenueWithPaymentResponse = {
+  message: string;
+  code: number;
+  data: {
+    isSuccess: boolean;
+    message: string;
+    missingFields: string[];
+    transactionId: number;
+    subscriptionId: number;
+    qrCodeUrl: string;
+    amount: number;
+    bankInfo: {
+      bankName: string;
+      accountNumber: string;
+      accountName: string;
+    };
+    expireAt: string;
+    paymentContent: string;
+    packageName: string;
+    totalDays: number;
+  };
+  traceId?: string;
+  timestamp?: string;
+};
+
+export type UpdateOpeningHoursRequest = {
+  venueLocationId: number;
+  day: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  openTime: string; // "HH:mm" format
+  closeTime: string; // "HH:mm" format
+  isClosed: boolean;
+};
+
+export type UpdateOpeningHoursResponse = {
+  message: string;
+  code: number;
+  data: any;
   traceId?: string;
   timestamp?: string;
 };

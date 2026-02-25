@@ -8,9 +8,26 @@ type Props = {
     setFormData: React.Dispatch<React.SetStateAction<VenueFormData>>
 }
 
+const getPreviewUrl = (file: File | string) => {
+    if (typeof file === "string") return file
+    return URL.createObjectURL(file)
+}
+
 export default function Media({ formData, setFormData }: Props) {
 
-    
+    const coverPreview =
+        formData.coverImage ?? formData.existingCoverUrl ?? null
+
+    const interiorPreview = [
+        ...(formData.existingInteriorUrls ?? []),
+        ...(formData.interiorImage ?? [])
+    ]
+
+    const menuPreview = [
+        ...(formData.existingMenuUrls ?? []),
+        ...(formData.fullPageMenuImage ?? [])
+    ]
+console.log('render media', { coverPreview, interiorPreview, menuPreview }) 
     return (
         <div className="flex justify-center">
             <div className="w-full max-w-4xl px-6 py-10 md:px-10">
@@ -18,13 +35,15 @@ export default function Media({ formData, setFormData }: Props) {
                 <h1 className="mb-8 text-center text-2xl font-bold text-gray-900">
                     Tải lên phương tiện
                 </h1>
+
                 <div className="grid gap-8 md:grid-cols-2">
 
-                    {/* Ảnh bìa */}
+                    {/* ================= COVER ================= */}
                     <div className="mb-6">
                         <p className="text-sm font-semibold text-gray-900">
                             Ảnh bìa <span className="text-pink-500">*</span>
                         </p>
+
                         <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
                             <span>
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
@@ -42,34 +61,26 @@ export default function Media({ formData, setFormData }: Props) {
                             />
                         </label>
 
-                        {formData.coverImage && (
+                        {coverPreview && (
                             <div className="mt-3 relative h-24 w-40">
                                 <Image
-                                    src={URL.createObjectURL(formData.coverImage)}
+                                    src={getPreviewUrl(coverPreview)}
                                     alt="cover-preview"
                                     width={160}
                                     height={96}
                                     className="h-24 w-40 rounded-3xl object-cover"
                                     unoptimized
                                 />
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setFormData({ ...formData, coverImage: null })
-                                    }
-                                    className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-600 text-[10px] text-white"
-                                >
-                                    ×
-                                </button>
                             </div>
                         )}
                     </div>
 
-                    {/* Ảnh nội thất */}
+                    {/* ================= INTERIOR ================= */}
                     <div className="mb-6">
                         <p className="text-sm font-semibold text-gray-900">
                             Ảnh nội thất <span className="text-pink-500">*</span>
                         </p>
+
                         <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
                             <span>
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
@@ -89,42 +100,32 @@ export default function Media({ formData, setFormData }: Props) {
                                     setFormData({ ...formData, interiorImage: merged })
                                 }}
                             />
-
                         </label>
-                        {formData.interiorImage?.length > 0 && (
+
+                        {interiorPreview.length > 0 && (
                             <div className="mt-3 flex flex-wrap gap-3">
-                                {formData.interiorImage.map((file, i) => (
+                                {interiorPreview.map((file, i) => (
                                     <div key={i} className="relative h-16 w-16">
                                         <Image
-                                            src={URL.createObjectURL(file)}
+                                            src={getPreviewUrl(file)}
                                             alt={`interior-${i}`}
                                             width={64}
                                             height={64}
                                             className="h-16 w-16 rounded-[20px] object-cover"
+                                            unoptimized
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                const next = formData.interiorImage.filter((_, idx) => idx !== i)
-                                                setFormData({ ...formData, interiorImage: next })
-                                            }}
-                                            className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-600 text-[10px] text-white"
-                                        >
-                                            ×
-                                        </button>
                                     </div>
                                 ))}
                             </div>
                         )}
-
-
                     </div>
 
-                    {/* Ảnh thực đơn */}
+                    {/* ================= MENU ================= */}
                     <div className="mb-6">
                         <p className="text-sm font-semibold text-gray-900">
                             Ảnh thực đơn <span className="text-pink-500">*</span>
                         </p>
+
                         <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
                             <span>
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
@@ -143,40 +144,28 @@ export default function Media({ formData, setFormData }: Props) {
                                     const merged = [...formData.fullPageMenuImage, ...files].slice(0, 5)
                                     setFormData({ ...formData, fullPageMenuImage: merged })
                                 }}
-
                             />
                         </label>
 
-                        {formData.fullPageMenuImage.length > 0 && (
+                        {menuPreview.length > 0 && (
                             <div className="mt-3 flex flex-wrap gap-3">
-                                {formData.fullPageMenuImage.map((file, i) => (
+                                {menuPreview.map((file, i) => (
                                     <div key={i} className="relative h-16 w-16">
                                         <Image
-                                            src={URL.createObjectURL(file)}
+                                            src={getPreviewUrl(file)}
                                             alt={`menu-${i}`}
                                             width={64}
                                             height={64}
                                             className="h-16 w-16 rounded-[20px] object-cover"
+                                            unoptimized
                                         />
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                const next = formData.fullPageMenuImage.filter((_, idx) => idx !== i)
-                                                setFormData({ ...formData, fullPageMenuImage: next })
-                                            }}
-                                            className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gray-600 text-[10px] text-white"
-                                        >
-                                            ×
-                                        </button>
                                     </div>
                                 ))}
                             </div>
                         )}
-
                     </div>
+
                 </div>
-
-
             </div>
         </div>
     )

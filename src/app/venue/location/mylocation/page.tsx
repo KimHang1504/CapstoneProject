@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 import { getMyVenueLocations } from '@/api/venue/location/api';
-import { VenueLocationListItem } from '@/api/venue/location/type';
+import { MyVenueLocation} from '@/api/venue/location/type';
 // import { VENUE_STATUS_CONFIG } from '@/api/venue/location/status';
 
 type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DRAFTED';
@@ -14,12 +14,11 @@ type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DRAFTED';
 export default function MyLocationPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [keyword, setKeyword] = useState('');
-  const [data, setData] = useState<VenueLocationListItem[]>([]);
-  const [loading, setLoading] = useState(true);
+const [data, setData] = useState<MyVenueLocation[]>([]);  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getMyVenueLocations()
-      .then(res => setData(res.data))
+      .then(setData)
       .finally(() => setLoading(false));
   }, []);
 
@@ -51,11 +50,9 @@ export default function MyLocationPage() {
   }
 
   return (
-    <div className="flex gap-10 justify-between p-8">
-      <div className="flex-2 space-y-4">
+    <div className="flex gap-10 p-8 items-start">
+      <div className="flex-1 min-w-0 space-y-4">
         {locations.map(loc => {
-          // const statusConfig = VENUE_STATUS_CONFIG[loc.status];
-
           return (
             <div
               key={loc.id}
@@ -73,18 +70,18 @@ export default function MyLocationPage() {
 
               <div className="flex-1 pr-10">
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold text-lg text-gray-900">
-                    {loc.name}
-                  </h3>
-
-                  {/* <span
-                    className={`text-xs px-2 py-0.5 rounded-full font-medium ${statusConfig.className}`}
+                  <Link
+                    href={`/venue/location/mylocation/${loc.id}`}
                   >
-                    {statusConfig.label}
-                  </span> */}
+                    <h3 className="font-semibold text-lg text-gray-900">
+                      {loc.name}
+                    </h3>
+                  </Link>
+
                 </div>
 
-                <p className="text-sm text-gray-500 mt-1">{loc.address}</p>
+                <p className="text-sm text-gray-500 mt-1 line-clamp-2 min-h-10">{loc.description}</p>
+                <p className="text-sm text-gray-900 font-medium italic mt-1 line-clamp-2 min-h-10">{loc.address}</p>
               </div>
 
               <Link
@@ -106,7 +103,7 @@ export default function MyLocationPage() {
         )}
       </div>
 
-      <div className="flex-1 space-y-2 mb-8">
+      <div className="w-[320px] space-y-2 sticky top-8 self-start">
         <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 mb-4">
           <Search className="text-[#8093F1] w-5 h-5" />
           <input

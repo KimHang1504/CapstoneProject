@@ -53,7 +53,7 @@ export default function ManagementLayout({
           <div className="flex items-center justify-between">
             {isSidebarOpen && (
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center text-white font-bold">
+                <div className="w-8 h-8 bg-linear-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center text-white font-bold">
                   CM
                 </div>
                 <span className="font-semibold text-white text-sm">CoupleMood</span>
@@ -77,7 +77,7 @@ export default function ManagementLayout({
               className={`
                 flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
                 ${pathname === '/admin'
-                  ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
+                  ? 'bg-linear-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
                   : 'text-gray-600 hover:bg-purple-50 hover:text-purple-600'
                 }
               `}
@@ -139,7 +139,7 @@ export default function ManagementLayout({
                         <span className="font-medium text-sm">{item.label}</span>
                       )}
                       {isActive && (
-                        <div className="absolute right-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-400 to-pink-400 rounded-l"></div>
+                        <div className="absolute right-0 top-0 bottom-0 w-1 bg-linear-to-b from-purple-400 to-pink-400 rounded-l"></div>
                       )}
                     </Link>
                   );
@@ -191,7 +191,7 @@ export default function ManagementLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
+      <main className="flex-1 flex flex-col">
         {/* Header */}
         <header className="bg-white border-b border-purple-100">
           <div className="px-8 py-4">
@@ -238,7 +238,7 @@ export default function ManagementLayout({
                     <p className="text-sm font-semibold text-gray-700">John Wick</p>
                     <p className="text-xs text-gray-500">Administrator</p>
                   </div>
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all duration-200">
+                  <div className="w-10 h-10 bg-linear-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all duration-200">
                     JW
                   </div>
                   <ChevronDown className="w-4 h-4 text-gray-400" />
@@ -249,7 +249,7 @@ export default function ManagementLayout({
         </header>
 
         {/* Content */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1">
           <div className="p-8">{children}</div>
         </div>
       </main>

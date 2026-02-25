@@ -106,6 +106,19 @@ export default function Contact({ formData, setFormData }: Props) {
               className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
             />
           </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-800">
+              Email
+            </label>
+            <input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              placeholder="hehe@gmail.com"
+              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            />
+          </div>
         </div>
 
         {/* Thời gian mở cửa */}

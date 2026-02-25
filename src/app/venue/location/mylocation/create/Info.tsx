@@ -22,13 +22,17 @@ export type VenueFormData = {
   latitude: number
   longitude: number
 
-  coverImage: File | null
-  interiorImage: File[]
-  fullPageMenuImage: File[]
+coverImage: File | string | null
+interiorImage: (File | string)[]
+fullPageMenuImage: (File | string)[]
 
   selectedMoods: number[]
   selectedStyles: number[]
 
+  // For edit mode - existing URLs
+  existingCoverUrl?: string
+  existingInteriorUrls?: string[]
+  existingMenuUrls?: string[]
 }
 
 
@@ -113,8 +117,59 @@ export default function Info({ formData, setFormData }: Props) {
             className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
           />
         </div>
-        
 
+        {/* Giá cả */}
+        <div className="mb-6">
+          <label className="mb-2 block text-sm font-medium text-gray-800">
+            Khoảng giá <span className="text-pink-500">*</span>
+          </label>
+
+          <div className="grid grid-cols-2 gap-4">
+
+            {/* PRICE MIN */}
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                ₫
+              </span>
+              <input
+                type="number"
+                value={formData.priceMin || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    priceMin: Number(e.target.value),
+                  })
+                }
+                placeholder="Tối thiểu"
+                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              />
+            </div>
+
+            {/* PRICE MAX */}
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                ₫
+              </span>
+              <input
+                type="number"
+                value={formData.priceMax || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    priceMax: Number(e.target.value),
+                  })
+                }
+                placeholder="Tối đa"
+                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              />
+            </div>
+
+          </div>
+
+          <p className="text-xs text-gray-400 mt-2">
+            Ví dụ: 50.000đ - 200.000đ
+          </p>
+        </div>
         <div className="mb-6">
           <label className="mb-3 block text-sm font-medium">
             Thẻ tâm trạng *

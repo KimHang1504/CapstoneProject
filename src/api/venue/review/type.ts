@@ -93,3 +93,11 @@ export interface GetVenueReviewsParams {
   sortDescending?: boolean
 }
 
+
+export interface ReplyReviewResponse {
+  message: string
+  code: number
+  data: ReviewReply
+  traceId: string
+  timestamp: string
+}

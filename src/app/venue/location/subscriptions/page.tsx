@@ -3,8 +3,9 @@
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { getSubscriptionPackages } from '@/api/subscription/api';
+import { submitVenueWithPayment } from '@/api/venue/location/api';
 import { SubscriptionPackage } from '@/api/subscription/type';
-import { Check } from 'lucide-react';
+import { Check} from 'lucide-react';
 
 export default function LocationRegisterPage() {
   const searchParams = useSearchParams();
@@ -13,6 +14,7 @@ export default function LocationRegisterPage() {
 
   const [packages, setPackages] = useState<SubscriptionPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -31,12 +33,39 @@ export default function LocationRegisterPage() {
     fetchPackages();
   }, []);
 
-  const handleBuyPackage = (subscriptionId: number) => {
+  const handleBuyPackage = async (pkg: SubscriptionPackage) => {
     if (!locationId) {
       alert('Không tìm thấy thông tin địa điểm');
       return;
     }
-    router.push(`/venue/location/subscriptions/checkout?locationId=${locationId}&subscriptionId=${subscriptionId}`);
+
+    try {
+      setIsProcessing(true);
+
+      const response = await submitVenueWithPayment(Number(locationId), {
+        packageId: pkg.id,
+        quantity: 1
+      });
+
+      console.log('Payment response:', response);
+
+      // Redirect to checkout with payment data
+      const paymentData = encodeURIComponent(JSON.stringify(response.data));
+      router.push(`/venue/location/subscriptions/checkout?locationId=${locationId}&paymentData=${paymentData}`);
+    } catch (error: any) {
+      console.error('Error creating payment:', error);
+      
+      // Handle specific error messages
+      const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
+      
+      if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
+        alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
+      } else {
+        alert(errorMessage);
+      }
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   if (isLoading) {
@@ -59,12 +88,12 @@ export default function LocationRegisterPage() {
             key={pkg.id}
             className="flex flex-col h-full rounded-xl overflow-hidden bg-[#B388EB]"
           >
-            {/* CONTENT */}
-            <div className="flex flex-col flex-1 p-8 shadow-md text-white">
-              {/* Tên gói */}
-              <span className="text-xl font-semibold mb-5">
+             {/* Tên gói */}
+              <span className="text-xl text-center font-extrabold mb-5 bg-[#f4ace9] p-4 text-white ">
                 {pkg.packageName}
               </span>
+            <div className="flex flex-col flex-1 p-8 shadow-md text-white">
+             
 
               {/* Giá */}
               <div className="mb-6">
@@ -81,30 +110,31 @@ export default function LocationRegisterPage() {
 
               {/* Nút mua */}
               <button
-                onClick={() => handleBuyPackage(pkg.id)}
-                className="mb-6 rounded-md py-3 text-sm font-semibold bg-white text-[#B388EB] hover:bg-[#fdeaf9]"
+                onClick={() => handleBuyPackage(pkg)}
+                disabled={isProcessing}
+                className="mb-6 rounded-md py-3 text-sm font-semibold bg-white text-[#B388EB] hover:bg-[#fdeaf9] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Mua
+                {isProcessing ? 'Đang xử lý...' : 'Mua'}
               </button>
 
               {/* FEATURES */}
               <div className="space-y-2 text-sm">
                 <div className="flex items-start gap-2">
-                  <Check className="text-[#FDC5F5] flex-shrink-0" />
+                  <Check className="text-[#FDC5F5] shrink-0" />
                   <span>Hiển thị trên ứng dụng</span>
                 </div>
                 <div className="flex items-start gap-2">
-                  <Check className="text-[#FDC5F5] flex-shrink-0" />
+                  <Check className="text-[#FDC5F5] shrink-0" />
                   <span>Thời hạn {pkg.durationDays} ngày</span>
                 </div>
                 {pkg.packageName.includes('PRO') && (
                   <>
                     <div className="flex items-start gap-2">
-                      <Check className="text-[#FDC5F5] flex-shrink-0" />
+                      <Check className="text-[#FDC5F5] shrink-0" />
                       <span>Ưu tiên hiển thị</span>
                     </div>
                     <div className="flex items-start gap-2">
-                      <Check className="text-[#FDC5F5] flex-shrink-0" />
+                      <Check className="text-[#FDC5F5] shrink-0" />
                       <span>Báo cáo khách hàng</span>
                     </div>
                   </>
@@ -112,12 +142,11 @@ export default function LocationRegisterPage() {
               </div>
             </div>
 
-            {/* FOOTER */}
-            <button
+            {/* <button
               className="bg-[#FDC5F5] py-4 text-gray-800 hover:bg-[#f79fea]"
             >
               Xem chi tiết
-            </button>
+            </button> */}
           </div>
         ))}
       </div>
