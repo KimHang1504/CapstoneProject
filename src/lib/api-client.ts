@@ -10,6 +10,15 @@ params?: Record<string, string | number | boolean | undefined>
   body?: any;
 };
 
+// response chung của BE
+export type ApiResponse<T> = {
+  message: string;
+  code: number;
+  data: T;
+  traceId: string;
+  timestamp: string;
+};
+
 class ApiClient {
   private NEXT_PUBLIC_API_URL: string;
   private defaultHeaders: Record<string, string>;

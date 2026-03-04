@@ -5,12 +5,8 @@
 'use client';
 import { SidebarConfig } from '@/types/sidebar';
 import {
-  MapPin,
   LayoutDashboard,
   User,
-  TicketPercent,
-  ShoppingBag,
-  BarChart3,
   MessageSquareMore ,
 } from 'lucide-react';
 
@@ -28,7 +24,7 @@ export const venueSidebarConfig: SidebarConfig = {
     },
         {
       label: 'Quảng cáo',
-      href: '/venue/',
+      href: '/venue/advertisement',
       icon: LayoutDashboard,
     },
     {

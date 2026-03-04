@@ -1,6 +1,5 @@
-import { apiClient } from "@/lib/api-client";
+import { apiClient, ApiResponse } from "@/lib/api-client";
 import { GetVenueReviewsParams, GetVenueReviewsResponse, ReplyReviewResponse, ReviewReply } from "./type";
-import { ApiResponse } from "@/api/mood/type";
 
 
 export const getMyReviews = (params: GetVenueReviewsParams) => {

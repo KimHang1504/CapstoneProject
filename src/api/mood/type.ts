@@ -1,3 +1,5 @@
+import { ApiResponse } from "@/lib/api-client";
+
 // 1 item mood
 export type CoupleMoodType = {
   id: number;
@@ -6,14 +8,7 @@ export type CoupleMoodType = {
   isActive: boolean;
 };
 
-// response chung của BE
-export type ApiResponse<T> = {
-  message: string;
-  code: number;
-  data: T;
-  traceId: string;
-  timestamp: string;
-};
+
 
 export type CouplePersonalityType = {
   id: number;
