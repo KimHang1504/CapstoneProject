@@ -87,6 +87,8 @@ export default function LocationDetailPage() {
     }
 
     const isPending = location.status === 'PENDING';
+    const canSubmitForApproval =
+        location.status === 'DRAFTED' || location.status === 'PENDING';
     const firstImage = location.coverImage && location.coverImage.length > 0
         ? location.coverImage[0]
         : '/placeholder.jpg';
@@ -171,18 +173,21 @@ export default function LocationDetailPage() {
 
                     <div className="flex justify-end gap-3">
                         {/* SUBMIT */}
-                        <button
-                            onClick={handleSubmitForApproval}
-                            disabled={isPending}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200
-                            ${isPending
-                                    ? 'bg-amber-100 text-amber-600 cursor-not-allowed'
-                                    : 'bg-linear-to-r from-violet-500 to-purple-500 text-white hover:shadow-md hover:scale-[1.02] active:scale-[0.98]'
-                                }`}
-                        >
-                            <Send size={18} />
-                            {isPending ? 'Đang chờ duyệt' : 'Gửi duyệt'}
-                        </button>
+                        {/* SUBMIT */}
+                        {canSubmitForApproval && (
+                            <button
+                                onClick={handleSubmitForApproval}
+                                disabled={isPending}
+                                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200
+        ${isPending
+                                        ? 'bg-amber-100 text-amber-600 cursor-not-allowed'
+                                        : 'bg-linear-to-r from-violet-500 to-purple-500 text-white hover:shadow-md hover:scale-[1.02] active:scale-[0.98]'
+                                    }`}
+                            >
+                                <Send size={18} />
+                                {isPending ? 'Đang chờ duyệt' : 'Gửi duyệt'}
+                            </button>
+                        )}
 
                         {/* EDIT */}
                         <button
@@ -384,7 +389,7 @@ export default function LocationDetailPage() {
                     </div>
                 )}
 
-                <div className="bg-white rounded-2xl p-6">
+                {/* <div className="bg-white rounded-2xl p-6">
                     <div className="flex justify-between items-center mb-4">
                         <p className="font-semibold">Giờ hoạt động</p>
 
@@ -394,11 +399,13 @@ export default function LocationDetailPage() {
                             ? `${location.todayDayName}: ${location.todayOpeningHour}`
                             : 'Chưa có thông tin giờ hoạt động'}
                     </p>
+                </div> */}
+                <div>
+                    {canShowReview && (
+                        <ReviewSection venueId={location.id} />
+                    )}
                 </div>
 
-                {canShowReview && (
-                    <ReviewSection venueId={location.id} />
-                )}
 
                 {/* Opening Hours Modal */}
                 {showOpeningHoursModal && (

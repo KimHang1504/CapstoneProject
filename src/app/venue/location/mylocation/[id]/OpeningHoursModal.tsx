@@ -85,7 +85,7 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
                 <th className="p-3 text-center">Mở cửa</th>
                 <th className="p-3 text-center">Thời gian mở</th>
                 <th className="p-3 text-center">Thời gian đóng</th>
-                <th className="p-3 text-center">Trạng thái</th>
+                {/* <th className="p-3 text-center">Trạng thái</th> */}
               </tr>
             </thead>
 
@@ -119,11 +119,10 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
                         onChange={(e) =>
                           updateDay(day.value, 'openTime', e.target.value)
                         }
-                        className="border rounded-lg px-2 py-1 disabled:bg-gray-100"
+                        className="border border-gray-300 rounded-lg px-2 py-1 disabled:bg-gray-100"
                       />
                     </td>
 
-                    {/* Close */}
                     <td className="p-3 text-center">
                       <input
                         type="time"
@@ -132,16 +131,15 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
                         onChange={(e) =>
                           updateDay(day.value, 'closeTime', e.target.value)
                         }
-                        className="border rounded-lg px-2 py-1 disabled:bg-gray-100"
+                        className="border border-gray-300 rounded-lg px-2 py-1 disabled:bg-gray-100"
                       />
                     </td>
 
-                    {/* Status */}
-                    <td className="p-3 text-center text-xs">
+                    {/* <td className="p-3 text-center text-xs">
                       {isSaving
                         ? <span className="text-violet-500">Đang lưu...</span>
                         : <span className="text-green-600">✓</span>}
-                    </td>
+                    </td> */}
                   </tr>
                 )
               })}

@@ -11,6 +11,7 @@ import {
 export type VenueFormData = {
   name: string
   description: string
+  category: string
   address: string
   email: string
   phoneNumber: string
@@ -114,6 +115,18 @@ export default function Info({ formData, setFormData }: Props) {
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows={3}
             placeholder="Mô tả ngắn gọn về địa điểm tối đa 150 kí tự"
+            className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+          />
+        </div>
+
+         <div className="mb-4">
+          <label className="mb-1 block text-sm font-medium text-gray-800">
+          Danh mục<span className="text-pink-500"> *</span>
+          </label>
+          <input
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            placeholder="Nhập danh mục địa điểm. Vi dụ: quán cà phê, nhà hàng, quán bar..."
             className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
           />
         </div>

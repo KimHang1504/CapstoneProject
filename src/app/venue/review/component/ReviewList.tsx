@@ -4,6 +4,7 @@ import { useState } from "react"
 import { Review, ReviewReply } from "@/api/venue/review/type"
 import { replyReview, updateReply } from "@/api/venue/review/api"
 import Image from "next/image"
+import { Star, ThumbsUp } from "lucide-react"
 
 type Props = {
     reviews: Review[]
@@ -88,8 +89,14 @@ export default function ReviewList({
                             </div>
                         </div>
 
-                        <div className="text-sm font-semibold text-yellow-500">
-                            ⭐ {review.rating}
+                        <div className="flex items-center gap-1">
+                            {Array.from({ length: review.rating }).map((_, i) => (
+                                <Star
+                                    key={i}
+                                    size={16}
+                                    className="fill-yellow-400 text-yellow-400"
+                                />
+                            ))}
                         </div>
                     </div>
 
@@ -100,8 +107,10 @@ export default function ReviewList({
 
                     {/* Footer */}
                     <div className="flex items-center justify-between text-xs text-gray-400">
-                        <span>👍 {review.likeCount} lượt thích</span>
-
+                        <div className="flex  gap-1">
+                            <ThumbsUp size={14} color="#9CA3AF" className="text-gray-400" />
+                            <span>{review.likeCount} lượt thích</span>
+                        </div>
                         {review.isAnonymous && (
                             <span className="px-2 py-1 rounded-full bg-green-50 text-green-600 text-xs">
                                 Mood phù hợp

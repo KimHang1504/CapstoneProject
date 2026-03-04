@@ -14,8 +14,7 @@ export default function LocationRegisterPage() {
 
   const [packages, setPackages] = useState<SubscriptionPackage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isProcessing, setIsProcessing] = useState(false);
-
+const [processingPackageId, setProcessingPackageId] = useState<number | null>(null);
   useEffect(() => {
     const fetchPackages = async () => {
       try {
@@ -33,40 +32,35 @@ export default function LocationRegisterPage() {
     fetchPackages();
   }, []);
 
-  const handleBuyPackage = async (pkg: SubscriptionPackage) => {
-    if (!locationId) {
-      alert('Không tìm thấy thông tin địa điểm');
-      return;
+const handleBuyPackage = async (pkg: SubscriptionPackage) => {
+  if (!locationId) {
+    alert('Không tìm thấy thông tin địa điểm');
+    return;
+  }
+
+  try {
+    setProcessingPackageId(pkg.id);
+
+    const response = await submitVenueWithPayment(Number(locationId), {
+      packageId: pkg.id,
+      quantity: 1
+    });
+
+    const paymentData = encodeURIComponent(JSON.stringify(response.data));
+    router.push(`/venue/location/subscriptions/checkout?locationId=${locationId}&paymentData=${paymentData}`);
+
+  } catch (error: any) {
+    const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
+
+    if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
+      alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
+    } else {
+      alert(errorMessage);
     }
-
-    try {
-      setIsProcessing(true);
-
-      const response = await submitVenueWithPayment(Number(locationId), {
-        packageId: pkg.id,
-        quantity: 1
-      });
-
-      console.log('Payment response:', response);
-
-      // Redirect to checkout with payment data
-      const paymentData = encodeURIComponent(JSON.stringify(response.data));
-      router.push(`/venue/location/subscriptions/checkout?locationId=${locationId}&paymentData=${paymentData}`);
-    } catch (error: any) {
-      console.error('Error creating payment:', error);
-      
-      // Handle specific error messages
-      const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
-      
-      if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
-        alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
-      } else {
-        alert(errorMessage);
-      }
-    } finally {
-      setIsProcessing(false);
-    }
-  };
+  } finally {
+    setProcessingPackageId(null);
+  }
+};
 
   if (isLoading) {
     return (
@@ -111,10 +105,10 @@ export default function LocationRegisterPage() {
               {/* Nút mua */}
               <button
                 onClick={() => handleBuyPackage(pkg)}
-                disabled={isProcessing}
+                // disabled={isProcessing}
                 className="mb-6 rounded-md py-3 text-sm font-semibold bg-white text-[#B388EB] hover:bg-[#fdeaf9] disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isProcessing ? 'Đang xử lý...' : 'Mua'}
+                Mua
               </button>
 
               {/* FEATURES */}

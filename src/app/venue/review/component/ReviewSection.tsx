@@ -59,14 +59,7 @@ export default function ReviewSection({ venueId }: Props) {
     return (
         <div className="space-y-6">
 
-            <Statistic
-                summary={{
-                    averageRating: summary.averageRating,
-                    totalReviews: summary.totalReviews,
-                    moodMatchPercentage: summary.moodMatchPercentage,
-                    matchedReviewsCount: summary.matchedReviewsCount,
-                }}
-            />
+            <Statistic summary={summary} />
 
             <ReviewFilter onChange={setFilterParams} />
 

@@ -22,6 +22,16 @@ export const venueSidebarConfig: SidebarConfig = {
       icon: LayoutDashboard,
     },
     {
+      label: 'Địa điểm',
+      href: '/venue/location/mylocation',
+      icon: LayoutDashboard,
+    },
+        {
+      label: 'Quảng cáo',
+      href: '/venue/',
+      icon: LayoutDashboard,
+    },
+    {
       label: 'Hồ sơ',
       href: '/venue/profile',
       icon: User,
@@ -32,20 +42,20 @@ export const venueSidebarConfig: SidebarConfig = {
       icon: MessageSquareMore,
     },
   ],
-  sections: [
-    {
-      title: 'Địa điểm',
-      icon: MapPin,
-      items: [
-        {
-          label: 'Đăng ký địa điểm',
-          href: '/venue/location/subscriptions',
-        },
-        {
-          label: 'Quản lý địa điểm',
-          href: '/venue/location/mylocation',
-        },
-      ],
-    },
-  ],
+  // sections: [
+  //   {
+  //     title: 'Địa điểm',
+  //     icon: MapPin,
+  //     items: [
+  //       {
+  //         label: 'Đăng ký địa điểm',
+  //         href: '/venue/location/subscriptions',
+  //       },
+  //       {
+  //         label: 'Quản lý địa điểm',
+  //         href: '/venue/location/mylocation',
+  //       },
+  //     ],
+  //   },
+  // ],
 };

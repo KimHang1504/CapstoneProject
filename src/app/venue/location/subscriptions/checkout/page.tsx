@@ -89,7 +89,7 @@ export default function CheckoutPage() {
               ? 'Giao dịch đã hết hạn. Vui lòng thử lại.' 
               : 'Thanh toán không thành công. Vui lòng thử lại.',
             orderId: `TXN${paymentData.transactionId}`,
-            redirectUrl: '/venue/location/subscriptions?locationId=' + searchParams.get('locationId')
+            // redirectUrl: '/venue/location/subscriptions?locationId=' + searchParams.get('locationId')
           });
           router.push(failureUrl);
         }

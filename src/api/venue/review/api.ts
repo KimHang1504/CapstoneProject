@@ -1,5 +1,6 @@
 import { apiClient } from "@/lib/api-client";
 import { GetVenueReviewsParams, GetVenueReviewsResponse, ReplyReviewResponse, ReviewReply } from "./type";
+import { ApiResponse } from "@/api/mood/type";
 
 
 export const getMyReviews = (params: GetVenueReviewsParams) => {
@@ -35,5 +36,11 @@ export const updateReply = (
   return apiClient.put<{ data: ReviewReply }>(
     `/api/Review/${reviewId}/reply`,
     body
+  )
+}
+
+export const deleteReply = (reviewId: number) => {
+  return apiClient.delete<ApiResponse<null>>(
+    `/api/Review/${reviewId}/reply`
   )
 }
