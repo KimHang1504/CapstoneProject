@@ -4,6 +4,8 @@ import {
   Advertisement,
   AdvertisementListItem,
   AdvertisementPackage,
+  SubmitAdvertisementPaymentResponse,
+  SubmitAdvertisementPaymentRequest,
 } from "./type";
 
 //create
@@ -39,5 +41,18 @@ export const getAdvertisementById = async (
 export const getAdvertisementPackages = async () => {
   return apiClient.get<ApiResponse<AdvertisementPackage[]>>(
     "/api/Advertisement/packages"
+  );
+};
+
+// submit payment
+export const submitAdvertisementPayment = async (
+  advertisementId: number,
+  data: SubmitAdvertisementPaymentRequest
+): Promise<ApiResponse<SubmitAdvertisementPaymentResponse>> => {
+  return apiClient.post<
+    ApiResponse<SubmitAdvertisementPaymentResponse>
+  >(
+    `/api/Advertisement/${advertisementId}/submit-with-payment`,
+    data
   );
 };

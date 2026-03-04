@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api-client";
+import { apiClient, ApiResponse } from "@/lib/api-client";
 import {
   RegisterVenueLocationRequest,
   CreateVenueLocationResponse,
@@ -11,7 +11,7 @@ import {
   UpdateOpeningHoursResponse,
   MyVenueLocation
 } from "./type";
-import { ApiResponse } from "@/api/mood/type";
+
 
 export const registerVenueLocation = (
   payload: RegisterVenueLocationRequest
