@@ -43,7 +43,7 @@ export default function LoginPage() {
         }
     };
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#FDC5F5] via-[#B388EB] to-[#72DDF7] p-4 sm:p-6">
+        <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#FDC5F5] via-[#B388EB] to-[#72DDF7] p-4 sm:p-6">
 
             <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden max-w-5xl w-full">
 
@@ -91,7 +91,7 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             className="mt-2 py-3 rounded-xl font-semibold text-white 
-                        bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400
+                        bg-linear-to-r from-pink-400 via-purple-400 to-blue-400
                         hover:scale-[1.02] active:scale-[0.98]
                         transition-all duration-200 shadow-lg w-full cursor-pointer"
                         >

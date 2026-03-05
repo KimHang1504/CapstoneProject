@@ -6,7 +6,7 @@ import { ShieldAlert, ArrowLeft, Home } from "lucide-react";
 export default function UnauthorizedPage() {
     return (
         <div className="min-h-screen flex items-center justify-center
-    bg-gradient-to-br from-[#FDC5F5] via-[#B388EB] to-[#72DDF7]
+    bg-linear-to-br from-[#FDC5F5] via-[#B388EB] to-[#72DDF7]
     p-6 relative overflow-hidden">
 
             {/* floating hearts */}
@@ -22,7 +22,7 @@ export default function UnauthorizedPage() {
 
                 {/* icon */}
                 <div className="flex justify-center mb-6">
-                    <div className="p-5 rounded-full bg-gradient-to-r
+                    <div className="p-5 rounded-full bg-linear-to-r
           from-[#F7AEF8] to-[#8093F1] shadow-lg">
                         <ShieldAlert size={40} className="text-white" />
                     </div>
@@ -49,7 +49,7 @@ export default function UnauthorizedPage() {
                         href="/auth"
                         className="flex items-center justify-center gap-2
             px-5 py-3 rounded-xl font-semibold text-white
-            bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400
+            bg-linear-to-r from-pink-400 via-purple-400 to-blue-400
             hover:scale-[1.03] active:scale-[0.97]
             transition-all shadow-md"
                     >
