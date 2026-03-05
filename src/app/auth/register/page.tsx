@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import mascot from "../../../../public/mascot.png";
-import Image from "next/image";
 import MascotPanel from "../components/mascot_panel";
+import { register } from "@/api/auth/api";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
-
+    const [errors, setErrors] = useState<any>({});
+    const nav = useRouter();
     const [form, setForm] = useState({
         email: "",
         password: "",
@@ -24,20 +25,61 @@ export default function RegisterPage() {
         });
     };
 
-    const handleSubmit = (e: any) => {
+    const handleSubmit = async (e: any) => {
         e.preventDefault();
 
-        if (form.password !== form.confirmPassword) {
-            alert("Password không khớp");
-            return;
+        const newErrors: any = {};
+
+        if (!form.email) newErrors.email = "Vui lòng nhập email";
+        if (!form.businessName) newErrors.businessName = "Vui lòng nhập tên doanh nghiệp";
+        if (!form.phoneNumber) newErrors.phoneNumber = "Vui lòng nhập số điện thoại";
+        if (!form.address) newErrors.address = "Vui lòng nhập địa chỉ";
+        if (!form.password) newErrors.password = "Vui lòng nhập mật khẩu";
+        if (!form.confirmPassword) newErrors.confirmPassword = "Vui lòng xác nhận mật khẩu";
+
+        if (form.password && form.confirmPassword && form.password !== form.confirmPassword) {
+            newErrors.confirmPassword = "Mật khẩu không khớp";
         }
 
-        console.log(form);
+        setErrors(newErrors);
+
+        if (Object.keys(newErrors).length > 0) return;
+
+        try {
+            const payload = {
+                email: form.email,
+                password: form.password,
+                confirmPassword: form.confirmPassword,
+                businessName: form.businessName,
+                phoneNumber: form.phoneNumber,
+                address: form.address
+            }
+            const res = await register(payload);
+            if (res.code === 200) {
+                alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                setForm({
+                    email: "",
+                    password: "",
+                    confirmPassword: "",
+                    businessName: "",
+                    phoneNumber: "",
+                    address: ""
+                });
+                nav.push("/auth");
+            } else {
+                alert(res.message || "Đăng ký thất bại. Vui lòng thử lại.");
+            }
+
+        } catch (error) {
+            console.error("Error occurred while registering:", error);
+            alert("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
+        }
     };
+
 
     return (
         <div className="min-h-screen flex items-center justify-center 
-    bg-gradient-to-br from-[#FDC5F5] via-[#B388EB] to-[#72DDF7] p-4">
+    bg-linear-to-br from-[#FDC5F5] via-[#B388EB] to-[#72DDF7] p-4">
 
             <div className="bg-white/90 backdrop-blur-md rounded-3xl shadow-xl flex flex-col md:flex-row overflow-hidden max-w-6xl w-full">
 
@@ -67,8 +109,13 @@ export default function RegisterPage() {
                                 placeholder="example@email.com"
                                 value={form.email}
                                 onChange={handleChange}
-                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#B388EB] outline-none"
+                                className={`w-full border rounded-xl px-4 py-3 outline-none ${errors.email ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-[#B388EB]"}`}
                             />
+                            {errors.email && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.email}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -78,8 +125,13 @@ export default function RegisterPage() {
                                 placeholder="Tên doanh nghiệp của bạn"
                                 value={form.businessName}
                                 onChange={handleChange}
-                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#B388EB] outline-none"
+                                className={`w-full border rounded-xl px-4 py-3 outline-none ${errors.businessName ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-[#B388EB]"}`}
                             />
+                            {errors.businessName && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.businessName}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -89,8 +141,13 @@ export default function RegisterPage() {
                                 placeholder="0123456789"
                                 value={form.phoneNumber}
                                 onChange={handleChange}
-                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#B388EB] outline-none"
+                                className={`w-full border rounded-xl px-4 py-3 outline-none ${errors.phoneNumber ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-[#B388EB]"}`}
                             />
+                            {errors.phoneNumber && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.phoneNumber}
+                                </p>
+                            )}
                         </div>
 
                         <div className="md:col-span-2">
@@ -100,8 +157,13 @@ export default function RegisterPage() {
                                 placeholder="Địa chỉ doanh nghiệp của bạn"
                                 value={form.address}
                                 onChange={handleChange}
-                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#B388EB] outline-none"
+                                className={`w-full border rounded-xl px-4 py-3 outline-none ${errors.address ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-[#B388EB]"}`}
                             />
+                            {errors.address && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.address}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -111,8 +173,13 @@ export default function RegisterPage() {
                                 type="password"
                                 value={form.password}
                                 onChange={handleChange}
-                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#B388EB] outline-none"
+                                className={`w-full border rounded-xl px-4 py-3 outline-none ${errors.password ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-[#B388EB]"}`}
                             />
+                            {errors.password && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.password}
+                                </p>
+                            )}
                         </div>
 
                         <div>
@@ -122,15 +189,20 @@ export default function RegisterPage() {
                                 type="password"
                                 value={form.confirmPassword}
                                 onChange={handleChange}
-                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-[#B388EB] outline-none"
+                                className={`w-full border rounded-xl px-4 py-3 outline-none ${errors.confirmPassword ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-[#B388EB]"}`}
                             />
+                            {errors.confirmPassword && (
+                                <p className="text-red-500 text-sm mt-1">
+                                    {errors.confirmPassword}
+                                </p>
+                            )}
                         </div>
 
                         <div className="md:col-span-2 mt-2">
                             <button
                                 type="submit"
                                 className="w-full py-3 rounded-xl font-semibold text-white
-              bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400
+              bg-linear-to-r from-pink-400 via-purple-400 to-blue-400
               hover:scale-[1.02] active:scale-[0.98]
               transition-all duration-200 shadow-lg cursor-pointer"
                             >

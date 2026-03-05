@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { LoginRequest, LoginResponse } from "./type";
+import { LoginRequest, LoginResponse, RegisterRequest } from "./type";
 
 export const login = (payload: LoginRequest) => {
   return apiClient.post<ApiResponse<LoginResponse>>(
@@ -7,3 +7,10 @@ export const login = (payload: LoginRequest) => {
     payload
   );
 };
+
+export const register = (payload: RegisterRequest) => {
+  return apiClient.post<ApiResponse<null>>(
+    "/api/Auth/register-venue-owner",
+    payload
+  );
+}
