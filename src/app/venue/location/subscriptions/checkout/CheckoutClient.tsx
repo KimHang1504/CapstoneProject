@@ -64,7 +64,7 @@ export default function QRContent() {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [transactionId, router]);
+  }, [transactionId, router, locationId]);
 
   const handleCancelPayment = async () => {
     if (!transactionId) return;
