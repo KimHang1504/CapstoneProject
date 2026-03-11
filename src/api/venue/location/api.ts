@@ -9,7 +9,8 @@ import {
   SubmitVenueWithPaymentResponse,
   UpdateOpeningHoursRequest,
   UpdateOpeningHoursResponse,
-  MyVenueLocation
+  MyVenueLocation,
+  PaymentQrInfoLocation
 } from "./type";
 
 
@@ -43,10 +44,21 @@ export const updateVenueLocation = (id: number, payload: UpdateVenueLocationRequ
   );
 };
 
-export const submitVenueWithPayment = (id: number, payload: SubmitVenueWithPaymentRequest) => {
-  return apiClient.post<SubmitVenueWithPaymentResponse>(
-    `/api/VenueLocation/${id}/submit-with-payment`,
-    payload
+export const submitVenueWithPayment = async (
+  locationId: number,
+  data: SubmitVenueWithPaymentRequest
+): Promise<ApiResponse<SubmitVenueWithPaymentResponse>> => {
+  return apiClient.post<ApiResponse<SubmitVenueWithPaymentResponse>>(
+    `/api/VenueLocation/${locationId}/submit-with-payment`,
+    data
+  );
+};
+
+export const getPaymentQrInfo = async (
+  transactionId: number
+): Promise<ApiResponse<PaymentQrInfoLocation>> => {
+  return apiClient.get<ApiResponse<PaymentQrInfoLocation>>(
+    `/api/Payment/qr-info/${transactionId}`
   );
 };
 
@@ -58,14 +70,4 @@ export const updateOpeningHours = (payload: UpdateOpeningHoursRequest) => {
 };
 
 
-export const cancelPayment = (transactionId: number) => {
-  return apiClient.post<ApiResponse<any>>(
-    `/api/Payment/cancel/${transactionId}`
-  );
-};
 
-export const getPaymentStatus = (transactionId: number) => {
-  return apiClient.get<ApiResponse<{ status: string }>>(
-    `/api/Payment/status/${transactionId}`
-  );
-};

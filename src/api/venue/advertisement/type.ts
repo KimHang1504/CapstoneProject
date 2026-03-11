@@ -1,14 +1,44 @@
 // Placement type (FE tự khóa trước dù BE chưa enum)
 export type PlacementType =
     | "HOME_BANNER"
-    | "DETAIL_BANNER"
-    | "POPUP";
+    | "POPUP"
+
+export const PLACEMENT_LABEL: Record<PlacementType, string> = {
+    HOME_BANNER: "Banner đầu trang",
+    POPUP: "Popup"
+};
 
 export type AdvertisementStatus =
     | "DRAFT"
-    | "ACTIVE"
     | "PENDING"
-    | "INACTIVE";
+    | "ACTIVE"
+    | "INACTIVE"
+    | "APPROVED"
+    | "REJECTED";
+
+export interface VenueLocationAd {
+    id: number;
+    venueId: number;
+    venueName: string;
+    priorityScore: number;
+    startDate: string;
+    endDate: string;
+    status: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DRAFTED';
+}
+
+export type AdsOrderStatus =
+    | "PENDING"
+    | "COMPLETED"
+    | "FAILED"
+    | "CANCELLED";
+
+export interface AdsOrder {
+    id: number;
+    packageName: string;
+    pricePaid: number;
+    status: AdsOrderStatus;
+    createdAt: string;
+}
 
 // Type gửi lên khi create
 export interface CreateAdvertisementRequest {
@@ -30,19 +60,21 @@ export interface Advertisement {
     placementType: PlacementType;
     status: AdvertisementStatus;
     rejectionReason: string | null;
+    desiredStartDate: string | null;
     createdAt: string;
     updatedAt: string;
-    venueLocationAds: any[];
-    adsOrders: any[];
+    venueLocationAds: VenueLocationAd[];
+    adsOrders: AdsOrder[];
 }
 
 export interface AdvertisementListItem {
     id: number;
     title: string;
     bannerUrl: string;
-    placementType: string; // tạm để string vì BE đang trả linh tinh
-    status: "DRAFT" | "ACTIVE" | "REJECTED" | "EXPIRED";
+    placementType: PlacementType;
+    status: AdvertisementStatus;
     rejectionReason: string | null;
+    desiredStartDate: string | null;
     createdAt: string;
     updatedAt: string;
     venueLocationCount: number;
@@ -85,3 +117,4 @@ export interface SubmitAdvertisementPaymentResponse {
         accountName: string;
     };
 }
+

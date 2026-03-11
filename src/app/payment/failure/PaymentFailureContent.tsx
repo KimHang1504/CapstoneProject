@@ -2,23 +2,29 @@
 'use client';
 
 import { useSearchParams, useRouter } from 'next/navigation';
-import { XCircle, RefreshCw, Home } from 'lucide-react';
+import { XCircle, Home } from 'lucide-react';
 
 export default function PaymentFailureContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const type = searchParams.get("type");
+  const locationId = searchParams.get("locationId");
+  const advertisementId = searchParams.get("advertisementId");
 
   const title =
     searchParams.get('title') || 'Thanh toán thất bại';
   const message =
     searchParams.get('message') ||
     'Giao dịch của bạn không thể hoàn tất. Vui lòng thử lại.';
-  const retryUrl = searchParams.get('retry');
-  const homeUrl = searchParams.get('home') || '/';
 
-  const handleRetry = () => {
-    if (retryUrl) router.push(retryUrl);
-    else router.back();
+  const handleBack = () => {
+    if (type === "location" && locationId) {
+      router.push(`/venue/location/mylocation/${locationId}`);
+    }
+
+    if (type === "advertisement" && advertisementId) {
+      router.push(`/venue/advertisement/${advertisementId}`);
+    }
   };
 
   return (
@@ -38,19 +44,11 @@ export default function PaymentFailureContent() {
 
         <div className="space-y-3">
           <button
-            onClick={handleRetry}
-            className="w-full bg-violet-600 text-white py-4 rounded-full font-semibold hover:bg-violet-700 transition flex items-center justify-center gap-2"
-          >
-            <RefreshCw size={20} />
-            Thử lại
-          </button>
-
-          <button
-            onClick={() => router.push(homeUrl)}
+            onClick={handleBack}
             className="w-full bg-white border-2 border-gray-300 text-gray-700 py-4 rounded-full font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
           >
             <Home size={20} />
-            Về trang chủ
+            Về trang chi tiết
           </button>
         </div>
       </div>

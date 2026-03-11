@@ -2,88 +2,242 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import { AdvertisementPackage } from "@/api/venue/advertisement/type";
-import { getAdvertisementPackages, submitAdvertisementPayment } from "@/api/venue/advertisement/api";
+import {
+    getAdvertisementPackages,
+    submitAdvertisementPayment,
+} from "@/api/venue/advertisement/api";
+
 import SelectVenueModal from "@/app/venue/advertisement/package/component/SelectVenueModal";
 
 export default function PackagesClient() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
+    const searchParams = useSearchParams();
+    const router = useRouter();
 
-  const adId = searchParams.get("adId");
-  const [selectedPackageId, setSelectedPackageId] = useState<number | null>(null);
+    const adId = searchParams.get("adId");
 
-  const [packages, setPackages] = useState<AdvertisementPackage[]>([]);
-  const [openModal, setOpenModal] = useState(false);
+    const [packages, setPackages] = useState<AdvertisementPackage[]>([]);
 
-  useEffect(() => {
-    const fetchPackages = async () => {
-      const res = await getAdvertisementPackages();
-      setPackages(res.data);
+    const [selectedPackageId, setSelectedPackageId] = useState<number | null>(null);
+
+    const [openDurationModal, setOpenDurationModal] = useState(false);
+    const [selectedPlacementPackages, setSelectedPlacementPackages] =
+        useState<AdvertisementPackage[]>([]);
+
+    const [openVenueModal, setOpenVenueModal] = useState(false);
+
+    // fetch packages
+    useEffect(() => {
+        const fetchPackages = async () => {
+            try {
+                const res = await getAdvertisementPackages();
+                setPackages(res.data);
+            } catch (error) {
+                console.error("Fetch packages error:", error);
+            }
+        };
+
+        fetchPackages();
+    }, []);
+
+    // group packages by placement
+    function groupPackagesByPlacement(packages: AdvertisementPackage[]) {
+        const grouped: Record<string, AdvertisementPackage[]> = {};
+
+        packages.forEach((pkg) => {
+            if (!grouped[pkg.placement]) {
+                grouped[pkg.placement] = [];
+            }
+
+            grouped[pkg.placement].push(pkg);
+        });
+
+        return grouped;
+    }
+
+    const groupedPackages = groupPackagesByPlacement(packages);
+
+    // confirm venue -> create transaction
+    const handleConfirmVenue = async (venueId: number) => {
+        if (!adId || !selectedPackageId) return;
+
+        try {
+            const res = await submitAdvertisementPayment(Number(adId), {
+                packageId: selectedPackageId,
+                venueId,
+            });
+            console.log("Payment submission response:", res); // log full response
+
+            const transactionId = res.data.transactionId;
+
+            router.push(
+                `/venue/advertisement/package/checkout?transactionId=${transactionId}&type=advertisement`
+            );
+        } catch (error) {
+            console.error(error);
+            alert("Có lỗi xảy ra khi submit payment");
+        } finally {
+            setOpenVenueModal(false);
+        }
     };
 
-    fetchPackages();
-  }, []);
 
-  const handleBuyNow = (packageId: number) => {
-    setSelectedPackageId(packageId);
-    setOpenModal(true);
-  };
+    function getPreviewImage(placement: string) {
+        switch (placement) {
+            case "LIST":
+                return "/list.png";
 
-  const handleConfirmVenue = async (venueId: number) => {
-    if (!adId || !selectedPackageId) return;
+            case "BANNER":
+                return "/banner.png";
 
-    try {
-      const res = await submitAdvertisementPayment(Number(adId), {
-        packageId: selectedPackageId,
-        venueId,
-      });
+            case "VOUCHER":
+                return "/voucher.png";
 
-      const paymentData = res.data;
-
-      router.push(`/checkout/qr?orderId=${paymentData.adsOrderId}`);
-    } catch (error) {
-      console.error(error);
-      alert("Có lỗi xảy ra khi submit payment");
-    } finally {
-      setOpenModal(false);
+            default:
+                return "/ads/default.png";
+        }
     }
-  };
+    return (
+        <div className="p-6 max-w-6xl mx-auto">
 
-  return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">
-        Chọn gói để publish quảng cáo
-      </h1>
+            <h1 className="text-2xl font-bold mb-12">
+                Chi tiết các vị trí quảng cáo
+            </h1>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        {packages.map((pkg) => (
-          <div
-            key={pkg.id}
-            className="border p-6 rounded-xl shadow-sm hover:shadow-md transition"
-          >
-            <h2 className="font-semibold mb-2">{pkg.name}</h2>
-            <p className="text-gray-600 mb-3">{pkg.description}</p>
+            <div className="space-y-20">
 
-            <div className="text-green-600 font-bold text-lg mb-4">
-              {pkg.price.toLocaleString()} đ
+                {Object.entries(groupedPackages).map(([placement, pkgs]) => {
+                    const oneDayPackage = pkgs.find((p) => p.durationDays === 1);
+
+                    if (!oneDayPackage) return null;
+
+                    return (
+                        <div
+                            key={placement}
+                            className="grid md:grid-cols-2 gap-10 items-center"
+                        >
+
+                            {/* LEFT TEXT */}
+                            <div>
+
+                                <h2 className="text-xl font-semibold text-blue-600 mb-3">
+                                    {oneDayPackage.name}
+                                </h2>
+
+                                <p className="text-gray-600 mb-4">
+                                    {oneDayPackage.description}
+                                </p>
+
+                                <div className="text-lg font-bold text-blue-500 mb-6">
+                                    Từ {oneDayPackage.price.toLocaleString()} VND / ngày
+                                </div>
+
+                                <button
+                                    onClick={() => {
+                                        setSelectedPlacementPackages(pkgs);
+                                        setSelectedPackageId(null);
+                                        setOpenDurationModal(true);
+                                    }}
+                                    className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
+                                >
+                                    Mua
+                                </button>
+
+                            </div>
+
+                            {/* PREVIEW */}
+                            <div className="h-75 rounded-xl overflow-hidden ">
+                                <Image
+                                    src={getPreviewImage(placement)}
+                                    alt="Advertisement preview"
+                                    width={600}
+                                    height={300}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+
+                        </div>
+                    );
+                })}
+
             </div>
 
-            <button
-              onClick={() => handleBuyNow(pkg.id)}
-              className="w-full py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-              Mua ngay
-            </button>
-          </div>
-        ))}
-      </div>
+            {/* DURATION MODAL */}
+            {openDurationModal && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
-      <SelectVenueModal
-        open={openModal}
-        onClose={() => setOpenModal(false)}
-        onConfirm={handleConfirmVenue}
-      />
-    </div>
-  );
+                    <div className="bg-white rounded-xl p-6 w-105">
+
+                        <h2 className="text-lg font-semibold mb-4">
+                            Chọn thời hạn quảng cáo
+                        </h2>
+
+                        <div className="space-y-3">
+
+                            {selectedPlacementPackages
+                                .sort((a, b) => a.durationDays - b.durationDays)
+                                .map((pkg) => {
+
+                                    const isSelected = selectedPackageId === pkg.id;
+
+                                    return (
+                                        <div
+                                            key={pkg.id}
+                                            onClick={() => setSelectedPackageId(pkg.id)}
+                                            className={`border rounded-lg p-3 flex justify-between cursor-pointer transition
+                      ${isSelected
+                                                    ? "border-indigo-500 bg-indigo-50"
+                                                    : "hover:bg-gray-50"
+                                                }`}
+                                        >
+
+                                            <span>{pkg.durationDays} ngày</span>
+
+                                            <span className="font-semibold text-blue-600">
+                                                {pkg.price.toLocaleString()} VND
+                                            </span>
+
+                                        </div>
+                                    );
+                                })}
+
+                        </div>
+
+                        <div className="flex gap-3 mt-6">
+
+                            <button
+                                onClick={() => setOpenDurationModal(false)}
+                                className="flex-1 py-2 border rounded-lg"
+                            >
+                                Hủy
+                            </button>
+
+                            <button
+                                disabled={!selectedPackageId}
+                                onClick={() => {
+                                    setOpenDurationModal(false);
+                                    setOpenVenueModal(true);
+                                }}
+                                className="flex-1 py-2 bg-indigo-600 text-white rounded-lg disabled:bg-gray-400"
+                            >
+                                Tiếp tục
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            )}
+
+            {/* VENUE MODAL */}
+            <SelectVenueModal
+                open={openVenueModal}
+                onClose={() => setOpenVenueModal(false)}
+                onConfirm={handleConfirmVenue}
+            />
+
+        </div>
+    );
 }
