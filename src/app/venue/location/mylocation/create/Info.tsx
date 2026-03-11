@@ -1,38 +1,42 @@
 'use client';
 
+import { useEffect, useState } from "react";
+import { getCoupleMoodTypes, getCouplePersonalityTypes } from "@/api/mood/api";
+import {
+  CoupleMoodType,
+  CouplePersonalityType,
+} from "@/api/mood/type";
 
-const TYPES = ["giải trí", "ăn uống", "vui chơi", "khác"] as const
-const MOOD_TAGS = ["Thư giãn", "Lãng mạn", "Thân mật", "Ấm cúng", "Năng động", "Yêu thương"] as const
 
 export type VenueFormData = {
-  // Info (step 1)
-  name: string;
-  description: string;
-  email: string;
-  type: (typeof TYPES)[number];
-  mood: (typeof MOOD_TAGS)[number];
+  name: string
+  description: string
+  category: string
+  address: string
+  email: string
+  phoneNumber: string
+  websiteUrl?: string
 
-  // Contact (step 2)
-  address: string;
-  googleMapUrl: string;
-  hotline: string;
-  website: string;
-  openTime: string;
-  openDays: string;
+  priceMin: number
+  priceMax: number
 
-  // Media (step 3)
-  coverImage?: File | null;
-  avatarImage?: File | null;
-  interiorImages: File[];
-  menuImages: File[];
-  introVideo?: File | null;
+  latitude: number
+  longitude: number
 
-  // Owner verify (step 4)
-  ownerFullName: string;
-  frontIdCard?: File | null;
-  backIdCard?: File | null;
-  businessLicense?: File | null;
-};
+coverImage: File | string | null
+interiorImage: (File | string)[]
+fullPageMenuImage: (File | string)[]
+
+  selectedMoods: number[]
+  selectedStyles: number[]
+
+  // For edit mode - existing URLs
+  existingCoverUrl?: string
+  existingInteriorUrls?: string[]
+  existingMenuUrls?: string[]
+}
+
+
 
 
 type Props = {
@@ -42,6 +46,45 @@ type Props = {
 
 
 export default function Info({ formData, setFormData }: Props) {
+
+  const [moods, setMoods] = useState<CoupleMoodType[]>([]);
+  const [styles, setStyles] = useState<CouplePersonalityType[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        setLoading(true);
+        const [moodRes, styleRes] = await Promise.all([
+          getCoupleMoodTypes(),
+          getCouplePersonalityTypes(),
+        ]);
+
+        setMoods(moodRes.data);
+        setStyles(styleRes.data);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+
+  function toggleItem(
+    list: number[],
+    id: number,
+    key: "selectedMoods" | "selectedStyles"
+  ) {
+    setFormData(prev => ({
+      ...prev,
+      [key]: list.includes(id)
+        ? list.filter(i => i !== id)
+        : [...list, id],
+    }));
+  }
+
+
   return (
     <div className="flex items-center justify-center ">
       <div className="w-full max-w-3xl rounded-3xl  px-6 py-10 md:px-10">
@@ -76,56 +119,135 @@ export default function Info({ formData, setFormData }: Props) {
           />
         </div>
 
-        {/* Loại hình */}
-        <div className="mb-4">
+         <div className="mb-4">
           <label className="mb-1 block text-sm font-medium text-gray-800">
-            Loại hình<span className="text-pink-500"> *</span>
+          Danh mục<span className="text-pink-500"> *</span>
           </label>
-          <select
-            value={formData.type}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                type: e.target.value as (typeof TYPES)[number],
-              })
-            }
-            className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
-          >
-            {TYPES.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
+          <input
+            value={formData.category}
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+            placeholder="Nhập danh mục địa điểm. Vi dụ: quán cà phê, nhà hàng, quán bar..."
+            className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+          />
         </div>
 
-        {/* Thẻ tâm trạng */}
-        <div className="mb-8">
+        {/* Giá cả */}
+        <div className="mb-6">
           <label className="mb-2 block text-sm font-medium text-gray-800">
-            Thẻ tâm trạng<span className="text-pink-500"> *</span>
+            Khoảng giá <span className="text-pink-500">*</span>
           </label>
+
+          <div className="grid grid-cols-2 gap-4">
+
+            {/* PRICE MIN */}
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                ₫
+              </span>
+              <input
+                type="number"
+                value={formData.priceMin || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    priceMin: Number(e.target.value),
+                  })
+                }
+                placeholder="Tối thiểu"
+                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              />
+            </div>
+
+            {/* PRICE MAX */}
+            <div className="relative">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">
+                ₫
+              </span>
+              <input
+                type="number"
+                value={formData.priceMax || ""}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    priceMax: Number(e.target.value),
+                  })
+                }
+                placeholder="Tối đa"
+                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              />
+            </div>
+
+          </div>
+
+          <p className="text-xs text-gray-400 mt-2">
+            Ví dụ: 50.000đ - 200.000đ
+          </p>
+        </div>
+        <div className="mb-6">
+          <label className="mb-3 block text-sm font-medium">
+            Thẻ tâm trạng *
+          </label>
+
           <div className="flex flex-wrap gap-3">
-            {MOOD_TAGS.map((tag) => {
-              const active = formData.mood === tag
+            {moods.map(mood => {
+              const active = formData.selectedMoods.includes(mood.id);
 
               return (
                 <button
-                  key={tag}
+                  key={mood.id}
                   type="button"
                   onClick={() =>
-                    setFormData({ ...formData, mood: tag })
+                    toggleItem(
+                      formData.selectedMoods,
+                      mood.id,
+                      "selectedMoods"
+                    )
                   }
-                  className={`rounded-2xl px-4 py-2 text-sm font-medium shadow-sm transition ${active
-                    ? "bg-[#C9A7FF] text-white"
-                    : "bg-white text-gray-700"
+                  className={`rounded-full px-4 py-2 text-xs font-medium
+            ${active
+                      ? "bg-[#9f5ff2] text-white"
+                      : "bg-white border border-[#E4D7FF]"
                     }`}
                 >
-                  {tag}
+                  {mood.name.toLowerCase()}
                 </button>
-              )
+              );
             })}
           </div>
         </div>
+        <div>
+          <label className="mb-3 block text-sm font-medium">
+            Thẻ tính cách *
+          </label>
+
+          <div className="flex flex-wrap gap-3">
+            {styles.map(style => {
+              const active = formData.selectedStyles.includes(style.id);
+
+              return (
+                <button
+                  key={style.id}
+                  type="button"
+                  onClick={() =>
+                    toggleItem(
+                      formData.selectedStyles,
+                      style.id,
+                      "selectedStyles"
+                    )
+                  }
+                  className={`rounded-full px-4 py-2 text-xs font-medium
+            ${active
+                      ? "bg-[#7C4DFF] text-white"
+                      : "bg-white border border-[#E4D7FF]"
+                    }`}
+                >
+                  {style.name.toLowerCase()}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
       </div>
     </div>
   );
