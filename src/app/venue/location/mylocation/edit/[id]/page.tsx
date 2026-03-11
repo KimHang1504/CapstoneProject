@@ -27,7 +27,7 @@ export default function EditPage() {
         setInitialData({
           name: data.name,
           description: data.description,
-          category: data.category ?? "",
+selectedCategories: [],
           address: data.address,
           latitude: data.latitude,
           longitude: data.longitude,
