@@ -1,6 +1,8 @@
 "use client"
 
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info"
+import { geocodeAddress } from "@/api/geocode/nominatim";
+import { useState } from "react";
 
 type Props = {
   formData: VenueFormData
@@ -8,6 +10,10 @@ type Props = {
 }
 
 export default function Contact({ formData, setFormData }: Props) {
+  const [isMapLoading, setIsMapLoading] = useState(false)
+  const [mapError, setMapError] = useState<string | null>(null)
+
+
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-3xl px-6 py-10 md:px-10">
@@ -21,33 +27,54 @@ export default function Contact({ formData, setFormData }: Props) {
             Địa chỉ của địa điểm<span className="text-pink-500"> *</span>
           </label>
           <input
+            className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
             value={formData.address}
             onChange={(e) =>
               setFormData({ ...formData, address: e.target.value })
             }
-            placeholder="Nhập tên chỗ địa điểm"
-            className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
-          />
-        </div>
+            onBlur={async () => {
+              if (!formData.address) return
 
-        {/* Google Maps */}
-        <div className="mb-4">
-          <label className="mb-1 block text-sm font-medium text-gray-800">
-            Liên kết trên Google Maps<span className="text-pink-500"> *</span>
-          </label>
-          <input
-            value={formData.googleMapUrl}
-            onChange={(e) =>
-              setFormData({ ...formData, googleMapUrl: e.target.value })
-            }
-            placeholder="https://maps.app.goo.gl/examplevenue"
-            className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
-          />
-        </div>
+              try {
+                setIsMapLoading(true)
+                setMapError(null)
 
-        {/* Ảnh cover: tạm thời là khung, sau bạn gắn upload */}
-        <div className="mb-6">
-          <div className="h-40 w-full rounded-3xl bg-gray-200" />
+                const { lat, lon } = await geocodeAddress(formData.address)
+
+                setFormData((prev) => ({
+                  ...prev,
+                  latitude: lat,
+                  longitude: lon,
+                }))
+              } catch {
+                setMapError("Không xác định được vị trí từ địa chỉ này")
+              } finally {
+                setIsMapLoading(false)
+              }
+            }}
+          />
+
+          {isMapLoading && (
+            <div className="mt-4 h-64 w-full rounded-xl bg-gray-100 flex items-center justify-center text-sm text-gray-500">
+              Đang tải bản đồ...
+            </div>
+          )}
+
+          {!isMapLoading &&
+            formData.latitude != null &&
+            formData.longitude != null && (
+              <iframe
+                className="mt-4 w-full h-64 rounded-xl"
+                loading="lazy"
+                src={`https://www.openstreetmap.org/export/embed.html?marker=${formData.latitude},${formData.longitude}&zoom=17`}
+              />
+            )}
+
+          {mapError && (
+            <p className="mt-2 text-sm text-red-500">{mapError}</p>
+          )}
+
+
         </div>
 
         {/* Hotline + Website */}
@@ -57,9 +84,9 @@ export default function Contact({ formData, setFormData }: Props) {
               Số điện thoại hotline<span className="text-pink-500"> *</span>
             </label>
             <input
-              value={formData.hotline}
+              value={formData.phoneNumber}
               onChange={(e) =>
-                setFormData({ ...formData, hotline: e.target.value })
+                setFormData({ ...formData, phoneNumber: e.target.value })
               }
               placeholder="03xxxxxxxx"
               className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
@@ -71,18 +98,31 @@ export default function Contact({ formData, setFormData }: Props) {
               Liên kết website
             </label>
             <input
-              value={formData.website}
+              value={formData.websiteUrl}
               onChange={(e) =>
-                setFormData({ ...formData, website: e.target.value })
+                setFormData({ ...formData, websiteUrl: e.target.value })
               }
               placeholder="hehe.com"
+              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-800">
+              Email
+            </label>
+            <input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              placeholder="hehe@gmail.com"
               className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
             />
           </div>
         </div>
 
         {/* Thời gian mở cửa */}
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label className="mb-1 block text-sm font-medium text-gray-800">
             Thời gian mở cửa<span className="text-pink-500"> *</span>
           </label>
@@ -104,7 +144,7 @@ export default function Contact({ formData, setFormData }: Props) {
               className="w-40 rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   )

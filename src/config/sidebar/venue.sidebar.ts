@@ -5,36 +5,32 @@
 'use client';
 import { SidebarConfig } from '@/types/sidebar';
 import {
-  MapPin,
   LayoutDashboard,
   User,
-  TicketPercent,
-  ShoppingBag,
-  BarChart3,
+  MessageSquareMore ,
 } from 'lucide-react';
 
 export const venueSidebarConfig: SidebarConfig = {
-  sections: [
-    {
-      title: 'Địa điểm',
-      icon: MapPin,
-      items: [
-        {
-          label: 'Đăng ký địa điểm',
-          href: '/venue/location/subscriptions',
-        },
-        {
-          label: 'Quản lý địa điểm',
-          href: '/venue/location/mylocation',
-        },
-      ],
-    },
-  ],
-  tabs: [
+    tabs: [
     {
       label: 'Dashboard',
       href: '/venue',
       icon: LayoutDashboard,
+    },
+    {
+      label: 'Địa điểm',
+      href: '/venue/location/mylocation',
+      icon: LayoutDashboard,
+    },
+        {
+      label: 'Quảng cáo',
+      href: '/venue/advertisement',
+      icon: LayoutDashboard,
+    },
+        {
+      label: 'Insight',
+      href: '/venue/insight',
+      icon: User,
     },
     {
       label: 'Hồ sơ',
@@ -42,19 +38,25 @@ export const venueSidebarConfig: SidebarConfig = {
       icon: User,
     },
     {
-      label: 'Voucher',
-      href: '/venue/vouchers',
-      icon: TicketPercent,
-    },
-    {
-      label: 'Đơn hàng',
-      href: '/venue/orders',
-      icon: ShoppingBag,
-    },
-    {
-      label: 'Thống kê',
-      href: '/venue/analytics',
-      icon: BarChart3,
+      label: 'Đánh giá',
+      href: '/venue/review',
+      icon: MessageSquareMore,
     },
   ],
+  // sections: [
+  //   {
+  //     title: 'Địa điểm',
+  //     icon: MapPin,
+  //     items: [
+  //       {
+  //         label: 'Đăng ký địa điểm',
+  //         href: '/venue/location/subscriptions',
+  //       },
+  //       {
+  //         label: 'Quản lý địa điểm',
+  //         href: '/venue/location/mylocation',
+  //       },
+  //     ],
+  //   },
+  // ],
 };
