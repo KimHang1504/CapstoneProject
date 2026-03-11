@@ -13,7 +13,7 @@ export const adminSidebarConfig: SidebarConfig = {
     },
     {
       label: 'Quản lý Venue',
-      href: '/admin/venues',
+      href: '/admin/venue-management',
     },
     {
       label: 'Quản lý User',

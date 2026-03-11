@@ -6,7 +6,7 @@
 import { DEV_ACCESS_TOKEN } from "@/api/dev-auth";
 type RequestOptions = {
   headers?: Record<string, string>;
-params?: Record<string, string | number | boolean | undefined>
+  params?: Record<string, string | number | boolean | undefined>
   body?: any;
 };
 
@@ -28,13 +28,14 @@ class ApiClient {
     this.defaultHeaders = {
       'Content-Type': 'application/json',
     };
-    if (typeof window !== "undefined" && DEV_ACCESS_TOKEN) {
-      this.defaultHeaders["Authorization"] = `Bearer ${DEV_ACCESS_TOKEN}`;
-    }
+    // if (typeof window !== "undefined" && DEV_ACCESS_TOKEN) {
+    //   this.defaultHeaders["Authorization"] = `Bearer ${DEV_ACCESS_TOKEN}`;
+    // }
   }
 
   // Thêm token vào header (dùng khi đã login)
   setAuthToken(token: string) {
+    localStorage.setItem("access_token", token);
     this.defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
@@ -59,13 +60,18 @@ class ApiClient {
         }
       });
     }
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("access_token")
+        : null;
 
     const config: RequestInit = {
       method,
       headers: {
         ...this.defaultHeaders,
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
         ...options?.headers,
-      },
+      }
     };
 
     // Thêm body nếu không phải GET
