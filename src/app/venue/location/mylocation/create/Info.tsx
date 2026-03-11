@@ -6,12 +6,13 @@ import {
   CoupleMoodType,
   CouplePersonalityType,
 } from "@/api/mood/type";
+import CategoryDropdown from "@/app/venue/location/mylocation/create/CategoryDropdown";
 
 
 export type VenueFormData = {
   name: string
   description: string
-  category: string
+  selectedCategories: number[]
   address: string
   email: string
   phoneNumber: string
@@ -23,9 +24,9 @@ export type VenueFormData = {
   latitude: number
   longitude: number
 
-coverImage: File | string | null
-interiorImage: (File | string)[]
-fullPageMenuImage: (File | string)[]
+  coverImage: File | string | null
+  interiorImage: (File | string)[]
+  fullPageMenuImage: (File | string)[]
 
   selectedMoods: number[]
   selectedStyles: number[]
@@ -49,27 +50,25 @@ export default function Info({ formData, setFormData }: Props) {
 
   const [moods, setMoods] = useState<CoupleMoodType[]>([]);
   const [styles, setStyles] = useState<CouplePersonalityType[]>([]);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
       try {
-        setLoading(true);
+
         const [moodRes, styleRes] = await Promise.all([
           getCoupleMoodTypes(),
-          getCouplePersonalityTypes(),
-        ]);
+          getCouplePersonalityTypes()
+        ])
 
-        setMoods(moodRes.data);
-        setStyles(styleRes.data);
+        setMoods(moodRes.data)
+        setStyles(styleRes.data)
+
       } finally {
-        setLoading(false);
       }
     }
 
-    fetchData();
-  }, []);
-
+    fetchData()
+  }, [])
 
   function toggleItem(
     list: number[],
@@ -83,7 +82,6 @@ export default function Info({ formData, setFormData }: Props) {
         : [...list, id],
     }));
   }
-
 
   return (
     <div className="flex items-center justify-center ">
@@ -119,15 +117,20 @@ export default function Info({ formData, setFormData }: Props) {
           />
         </div>
 
-         <div className="mb-4">
-          <label className="mb-1 block text-sm font-medium text-gray-800">
-          Danh mục<span className="text-pink-500"> *</span>
+        {/* CATEGORY */}
+        <div className="mb-6">
+          <label className="mb-2 block text-sm font-medium text-gray-800">
+            Danh mục <span className="text-pink-500">*</span>
           </label>
-          <input
-            value={formData.category}
-            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            placeholder="Nhập danh mục địa điểm. Vi dụ: quán cà phê, nhà hàng, quán bar..."
-            className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+
+          <CategoryDropdown
+            selected={formData.selectedCategories}
+            onChange={(ids) =>
+              setFormData({
+                ...formData,
+                selectedCategories: ids
+              })
+            }
           />
         </div>
 

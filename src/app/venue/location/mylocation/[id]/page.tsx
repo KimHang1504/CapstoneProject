@@ -329,8 +329,18 @@ export default function LocationDetailPage() {
                         </div>
 
                         <div>
-                            <p className="text-sm font-bold mb-1">Danh mục</p>
-                            <p className="text-sm text-gray-700">{location.category}</p>
+                            <p className="text-sm font-bold mb-2">Danh mục</p>
+
+                            <div className="flex flex-wrap gap-2">
+                                {location.category?.map((cat, index) => (
+                                    <span
+                                        key={index}
+                                        className="inline-block rounded-2xl bg-gray-200 px-4 py-1 text-sm font-medium text-gray-700"
+                                    >
+                                        {cat}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
 
                         <div>
