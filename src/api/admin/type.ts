@@ -149,3 +149,30 @@ export interface OpeningHour {
   openTime: string;
   closeTime: string;
 }
+
+// Accept or reject venue application
+export interface VenueApprovalRequest {
+  venueId: number;
+  status: 'ACTIVE' | 'DRAFTED';
+  reason: string | null;
+}
+
+//Special event management
+export type SpecialEvent = {
+    id: number;
+    eventName: string;
+    description: string;
+    imageUrl: string;
+    startDate: string;
+    endDate: string;
+};
+
+export interface SpecialEventPagination {
+  items: SpecialEvent[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}

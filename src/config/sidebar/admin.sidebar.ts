@@ -16,16 +16,16 @@ export const adminSidebarConfig: SidebarConfig = {
       href: '/admin/venue-management',
     },
     {
-      label: 'Quản lý User',
-      href: '/admin/users',
+      label: 'Quản lí quảng cáo',
+      href: '/admin/advertisement-management',
     },
     {
-      label: 'Báo cáo',
-      href: '/admin/reports',
+      label: 'Quản lí sự kiện đặc biệt',
+      href: '/admin/special-event-management',
     },
     {
-      label: 'Cài đặt',
-      href: '/admin/settings',
+      label: 'Thử thách',
+      href: '/admin/challenge',
     },
   ],
 };

@@ -1,5 +1,6 @@
 import { getPendingVenueDetail } from "@/api/admin/api";
 import VenueApprovalActions from "./components/venueApprovalActions";
+import Image from "next/image";
 
 type Props = {
     params: Promise<{
@@ -14,17 +15,27 @@ export default async function LocationDetailPage({ params }: Props) {
 
     const coverImage =
         location.coverImage?.[0] ??
-        "https://via.placeholder.com/1200x400?text=No+Image";
+        null;
 
     return (
         <div className="max-w-6xl mx-auto p-6 space-y-6">
 
             {/* COVER */}
             <div className="relative">
-                <img
-                    src={coverImage}
-                    className="w-full max-h-80 object-contain rounded-xl"
-                />
+                {coverImage != null ? (
+                    <div className="relative w-full h-80 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+
+                        <Image
+                            src={coverImage}
+                            alt={location.name}
+                            fill
+                            className="object-cover"
+                        />
+
+                    </div>
+                ) : (
+                    <div className="text-gray-400">Không có hình ảnh</div>
+                )}
 
                 {location.isOwnerVerified ? (
                     <div className="absolute top-4 left-4 bg-green-500 text-white text-xs px-3 py-1 rounded-full">
@@ -67,7 +78,7 @@ export default async function LocationDetailPage({ params }: Props) {
 
             {/* DESCRIPTION */}
             <div className="bg-white rounded-xl shadow p-6">
-                <h2 className="text-xl font-semibold mb-3">Description</h2>
+                <h2 className="text-xl font-semibold mb-3">Mô tả</h2>
 
                 <p className="text-gray-700">
                     {location.description ?? "Chưa có mô tả"}
@@ -79,7 +90,7 @@ export default async function LocationDetailPage({ params }: Props) {
                 location.couplePersonalityTypes?.length) && (
                     <div className="bg-white rounded-xl shadow p-6">
                         <h2 className="text-xl font-semibold mb-4">
-                            Mood & Personality
+                            Mood và tính cách phù hợp
                         </h2>
 
                         <div className="flex flex-wrap gap-2">
@@ -108,16 +119,20 @@ export default async function LocationDetailPage({ params }: Props) {
             {location.interiorImage?.length > 0 && (
                 <div className="bg-white rounded-xl shadow p-6">
                     <h2 className="text-xl font-semibold mb-4">
-                        Interior Images
+                        Hình ảnh nội thất
                     </h2>
 
                     <div className="grid grid-cols-3 gap-4">
                         {location.interiorImage.map(
                             (img: string, index: number) => (
-                                <img
-                                    key={index}
+                                <Image
+                                key={index}  
                                     src={img}
-                                    className="w-full h-50 object-cover rounded-lg"
+                                    alt="Hình bị lỗi"
+                                    width={400}
+                                    height={300}
+                                    className="object-cover w-full h-full"
+                                    priority
                                 />
                             )
                         )}
@@ -127,13 +142,13 @@ export default async function LocationDetailPage({ params }: Props) {
 
             {/* OWNER INFO */}
             <div className="bg-white rounded-xl shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">Venue Owner</h2>
+                <h2 className="text-xl font-semibold mb-4">Chủ địa điểm</h2>
 
                 <div className="grid grid-cols-2 gap-4 text-gray-700">
 
                     <div>
                         <p className="text-sm text-gray-500">
-                            Business Name
+                            Tên doanh nghiệp
                         </p>
                         <p>
                             {location.venueOwner?.businessName ??
@@ -142,7 +157,7 @@ export default async function LocationDetailPage({ params }: Props) {
                     </div>
 
                     <div>
-                        <p className="text-sm text-gray-500">Phone</p>
+                        <p className="text-sm text-gray-500">Số điện thoại</p>
                         <p>
                             {location.venueOwner?.phoneNumber ??
                                 "Chưa cập nhật"}
@@ -158,7 +173,7 @@ export default async function LocationDetailPage({ params }: Props) {
                     </div>
 
                     <div>
-                        <p className="text-sm text-gray-500">Address</p>
+                        <p className="text-sm text-gray-500">Địa chỉ</p>
                         <p>
                             {location.venueOwner?.address ??
                                 "Chưa cập nhật"}
@@ -170,12 +185,12 @@ export default async function LocationDetailPage({ params }: Props) {
 
             {/* CONTACT */}
             <div className="bg-white rounded-xl shadow p-6">
-                <h2 className="text-xl font-semibold mb-4">Contact</h2>
+                <h2 className="text-xl font-semibold mb-4">Liên hệ</h2>
 
                 <div className="grid grid-cols-2 gap-4 text-gray-700">
 
                     <div>
-                        <p className="text-sm text-gray-500">Phone</p>
+                        <p className="text-sm text-gray-500">Số điện thoại</p>
                         <p>{location.phoneNumber ?? "Chưa cập nhật"}</p>
                     </div>
 
