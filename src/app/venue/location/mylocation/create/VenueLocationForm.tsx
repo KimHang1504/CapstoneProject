@@ -25,7 +25,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
   const [formData, setFormData] = useState<VenueFormData>(() => ({
     name: initialData?.name || "",
     description: initialData?.description || "",
-    category: initialData?.category || "",
+    selectedCategories: initialData?.selectedCategories || [],
     address: initialData?.address || "",
     latitude: initialData?.latitude || 0,
     longitude: initialData?.longitude || 0,
@@ -117,7 +117,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         name: formData.name,
         description: formData.description,
         address: formData.address,
-        category: formData.category,
+        categoryIds: formData.selectedCategories,
         latitude: formData.latitude,
         longitude: formData.longitude,
         email: formData.email,
