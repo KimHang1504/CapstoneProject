@@ -1,7 +1,244 @@
-import React from 'react'
+'use client';
 
-export default function page() {
+import { useEffect, useMemo, useState } from 'react';
+import { ChevronRight, ChevronLeft, Search, Trash2, Target, Star, Trophy, FileQuestion } from 'lucide-react';
+import Link from 'next/link';
+import { deleteChallenge, getAllChallenges } from '@/api/admin/api';
+import { Challenge } from '@/api/admin/type';
+
+export default function ChallengeListPage() {
+
+  const [keyword, setKeyword] = useState('');
+  const [data, setData] = useState<Challenge[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+
+    setLoading(true);
+
+    getAllChallenges(page, 10)
+      .then(res => {
+
+        setData(res.data.items);
+        setTotalPages(res.data.totalPages);
+
+      })
+      .finally(() => setLoading(false));
+
+  }, [page]);
+
+  const handleDelete = async (id: number) => {
+
+    if (confirm('Bạn có chắc muốn xóa challenge này không?')) {
+
+      await deleteChallenge(id);
+
+      getAllChallenges(page, 10).then(res => {
+        setData(res.data.items);
+        setTotalPages(res.data.totalPages);
+      });
+
+    }
+  };
+
+  const challenges = useMemo(() => {
+
+    const key = keyword.toLowerCase();
+
+    return data.filter(c =>
+      c.title.toLowerCase().includes(key)
+    );
+
+  }, [data, keyword]);
+
+  const formatDate = (date?: string | null) => {
+
+    if (!date) return 'Không giới hạn';
+
+    return new Date(date).toLocaleDateString('vi-VN');
+
+  };
+
   return (
-    <div>page</div>
-  )
+    <div className="p-8 space-y-6">
+      <div className='flex item-center gap-5'>
+        <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 w-[320px]">
+
+          <Search className="text-[#8093F1] w-5 h-5" />
+
+          <input
+            value={keyword}
+            onChange={e => setKeyword(e.target.value)}
+            placeholder="Tìm kiếm challenge"
+            className="w-full bg-transparent outline-none text-sm"
+          />
+
+        </div>
+
+        <div className='flex item-center'>
+          <Link href="/admin/challenge/new"
+            className="inline-flex items-center gap-2 text-sm bg-violet-600 text-white px-4 py-2 rounded-full shadow hover:bg-violet-700 transition"
+          >
+            <Star size={18} />
+            Tạo Challenge mới
+          </Link>
+        </div>
+
+        <div className='flex item-center'>
+          <Link href="/admin/challenge/instruction"
+            className="inline-flex items-center gap-2 text-sm bg-violet-600 text-white px-4 py-2 rounded-full shadow hover:bg-violet-700 transition"
+          >
+            <FileQuestion size={18} />
+            Hướng dẫn
+          </Link>
+        </div>
+      </div>
+      {/* LIST */}
+      <div className="space-y-4">
+
+        {loading &&
+          [...Array(5)].map((_, i) => (
+
+            <div
+              key={i}
+              className="flex gap-4 bg-white rounded-2xl p-4 border border-gray-200 animate-pulse"
+            >
+
+              <div className="flex-1 space-y-2">
+
+                <div className="h-4 w-1/3 bg-gray-200 rounded" />
+
+                <div className="h-3 w-2/3 bg-gray-200 rounded" />
+
+                <div className="h-3 w-1/2 bg-gray-200 rounded" />
+
+              </div>
+
+            </div>
+
+          ))}
+
+        {!loading &&
+          challenges.map(challenge => (
+
+            <div
+              key={challenge.id}
+              className="relative flex gap-4 bg-white rounded-2xl p-4 border border-violet-100
+                            hover:shadow-md hover:border-violet-200 transition"
+            >
+
+              {/* CONTENT */}
+              <div className="flex-1 pr-10">
+
+                <Link href={`/admin/challenge/${challenge.id}`}>
+
+                  <h3 className="font-semibold text-lg text-gray-900">
+                    {challenge.title}
+                  </h3>
+
+                </Link>
+
+                <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                  {challenge.description}
+                </p>
+
+                <div className="flex gap-4 text-sm mt-2">
+
+                  <span className="text-violet-600 font-medium flex gap-2 items-center">
+                    <Target size={20} /> Goal: {challenge.targetGoal}
+                  </span>
+
+                  <span className="text-green-600 font-medium flex gap-2 items-center">
+                    <Trophy size={20} /> {challenge.rewardPoints} points
+                  </span>
+
+                </div>
+
+                <p className="text-sm text-gray-500 mt-1">
+                  {formatDate(challenge.startDate)} → {formatDate(challenge.endDate)}
+                </p>
+
+              </div>
+
+              {/* ARROW */}
+              <Link href={`/admin/challenge/${challenge.id}`}>
+
+                <div className="absolute bottom-4 right-4">
+
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600">
+
+                    <ChevronRight size={18} />
+
+                  </div>
+
+                </div>
+
+              </Link>
+
+              {/* DELETE */}
+              <div className="absolute top-4 right-4">
+
+                <button
+                  className="cursor-pointer flex items-center justify-center w-8 h-8 rounded-full text-red-500"
+                  onClick={() => handleDelete(challenge.id)}
+                >
+
+                  <Trash2 size={18} />
+
+                </button>
+
+              </div>
+
+            </div>
+
+          ))}
+
+        {!loading && challenges.length === 0 && (
+
+          <div className="text-center text-gray-500 py-10">
+            Không có challenge
+          </div>
+
+        )}
+
+      </div>
+
+      {/* PAGINATION */}
+      {!loading && totalPages > 1 && (
+
+        <div className="flex justify-center items-center gap-4 pt-6">
+
+          <button
+            disabled={page === 1}
+            onClick={() => setPage(p => p - 1)}
+            className="p-2 rounded-lg border disabled:opacity-40"
+          >
+
+            <ChevronLeft size={18} />
+
+          </button>
+
+          <span className="text-sm text-gray-600">
+            Page {page} / {totalPages}
+          </span>
+
+          <button
+            disabled={page === totalPages}
+            onClick={() => setPage(p => p + 1)}
+            className="p-2 rounded-lg border disabled:opacity-40"
+          >
+
+            <ChevronRight size={18} />
+
+          </button>
+
+        </div>
+
+      )}
+
+    </div>
+  );
 }

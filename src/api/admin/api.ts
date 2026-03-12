@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { LocationDetail, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
+import { Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
 
 export const getAllPendingVenues = (page: number, pageSize: number) => {
     console.log(apiClient);
@@ -35,4 +35,41 @@ export const getSpecialEventDetail = (id: string) => {
 
 export const deleteSpecialEvent = (id: number) => {
     return apiClient.delete(`/api/SpecialEvent/${id}`);
+}
+
+
+// Challenge
+export const getAllChallenges = (page: number, pageSize: number) => {
+    return apiClient.get<ApiResponse<ChallengePagination>>("/api/Challenge", {
+        params: {
+            page,
+            pageSize,
+        }
+    });
+}
+
+export const getChallengeDetail = (id: string) => {
+    console.log("Getting challenge detail for id:", id);
+    console.log("API URL:", apiClient);
+    return apiClient.get<ApiResponse<Challenge>>(`/api/Challenge/${id}`);
+}
+
+export const getLocations = (body: LocationRequest) => {
+    return apiClient.post<ApiResponse<Recommendations>>("/api/venue-location/search", body);
+}
+
+export const createChallenge = (body: ChallengeRequest) => {
+    return apiClient.post<ApiResponse<Challenge>>("/api/Challenge", body);
+}
+
+export const deleteChallenge = (challengeId: number) => {
+    return apiClient.delete(`/api/Challenge`,
+        {
+            params: { challengeId }
+        }
+    );
+}
+
+export const getChallengeConfig = () => {
+    return apiClient.get<ApiResponse<ChallengeConfigResponse>>("/api/Challenge/definitions");
 }

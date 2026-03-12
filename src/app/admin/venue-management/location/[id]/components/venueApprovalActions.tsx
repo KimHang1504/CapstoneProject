@@ -59,7 +59,7 @@ export default function VenueApprovalActions({ id }: { id: string }) {
 
       {open && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl w-[400px] space-y-4">
+          <div className="bg-white p-6 rounded-xl w-100 space-y-4">
             <h2 className="text-lg font-semibold">
               {action === "ACTIVE"
                 ? "Lý do chấp nhận"

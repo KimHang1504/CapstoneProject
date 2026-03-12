@@ -20,7 +20,6 @@ export default async function LocationDetailPage({ params }: Props) {
     return (
         <div className="max-w-6xl mx-auto p-6 space-y-6">
 
-            {/* COVER */}
             <div className="relative">
                 {coverImage != null ? (
                     <div className="relative w-full h-80 rounded-xl overflow-hidden shrink-0 bg-gray-100">
@@ -48,7 +47,6 @@ export default async function LocationDetailPage({ params }: Props) {
                 )}
             </div>
 
-            {/* HEADER */}
             <div className="bg-white rounded-xl shadow p-6">
                 <h1 className="text-3xl font-bold text-gray-800">
                     {location.name ?? "Unnamed Location"}
@@ -76,7 +74,6 @@ export default async function LocationDetailPage({ params }: Props) {
                 </div>
             </div>
 
-            {/* DESCRIPTION */}
             <div className="bg-white rounded-xl shadow p-6">
                 <h2 className="text-xl font-semibold mb-3">Mô tả</h2>
 
@@ -85,7 +82,6 @@ export default async function LocationDetailPage({ params }: Props) {
                 </p>
             </div>
 
-            {/* TAGS */}
             {(location.coupleMoodTypes?.length ||
                 location.couplePersonalityTypes?.length) && (
                     <div className="bg-white rounded-xl shadow p-6">
@@ -115,7 +111,6 @@ export default async function LocationDetailPage({ params }: Props) {
                     </div>
                 )}
 
-            {/* GALLERY */}
             {location.interiorImage?.length > 0 && (
                 <div className="bg-white rounded-xl shadow p-6">
                     <h2 className="text-xl font-semibold mb-4">
@@ -140,7 +135,6 @@ export default async function LocationDetailPage({ params }: Props) {
                 </div>
             )}
 
-            {/* OWNER INFO */}
             <div className="bg-white rounded-xl shadow p-6">
                 <h2 className="text-xl font-semibold mb-4">Chủ địa điểm</h2>
 
@@ -183,7 +177,6 @@ export default async function LocationDetailPage({ params }: Props) {
                 </div>
             </div>
 
-            {/* CONTACT */}
             <div className="bg-white rounded-xl shadow p-6">
                 <h2 className="text-xl font-semibold mb-4">Liên hệ</h2>
 

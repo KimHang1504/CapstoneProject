@@ -69,7 +69,6 @@ export default function MyLocationPage() {
     return (
         <div className="flex gap-10 p-8 items-start">
 
-            {/* LEFT LIST */}
             <div className="flex-1 min-w-0 space-y-4">
 
                 {loading &&
@@ -120,7 +119,6 @@ export default function MyLocationPage() {
 
                             </div>
 
-                            {/* CONTENT */}
                             <div className="flex-1 pr-10">
 
                                 <Link href={`/admin/venue-management/location/${loc.id}`}>
@@ -139,7 +137,6 @@ export default function MyLocationPage() {
 
                             </div>
 
-                            {/* ARROW */}
                             <Link
                                 href={`/admin/venue-management/location/${loc.id}`}
                                 className="absolute bottom-4 right-4"
@@ -163,7 +160,6 @@ export default function MyLocationPage() {
                     </div>
                 )}
 
-                {/* PAGINATION */}
                 {!loading && totalPages > 1 && (
 
                     <div className="flex justify-center items-center gap-4 pt-6">
@@ -194,10 +190,8 @@ export default function MyLocationPage() {
 
             </div>
 
-            {/* RIGHT PANEL */}
             <div className="w-[320px] space-y-2 sticky top-8 self-start">
 
-                {/* SEARCH */}
                 <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 mb-4">
 
                     <Search className="text-[#8093F1] w-5 h-5" />

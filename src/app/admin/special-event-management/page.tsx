@@ -58,7 +58,6 @@ export default function SpecialEventListPage() {
     return (
         <div className="flex gap-10 p-8 items-start">
 
-            {/* LEFT LIST */}
             <div className="flex-1 min-w-0 space-y-4">
 
                 {loading &&
@@ -94,24 +93,22 @@ export default function SpecialEventListPage() {
             hover:shadow-md hover:border-violet-200 transition"
                         >
 
-                            {/* IMAGE */}
                             <div className="relative w-32 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-                                {event.imageUrl ?
+                                {event.bannerUrl ?
                                     <Image
-                                        src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNQXHua5bQYZmQ9fyqedecWJPXFL7UMH-9Nw&s'
+                                        src={event.bannerUrl}
                                         alt={event.eventName}
                                         fill
                                         className="object-cover"
                                     />
                                     :
                                     <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                        No Image
+                                        Rỗng
                                     </div>
                                 }
 
                             </div>
 
-                            {/* CONTENT */}
                             <div className="flex-1 pr-10">
                                 <Link href={`/admin/special-event-management/special-event/${event.id}`}>
                                     <h3 className="font-semibold text-lg text-gray-900">
@@ -128,7 +125,6 @@ export default function SpecialEventListPage() {
 
                             </div>
 
-                            {/* ARROW */}
                             <Link href={`/admin/special-event-management/special-event/${event.id}`}>
                                 <div className="absolute bottom-4 right-4">
 
@@ -162,7 +158,6 @@ export default function SpecialEventListPage() {
                 </div>
             )}
 
-            {/* PAGINATION */}
             {!loading && totalPages > 1 && (
 
                 <div className="flex justify-center items-center gap-4 pt-6">
@@ -194,10 +189,8 @@ export default function SpecialEventListPage() {
         </div>
 
 
-            {/* RIGHT PANEL */ }
     <div className="w-[320px] space-y-2 sticky top-8 self-start">
 
-        {/* SEARCH */}
         <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 mb-4">
 
             <Search className="text-[#8093F1] w-5 h-5" />
@@ -211,7 +204,6 @@ export default function SpecialEventListPage() {
 
         </div>
 
-        {/* STAT */}
         <div className="rounded-[20px] p-3 bg-[#F8EAFB]">
 
             <p className="text-sm text-gray-500">
