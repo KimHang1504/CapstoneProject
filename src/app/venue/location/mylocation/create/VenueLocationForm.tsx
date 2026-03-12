@@ -22,10 +22,10 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
   const [step, setStep] = useState(1)
   const router = useRouter()
 
-  const [formData, setFormData] = useState<VenueFormData>({
+  const [formData, setFormData] = useState<VenueFormData>(() => ({
     name: initialData?.name || "",
     description: initialData?.description || "",
-    category: initialData?.category || "",
+    selectedCategories: initialData?.selectedCategories || [],
     address: initialData?.address || "",
     latitude: initialData?.latitude || 0,
     longitude: initialData?.longitude || 0,
@@ -35,7 +35,6 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     priceMin: initialData?.priceMin || 0,
     priceMax: initialData?.priceMax || 0,
 
-    // 🔥 FILE mới luôn rỗng khi edit
     coverImage: null,
     interiorImage: [],
     fullPageMenuImage: [],
@@ -43,11 +42,10 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     selectedMoods: initialData?.selectedMoods || [],
     selectedStyles: initialData?.selectedStyles || [],
 
-    // ✅ URL cũ chỉ nằm ở existing
     existingCoverUrl: initialData?.existingCoverUrl || "",
     existingInteriorUrls: initialData?.existingInteriorUrls || [],
     existingMenuUrls: initialData?.existingMenuUrls || [],
-  });
+  }))
 
   const CurrentStep = steps[step - 1]
 
@@ -119,6 +117,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         name: formData.name,
         description: formData.description,
         address: formData.address,
+        categoryIds: formData.selectedCategories,
         latitude: formData.latitude,
         longitude: formData.longitude,
         email: formData.email,
@@ -151,6 +150,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       )
     }
   }
+
 
   return (
     <div>

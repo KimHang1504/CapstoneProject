@@ -145,6 +145,7 @@ export type VenueLocationDetail = VenueLocationBase & {
   coverImage?: string[] | null;
   interiorImage?: string[] | null;
   fullPageMenuImage?: string[] | null;
+  category: string[] | null;
 
   createdAt: string;
   updatedAt: string;
@@ -220,30 +221,57 @@ export type SubmitVenueWithPaymentRequest = {
   quantity: number;
 };
 
-export type SubmitVenueWithPaymentResponse = {
+export interface SubmitVenueWithPaymentResponse {
+  isSuccess: boolean;
   message: string;
-  code: number;
-  data: {
-    isSuccess: boolean;
-    message: string;
-    missingFields: string[];
-    transactionId: number;
-    subscriptionId: number;
-    qrCodeUrl: string;
-    amount: number;
-    bankInfo: {
-      bankName: string;
-      accountNumber: string;
-      accountName: string;
-    };
-    expireAt: string;
-    paymentContent: string;
-    packageName: string;
-    totalDays: number;
+  transactionId: number;
+  subscriptionId: number;
+  qrCodeUrl: string;
+  amount: number;
+  paymentContent: string;
+  packageName: string;
+  totalDays: number;
+  expireAt: string;
+
+  bankInfo: {
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
   };
-  traceId?: string;
-  timestamp?: string;
-};
+}
+
+export interface SubmitVenuePaymentData {
+  isSuccess: boolean;
+  message: string;
+  missingFields: string[];
+  transactionId: number;
+  subscriptionId: number;
+  qrCodeUrl: string;
+  amount: number;
+  paymentContent: string;
+  packageName: string;
+  totalDays: number;
+  expireAt: string;
+
+  bankInfo: {
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+  };
+}
+export interface PaymentQrInfoLocation {
+  transactionId: number;
+  qrCodeUrl: string;
+  amount: number;
+  paymentContent: string;
+  expireAt: string;
+
+  bankInfo: {
+    BankName: string;
+    AccountNumber: string;
+    AccountName: string;
+  };
+}
 
 export type UpdateOpeningHoursRequest = {
   venueLocationId: number;

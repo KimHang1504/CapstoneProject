@@ -3,7 +3,6 @@
  * Sử dụng: apiClient.get('/api/users'), apiClient.post('/api/users', { name: 'John' })
  */
 
-import { DEV_ACCESS_TOKEN } from "@/api/dev-auth";
 type RequestOptions = {
   headers?: Record<string, string>;
   params?: Record<string, string | number | boolean | undefined>
@@ -126,7 +125,41 @@ class ApiClient {
   delete<T>(endpoint: string, options?: RequestOptions) {
     return this.request<T>(endpoint, 'DELETE', options);
   }
+
+  //upload ảnh
+  async uploadFile<T>(endpoint: string, file: File): Promise<T> {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem("access_token")
+        : null;
+
+    const response = await fetch(
+      new URL(endpoint, this.NEXT_PUBLIC_API_URL).toString(),
+      {
+        method: "POST",
+        headers: {
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: formData,
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({
+        message: response.statusText,
+      }));
+      throw new Error(error.message || "Upload failed");
+    }
+
+    return response.json();
+  }
 }
+
+
+
 
 // Export instance để sử dụng trong toàn bộ app
 export const apiClient = new ApiClient(

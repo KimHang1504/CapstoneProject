@@ -108,6 +108,24 @@ export default function LocationDetailPage() {
 
     const handleSubmitForApproval = () => {
         if (isPending) return;
+
+        const errors = [];
+
+        if (!location.name) errors.push("Tên địa điểm");
+        if (!location.description) errors.push("Mô tả");
+        if (!location.address) errors.push("Địa chỉ");
+        if (!location.email) errors.push("Email");
+        if (!location.phoneNumber) errors.push("Số điện thoại");
+        if (!location.priceMin || !location.priceMax) errors.push("Khoảng giá");
+        if (!location.coverImage?.length) errors.push("Hình ảnh bìa");
+        if (!location.coupleMoodTypes?.length) errors.push("Tâm trạng");
+        if (!location.couplePersonalityTypes?.length) errors.push("Tính cách");
+
+        if (errors.length > 0) {
+            alert("Vui lòng hoàn thiện: " + errors.join(", "));
+            return;
+        }
+
         router.push(`/venue/location/subscriptions?locationId=${location.id}`);
     };
 
@@ -308,6 +326,21 @@ export default function LocationDetailPage() {
                         <div>
                             <p className="text-sm font-bold mb-1">Mô tả</p>
                             <p className="text-sm text-gray-700">{location.description}</p>
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-bold mb-2">Danh mục</p>
+
+                            <div className="flex flex-wrap gap-2">
+                                {location.category?.map((cat, index) => (
+                                    <span
+                                        key={index}
+                                        className="inline-block rounded-2xl bg-gray-200 px-4 py-1 text-sm font-medium text-gray-700"
+                                    >
+                                        {cat}
+                                    </span>
+                                ))}
+                            </div>
                         </div>
 
                         <div>
