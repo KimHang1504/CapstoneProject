@@ -27,6 +27,11 @@ export const venueSidebarConfig: SidebarConfig = {
       href: '/venue/advertisement',
       icon: LayoutDashboard,
     },
+      {
+      label: 'Voucher',
+      href: '/venue/voucher',
+      icon: LayoutDashboard,
+    },
         {
       label: 'Insight',
       href: '/venue/insight',

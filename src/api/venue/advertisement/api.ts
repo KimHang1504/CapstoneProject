@@ -3,9 +3,9 @@ import {
   CreateAdvertisementRequest,
   Advertisement,
   AdvertisementListItem,
-  AdvertisementPackage,
   SubmitAdvertisementPaymentResponse,
   SubmitAdvertisementPaymentRequest,
+  AdvertisementPackagesResponse,
 } from "./type";
 
 //create
@@ -39,7 +39,7 @@ export const getAdvertisementById = async (
 
 //get gói quảng cáo
 export const getAdvertisementPackages = async () => {
-  return apiClient.get<ApiResponse<AdvertisementPackage[]>>(
+  return apiClient.get<ApiResponse<AdvertisementPackagesResponse>>(
     "/api/Advertisement/packages"
   );
 };

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { AdvertisementPackage } from "@/api/venue/advertisement/type";
+import { AdvertisementPackage, AdvertisementPackageGroup } from "@/api/venue/advertisement/type";
 import {
     getAdvertisementPackages,
     submitAdvertisementPayment,
@@ -17,8 +17,7 @@ export default function PackagesClient() {
 
     const adId = searchParams.get("adId");
 
-    const [packages, setPackages] = useState<AdvertisementPackage[]>([]);
-
+    const [packages, setPackages] = useState<AdvertisementPackageGroup | null>(null);
     const [selectedPackageId, setSelectedPackageId] = useState<number | null>(null);
 
     const [openDurationModal, setOpenDurationModal] = useState(false);
@@ -32,7 +31,8 @@ export default function PackagesClient() {
         const fetchPackages = async () => {
             try {
                 const res = await getAdvertisementPackages();
-                setPackages(res.data);
+                setPackages(res.data.data);
+                console.log("Packages response:", res); // log full response
             } catch (error) {
                 console.error("Fetch packages error:", error);
             }
@@ -42,21 +42,21 @@ export default function PackagesClient() {
     }, []);
 
     // group packages by placement
-    function groupPackagesByPlacement(packages: AdvertisementPackage[]) {
-        const grouped: Record<string, AdvertisementPackage[]> = {};
+    // function groupPackagesByPlacement(packages: AdvertisementPackage[]) {
+    //     const grouped: Record<string, AdvertisementPackage[]> = {};
 
-        packages.forEach((pkg) => {
-            if (!grouped[pkg.placement]) {
-                grouped[pkg.placement] = [];
-            }
+    //     packages.forEach((pkg) => {
+    //         if (!grouped[pkg.placement]) {
+    //             grouped[pkg.placement] = [];
+    //         }
 
-            grouped[pkg.placement].push(pkg);
-        });
+    //         grouped[pkg.placement].push(pkg);
+    //     });
 
-        return grouped;
-    }
+    //     return grouped;
+    // }
 
-    const groupedPackages = groupPackagesByPlacement(packages);
+    // const groupedPackages = groupPackagesByPlacement(packages);
 
     // confirm venue -> create transaction
     const handleConfirmVenue = async (venueId: number) => {
@@ -85,18 +85,19 @@ export default function PackagesClient() {
 
     function getPreviewImage(placement: string) {
         switch (placement) {
-            case "LIST":
-                return "/list.png";
+            case "POPUP":
+                return "/popup.jpg";
 
-            case "BANNER":
-                return "/banner.png";
-
-            case "VOUCHER":
-                return "/voucher.png";
+            case "HOME_BANNER":
+                return "/homebanner.jpg";
 
             default:
-                return "/ads/default.png";
+                return "/banner.png";
         }
+    }
+
+    if (!packages) {
+        return <div className="p-6">Loading packages...</div>;
     }
     return (
         <div className="p-6 max-w-6xl mx-auto">
@@ -107,10 +108,10 @@ export default function PackagesClient() {
 
             <div className="space-y-20">
 
-                {Object.entries(groupedPackages).map(([placement, pkgs]) => {
-                    const oneDayPackage = pkgs.find((p) => p.durationDays === 1);
-
-                    if (!oneDayPackage) return null;
+                {Object.entries(packages).map(([placement, pkgs]) => {
+                    const cheapestPackage = pkgs.reduce((min, p) =>
+                        p.durationDays < min.durationDays ? p : min
+                    );
 
                     return (
                         <div
@@ -122,15 +123,15 @@ export default function PackagesClient() {
                             <div>
 
                                 <h2 className="text-xl font-semibold text-blue-600 mb-3">
-                                    {oneDayPackage.name}
+                                    {cheapestPackage.name}
                                 </h2>
 
                                 <p className="text-gray-600 mb-4">
-                                    {oneDayPackage.description}
+                                    {cheapestPackage.description}
                                 </p>
 
                                 <div className="text-lg font-bold text-blue-500 mb-6">
-                                    Từ {oneDayPackage.price.toLocaleString()} VND / ngày
+                                    Từ {cheapestPackage.price.toLocaleString()} VND / {cheapestPackage.durationDays} ngày
                                 </div>
 
                                 <button

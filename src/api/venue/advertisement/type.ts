@@ -94,6 +94,15 @@ export interface AdvertisementPackage {
     createdAt: string;
 }
 
+export type AdvertisementPackageGroup = Record<
+  PlacementType,
+  AdvertisementPackage[]
+>;
+
+export interface AdvertisementPackagesResponse {
+  data: AdvertisementPackageGroup;
+}
+
 // Type gửi lên khi submit payment
 export interface SubmitAdvertisementPaymentRequest {
     packageId: number;
