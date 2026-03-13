@@ -1,0 +1,234 @@
+import { getChallengeDetail } from "@/api/admin/api";
+import {
+    Calendar,
+    Target,
+    Trophy,
+    Hash,
+    Image as ImageIcon,
+    MapPin,
+    ListChecks,
+    Zap
+} from "lucide-react";
+
+type Props = {
+    params: Promise<{
+        id: string;
+    }>;
+};
+
+export default async function ChallengeDetailPage({ params }: Props) {
+
+    const { id } = await params;
+
+    const res = await getChallengeDetail(id);
+
+    const challenge = res.data;
+
+    const formatDate = (date: string | null) =>
+        date ? new Date(date).toLocaleDateString("vi-VN") : "Không giới hạn";
+
+    return (
+        <div className="max-w-5xl mx-auto p-6 space-y-6">
+
+            {/* HEADER */}
+            <div className="bg-white rounded-2xl shadow p-6 space-y-5">
+
+                <div className="flex items-center justify-between">
+
+                    <h1 className="text-3xl font-bold text-gray-800">
+                        {challenge.title}
+                    </h1>
+
+                    <span className="text-xs bg-violet-100 text-violet-700 px-3 py-1 rounded-full font-medium">
+                        Challenge
+                    </span>
+
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+
+                    {/* TIME */}
+                    <div className="flex items-center gap-3 bg-gray-50 hover:bg-gray-100 transition rounded-xl px-4 py-3">
+
+                        <Calendar className="text-gray-500" size={20} />
+
+                        <div>
+                            <p className="text-gray-500 text-xs">
+                                Thời gian
+                            </p>
+
+                            <p className="text-gray-700 font-medium">
+                                {formatDate(challenge.startDate)} → {formatDate(challenge.endDate)}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    {/* GOAL */}
+                    <div className="flex items-center gap-3 bg-gray-50 hover:bg-gray-100 transition rounded-xl px-4 py-3">
+
+                        <Target className="text-gray-500" size={20} />
+
+                        <div>
+                            <p className="text-gray-500 text-xs">
+                                Mục tiêu
+                            </p>
+
+                            <p className="text-gray-700 font-medium">
+                                {challenge.targetGoal}
+                            </p>
+                        </div>
+
+                    </div>
+
+                    {/* REWARD */}
+                    <div className="flex items-center gap-3 bg-green-50 hover:bg-green-100 transition rounded-xl px-4 py-3">
+
+                        <Trophy className="text-green-600" size={20} />
+
+                        <div>
+                            <p className="text-green-600 text-xs">
+                                Phần thưởng
+                            </p>
+
+                            <p className="text-green-700 font-semibold">
+                                {challenge.rewardPoints} điểm
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {/* DESCRIPTION */}
+            <div className="bg-white rounded-2xl shadow p-6">
+
+                <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                    <Zap size={18} />
+                    Mô tả thử thách
+                </h2>
+
+                <p className="text-gray-700 leading-relaxed">
+                    {challenge.description ?? "Chưa có mô tả"}
+                </p>
+
+            </div>
+
+
+            {/* INFO */}
+            <div className="bg-white rounded-2xl shadow p-6">
+
+                <h2 className="text-xl font-semibold mb-5">
+                    Thông tin thử thách
+                </h2>
+
+                <div className="grid sm:grid-cols-2 gap-6">
+
+                    <div>
+                        <p className="text-sm text-gray-500">
+                            Sự kiện kích hoạt
+                        </p>
+
+                        <p className="font-medium text-gray-800">
+                            {challenge.triggerEvent}
+                        </p>
+                    </div>
+
+                    <div>
+                        <p className="text-sm text-gray-500">
+                            Chỉ số mục tiêu
+                        </p>
+
+                        <p className="font-medium text-gray-800">
+                            {challenge.goalMetric}
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {/* RULES */}
+            {challenge.ruleData && (
+                <div className="bg-white rounded-2xl shadow p-6">
+
+                    <h2 className="text-xl font-semibold mb-4">
+                        Quy tắc
+                    </h2>
+
+                    <div className="flex flex-wrap gap-3">
+
+                        {challenge.ruleData.hash_tags?.map((tag: string) => (
+                            <span
+                                key={tag}
+                                className="flex items-center gap-1 bg-violet-50 text-violet-700 px-3 py-1 rounded-full text-xs font-medium"
+                            >
+                                {tag}
+                            </span>
+                        ))}
+
+                        {challenge.ruleData.has_image && (
+                            <span className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-medium">
+                                <ImageIcon size={14} />
+                                Bắt buộc có hình ảnh
+                            </span>
+                        )}
+
+                        {challenge.ruleData.venue_id?.map((id: number) => (
+                            <span
+                                key={id}
+                                className="flex items-center gap-1 bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-xs font-medium"
+                            >
+                                <MapPin size={14} />
+                                Venue {id}
+                            </span>
+                        ))}
+
+                    </div>
+
+                </div>
+            )}
+
+
+            {/* INSTRUCTIONS */}
+            {challenge.instructions.length > 0 && (
+                <div className="bg-white rounded-2xl shadow p-6">
+
+                    <h2 className="text-xl font-semibold mb-5 flex items-center gap-2">
+                        <ListChecks size={20} />
+                        Hướng dẫn thực hiện
+                    </h2>
+
+                    <div className="space-y-4">
+
+                        {challenge.instructions.map((ins: string, index: number) => (
+
+                            <div
+                                key={index}
+                                className="flex gap-4 items-start"
+                            >
+
+                                <div className="w-7 h-7 flex items-center justify-center rounded-full bg-violet-100 text-violet-700 text-xs font-semibold">
+                                    {index + 1}
+                                </div>
+
+                                <p className="text-gray-700">
+                                    {ins}
+                                </p>
+
+                            </div>
+
+                        ))}
+
+                    </div>
+
+                </div>
+            )}
+
+        </div>
+    );
+}

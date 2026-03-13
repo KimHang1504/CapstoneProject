@@ -71,7 +71,7 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className={`${stat.bgColor} p-3 rounded-xl group-hover:scale-110 transition-transform duration-300`}>
-                  <Icon className={`w-6 h-6 bg-gradient-to-br ${stat.color} bg-clip-text text-transparent`} style={{ WebkitTextFillColor: 'transparent' }} />
+                  <Icon className={`w-6 h-6 bg-linear-to-br ${stat.color} bg-clip-text text-transparent`} style={{ WebkitTextFillColor: 'transparent' }} />
                 </div>
               </div>
             </div>
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
             {[40, 65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 88].map((height, i) => (
               <div key={i} className="flex-1 flex flex-col items-center gap-2">
                 <div 
-                  className="w-full bg-gradient-to-t from-purple-400 to-pink-400 rounded-t-lg hover:from-purple-500 hover:to-pink-500 transition-all duration-300 cursor-pointer"
+                  className="w-full bg-linear-to-t from-purple-400 to-pink-400 rounded-t-lg hover:from-purple-500 hover:to-pink-500 transition-all duration-300 cursor-pointer"
                   style={{ height: `${height}%` }}
                 ></div>
                 <span className="text-xs text-gray-400">T{i + 1}</span>
@@ -123,7 +123,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-gradient-to-r from-purple-100 via-pink-100 to-blue-100 p-8 rounded-2xl border border-purple-200">
+      <div className="bg-linear-to-r from-purple-100 via-pink-100 to-blue-100 p-8 rounded-2xl border border-purple-200">
         <h3 className="text-lg font-bold text-gray-800 mb-4">Thao tác nhanh</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
