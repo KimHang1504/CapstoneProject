@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronRight, ChevronLeft, Search, Trash2, IdCard } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Search, Trash2, IdCard, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { deleteSpecialEvent, getAllSpecialEvents } from '@/api/admin/api';
 import { SpecialEvent } from '@/api/admin/type';
@@ -52,14 +52,21 @@ export default function SpecialEventListPage() {
     }, [data, keyword]);
 
     const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString('vi-VN');
+        return new Date(date).toLocaleDateString();
     };
 
     return (
         <div className="flex gap-10 p-8 items-start">
 
             <div className="flex-1 min-w-0 space-y-4">
-
+                <div className='flex item-center justify-end'>
+                    <Link href="/admin/special-event-management/new"
+                        className="inline-flex items-center gap-2 text-sm bg-violet-600 text-white px-4 py-2 rounded-full shadow hover:bg-violet-700 transition"
+                    >
+                        <Plus size={18} />
+                        Tạo sự kiện mới
+                    </Link>
+                </div>
                 {loading &&
                     [...Array(5)].map((_, i) => (
 
@@ -146,77 +153,95 @@ export default function SpecialEventListPage() {
 
                                     <Trash2 size={18} />
                                 </button>
-                        </div>
+                            </div>
 
                         </div>
 
                     ))}
 
-            {!loading && events.length === 0 && (
-                <div className="text-center text-gray-500 py-10">
-                    Không có sự kiện
+                {!loading && events.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-gray-50 text-center">
+                        <svg
+                            className="w-10 h-10 text-gray-400 mb-3"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M9 12l2 2 4-4" />
+                            <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                        </svg>
+
+                        <p className="text-gray-600 font-medium">
+                            Không có sự kiện nào
+                        </p>
+
+                        <p className="text-sm text-gray-400">
+                            Hãy tạo sự kiện nào
+                        </p>
+                    </div>
+
+                )}
+
+                {!loading && totalPages > 1 && (
+
+                    <div className="flex justify-center items-center gap-4 pt-6">
+
+                        <button
+                            disabled={page === 1}
+                            onClick={() => setPage(p => p - 1)}
+                            className="p-2 rounded-lg border disabled:opacity-40"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+
+                        <span className="text-sm text-gray-600">
+                            Page {page} / {totalPages}
+                        </span>
+
+                        <button
+                            disabled={page === totalPages}
+                            onClick={() => setPage(p => p + 1)}
+                            className="p-2 rounded-lg border disabled:opacity-40"
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+
+                    </div>
+
+                )}
+
+            </div>
+
+
+            <div className="w-[320px] space-y-2 sticky top-8 self-start">
+
+                <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 mb-4">
+
+                    <Search className="text-[#8093F1] w-5 h-5" />
+
+                    <input
+                        value={keyword}
+                        onChange={e => setKeyword(e.target.value)}
+                        placeholder="Tìm kiếm sự kiện"
+                        className="w-full bg-transparent outline-none text-sm"
+                    />
+
                 </div>
-            )}
 
-            {!loading && totalPages > 1 && (
+                <div className="rounded-[20px] p-3 bg-[#F8EAFB]">
 
-                <div className="flex justify-center items-center gap-4 pt-6">
+                    <p className="text-sm text-gray-500">
+                        Tổng sự kiện
+                    </p>
 
-                    <button
-                        disabled={page === 1}
-                        onClick={() => setPage(p => p - 1)}
-                        className="p-2 rounded-lg border disabled:opacity-40"
-                    >
-                        <ChevronLeft size={18} />
-                    </button>
-
-                    <span className="text-sm text-gray-600">
-                        Page {page} / {totalPages}
-                    </span>
-
-                    <button
-                        disabled={page === totalPages}
-                        onClick={() => setPage(p => p + 1)}
-                        className="p-2 rounded-lg border disabled:opacity-40"
-                    >
-                        <ChevronRight size={18} />
-                    </button>
+                    <p className="text-2xl font-bold text-[#5B3DF5]">
+                        {data.length.toString().padStart(2, '0')}
+                    </p>
 
                 </div>
 
-            )}
-
-        </div>
-
-
-    <div className="w-[320px] space-y-2 sticky top-8 self-start">
-
-        <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 mb-4">
-
-            <Search className="text-[#8093F1] w-5 h-5" />
-
-            <input
-                value={keyword}
-                onChange={e => setKeyword(e.target.value)}
-                placeholder="Tìm kiếm sự kiện"
-                className="w-full bg-transparent outline-none text-sm"
-            />
-
-        </div>
-
-        <div className="rounded-[20px] p-3 bg-[#F8EAFB]">
-
-            <p className="text-sm text-gray-500">
-                Tổng sự kiện
-            </p>
-
-            <p className="text-2xl font-bold text-[#5B3DF5]">
-                {data.length.toString().padStart(2, '0')}
-            </p>
-
-        </div>
-
-    </div>
+            </div>
 
         </div >
     );

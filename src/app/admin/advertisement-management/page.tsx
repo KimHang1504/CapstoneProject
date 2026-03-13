@@ -98,7 +98,23 @@ export default function AdvertisementList() {
           ))}
         </div>
       ) : data.length === 0 ? (
-        <p className="text-gray-500">Chưa có yêu cầu quảng cáo nào.</p>
+        <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-gray-50 text-center">
+          <svg
+            className="w-10 h-10 text-gray-400 mb-3"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M9 12l2 2 4-4" />
+            <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+          </svg>
+
+          <p className="text-gray-600 font-medium">
+            Không có yêu cầu quảng cáo nào
+          </p>
+        </div>
+
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((ad) => (

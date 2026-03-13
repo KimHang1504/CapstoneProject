@@ -177,6 +177,16 @@ export interface SpecialEventPagination {
   hasNextPage: boolean;
 }
 
+export interface CreateSpecialEventRequest {
+  eventName: string,
+  description: string,
+  bannerUrl: string,
+  startDate: string,
+  endDate: string,
+  isYearly: boolean
+};
+
+
 //Challenge management
 export type Challenge = {
   id: number,

@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CreateSpecialEventRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
 
 export const getAllPendingVenues = (page: number, pageSize: number) => {
     console.log(apiClient);
@@ -37,6 +37,9 @@ export const deleteSpecialEvent = (id: number) => {
     return apiClient.delete(`/api/SpecialEvent/${id}`);
 }
 
+export const createSpecialEvent = (body: CreateSpecialEventRequest) => {
+    return apiClient.post<ApiResponse<void>>("/api/SpecialEvent", body);
+};
 
 // Challenge
 export const getAllChallenges = (page: number, pageSize: number) => {
