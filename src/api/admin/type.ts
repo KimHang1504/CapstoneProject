@@ -283,3 +283,23 @@ export interface LocationPagination {
 export interface Recommendations {
   recommendations: LocationPagination;
 }
+
+//Advertisement
+export interface Advertisement {
+  id: number;
+  title: string;
+  bannerUrl: string;
+  placementType: string;
+  status: string;
+  desiredStartDate: string;
+  venueLocationCount: number;
+}
+
+export interface AdvertisementAcceptRequest {
+  advertisementId: number;
+}
+
+export interface AdvertisementRejectRequest {
+  advertisementId: number;
+  reason: string;
+}

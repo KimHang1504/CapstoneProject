@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
 
 export const getAllPendingVenues = (page: number, pageSize: number) => {
     console.log(apiClient);
@@ -72,4 +72,17 @@ export const deleteChallenge = (challengeId: number) => {
 
 export const getChallengeConfig = () => {
     return apiClient.get<ApiResponse<ChallengeConfigResponse>>("/api/Challenge/definitions");
+}
+
+//Advertisement management
+export const getPendingAdvertisements = () =>{
+    return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/pending");
+}
+
+export const acceptPendingAdvertisements = (body: AdvertisementAcceptRequest) =>{
+    return apiClient.post<ApiResponse<void>>("/api/Advertisement/approve", body);
+}
+
+export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) =>{
+    return apiClient.post<ApiResponse<void>>("/api/Advertisement/reject", body);
 }
