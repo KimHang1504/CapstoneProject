@@ -149,3 +149,137 @@ export interface OpeningHour {
   openTime: string;
   closeTime: string;
 }
+
+// Accept or reject venue application
+export interface VenueApprovalRequest {
+  venueId: number;
+  status: 'ACTIVE' | 'DRAFTED';
+  reason: string | null;
+}
+
+//Special event management
+export type SpecialEvent = {
+  id: number;
+  eventName: string;
+  description: string;
+  bannerUrl: string;
+  startDate: string;
+  endDate: string;
+};
+
+export interface SpecialEventPagination {
+  items: SpecialEvent[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+//Challenge management
+export type Challenge = {
+  id: number,
+  title: string,
+  description: string,
+  triggerEvent: "POST" | "REVIEW" | "CHECKIN",
+  goalMetric: "COUNT" | "UNIQUE_LIST" | "STREAK",
+  targetGoal: number,
+  rewardPoints: number,
+  startDate: string,
+  endDate: string,
+  status: string,
+  createdAt: string,
+  ruleData: {
+    hash_tags: string[] | null,
+    has_image: boolean | null
+    venue_id: number[] | null
+  },
+  instructions: string[]
+};
+
+export interface ChallengePagination {
+  items: Challenge[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface ChallengeRequest {
+  title: string,
+  description: string,
+  triggerEvent: string,
+  goalMetric: string,
+  targetGoal: number,
+  rewardPoints: number,
+  startDate: string | null,
+  endDate: string | null,
+  ruleData: {
+    hash_tags: string[] | null,
+    has_image: boolean | null
+    venue_id: number[] | null
+  }
+};
+//Definitions
+export interface TaskType {
+  code: string;
+  label: string;
+}
+
+export interface Metric {
+  code: string;
+  label: string;
+}
+
+export interface RuleField {
+  key: string;
+  label: string;
+  type: "STRING" | "NUMBER" | "BOOLEAN";
+}
+
+export type ChallengeRules = {
+  [taskType: string]: RuleField[];
+};
+
+export interface ChallengeConfigResponse {
+  taskTypes: TaskType[];
+  metrics: Metric[];
+  rules: ChallengeRules;
+}
+
+//Location select for challenge
+export interface LocationRequest {
+  query: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface Location {
+  id: number;
+  name: string;
+  description: string | null;
+  address: string;
+  coverImage: string[];
+  coupleMoodTypeNames: string[];
+  couplePersonalityTypeNames: string[];
+  venueOwnerName: string,
+  venueOwnerId: number,
+  isOpenNow: boolean,
+}
+
+export interface LocationPagination {
+  items: Location[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface Recommendations {
+  recommendations: LocationPagination;
+}
