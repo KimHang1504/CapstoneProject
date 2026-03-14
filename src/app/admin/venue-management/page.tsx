@@ -24,7 +24,7 @@ export default function MyLocationPage() {
 
         setLoading(true);
 
-        getAllPendingVenues(page , 10)
+        getAllPendingVenues(page, 10)
             .then(res => {
 
                 setData(res.data.items);
@@ -67,9 +67,9 @@ export default function MyLocationPage() {
     }, [data, statusFilter, keyword]);
 
     return (
-        <div className="flex gap-10 p-8 items-start">
-
+        <div className="flex gap-10 px-8 py-4 items-start">
             <div className="flex-1 min-w-0 space-y-4">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí địa điểm</h2>
 
                 {loading &&
                     [...Array(5)].map((_, i) => (
@@ -155,9 +155,24 @@ export default function MyLocationPage() {
                     ))}
 
                 {!loading && locations.length === 0 && (
-                    <div className="text-center text-gray-500 py-10">
-                        Không có yêu cầu nào
+                    <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-gray-50 text-center">
+                        <svg
+                            className="w-10 h-10 text-gray-400 mb-3"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M9 12l2 2 4-4" />
+                            <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                        </svg>
+
+                        <p className="text-gray-600 font-medium">
+                            Không có yêu cầu mở địa điểm nào
+                        </p>
+
                     </div>
+
                 )}
 
                 {!loading && totalPages > 1 && (

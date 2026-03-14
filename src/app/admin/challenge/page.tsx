@@ -63,7 +63,8 @@ export default function ChallengeListPage() {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="px-8 py-4 space-y-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí thử thách</h2>
       <div className='flex item-center gap-5'>
         <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 w-[320px]">
 
@@ -198,8 +199,25 @@ export default function ChallengeListPage() {
 
         {!loading && challenges.length === 0 && (
 
-          <div className="text-center text-gray-500 py-10">
-            Không có challenge
+          <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-gray-50 text-center">
+            <svg
+              className="w-10 h-10 text-gray-400 mb-3"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path d="M9 12l2 2 4-4" />
+              <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+            </svg>
+
+            <p className="text-gray-600 font-medium">
+              Không có challenge
+            </p>
+
+            <p className="text-sm text-gray-400">
+              Hãy tạo thử thách mới để bắt đầu.
+            </p>
           </div>
 
         )}

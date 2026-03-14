@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CreateSpecialEventRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
 
 export const getAllPendingVenues = (page: number, pageSize: number) => {
     console.log(apiClient);
@@ -37,6 +37,9 @@ export const deleteSpecialEvent = (id: number) => {
     return apiClient.delete(`/api/SpecialEvent/${id}`);
 }
 
+export const createSpecialEvent = (body: CreateSpecialEventRequest) => {
+    return apiClient.post<ApiResponse<void>>("/api/SpecialEvent", body);
+};
 
 // Challenge
 export const getAllChallenges = (page: number, pageSize: number) => {
@@ -72,4 +75,60 @@ export const deleteChallenge = (challengeId: number) => {
 
 export const getChallengeConfig = () => {
     return apiClient.get<ApiResponse<ChallengeConfigResponse>>("/api/Challenge/definitions");
+}
+
+//Advertisement management
+export const getPendingAdvertisements = () =>{
+    return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/pending");
+}
+
+export const acceptPendingAdvertisements = (body: AdvertisementAcceptRequest) =>{
+    return apiClient.post<ApiResponse<void>>("/api/Advertisement/approve", body);
+}
+
+export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) =>{
+    return apiClient.post<ApiResponse<void>>("/api/Advertisement/reject", body);
+}
+
+//Voucher management
+export const getVouchers = (request: VoucherSearchRequest) => {
+    return apiClient.get<ApiResponse<VoucherPagination>>("/api/admin-vouchers/pending", {
+        params: {
+            PageNumber: request.PageNumber,
+            PageSize: request.PageSize,
+            Status: request.Status,
+            Keyword: request.Keyword,
+            VenueOwnerId: request.VenueOwnerId,
+            SortBy: request.SortBy,
+            SortDirection: request.SortDirection
+
+        }
+    });
+}
+
+export const getAllVouchers = (request: VoucherSearchRequest) => {
+    return apiClient.get<ApiResponse<VoucherPagination>>("/api/admin-vouchers", {
+        params: {
+            PageNumber: request.PageNumber,
+            PageSize: request.PageSize,
+            Status: request.Status,
+            Keyword: request.Keyword,
+            VenueOwnerId: request.VenueOwnerId,
+            SortBy: request.SortBy,
+            SortDirection: request.SortDirection
+
+        }
+    });
+}
+
+export const getVoucherDetail = (id: number) => {
+    return apiClient.get<ApiResponse<Voucher>>(`/api/admin-vouchers/${id}`);
+}
+
+export const approveVoucher = (id: number) => {
+    return apiClient.post(`/api/admin-vouchers/${id}/approve`);
+}
+
+export const rejectVoucher = (id: number, rejectReason: string) => {
+    return apiClient.post(`/api/admin-vouchers/${id}/reject`, { rejectReason });
 }

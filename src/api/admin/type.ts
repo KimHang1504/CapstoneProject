@@ -177,6 +177,16 @@ export interface SpecialEventPagination {
   hasNextPage: boolean;
 }
 
+export interface CreateSpecialEventRequest {
+  eventName: string,
+  description: string,
+  bannerUrl: string,
+  startDate: string,
+  endDate: string,
+  isYearly: boolean
+};
+
+
 //Challenge management
 export type Challenge = {
   id: number,
@@ -282,4 +292,99 @@ export interface LocationPagination {
 
 export interface Recommendations {
   recommendations: LocationPagination;
+}
+
+//Advertisement
+export interface Advertisement {
+  id: number;
+  title: string;
+  bannerUrl: string;
+  placementType: string;
+  status: string;
+  desiredStartDate: string;
+  venueLocationCount: number;
+}
+
+export interface AdvertisementAcceptRequest {
+  advertisementId: number;
+}
+
+export interface AdvertisementRejectRequest {
+  advertisementId: number;
+  reason: string;
+}
+
+//Voucher
+export interface VoucherSearchRequest {
+  PageNumber: number;
+  PageSize: number;
+  Status?: string;
+  Keyword?: string;
+  VenueOwnerId?: number;
+  SortBy: 'createdAt' | 'updatedAt';
+  SortDirection: 'asc' | 'desc';
+}
+
+export interface VoucherLocation {
+  venueLocationId: number;
+  venueLocationName: string;
+}
+
+export type DiscountType = "PERCENTAGE" | "AMOUNT";
+
+export type VoucherStatus =
+  | "DRAFT"
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "ACTIVE"
+  | "ENDED";
+
+export interface Voucher {
+  id: number;
+  venueOwnerId: number;
+  venueOwnerName: string;
+  code: string;
+  title: string;
+  description: string;
+
+  pointPrice: number;
+
+  discountType: DiscountType;
+  discountAmount: number | null;
+  discountPercent: number | null;
+
+  quantity: number;
+  remainingQuantity: number;
+
+  usageLimitPerMember: number;
+  usageValiDays: number | null;
+
+  rejectReason: string | null;
+
+  startDate: string; 
+  endDate: string; 
+
+  status: VoucherStatus;
+
+  createdAt: string; 
+  updatedAt: string; 
+
+  locations: VoucherLocation[];
+}
+
+
+export interface VoucherPagination {
+  items: Voucher[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface VoucherRejectRequest {
+  voucherId: number;
+  rejectReason: string;
 }
