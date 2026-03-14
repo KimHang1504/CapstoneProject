@@ -63,7 +63,8 @@ export default function ChallengeListPage() {
   };
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="px-8 py-4 space-y-6">
+      <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí thử thách</h2>
       <div className='flex item-center gap-5'>
         <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 w-[320px]">
 

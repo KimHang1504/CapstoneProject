@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CreateSpecialEventRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CreateSpecialEventRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
 
 export const getAllPendingVenues = (page: number, pageSize: number) => {
     console.log(apiClient);
@@ -88,4 +88,24 @@ export const acceptPendingAdvertisements = (body: AdvertisementAcceptRequest) =>
 
 export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) =>{
     return apiClient.post<ApiResponse<void>>("/api/Advertisement/reject", body);
+}
+
+//Voucher management
+export const getVouchers = (request: VoucherSearchRequest) => {
+    return apiClient.get<ApiResponse<VoucherPagination>>("/api/admin-vouchers", {
+        params: {
+            PageNumber: request.PageNumber,
+            PageSize: request.PageSize,
+            Status: request.Status,
+            Keyword: request.Keyword,
+            VenueOwnerId: request.VenueOwnerId,
+            SortBy: request.SortBy,
+            SortDirection: request.SortDirection
+
+        }
+    });
+}
+
+export const getVoucherDetail = (id: number) => {
+    return apiClient.get<ApiResponse<Voucher>>(`/api/admin-vouchers/${id}`);
 }

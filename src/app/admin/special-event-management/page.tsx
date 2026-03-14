@@ -56,16 +56,18 @@ export default function SpecialEventListPage() {
     };
 
     return (
-        <div className="flex gap-10 p-8 items-start">
-
+        <div className="flex gap-10 px-8 py-4 items-start">
             <div className="flex-1 min-w-0 space-y-4">
-                <div className='flex item-center justify-end'>
-                    <Link href="/admin/special-event-management/new"
-                        className="inline-flex items-center gap-2 text-sm bg-violet-600 text-white px-4 py-2 rounded-full shadow hover:bg-violet-700 transition"
-                    >
-                        <Plus size={18} />
-                        Tạo sự kiện mới
-                    </Link>
+                <div className="flex items-center justify-between">
+                    <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí sự kiện đặc biệt</h2>
+                    <div className='flex item-center'>
+                        <Link href="/admin/special-event-management/new"
+                            className="inline-flex items-center gap-2 text-sm bg-violet-600 text-white px-4 py-2 rounded-full shadow hover:bg-violet-700 transition"
+                        >
+                            <Plus size={18} />
+                            Tạo sự kiện mới
+                        </Link>
+                    </div>
                 </div>
                 {loading &&
                     [...Array(5)].map((_, i) => (

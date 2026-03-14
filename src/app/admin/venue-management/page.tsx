@@ -67,9 +67,9 @@ export default function MyLocationPage() {
     }, [data, statusFilter, keyword]);
 
     return (
-        <div className="flex gap-10 p-8 items-start">
-
+        <div className="flex gap-10 px-8 py-4 items-start">
             <div className="flex-1 min-w-0 space-y-4">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí địa điểm</h2>
 
                 {loading &&
                     [...Array(5)].map((_, i) => (
