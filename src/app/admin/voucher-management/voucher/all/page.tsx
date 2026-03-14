@@ -1,6 +1,6 @@
 "use client";
 
-import { getVouchers } from "@/api/admin/api";
+import { getAllVouchers } from "@/api/admin/api";
 import { Voucher } from "@/api/admin/type";
 import { Plus } from "lucide-react";
 import Link from "next/link";
@@ -17,7 +17,7 @@ export default function VoucherPage() {
   const fetchData = async () => {
     setLoading(true);
 
-    const res = await getVouchers({
+    const res = await getAllVouchers({
       PageNumber: page,
       PageSize: pageSize,
       SortBy: "createdAt",
@@ -39,7 +39,7 @@ export default function VoucherPage() {
     <div className="px-8 py-4 min-h-screen space-y-6">
       <div className="flex gap-5 items-center ">
         <h2 className="text-xl font-bold text-gray-900 mb-2">Quản lí voucher</h2>
-        <Link href="/admin/voucher-management/voucher/all"
+        <Link href="/admin/voucher-management/all"
           className="inline-flex items-center gap-2 text-sm bg-violet-600 text-white px-4 py-2 rounded-full shadow hover:bg-violet-700 transition"
         >
           <Plus size={18} />
@@ -135,8 +135,8 @@ const getStatusColor = (status: string) => {
   switch (status) {
     case "ACTIVE":
       return "bg-[#72DDF7]/20 text-[#72DDF7]";
-    case "DRAFTED":
-      return "bg-[#B388EB]/20 text-[#B388EB]";
+    case "APPROVED":
+      return "bg-green-500 text-white";
     case "ENDED":
       return "bg-gray-200 text-gray-600";
     case "REJECTED":

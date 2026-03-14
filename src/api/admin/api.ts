@@ -92,6 +92,21 @@ export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) =>
 
 //Voucher management
 export const getVouchers = (request: VoucherSearchRequest) => {
+    return apiClient.get<ApiResponse<VoucherPagination>>("/api/admin-vouchers/pending", {
+        params: {
+            PageNumber: request.PageNumber,
+            PageSize: request.PageSize,
+            Status: request.Status,
+            Keyword: request.Keyword,
+            VenueOwnerId: request.VenueOwnerId,
+            SortBy: request.SortBy,
+            SortDirection: request.SortDirection
+
+        }
+    });
+}
+
+export const getAllVouchers = (request: VoucherSearchRequest) => {
     return apiClient.get<ApiResponse<VoucherPagination>>("/api/admin-vouchers", {
         params: {
             PageNumber: request.PageNumber,
@@ -108,4 +123,12 @@ export const getVouchers = (request: VoucherSearchRequest) => {
 
 export const getVoucherDetail = (id: number) => {
     return apiClient.get<ApiResponse<Voucher>>(`/api/admin-vouchers/${id}`);
+}
+
+export const approveVoucher = (id: number) => {
+    return apiClient.post(`/api/admin-vouchers/${id}/approve`);
+}
+
+export const rejectVoucher = (id: number, rejectReason: string) => {
+    return apiClient.post(`/api/admin-vouchers/${id}/reject`, { rejectReason });
 }

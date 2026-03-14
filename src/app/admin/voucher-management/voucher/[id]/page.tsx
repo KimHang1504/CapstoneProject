@@ -2,6 +2,7 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { Voucher } from "@/api/admin/type";
 import { getVoucherDetail } from "@/api/admin/api";
+import VoucherApprovalActions from "./components/VoucherApprovalActions";
 
 type Props = {
     params: Promise<{ id: number }>;
@@ -152,7 +153,7 @@ export default async function VoucherDetailPage({ params }: Props) {
                 </div>
 
             </div>
-
+            <VoucherApprovalActions voucherId={voucher.id} />
         </div>
 
     );

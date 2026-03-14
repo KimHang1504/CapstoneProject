@@ -383,3 +383,8 @@ export interface VoucherPagination {
   hasPreviousPage: boolean;
   hasNextPage: boolean;
 }
+
+export interface VoucherRejectRequest {
+  voucherId: number;
+  rejectReason: string;
+}
