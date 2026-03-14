@@ -19,7 +19,7 @@ export default async function EventDetailPage({ params }: Props) {
     const banner = event.bannerUrl ?? null;
 
     const formatDate = (date: string) =>
-        new Date(date).toLocaleDateString("vi-VN");
+        new Date(date).toLocaleDateString();
 
     return (
         <div className="max-w-5xl mx-auto p-6 space-y-6">
