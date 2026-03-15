@@ -3,8 +3,8 @@ import {
   WalletBalanceResponse,
   WithdrawRequest,
   WithdrawResponse,
+  WithdrawWalletRequest,
 } from "./type";
-
 
 export async function getWalletBalance() {
   const res = await apiClient.get<ApiResponse<WalletBalanceResponse>>(
@@ -14,8 +14,7 @@ export async function getWalletBalance() {
   return res.data;
 }
 
-
-export async function withdrawWallet(data: WithdrawRequest) {
+export async function withdrawWallet(data: WithdrawWalletRequest) {
   const res = await apiClient.post<ApiResponse<WithdrawResponse>>(
     "/api/Wallet/withdraw",
     data

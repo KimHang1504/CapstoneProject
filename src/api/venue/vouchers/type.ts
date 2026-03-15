@@ -17,7 +17,7 @@ export type CreateVoucherRequest = {
 
   usageLimitPerMember: number | null;
 
-  usageValidDays: number;
+  usageValiDays: number;
 
   venueLocationIds: number[];
 
@@ -56,7 +56,7 @@ export type Voucher = {
   remainingQuantity: number;
 
   usageLimitPerMember: number | null;
-  usageValidDays: number | null;
+  usageValiDays: number | null;
 
   rejectReason: string | null;
 
@@ -224,4 +224,27 @@ export type VoucherRedemptionListResponse = {
 
   hasPreviousPage: boolean;
   hasNextPage: boolean;
+};
+
+export type ValidateVoucherItemData = {
+  id: number;
+  voucherId: number;
+  itemCode: string;
+
+  status: string;
+  isValid: boolean;
+  validationMessage: string | null;
+
+  voucherTitle: string;
+  voucherDescription: string;
+
+  discountType: "PERCENTAGE" | "FIXED_AMOUNT";
+  discountAmount: number | null;
+  discountPercent: number | null;
+
+  acquiredAt: string | null;
+  expiredAt: string | null;
+  usedAt: string | null;
+
+  member: any | null;
 };

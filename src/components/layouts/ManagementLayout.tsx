@@ -9,10 +9,6 @@ import {
   X,
   ChevronDown,
   Search,
-  Bell,
-  User,
-  Download,
-  Filter
 } from 'lucide-react';
 
 type ManagementLayoutProps = {
@@ -89,6 +85,34 @@ export default function ManagementLayout({
             </Link>
           </div>
 
+                    {/* Fallback for tabs without sections */}
+          {sidebarConfig.tabs && (
+            <div className="space-y-1">
+              {sidebarConfig.tabs.map((tab) => {
+                const isActive = pathname === tab.href;
+                const Icon = tab.icon;
+
+                return (
+                  <Link
+                    key={tab.href}
+                    href={tab.href}
+                    className={`
+                      flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 mb-4
+                      group relative overflow-hidden
+                      ${isActive
+                        ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
+                        : 'text-white hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
+                      }
+                    `}
+                  >
+                    {Icon && <Icon className="w-5 h-5" />}
+                    {isSidebarOpen && <span className="font-medium text-sm">{tab.label}</span>}
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
           {/* Sections */}
           {sidebarConfig.sections?.map((section) => (
             <div key={section.title} className="mb-4">
@@ -148,33 +172,7 @@ export default function ManagementLayout({
             </div>
           ))}
 
-          {/* Fallback for tabs without sections */}
-          {sidebarConfig.tabs && (
-            <div className="space-y-1">
-              {sidebarConfig.tabs.map((tab) => {
-                const isActive = pathname === tab.href;
-                const Icon = tab.icon;
 
-                return (
-                  <Link
-                    key={tab.href}
-                    href={tab.href}
-                    className={`
-                      flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 mb-4
-                      group relative overflow-hidden
-                      ${isActive
-                        ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
-                        : 'text-white hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
-                      }
-                    `}
-                  >
-                    {Icon && <Icon className="w-5 h-5" />}
-                    {isSidebarOpen && <span className="font-medium text-sm">{tab.label}</span>}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
         </nav>
 
         {/* Footer */}

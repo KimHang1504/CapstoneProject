@@ -17,9 +17,9 @@ export default function CreateVoucherPage() {
   };
 
   return (
-    <div className="p-6 max-w-3xl">
+    <div className="">
       <h1 className="text-xl font-semibold mb-4">
-        Create Voucher
+        Tạo Voucher
       </h1>
 
       <VoucherForm onSubmit={handleCreate} />

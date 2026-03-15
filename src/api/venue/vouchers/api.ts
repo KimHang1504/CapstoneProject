@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { CreateVoucherRequest, Pagination, Voucher, VoucherDetail, VoucherExchangeItem, VoucherItemListResponse, VoucherListResponse, VoucherRedemptionListResponse, VoucherStatus, VoucherSummary } from "./type";
+import { CreateVoucherRequest, Pagination, ValidateVoucherItemData, Voucher, VoucherDetail, VoucherExchangeItem, VoucherItemListResponse, VoucherListResponse, VoucherRedemptionListResponse, VoucherStatus, VoucherSummary } from "./type";
 
 //tạo mới voucher
 export const createVoucher = (data: CreateVoucherRequest) => {
@@ -41,7 +41,7 @@ export const submitVoucher = (voucherId: number) => {
   return apiClient.post<ApiResponse<null>>(
     `/api/venue-vouchers/${voucherId}/submit`
   );
-};  
+};
 
 export const revokeVoucher = (voucherId: number) => {
   return apiClient.post<ApiResponse<null>>(
@@ -90,9 +90,10 @@ export const getVoucherItems = (params: GetVoucherItemsParams) => {
 
 // validate voucher item
 export const validateVoucherItem = (itemCode: string) => {
-  return apiClient.post("/api/venue-vouchers/voucher-items/validate", {
-    itemCode,
-  });
+  return apiClient.post<ApiResponse<ValidateVoucherItemData>>(
+    "/api/venue-vouchers/voucher-items/validate",
+    { itemCode }
+  );
 };
 
 // redeem voucher item

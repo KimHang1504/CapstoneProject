@@ -7,97 +7,108 @@ import { VoucherItem } from "@/api/venue/vouchers/type";
 
 export default function VoucherItemsPage() {
 
-  const { id } = useParams();
+    const { id } = useParams();
 
-  const [items, setItems] = useState<VoucherItem[]>([]);
-  const [loading, setLoading] = useState(true);
+    const [items, setItems] = useState<VoucherItem[]>([]);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+    useEffect(() => {
 
-    const fetchItems = async () => {
-      try {
+        const fetchItems = async () => {
+            try {
 
-        const res = await getVoucherItems({
-          voucherId: Number(id),
-          pageNumber: 1,
-          pageSize: 20,
-        });
+                const res = await getVoucherItems({
+                    voucherId: Number(id),
+                    pageNumber: 1,
+                    pageSize: 20,
+                });
 
-        setItems(res.data.items);
+                setItems(res.data.items);
 
-      } finally {
-        setLoading(false);
-      }
-    };
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    fetchItems();
+        fetchItems();
 
-  }, [id]);
+    }, [id]);
 
-  if (loading) return <p className="p-6">Loading voucher items...</p>;
+    if (loading) return <p className="p-6">Loading voucher items...</p>;
+    if (loading) return <p className="p-6">Loading voucher items...</p>;
 
-  return (
-    <div className="p-6 space-y-4">
+    if (items.length === 0) {
+        return (
+            <div className="p-6">
+                <div className="p-6 text-center text-gray-500">
+                    Hãy gửi duyệt để phát hành voucher nào!
+                </div>
+            </div>
+        );
+    }
 
-      <h1 className="text-2xl font-semibold">
-        Voucher Items
-      </h1>
+    return (
+        <div className="p-6 space-y-4">
 
-      <div className="border rounded overflow-hidden">
+            <h1 className="text-2xl font-semibold">
+                Voucher Items
+            </h1>
 
-        <table className="w-full text-sm">
+            <div className="border rounded overflow-hidden">
 
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-3 text-left">ID</th>
-              <th className="p-3 text-left">Code</th>
-              <th className="p-3 text-left">Status</th>
-              <th className="p-3 text-left">Assigned</th>
-              <th className="p-3 text-left">Expired At</th>
-              <th className="p-3 text-left">Created</th>
-            </tr>
-          </thead>
+                <table className="w-full text-sm">
 
-          <tbody>
+                    <thead className="bg-gray-100">
+                        <tr>
+                            <th className="p-3 text-left">ID</th>
+                            <th className="p-3 text-left">Code</th>
+                            <th className="p-3 text-left">Status</th>
+                            <th className="p-3 text-left">Assigned</th>
+                            <th className="p-3 text-left">Expired At</th>
+                            <th className="p-3 text-left">Created</th>
+                        </tr>
+                    </thead>
 
-            {items.map((item) => (
+                    <tbody>
 
-              <tr key={item.id} className="border-t">
+                        {items.map((item) => (
 
-                <td className="p-3">{item.id}</td>
+                            <tr key={item.id} className="border-t">
 
-                <td className="p-3 font-mono">
-                  {item.itemCode}
-                </td>
+                                <td className="p-3">{item.id}</td>
 
-                <td className="p-3">
-                  {item.status}
-                </td>
+                                <td className="p-3 font-mono">
+                                    {item.itemCode}
+                                </td>
 
-                <td className="p-3">
-                  {item.isAssigned ? "Yes" : "No"}
-                </td>
+                                <td className="p-3">
+                                    {item.status}
+                                </td>
 
-                <td className="p-3">
-                  {item.expiredAt
-                    ? new Date(item.expiredAt).toLocaleDateString()
-                    : "-"}
-                </td>
+                                <td className="p-3">
+                                    {item.isAssigned ? "Yes" : "No"}
+                                </td>
 
-                <td className="p-3">
-                  {new Date(item.createdAt).toLocaleDateString()}
-                </td>
+                                <td className="p-3">
+                                    {item.expiredAt
+                                        ? new Date(item.expiredAt).toLocaleDateString()
+                                        : "-"}
+                                </td>
 
-              </tr>
+                                <td className="p-3">
+                                    {new Date(item.createdAt).toLocaleDateString()}
+                                </td>
 
-            ))}
+                            </tr>
 
-          </tbody>
+                        ))}
 
-        </table>
+                    </tbody>
 
-      </div>
+                </table>
 
-    </div>
-  );
+            </div>
+
+        </div>
+    );
 }

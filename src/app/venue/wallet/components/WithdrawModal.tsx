@@ -35,58 +35,101 @@ export default function WithdrawModal({ onClose, onSuccess }: Props) {
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Withdraw failed");
+      alert("Yêu cầu rút tiền thất bại");
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg w-[400px] space-y-4">
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+      <div className="bg-white w-[420px] rounded-xl shadow-lg">
 
-        <h2 className="text-lg font-semibold">Withdraw</h2>
+        {/* Header */}
+        <div className="px-6 py-4 border-b">
+          <h2 className="text-lg font-semibold">Rút tiền</h2>
+          <p className="text-sm text-gray-500">
+            Chuyển tiền từ ví của bạn về tài khoản ngân hàng
+          </p>
+        </div>
 
-        <input
-          placeholder="Amount"
-          type="number"
-          className="w-full border px-3 py-2 rounded"
-          value={form.amount}
-          onChange={(e) => handleChange("amount", e.target.value)}
-        />
+        <div className="p-6 space-y-5">
 
-        <input
-          placeholder="Bank Name"
-          className="w-full border px-3 py-2 rounded"
-          value={form.bankName}
-          onChange={(e) => handleChange("bankName", e.target.value)}
-        />
+          {/* Amount */}
+          <div>
+            <label className="text-sm font-medium block mb-1">
+              Số tiền rút
+            </label>
+            <input
+              type="number"
+              placeholder="Nhập số tiền"
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={form.amount}
+              onChange={(e) => handleChange("amount", e.target.value)}
+            />
+          </div>
 
-        <input
-          placeholder="Account Number"
-          className="w-full border px-3 py-2 rounded"
-          value={form.accountNumber}
-          onChange={(e) => handleChange("accountNumber", e.target.value)}
-        />
+          {/* Bank section */}
+          <div className="space-y-3">
+            <p className="text-sm font-semibold text-gray-700">
+              Thông tin ngân hàng
+            </p>
 
-        <input
-          placeholder="Account Name"
-          className="w-full border px-3 py-2 rounded"
-          value={form.accountName}
-          onChange={(e) => handleChange("accountName", e.target.value)}
-        />
+            <div>
+              <label className="text-sm block mb-1">
+                Tên ngân hàng
+              </label>
+              <input
+                placeholder="VD: Vietcombank, ACB, Techcombank..."
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={form.bankName}
+                onChange={(e) => handleChange("bankName", e.target.value)}
+              />
+            </div>
 
-        <div className="flex justify-end gap-2">
+            <div>
+              <label className="text-sm block mb-1">
+                Số tài khoản
+              </label>
+              <input
+                placeholder="Nhập số tài khoản"
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={form.accountNumber}
+                onChange={(e) =>
+                  handleChange("accountNumber", e.target.value)
+                }
+              />
+            </div>
+
+            <div>
+              <label className="text-sm block mb-1">
+                Tên chủ tài khoản
+              </label>
+              <input
+                placeholder="Nhập tên chủ tài khoản"
+                className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                value={form.accountName}
+                onChange={(e) =>
+                  handleChange("accountName", e.target.value)
+                }
+              />
+            </div>
+          </div>
+
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-2 px-6 py-4 border-t bg-gray-50">
           <button
             onClick={onClose}
-            className="border px-3 py-2 rounded"
+            className="px-4 py-2 border rounded-lg hover:bg-gray-100"
           >
-            Cancel
+            Hủy
           </button>
 
           <button
             onClick={handleSubmit}
-            className="bg-blue-600 text-white px-3 py-2 rounded"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Submit
+            Gửi yêu cầu rút tiền
           </button>
         </div>
 

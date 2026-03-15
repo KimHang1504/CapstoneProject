@@ -25,7 +25,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     quantity: 1,
 
     usageLimitPerMember: 1,
-    usageValidDays: 7,
+    usageValiDays: 7,
 
     venueLocationIds: [],
 
@@ -100,231 +100,280 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   };
 
   return (
-    <div className="bg-white border rounded-lg p-6 space-y-6 shadow-sm">
 
-      {/* Title */}
-      <div>
-        <label className="block text-sm font-medium mb-1">
-          Voucher Title
-        </label>
+    <div className="mx-20">
 
-        <input
-          className="w-full border rounded px-3 py-2"
-          value={form.title}
-          onChange={(e) =>
-            handleChange("title", e.target.value)
-          }
-        />
-      </div>
+      <div className="bg-white space-y-7">
 
-      {/* Description */}
-      <div>
-        <label className="block text-sm font-medium mb-1">
-          Description
-        </label>
-
-        <textarea
-          className="w-full border rounded px-3 py-2"
-          value={form.description}
-          onChange={(e) =>
-            handleChange("description", e.target.value)
-          }
-        />
-      </div>
-
-      {/* Discount type */}
-      <div>
-        <label className="block text-sm font-medium mb-1">
-          Discount Type
-        </label>
-
-        <select
-          className="w-full border rounded px-3 py-2"
-          value={form.discountType}
-          onChange={(e) =>
-            handleChange(
-              "discountType",
-              e.target.value as DiscountType
-            )
-          }
-        >
-          <option value="FIXED_AMOUNT">
-            Fixed Amount
-          </option>
-
-          <option value="PERCENTAGE">
-            Percentage
-          </option>
-        </select>
-      </div>
-
-      {/* Discount amount */}
-      {form.discountType === "FIXED_AMOUNT" && (
+        {/* BASIC INFO */}
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Discount Amount (VND)
+          <label className="block text-sm font-medium mb-2">
+            Tên voucher *
           </label>
 
           <input
-            type="number"
-            className="w-full border rounded px-3 py-2"
-            value={form.discountAmount ?? ""}
+            className="w-full border border-violet-200 rounded-xl px-4 py-3
+            focus:outline-none focus:ring-2 focus:ring-violet-500"
+            placeholder="Nhập tên voucher"
+            value={form.title}
             onChange={(e) =>
-              handleChange(
-                "discountAmount",
-                Number(e.target.value)
-              )
+              handleChange("title", e.target.value)
             }
           />
         </div>
-      )}
 
-      {/* Discount percent */}
-      {form.discountType === "PERCENTAGE" && (
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Discount Percent (%)
+          <label className="block text-sm font-medium mb-2">
+            Mô tả
           </label>
 
-          <input
-            type="number"
-            className="w-full border rounded px-3 py-2"
-            value={form.discountPercent ?? ""}
+          <textarea
+            rows={3}
+            className="w-full border border-violet-200 rounded-xl px-4 py-3
+            focus:outline-none focus:ring-2 focus:ring-violet-500"
+            placeholder="Mô tả ngắn về voucher"
+            value={form.description}
             onChange={(e) =>
-              handleChange(
-                "discountPercent",
-                Number(e.target.value)
-              )
+              handleChange("description", e.target.value)
             }
           />
         </div>
-      )}
 
-{/* Grid fields */}
-<div className="grid grid-cols-2 gap-4">
-  <div>
-    <label className="block text-sm font-medium mb-1">
-      Point Price
-    </label>
-    <input
-      type="number"
-      className="w-full border rounded px-3 py-2"
-      value={form.pointPrice ?? ""}
-      onChange={(e) =>
-        handleChange("pointPrice", Number(e.target.value))
-      }
-    />
-  </div>
 
-  <div>
-    <label className="block text-sm font-medium mb-1">
-      Quantity
-    </label>
-    <input
-      type="number"
-      className="w-full border rounded px-3 py-2"
-      value={form.quantity ?? ""}
-      onChange={(e) =>
-        handleChange("quantity", Number(e.target.value) || 0)
-      }
-    />
-  </div>
+        {/* DISCOUNT TYPE */}
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Loại giảm giá *
+          </label>
 
-  <div>
-    <label className="block text-sm font-medium mb-1">
-      Usage Limit Per Member
-    </label>
-    <input
-      type="number"
-      className="w-full border rounded px-3 py-2"
-      value={form.usageLimitPerMember ?? ""}
-      onChange={(e) =>
-        handleChange(
-          "usageLimitPerMember",
-          Number(e.target.value)
-        )
-      }
-    />
-  </div>
+          <select
+            className="w-full border border-violet-200 rounded-xl px-4 py-3
+            focus:outline-none focus:ring-2 focus:ring-violet-500"
+            value={form.discountType}
+            onChange={(e) =>
+              handleChange(
+                "discountType",
+                e.target.value as DiscountType
+              )
+            }
+          >
+            <option value="FIXED_AMOUNT">
+              Giảm tiền
+            </option>
 
-  <div>
-    <label className="block text-sm font-medium mb-1">
-      Usage Valid Days
-    </label>
-    <input
-      type="number"
-      className="w-full border rounded px-3 py-2"
-      value={form.usageValidDays || ""}
-      onChange={(e) =>
-        handleChange(
-          "usageValidDays",
-          Number(e.target.value)
-        )
-      }
-    />
-  </div>
-</div>
+            <option value="PERCENTAGE">
+              Giảm phần trăm
+            </option>
 
-{/* Date */}
-<div className="grid grid-cols-2 gap-4">
-  <div>
-    <label className="block text-sm font-medium mb-1">
-      Start Date
-    </label>
-    <input
-      type="date"
-      className="w-full border rounded px-3 py-2"
-      value={form.startDate}
-      onChange={(e) =>
-        handleChange("startDate", e.target.value)
-      }
-    />
-  </div>
+          </select>
+        </div>
 
-  <div>
-    <label className="block text-sm font-medium mb-1">
-      End Date
-    </label>
-    <input
-      type="date"
-      className="w-full border rounded px-3 py-2"
-      value={form.endDate}
-      onChange={(e) =>
-        handleChange("endDate", e.target.value)
-      }
-    />
-  </div>
-</div>
 
-      {/* Locations */}
-      <div>
+        {/* DISCOUNT VALUE */}
+        {form.discountType === "FIXED_AMOUNT" && (
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Số tiền giảm (VND)
+            </label>
 
-        <button
-          type="button"
-          onClick={() => setOpenLocationModal(true)}
-          className="border px-3 py-2 rounded"
-        >
-          Choose locations
-        </button>
+            <input
+              type="number"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-violet-500"
+              value={form.discountAmount ?? ""}
+              onChange={(e) =>
+                handleChange(
+                  "discountAmount",
+                  Number(e.target.value)
+                )
+              }
+            />
+          </div>
+        )}
 
-        <p className="text-sm text-gray-500 mt-1">
-          {selectedLocationIds.length} locations selected
-        </p>
+        {form.discountType === "PERCENTAGE" && (
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Phần trăm giảm (%)
+            </label>
+
+            <input
+              type="number"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3
+              focus:outline-none focus:ring-2 focus:ring-violet-500"
+              value={form.discountPercent ?? ""}
+              onChange={(e) =>
+                handleChange(
+                  "discountPercent",
+                  Number(e.target.value)
+                )
+              }
+            />
+          </div>
+        )}
+
+
+        {/* PRICE + QUANTITY */}
+        <div className="grid grid-cols-2 gap-5">
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Giá đổi (Point)
+            </label>
+
+            <input
+              type="number"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3"
+              value={form.pointPrice ?? ""}
+              onChange={(e) =>
+                handleChange(
+                  "pointPrice",
+                  Number(e.target.value)
+                )
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Số lượng
+            </label>
+
+            <input
+              type="number"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3"
+              value={form.quantity ?? ""}
+              onChange={(e) =>
+                handleChange(
+                  "quantity",
+                  Number(e.target.value) || 0
+                )
+              }
+            />
+          </div>
+
+        </div>
+
+
+        {/* LIMIT */}
+        <div className="grid grid-cols-2 gap-5">
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Giới hạn mỗi người
+            </label>
+
+            <input
+              type="number"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3"
+              value={form.usageLimitPerMember ?? ""}
+              onChange={(e) =>
+                handleChange(
+                  "usageLimitPerMember",
+                  Number(e.target.value)
+                )
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Hạn sử dụng (ngày)
+            </label>
+
+            <input
+              type="number"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3"
+              value={form.usageValiDays || ""}
+              onChange={(e) =>
+                handleChange(
+                  "usageValiDays",
+                  Number(e.target.value)
+                )
+              }
+            />
+          </div>
+
+        </div>
+
+
+        {/* DATE */}
+        <div className="grid grid-cols-2 gap-5">
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Ngày bắt đầu
+            </label>
+
+            <input
+              type="date"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3"
+              value={form.startDate}
+              onChange={(e) =>
+                handleChange("startDate", e.target.value)
+              }
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-2">
+              Ngày kết thúc
+            </label>
+
+            <input
+              type="date"
+              className="w-full border border-violet-200 rounded-xl px-4 py-3"
+              value={form.endDate}
+              onChange={(e) =>
+                handleChange("endDate", e.target.value)
+              }
+            />
+          </div>
+
+        </div>
+
+
+        {/* LOCATION */}
+        <div>
+
+          <label className="block text-sm font-medium mb-2">
+            Địa điểm áp dụng
+          </label>
+
+          <button
+            type="button"
+            onClick={() => setOpenLocationModal(true)}
+            className="border border-violet-200 px-4 py-2 rounded-lg hover:bg-gray-50"
+          >
+            Chọn địa điểm
+          </button>
+
+          <p className="text-sm text-gray-500 mt-2">
+            {selectedLocationIds.length} địa điểm đã chọn
+          </p>
+
+        </div>
+
+
+        {/* SUBMIT */}
+        <div className="flex justify-end pt-6">
+
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="bg-violet-600 hover:bg-violet-700
+            text-white px-8 py-3 rounded-xl"
+          >
+            {loading
+              ? "Đang lưu..."
+              : isEdit
+              ? "Cập nhật"
+              : "Tiếp tục"}
+          </button>
+
+        </div>
 
       </div>
-
-      {/* Submit */}
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="bg-blue-600 text-white px-5 py-2 rounded"
-      >
-        {loading
-          ? "Saving..."
-          : isEdit
-            ? "Update Voucher"
-            : "Create Voucher"}
-      </button>
 
       {openLocationModal && (
         <SelectLocationModal
@@ -335,5 +384,6 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       )}
 
     </div>
+
   );
 }

@@ -21,11 +21,12 @@ export type WithdrawRequest = {
     rejectionReason?: string | null;
     proofImageUrl?: string | null;
     requestedAt: string;
-    bankInfo?: {
-        bankName: string;
-        accountNumber: string;
-        accountName: string;
-    };
+    bankInfo?: BankInfo;
+};
+
+export type WithdrawWalletRequest = {
+    amount: number;
+    bankInfo: BankInfo;
 };
 
 export type WithdrawResponse = {

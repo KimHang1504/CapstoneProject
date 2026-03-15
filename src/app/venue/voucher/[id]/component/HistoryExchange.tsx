@@ -35,6 +35,15 @@ export default function HistoryExchange({ voucherId }: Props) {
   };
 
   if (loading) return <p>Loading exchange history...</p>;
+      if (items.length === 0) {
+        return (
+            <div className="p-6">
+                <div className="p-6 text-center text-gray-500">
+                    Chưa có ai đổi hết á!
+                </div>
+            </div>
+        );
+    }
 
   return (
     <div className="mt-8">
@@ -59,13 +68,7 @@ export default function HistoryExchange({ voucherId }: Props) {
 
         <tbody>
 
-          {items.length === 0 && (
-            <tr>
-              <td colSpan={7} className="text-center p-4">
-                No exchange history
-              </td>
-            </tr>
-          )}
+
 
           {items.map((item) => (
             <tr key={item.voucherItemId}>

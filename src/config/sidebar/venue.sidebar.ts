@@ -1,16 +1,16 @@
-/**
- * Sidebar config cho Venue
- * Ai code ở role Venue có thể tự thêm tab vào đây
- */
 'use client';
 import { SidebarConfig } from '@/types/sidebar';
 import {
   LayoutDashboard,
-  User,
+  MapPin,
+  Megaphone,
+  Wallet,
+  BarChart3,
+  TicketPercent,
 } from 'lucide-react';
 
 export const venueSidebarConfig: SidebarConfig = {
-    tabs: [
+  tabs: [
     {
       label: 'Dashboard',
       href: '/venue',
@@ -19,29 +19,28 @@ export const venueSidebarConfig: SidebarConfig = {
     {
       label: 'Địa điểm',
       href: '/venue/location/mylocation',
-      icon: LayoutDashboard,
+      icon: MapPin,
     },
-        {
+    {
       label: 'Quảng cáo',
       href: '/venue/advertisement',
-      icon: LayoutDashboard,
+      icon: Megaphone,
     },
-      {
+    {
       label: 'Wallet',
       href: '/venue/wallet',
-      icon: LayoutDashboard,
+      icon: Wallet,
     },
-        {
+    {
       label: 'Insight',
       href: '/venue/insight',
-      icon: User,
+      icon: BarChart3,
     },
-
   ],
   sections: [
     {
       title: 'Voucher',
-      icon: LayoutDashboard,
+      icon: TicketPercent,
       items: [
         {
           label: 'Voucher của tôi',
@@ -49,7 +48,7 @@ export const venueSidebarConfig: SidebarConfig = {
         },
         {
           label: 'Đổi mã giảm giá',
-          href: '/venue/voucher/redeem',
+          href: '/venue/redeem',
         },
       ],
     },

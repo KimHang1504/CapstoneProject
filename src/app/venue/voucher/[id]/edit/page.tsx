@@ -46,7 +46,7 @@ export default function EditVoucherPage() {
           quantity: data.quantity,
 
           usageLimitPerMember: data.usageLimitPerMember,
-          usageValidDays: data.usageValidDays ?? 7,
+          usageValiDays: data.usageValiDays ?? 7,
 
           venueLocationIds: data.locations.map(
             (l) => l.venueLocationId
@@ -97,7 +97,7 @@ export default function EditVoucherPage() {
   if (!voucher) return <p>Voucher not found</p>;
 
   return (
-    <div className="p-6 max-w-3xl">
+    <div className="p-6">
 
       <h1 className="text-2xl font-semibold mb-6">
         Edit Voucher

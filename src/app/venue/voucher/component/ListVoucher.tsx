@@ -25,7 +25,7 @@ export default function ListVoucher({ vouchers, loading }: Props) {
 
         <div
           key={v.id}
-          className="border rounded-xl overflow-hidden shadow-sm bg-white"
+          className="border border-gray-200 rounded-xl overflow-hidden shadow-sm bg-white"
         >
 
 

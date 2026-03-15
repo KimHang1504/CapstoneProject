@@ -9,13 +9,14 @@ import {
 } from "@/api/venue/vouchers/api";
 import { VoucherDetail } from "@/api/venue/vouchers/type";
 
+import { Send, Pencil, RotateCcw, Play, Square } from "lucide-react";
+
 type Props = {
   voucher: VoucherDetail;
   onChanged: () => Promise<void>;
 };
 
 export default function VoucherActions({ voucher, onChanged }: Props) {
-
 
   const handleSubmit = async () => {
     await submitVoucher(voucher.id);
@@ -38,22 +39,29 @@ export default function VoucherActions({ voucher, onChanged }: Props) {
   };
 
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-3">
 
       {voucher.status === "DRAFTED" && (
         <>
           <Link
             href={`/venue/voucher/${voucher.id}/edit`}
-            className="px-3 py-1 bg-gray-200 rounded"
+            className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+            bg-gray-100 text-gray-700 border border-gray-200
+            hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
           >
-            Edit
+            <Pencil size={18} />
+            Chỉnh sửa
           </Link>
 
           <button
             onClick={handleSubmit}
-            className="px-3 py-1 bg-blue-600 text-white rounded"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm
+            bg-gradient-to-r from-violet-500 to-purple-500 text-white
+            hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
+            transition-all duration-200"
           >
-            Submit
+            <Send size={18} />
+            Gửi duyệt
           </button>
         </>
       )}
@@ -61,38 +69,54 @@ export default function VoucherActions({ voucher, onChanged }: Props) {
       {voucher.status === "PENDING" && (
         <button
           onClick={handleRevoke}
-          className="px-3 py-1 bg-yellow-500 text-white rounded"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm
+          bg-amber-500 text-white
+          hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
+          transition-all duration-200"
         >
-          Revoke
+          <RotateCcw size={18} />
+          Thu hồi
         </button>
       )}
 
       {voucher.status === "REJECTED" && (
         <Link
           href={`/venue/voucher/${voucher.id}/edit`}
-          className="px-3 py-1 bg-gray-200 rounded"
+          className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+          bg-gray-100 text-gray-700 border border-gray-200
+          hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
         >
-          Edit
+          <Pencil size={18} />
+          Chỉnh sửa
         </Link>
       )}
 
       {voucher.status === "APPROVED" && (
         <button
           onClick={handleActivate}
-          className="px-3 py-1 bg-green-600 text-white rounded"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm
+          bg-emerald-600 text-white
+          hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
+          transition-all duration-200"
         >
-          Activate
+          <Play size={18} />
+          Kích hoạt
         </button>
       )}
 
       {voucher.status === "ACTIVE" && (
         <button
           onClick={handleEnd}
-          className="px-3 py-1 bg-red-600 text-white rounded"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm
+          bg-rose-600 text-white
+          hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
+          transition-all duration-200"
         >
-          End
+          <Square size={18} />
+          Kết thúc
         </button>
       )}
+
     </div>
   );
 }
