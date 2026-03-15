@@ -5,6 +5,7 @@ import { CreateSpecialEventRequest } from "@/api/admin/type";
 import { uploadImage } from "@/api/upload";
 import BackButton from "@/components/BackButton";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function CreateEventPage() {
   const [form, setForm] = useState({
@@ -61,13 +62,13 @@ export default function CreateEventPage() {
       console.log(payload);
       const res = await createSpecialEvent(payload);
       if (res.code === 201) {
-        alert("Tạo sự kiện thành công");
+        toast.success("Tạo sự kiện thành công");
       } else {
-        alert("Tạo sự kiện thất bại: " + res.message);
+        toast.error("Tạo sự kiện thất bại: " + res.message);
       }
     } catch (error) {
       console.error("Error creating event:", error);
-      alert("Có lỗi xảy ra khi tạo sự kiện");
+      toast.error("Có lỗi xảy ra khi tạo sự kiện");
     } finally {
       setForm({
         eventName: "",

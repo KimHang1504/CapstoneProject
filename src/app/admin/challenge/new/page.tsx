@@ -14,9 +14,11 @@ import Image from "next/image";
 import { ChallengeRequest, Location } from "@/api/admin/type";
 import { createChallenge } from "@/api/admin/api";
 import BackButton from "@/components/BackButton";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function CreateChallengePage() {
-
+    const router = useRouter();
     const [form, setForm] = useState({
         title: "",
         description: "",
@@ -109,6 +111,24 @@ export default function CreateChallengePage() {
 
         console.log(payload);
         await createChallenge(payload);
+        toast.success("Tạo challenge thành công");
+        setForm({
+            title: "",
+            description: "",
+            triggerEvent: "",
+            goalMetric: "",
+            targetGoal: "",
+            rewardPoints: "",
+            startDate: "",
+            endDate: ""
+        });
+        setRuleData({
+            has_image: false,
+            venue_id: [],
+            hash_tags: []
+        });
+        setSelectedLocations([]);
+        router.push("/admin/challenge");
     };
 
     const showRuleData = form.triggerEvent !== "CHECKIN";

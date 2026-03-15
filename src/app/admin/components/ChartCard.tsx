@@ -115,7 +115,7 @@ export default function ChartCard({
   };
 
   return (
-    <div className="bg-white rounded-2xl border shadow-sm p-6 h-[340px] flex flex-col">
+    <div className="bg-white rounded-2xl border shadow-sm p-6 h-85 flex flex-col">
       <h3 className="font-semibold text-gray-700 mb-4">
         {title}
       </h3>
