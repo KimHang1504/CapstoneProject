@@ -95,18 +95,18 @@ export interface AdvertisementPackage {
 }
 
 export type AdvertisementPackageGroup = Record<
-  PlacementType,
-  AdvertisementPackage[]
+    PlacementType,
+    AdvertisementPackage[]
 >;
 
 export interface AdvertisementPackagesResponse {
-  data: AdvertisementPackageGroup;
+    data: AdvertisementPackageGroup;
 }
 
 // Type gửi lên khi submit payment
 export interface SubmitAdvertisementPaymentRequest {
     packageId: number;
-    venueId: number;
+    venueIds: number[];
 }
 
 export interface SubmitAdvertisementPaymentResponse {
@@ -127,3 +127,11 @@ export interface SubmitAdvertisementPaymentResponse {
     };
 }
 
+export interface UpdateAdvertisementRequest {
+    title: string;
+    content: string;
+    bannerUrl: string;
+    targetUrl: string;
+    placementType: PlacementType;
+    desiredStartDate: string;
+}

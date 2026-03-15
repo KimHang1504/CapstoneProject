@@ -27,8 +27,8 @@ export const venueSidebarConfig: SidebarConfig = {
       icon: LayoutDashboard,
     },
       {
-      label: 'Voucher',
-      href: '/venue/voucher',
+      label: 'Wallet',
+      href: '/venue/wallet',
       icon: LayoutDashboard,
     },
         {

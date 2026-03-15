@@ -24,8 +24,8 @@ export default function PackagesClient() {
     const [selectedPlacementPackages, setSelectedPlacementPackages] =
         useState<AdvertisementPackage[]>([]);
 
+    const [selectedVenues, setSelectedVenues] = useState<number[]>([]);
     const [openVenueModal, setOpenVenueModal] = useState(false);
-
     // fetch packages
     useEffect(() => {
         const fetchPackages = async () => {
@@ -59,15 +59,14 @@ export default function PackagesClient() {
     // const groupedPackages = groupPackagesByPlacement(packages);
 
     // confirm venue -> create transaction
-    const handleConfirmVenue = async (venueId: number) => {
+    const handleConfirmVenue = async (venueIds: number[]) => {
         if (!adId || !selectedPackageId) return;
 
         try {
             const res = await submitAdvertisementPayment(Number(adId), {
                 packageId: selectedPackageId,
-                venueId,
+                venueIds: venueIds,
             });
-            console.log("Payment submission response:", res); // log full response
 
             const transactionId = res.data.transactionId;
 
@@ -77,8 +76,6 @@ export default function PackagesClient() {
         } catch (error) {
             console.error(error);
             alert("Có lỗi xảy ra khi submit payment");
-        } finally {
-            setOpenVenueModal(false);
         }
     };
 
@@ -233,11 +230,17 @@ export default function PackagesClient() {
             )}
 
             {/* VENUE MODAL */}
-            <SelectVenueModal
-                open={openVenueModal}
-                onClose={() => setOpenVenueModal(false)}
-                onConfirm={handleConfirmVenue}
-            />
+            {openVenueModal && (
+                <SelectVenueModal
+                    selectedIds={selectedVenues}
+                    onConfirm={(ids) => {
+                        setSelectedVenues(ids);
+                        handleConfirmVenue(ids);
+                    }}
+                    onClose={() => setOpenVenueModal(false)}
+                />
+            )}
+
 
         </div>
     );

@@ -6,6 +6,7 @@ import {
   SubmitAdvertisementPaymentResponse,
   SubmitAdvertisementPaymentRequest,
   AdvertisementPackagesResponse,
+  UpdateAdvertisementRequest,
 } from "./type";
 
 //create
@@ -57,3 +58,12 @@ export const submitAdvertisementPayment = async (
   );
 };
 
+export const updateAdvertisementDraft = async (
+  id: number,
+  data: UpdateAdvertisementRequest
+): Promise<ApiResponse<Advertisement>> => {
+  return apiClient.put<ApiResponse<Advertisement>>(
+    `/api/Advertisement/${id}/update-and-draft`,
+    data
+  );
+};
