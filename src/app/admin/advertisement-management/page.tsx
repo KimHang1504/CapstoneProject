@@ -4,6 +4,7 @@ import { acceptPendingAdvertisements, getPendingAdvertisements, rejectPendingAdv
 import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest } from "@/api/admin/type";
 import Image from "next/image";
 import { use, useEffect, useState } from "react";
+import ImagePreview from "../venue-management/location/[id]/components/ImagePreview";
 
 export default function AdvertisementList() {
   const [data, setData] = useState<Advertisement[]>([]);
@@ -124,25 +125,8 @@ export default function AdvertisementList() {
               className="bg-white rounded-xl shadow border overflow-hidden"
             >
               {/* Banner */}
-              <div className="relative w-full h-48">
-                <Image
-                  src={ad.bannerUrl}
-                  alt={ad.title}
-                  fill
-                  className="object-cover cursor-pointer"
-                  onClick={() => setPreviewImage(ad.bannerUrl)}
-                />
-                {previewImage && (
-                  <div
-                    className="fixed inset-0 bg-black/70 flex items-center justify-center z-50"
-                    onClick={() => setPreviewImage(null)}
-                  >
-                    <img
-                      src={previewImage}
-                      className="max-h-[90%] max-w-[90%] rounded-lg"
-                    />
-                  </div>
-                )}
+              <div className="relative h-50 w-full rounded-xl overflow-hidden">
+                <ImagePreview src={ad.bannerUrl} alt={ad.title} />
               </div>
 
               {/* Content */}

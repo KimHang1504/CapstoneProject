@@ -2,6 +2,7 @@
 
 import { getAllVouchers } from "@/api/admin/api";
 import { Voucher } from "@/api/admin/type";
+import BackButton from "@/components/BackButton";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -37,6 +38,7 @@ export default function VoucherPage() {
 
   return (
     <div className="px-8 py-4 min-h-screen space-y-6">
+      <BackButton />
       <div className="flex gap-5 items-center ">
         <h2 className="text-xl font-bold text-gray-900 mb-2">Quản lí voucher</h2>
         <Link href="/admin/voucher-management/all"

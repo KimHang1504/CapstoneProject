@@ -1,3 +1,39 @@
+//Dashboard
+export interface ChartItem {
+  label: string;
+  value: number;
+}
+
+export interface DashboardStats {
+  totalUsers: number;
+  totalVenueOwnerProfiles: number;
+  totalVenueLocations: number;
+  totalMemberProfiles: number;
+  activeCouples: number;
+  totalTransactions: number;
+  totalRevenue: number;
+  totalReports: number;
+  totalPosts: number;
+  totalAdsOrders: number;
+  activeAdsOrders: number;
+  totalMemberSubscriptions: number;
+  activeMemberSubscriptions: number;
+  totalVenueSubscriptions: number;
+  activeVenueSubscriptions: number;
+
+  userGrowthChart: ChartItem[];
+  revenueChart: ChartItem[];
+  transactionChart: ChartItem[];
+  venueGrowthChart: ChartItem[];
+  postActivityChart: ChartItem[];
+}
+
+export interface DashboardRequest {
+  Year: number;
+  Month?: number;
+}
+
+//Venue management
 export interface Venue {
   id: number;
 
@@ -71,6 +107,15 @@ export interface VenuePagination {
   hasNextPage: boolean;
 }
 
+export interface VenueDetail {
+  id: number;
+  name: string;
+  websiteUrl: string | null;
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | string;
+  businessLicenseUrl: string;
+  venueOwner: VenueOwner;
+}
+
 // LocationDetail 
 
 export interface LocationDetail {
@@ -135,12 +180,11 @@ export interface CouplePersonalityType {
 export interface VenueOwner {
   id: number;
   businessName: string;
-  phoneNumber: string | null;
-  email: string | null;
-  address: string | null;
-
-  citizenIdFrontUrl: string | null;
-  citizenIdBackUrl: string | null;
+  phoneNumber: string;
+  email: string;
+  address: string;
+  citizenIdFrontUrl: string;
+  citizenIdBackUrl: string;
   businessLicenseUrl: string | null;
 }
 
@@ -362,13 +406,13 @@ export interface Voucher {
 
   rejectReason: string | null;
 
-  startDate: string; 
-  endDate: string; 
+  startDate: string;
+  endDate: string;
 
   status: VoucherStatus;
 
-  createdAt: string; 
-  updatedAt: string; 
+  createdAt: string;
+  updatedAt: string;
 
   locations: VoucherLocation[];
 }

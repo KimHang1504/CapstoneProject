@@ -13,6 +13,7 @@ import LocationSelectModal from "./components/LocationSelectModal";
 import Image from "next/image";
 import { ChallengeRequest, Location } from "@/api/admin/type";
 import { createChallenge } from "@/api/admin/api";
+import BackButton from "@/components/BackButton";
 
 export default function CreateChallengePage() {
 
@@ -91,7 +92,7 @@ export default function CreateChallengePage() {
         if (showHashTag) {
             rulePayload.hash_tags = ruleData.hash_tags
                 .filter(tag => tag.trim() !== "")
-                .map(tag => "#" + tag.replace("#",""));
+                .map(tag => "#" + tag.replace("#", ""));
         }
 
         const payload: ChallengeRequest = {
@@ -126,7 +127,7 @@ export default function CreateChallengePage() {
     return (
 
         <div className="max-w-4xl mx-auto p-6 space-y-6">
-
+            <BackButton />
             <h1 className="text-3xl font-bold">
                 Tạo Challenge
             </h1>

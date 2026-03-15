@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ChallengeConfigResponse } from "@/api/admin/type";
 import { getChallengeConfig } from "@/api/admin/api";
+import BackButton from "@/components/BackButton";
 
 export default function ChallengeGuidePage() {
 
@@ -21,7 +22,7 @@ export default function ChallengeGuidePage() {
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-10">
-
+      <BackButton />
       <h1 className="text-3xl font-bold">
         Hướng dẫn tạo Challenge
       </h1>
