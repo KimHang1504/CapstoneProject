@@ -1,3 +1,39 @@
+//Dashboard
+export interface ChartItem {
+  label: string;
+  value: number;
+}
+
+export interface DashboardStats {
+  totalUsers: number;
+  totalVenueOwnerProfiles: number;
+  totalVenueLocations: number;
+  totalMemberProfiles: number;
+  activeCouples: number;
+  totalTransactions: number;
+  totalRevenue: number;
+  totalReports: number;
+  totalPosts: number;
+  totalAdsOrders: number;
+  activeAdsOrders: number;
+  totalMemberSubscriptions: number;
+  activeMemberSubscriptions: number;
+  totalVenueSubscriptions: number;
+  activeVenueSubscriptions: number;
+
+  userGrowthChart: ChartItem[];
+  revenueChart: ChartItem[];
+  transactionChart: ChartItem[];
+  venueGrowthChart: ChartItem[];
+  postActivityChart: ChartItem[];
+}
+
+export interface DashboardRequest {
+  Year: number;
+  Month?: number;
+}
+
+//Venue management
 export interface Venue {
   id: number;
 
@@ -71,6 +107,15 @@ export interface VenuePagination {
   hasNextPage: boolean;
 }
 
+export interface VenueDetail {
+  id: number;
+  name: string;
+  websiteUrl: string | null;
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | string;
+  businessLicenseUrl: string;
+  venueOwner: VenueOwner;
+}
+
 // LocationDetail 
 
 export interface LocationDetail {
@@ -135,12 +180,11 @@ export interface CouplePersonalityType {
 export interface VenueOwner {
   id: number;
   businessName: string;
-  phoneNumber: string | null;
-  email: string | null;
-  address: string | null;
-
-  citizenIdFrontUrl: string | null;
-  citizenIdBackUrl: string | null;
+  phoneNumber: string;
+  email: string;
+  address: string;
+  citizenIdFrontUrl: string;
+  citizenIdBackUrl: string;
   businessLicenseUrl: string | null;
 }
 
@@ -148,4 +192,243 @@ export interface OpeningHour {
   dayName: string;
   openTime: string;
   closeTime: string;
+}
+
+// Accept or reject venue application
+export interface VenueApprovalRequest {
+  venueId: number;
+  status: 'ACTIVE' | 'DRAFTED';
+  reason: string | null;
+}
+
+//Special event management
+export type SpecialEvent = {
+  id: number;
+  eventName: string;
+  description: string;
+  bannerUrl: string;
+  startDate: string;
+  endDate: string;
+};
+
+export interface SpecialEventPagination {
+  items: SpecialEvent[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface CreateSpecialEventRequest {
+  eventName: string,
+  description: string,
+  bannerUrl: string,
+  startDate: string,
+  endDate: string,
+  isYearly: boolean
+};
+
+
+//Challenge management
+export type Challenge = {
+  id: number,
+  title: string,
+  description: string,
+  triggerEvent: "POST" | "REVIEW" | "CHECKIN",
+  goalMetric: "COUNT" | "UNIQUE_LIST" | "STREAK",
+  targetGoal: number,
+  rewardPoints: number,
+  startDate: string,
+  endDate: string,
+  status: string,
+  createdAt: string,
+  ruleData: {
+    hash_tags: string[] | null,
+    has_image: boolean | null
+    venue_id: number[] | null
+  },
+  instructions: string[]
+};
+
+export interface ChallengePagination {
+  items: Challenge[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface ChallengeRequest {
+  title: string,
+  description: string,
+  triggerEvent: string,
+  goalMetric: string,
+  targetGoal: number,
+  rewardPoints: number,
+  startDate: string | null,
+  endDate: string | null,
+  ruleData: {
+    hash_tags: string[] | null,
+    has_image: boolean | null
+    venue_id: number[] | null
+  }
+};
+//Definitions
+export interface TaskType {
+  code: string;
+  label: string;
+}
+
+export interface Metric {
+  code: string;
+  label: string;
+}
+
+export interface RuleField {
+  key: string;
+  label: string;
+  type: "STRING" | "NUMBER" | "BOOLEAN";
+}
+
+export type ChallengeRules = {
+  [taskType: string]: RuleField[];
+};
+
+export interface ChallengeConfigResponse {
+  taskTypes: TaskType[];
+  metrics: Metric[];
+  rules: ChallengeRules;
+}
+
+//Location select for challenge
+export interface LocationRequest {
+  query: string;
+  page: number;
+  pageSize: number;
+}
+
+export interface Location {
+  id: number;
+  name: string;
+  description: string | null;
+  address: string;
+  coverImage: string[];
+  coupleMoodTypeNames: string[];
+  couplePersonalityTypeNames: string[];
+  venueOwnerName: string,
+  venueOwnerId: number,
+  isOpenNow: boolean,
+}
+
+export interface LocationPagination {
+  items: Location[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface Recommendations {
+  recommendations: LocationPagination;
+}
+
+//Advertisement
+export interface Advertisement {
+  id: number;
+  title: string;
+  bannerUrl: string;
+  placementType: string;
+  status: string;
+  desiredStartDate: string;
+  venueLocationCount: number;
+}
+
+export interface AdvertisementAcceptRequest {
+  advertisementId: number;
+}
+
+export interface AdvertisementRejectRequest {
+  advertisementId: number;
+  reason: string;
+}
+
+//Voucher
+export interface VoucherSearchRequest {
+  PageNumber: number;
+  PageSize: number;
+  Status?: string;
+  Keyword?: string;
+  VenueOwnerId?: number;
+  SortBy: 'createdAt' | 'updatedAt';
+  SortDirection: 'asc' | 'desc';
+}
+
+export interface VoucherLocation {
+  venueLocationId: number;
+  venueLocationName: string;
+}
+
+export type DiscountType = "PERCENTAGE" | "AMOUNT";
+
+export type VoucherStatus =
+  | "DRAFT"
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "ACTIVE"
+  | "ENDED";
+
+export interface Voucher {
+  id: number;
+  venueOwnerId: number;
+  venueOwnerName: string;
+  code: string;
+  title: string;
+  description: string;
+
+  pointPrice: number;
+
+  discountType: DiscountType;
+  discountAmount: number | null;
+  discountPercent: number | null;
+
+  quantity: number;
+  remainingQuantity: number;
+
+  usageLimitPerMember: number;
+  usageValiDays: number | null;
+
+  rejectReason: string | null;
+
+  startDate: string;
+  endDate: string;
+
+  status: VoucherStatus;
+
+  createdAt: string;
+  updatedAt: string;
+
+  locations: VoucherLocation[];
+}
+
+
+export interface VoucherPagination {
+  items: Voucher[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface VoucherRejectRequest {
+  voucherId: number;
+  rejectReason: string;
 }

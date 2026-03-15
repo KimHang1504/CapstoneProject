@@ -49,7 +49,7 @@ class ApiClient {
     method: string,
     options?: RequestOptions
   ): Promise<T> {
-    const url = new URL(endpoint, this.NEXT_PUBLIC_API_URL || window.location.origin);
+    const url = new URL(endpoint, this.NEXT_PUBLIC_API_URL);
 
     // Thêm query params nếu có
     if (options?.params) {
@@ -59,10 +59,14 @@ class ApiClient {
         }
       });
     }
-    const token =
-      typeof window !== "undefined"
-        ? localStorage.getItem("access_token")
-        : null;
+    let token: string | null = null;
+
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("access_token");
+    } else {
+      const { cookies } = await import("next/headers");
+      token = (await cookies()).get("accessToken")?.value ?? null;
+    }
 
     const config: RequestInit = {
       method,

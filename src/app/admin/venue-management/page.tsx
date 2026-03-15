@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { ChevronRight, Search } from 'lucide-react';
+import { ChevronRight, Search, ChevronLeft } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -17,17 +17,23 @@ export default function MyLocationPage() {
     const [data, setData] = useState<Venue[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
     useEffect(() => {
 
-        getAllPendingVenues()
+        setLoading(true);
+
+        getAllPendingVenues(page, 10)
             .then(res => {
 
                 setData(res.data.items);
+                setTotalPages(res.data.totalPages);
 
             })
             .finally(() => setLoading(false));
 
-    }, []);
+    }, [page]);
 
     const stats = useMemo(() => {
 
@@ -60,89 +66,147 @@ export default function MyLocationPage() {
 
     }, [data, statusFilter, keyword]);
 
-    if (loading) {
-        return <div className="p-8 text-gray-500">Đang tải dữ liệu...</div>;
-    }
-
     return (
-        <div className="flex gap-10 p-8 items-start">
-
-            {/* LEFT LIST */}
+        <div className="flex gap-10 px-8 py-4 items-start">
             <div className="flex-1 min-w-0 space-y-4">
+                <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí địa điểm</h2>
 
-                {locations.map(loc => (
+                {loading &&
+                    [...Array(5)].map((_, i) => (
 
-                    <div
-                        key={loc.id}
-                        className="relative flex gap-4 bg-white rounded-2xl p-4 border border-violet-100
-            hover:shadow-md hover:border-violet-200 transition"
-                    >
-
-                        {/* IMAGE */}
-                        <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-
-                            <Image
-                                src={
-                                    loc.coverImage?.[0] ??
-                                    'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg'
-                                }
-                                alt={loc.name}
-                                fill
-                                className="object-cover"
-                            />
-
-                        </div>
-
-                        {/* CONTENT */}
-                        <div className="flex-1 pr-10">
-
-                            <Link href={`/admin/venue-management/location/${loc.id}`}>
-                                <h3 className="font-semibold text-lg text-gray-900">
-                                    {loc.name}
-                                </h3>
-                            </Link>
-
-                            <p className="text-sm text-gray-500 mt-1 line-clamp-2 min-h-10">
-                                {loc.description ?? 'Không có mô tả'}
-                            </p>
-
-                            <p className="text-sm text-gray-900 font-medium italic mt-1 line-clamp-2 min-h-10">
-                                {loc.address ?? 'Chưa có địa chỉ'}
-                            </p>
-
-                        </div>
-
-                        {/* ARROW */}
-                        <Link
-                            href={`/admin/venue-management/location/${loc.id}`}
-                            className="absolute bottom-4 right-4"
+                        <div
+                            key={i}
+                            className="flex gap-4 bg-white rounded-2xl p-4 border border-gray-200 animate-pulse"
                         >
 
-                            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200">
+                            <div className="w-24 h-24 bg-gray-200 rounded-xl" />
 
-                                <ChevronRight size={18} />
+                            <div className="flex-1 space-y-2">
+
+                                <div className="h-4 w-1/3 bg-gray-200 rounded" />
+
+                                <div className="h-3 w-2/3 bg-gray-200 rounded" />
+
+                                <div className="h-3 w-1/2 bg-gray-200 rounded" />
 
                             </div>
 
-                        </Link>
+                        </div>
+
+                    ))}
+
+                {!loading &&
+                    locations.map(loc => (
+
+                        <div
+                            key={loc.id}
+                            className="relative flex gap-4 bg-white rounded-2xl p-4 border border-violet-100
+            hover:shadow-md hover:border-violet-200 transition"
+                        >
+
+                            {/* IMAGE */}
+                            <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+
+                                <Image
+                                    src={
+                                        loc.coverImage?.[0] ??
+                                        'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg'
+                                    }
+                                    alt={loc.name}
+                                    fill
+                                    className="object-cover"
+                                />
+
+                            </div>
+
+                            <div className="flex-1 pr-10">
+
+                                <Link href={`/admin/venue-management/location/${loc.id}`}>
+                                    <h3 className="font-semibold text-lg text-gray-900">
+                                        {loc.name}
+                                    </h3>
+                                </Link>
+
+                                <p className="text-sm text-gray-500 mt-1 line-clamp-2 min-h-10">
+                                    {loc.description ?? 'Không có mô tả'}
+                                </p>
+
+                                <p className="text-sm text-gray-900 font-medium italic mt-1 line-clamp-2 min-h-10">
+                                    {loc.address ?? 'Chưa có địa chỉ'}
+                                </p>
+
+                            </div>
+
+                            <Link
+                                href={`/admin/venue-management/location/${loc.id}`}
+                                className="absolute bottom-4 right-4"
+                            >
+
+                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200">
+
+                                    <ChevronRight size={18} />
+
+                                </div>
+
+                            </Link>
+
+                        </div>
+
+                    ))}
+
+                {!loading && locations.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-gray-50 text-center">
+                        <svg
+                            className="w-10 h-10 text-gray-400 mb-3"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            viewBox="0 0 24 24"
+                        >
+                            <path d="M9 12l2 2 4-4" />
+                            <path d="M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                        </svg>
+
+                        <p className="text-gray-600 font-medium">
+                            Không có yêu cầu mở địa điểm nào
+                        </p>
 
                     </div>
 
-                ))}
+                )}
 
-                {locations.length === 0 && (
-                    <div className="text-center text-gray-500 py-10">
-                        Không có yêu cầu nào 
+                {!loading && totalPages > 1 && (
+
+                    <div className="flex justify-center items-center gap-4 pt-6">
+
+                        <button
+                            disabled={page === 1}
+                            onClick={() => setPage(p => p - 1)}
+                            className="p-2 rounded-lg border disabled:opacity-40"
+                        >
+                            <ChevronLeft size={18} />
+                        </button>
+
+                        <span className="text-sm text-gray-600">
+                            Page {page} / {totalPages}
+                        </span>
+
+                        <button
+                            disabled={page === totalPages}
+                            onClick={() => setPage(p => p + 1)}
+                            className="p-2 rounded-lg border disabled:opacity-40"
+                        >
+                            <ChevronRight size={18} />
+                        </button>
+
                     </div>
+
                 )}
 
             </div>
 
-
-            {/* RIGHT PANEL */}
             <div className="w-[320px] space-y-2 sticky top-8 self-start">
 
-                {/* SEARCH */}
                 <div className="flex items-center gap-3 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 mb-4">
 
                     <Search className="text-[#8093F1] w-5 h-5" />
