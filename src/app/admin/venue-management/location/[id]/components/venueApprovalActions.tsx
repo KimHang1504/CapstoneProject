@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { acceptAndRejectVenue } from "@/api/admin/api";
 import { VenueApprovalRequest } from "@/api/admin/type";
 
-export default function VenueApprovalActions({ id }: { id: string }) {
+export default function VenueApprovalActions({ id }: { id: number }) {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);

@@ -1,6 +1,17 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CreateSpecialEventRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, VenueApprovalRequest, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
 
+//Dashboard
+export const getDashboardStats = (request: DashboardRequest) => {
+    return apiClient.get<ApiResponse<DashboardStats>>("/api/Admin/dashboard", {
+        params: {
+            Year: request.Year,
+            Month: request.Month,
+        }
+    });
+}
+
+//Venue management
 export const getAllPendingVenues = (page: number, pageSize: number) => {
     console.log(apiClient);
     return apiClient.get<ApiResponse<VenuePagination>>("/api/VenueLocation/pending", {
@@ -11,8 +22,8 @@ export const getAllPendingVenues = (page: number, pageSize: number) => {
     });
 };
 
-export const getPendingVenueDetail = (id: string) => {
-    return apiClient.get<ApiResponse<LocationDetail>>(`/api/VenueLocation/${id}`);
+export const getPendingVenueDetail = (id: number) => {
+    return apiClient.get<ApiResponse<VenueDetail>>(`/api/VenueLocation/${id}/docs`);
 };
 
 export const acceptAndRejectVenue = (body: VenueApprovalRequest) => {
@@ -78,15 +89,15 @@ export const getChallengeConfig = () => {
 }
 
 //Advertisement management
-export const getPendingAdvertisements = () =>{
+export const getPendingAdvertisements = () => {
     return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/pending");
 }
 
-export const acceptPendingAdvertisements = (body: AdvertisementAcceptRequest) =>{
+export const acceptPendingAdvertisements = (body: AdvertisementAcceptRequest) => {
     return apiClient.post<ApiResponse<void>>("/api/Advertisement/approve", body);
 }
 
-export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) =>{
+export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) => {
     return apiClient.post<ApiResponse<void>>("/api/Advertisement/reject", body);
 }
 

@@ -3,6 +3,7 @@
 import { createSpecialEvent } from "@/api/admin/api";
 import { CreateSpecialEventRequest } from "@/api/admin/type";
 import { uploadImage } from "@/api/upload";
+import BackButton from "@/components/BackButton";
 import { useState } from "react";
 
 export default function CreateEventPage() {
@@ -83,6 +84,7 @@ export default function CreateEventPage() {
 
   return (
     <div className="max-w-xl mx-auto p-6">
+      <BackButton />
       <h1 className="text-2xl font-semibold mb-6">Tạo sự kiện</h1>
 
       <form onSubmit={handleSubmit} className="space-y-4">

@@ -1,4 +1,5 @@
 import { getChallengeDetail } from "@/api/admin/api";
+import BackButton from "@/components/BackButton";
 import {
     Calendar,
     Target,
@@ -29,7 +30,7 @@ export default async function ChallengeDetailPage({ params }: Props) {
 
     return (
         <div className="max-w-5xl mx-auto p-6 space-y-6">
-
+            <BackButton />
             {/* HEADER */}
             <div className="bg-white rounded-2xl shadow p-6 space-y-5">
 

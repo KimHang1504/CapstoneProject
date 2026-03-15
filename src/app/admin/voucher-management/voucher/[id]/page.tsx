@@ -1,8 +1,9 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { Voucher } from "@/api/admin/type";
+import { Voucher, VoucherStatus } from "@/api/admin/type";
 import { getVoucherDetail } from "@/api/admin/api";
 import VoucherApprovalActions from "./components/VoucherApprovalActions";
+import BackButton from "@/components/BackButton";
 
 type Props = {
     params: Promise<{ id: number }>;
@@ -46,13 +47,7 @@ export default async function VoucherDetailPage({ params }: Props) {
 
         <div className="p-8 max-w-3xl mx-auto space-y-6">
 
-            <Link
-                href="/admin/voucher-management"
-                className="flex items-center gap-2 text-sm"
-            >
-                <ArrowLeft size={18} />
-                Quay lại
-            </Link>
+            <BackButton />
 
             <div className="bg-white rounded-2xl border border-black p-6 space-y-4">
 
@@ -153,7 +148,9 @@ export default async function VoucherDetailPage({ params }: Props) {
                 </div>
 
             </div>
-            <VoucherApprovalActions voucherId={voucher.id} />
+            {voucher.status === "PENDING" && (
+                <VoucherApprovalActions voucherId={voucher.id} />
+            )}
         </div>
 
     );

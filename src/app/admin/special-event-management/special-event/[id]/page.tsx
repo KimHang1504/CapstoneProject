@@ -1,6 +1,7 @@
 import { getSpecialEventDetail } from "@/api/admin/api";
 import Image from "next/image";
 import { Calendar, Info } from "lucide-react";
+import BackButton from "@/components/BackButton";
 
 type Props = {
     params: Promise<{
@@ -23,7 +24,7 @@ export default async function EventDetailPage({ params }: Props) {
 
     return (
         <div className="max-w-5xl mx-auto p-6 space-y-6">
-
+            <BackButton />
             {/* BANNER */}
             <div className="relative rounded-xl overflow-hidden shadow">
 
