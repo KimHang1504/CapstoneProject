@@ -131,6 +131,8 @@ export default function Dashboard() {
                 : `Doanh thu ${month}/${year}`
             }
             data={data.revenueChart}
+            type="bar"
+            color="#72DDF7"
           />
 
 
@@ -139,11 +141,15 @@ export default function Dashboard() {
             <ChartCard
               title="Tăng trưởng người dùng"
               data={data.userGrowthChart}
+              type="line"
+              color="#8093F1"
             />
 
             <ChartCard
               title="Giao dịch"
               data={data.transactionChart}
+              type="area"
+              color="#B388EB"
             />
 
           </div>
@@ -154,11 +160,15 @@ export default function Dashboard() {
             <ChartCard
               title="Tăng trưởng địa điểm"
               data={data.venueGrowthChart}
+              type="bar"
+              color="#F7AEF8"
             />
 
             <ChartCard
               title="Hoạt động bài viết"
               data={data.postActivityChart}
+              type="area"
+              color="#FDC5F5"
             />
 
           </div>

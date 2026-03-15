@@ -20,7 +20,7 @@ export default function StatCard({ title, value, icon }: Props) {
           </p>
         </div>
 
-        <div className="p-3 rounded-xl bg-linear-to-br from-[#FDC5F5] to-[#B388EB] text-white">
+        <div className="p-3 rounded-xl bg-[#B388EB] text-white">
           {icon}
         </div>
 
