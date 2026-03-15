@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { acceptAndRejectVenue } from "@/api/admin/api";
 import { VenueApprovalRequest } from "@/api/admin/type";
+import { toast } from "sonner";
 
 export default function VenueApprovalActions({ id }: { id: number }) {
   const router = useRouter();
@@ -12,21 +13,45 @@ export default function VenueApprovalActions({ id }: { id: number }) {
   const [action, setAction] = useState<"ACTIVE" | "DRAFTED" | null>(null);
   const [reason, setReason] = useState("");
 
-  const handleSubmit = async () => {
+  const handleSubmit = () => {
     if (!action) return;
 
-    const body: VenueApprovalRequest = {
-      venueId: Number(id),
-      status: action,
-      reason: reason,
-    };
+    const message =
+      action === "ACTIVE"
+        ? "Bạn có chắc muốn chấp nhận địa điểm này?"
+        : "Bạn có chắc muốn từ chối địa điểm này?";
 
-    console.log(body);
+    toast(message, {
+      action: {
+        label: action === "ACTIVE" ? "Chấp nhận" : "Từ chối",
+        onClick: async () => {
+          try {
+            const body: VenueApprovalRequest = {
+              venueId: Number(id),
+              status: action,
+              reason: reason,
+            };
 
-    await acceptAndRejectVenue(body);
+            await acceptAndRejectVenue(body);
 
-    alert(`Venue ${action}`);
-    router.push("/admin/venue-management");
+            toast.success(
+              action === "ACTIVE"
+                ? "Đã chấp nhận địa điểm"
+                : "Đã từ chối địa điểm"
+            );
+
+            router.push("/admin/venue-management");
+          } catch (error) {
+            console.error(error);
+            toast.error("Thao tác thất bại");
+          }
+        },
+      },
+      cancel: {
+        label: "Hủy",
+        onClick: () => { },
+      },
+    });
   };
 
   return (

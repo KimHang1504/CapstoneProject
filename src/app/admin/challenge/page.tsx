@@ -5,6 +5,7 @@ import { ChevronRight, ChevronLeft, Search, Trash2, Target, Star, Trophy, FileQu
 import Link from 'next/link';
 import { deleteChallenge, getAllChallenges } from '@/api/admin/api';
 import { Challenge } from '@/api/admin/type';
+import { toast } from 'sonner';
 
 export default function ChallengeListPage() {
 
@@ -30,19 +31,31 @@ export default function ChallengeListPage() {
 
   }, [page]);
 
-  const handleDelete = async (id: number) => {
+const handleDelete = (id: number) => {
+  toast("Bạn có chắc muốn xóa challenge này không?", {
+    action: {
+      label: "Xóa",
+      onClick: async () => {
+        try {
+          await deleteChallenge(id);
 
-    if (confirm('Bạn có chắc muốn xóa challenge này không?')) {
+          const res = await getAllChallenges(page, 10);
+          setData(res.data.items);
+          setTotalPages(res.data.totalPages);
 
-      await deleteChallenge(id);
-
-      getAllChallenges(page, 10).then(res => {
-        setData(res.data.items);
-        setTotalPages(res.data.totalPages);
-      });
-
-    }
-  };
+          toast.success("Đã xóa challenge");
+        } catch (error) {
+          console.error(error);
+          toast.error("Xóa challenge thất bại");
+        }
+      },
+    },
+    cancel: {
+      label: "Hủy",
+      onClick: () => {},
+    },
+  });
+};
 
   const challenges = useMemo(() => {
 

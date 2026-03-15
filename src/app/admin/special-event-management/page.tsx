@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { deleteSpecialEvent, getAllSpecialEvents } from '@/api/admin/api';
 import { SpecialEvent } from '@/api/admin/type';
 import Link from 'next/link';
+import { toast } from 'sonner';
 
 export default function SpecialEventListPage() {
 
@@ -32,13 +33,24 @@ export default function SpecialEventListPage() {
     }, [page]);
 
     const handleDelete = async (id: number) => {
-        if (confirm('Bạn có chắc muốn xóa sự kiện này không?')) {
-            await deleteSpecialEvent(id);
-            getAllSpecialEvents(page, 10).then(res => {
-                setData(res.data.items);
-                setTotalPages(res.data.totalPages);
-            });
-        }
+        toast("Bạn có chắc muốn xóa sự kiện này không?", {
+            action: {
+                label: "Xóa",
+                onClick: async () => {
+                    await deleteSpecialEvent(id);
+
+                    const res = await getAllSpecialEvents(page, 10);
+                    setData(res.data.items);
+                    setTotalPages(res.data.totalPages);
+
+                    toast.success("Đã xóa sự kiện");
+                },
+            },
+            cancel: {
+                label: "Hủy",
+                onClick: () => { },
+            },
+        });
     };
 
     const events = useMemo(() => {

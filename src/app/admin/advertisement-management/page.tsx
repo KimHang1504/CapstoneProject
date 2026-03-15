@@ -2,9 +2,9 @@
 
 import { acceptPendingAdvertisements, getPendingAdvertisements, rejectPendingAdvertisements } from "@/api/admin/api";
 import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest } from "@/api/admin/type";
-import Image from "next/image";
 import { use, useEffect, useState } from "react";
 import ImagePreview from "../venue-management/location/[id]/components/ImagePreview";
+import { toast } from "sonner";
 
 export default function AdvertisementList() {
   const [data, setData] = useState<Advertisement[]>([]);
@@ -29,47 +29,71 @@ export default function AdvertisementList() {
     }
   };
 
-  const handleAccept = async (id: number) => {
-    if (confirm("Bạn có chắc chắn muốn chấp nhận yêu cầu quảng cáo này?")) {
-      const body: AdvertisementAcceptRequest = {
-        advertisementId: id,
-      };
-      try {
-        const res = await acceptPendingAdvertisements(body);
-        if (res.code === 200) {
-          alert("Đã chấp nhận yêu cầu quảng cáo.");
-          fetchAdvertisements();
-        } else {
-          alert("Không thể chấp nhận yêu cầu quảng cáo: " + res.message);
-        }
-      } catch (error) {
-        console.error("Error accepting advertisement:", error);
-      }
-    }
+  const handleAccept = (id: number) => {
+    toast("Bạn có chắc chắn muốn chấp nhận yêu cầu quảng cáo này?", {
+      action: {
+        label: "Chấp nhận",
+        onClick: async () => {
+          const body: AdvertisementAcceptRequest = {
+            advertisementId: id,
+          };
+
+          try {
+            const res = await acceptPendingAdvertisements(body);
+
+            if (res.code === 200) {
+              toast.success("Đã chấp nhận yêu cầu quảng cáo");
+              fetchAdvertisements();
+            } else {
+              toast.error(res.message || "Không thể chấp nhận yêu cầu");
+            }
+          } catch (error) {
+            console.error("Error accepting advertisement:", error);
+            toast.error("Có lỗi xảy ra");
+          }
+        },
+      },
+      cancel: {
+        label: "Hủy",
+        onClick: () => { },
+      },
+    });
   };
 
-  const handleReject = async (id: number) => {
-    if (confirm("Bạn có chắc chắn muốn từ chối yêu cầu quảng cáo này?")) {
-      const body: AdvertisementRejectRequest = {
-        advertisementId: id,
-        reason: reason,
-      };
-      try {
-        const res = await rejectPendingAdvertisements(body);
-        if (res.code === 200) {
-          alert("Đã từ chối yêu cầu quảng cáo.");
-          fetchAdvertisements();
-        } else {
-          alert("Không thể từ chối yêu cầu quảng cáo: " + res.message);
+ const handleReject = (id: number) => {
+  toast("Bạn có chắc chắn muốn từ chối yêu cầu quảng cáo này?", {
+    action: {
+      label: "Từ chối",
+      onClick: async () => {
+        const body: AdvertisementRejectRequest = {
+          advertisementId: id,
+          reason: reason,
+        };
+
+        try {
+          const res = await rejectPendingAdvertisements(body);
+
+          if (res.code === 200) {
+            toast.success("Đã từ chối yêu cầu quảng cáo");
+            fetchAdvertisements();
+          } else {
+            toast.error(res.message || "Không thể từ chối yêu cầu");
+          }
+        } catch (error) {
+          console.error("Error rejecting advertisement:", error);
+          toast.error("Có lỗi xảy ra");
+        } finally {
+          setOpen(false);
+          setReason("");
         }
-      } catch (error) {
-        console.error("Error rejecting advertisement:", error);
-      } finally {
-        setOpen(false);
-        setReason("");
-      }
-    }
-  }
+      },
+    },
+    cancel: {
+      label: "Hủy",
+      onClick: () => { },
+    },
+  });
+};
 
 
   useEffect(() => {

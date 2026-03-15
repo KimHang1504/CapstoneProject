@@ -3,6 +3,7 @@
 import { approveVoucher, rejectVoucher } from "@/api/admin/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 type Props = {
     voucherId: number;
@@ -14,19 +15,56 @@ export default function VoucherApprovalActions({ voucherId }: Props) {
     const [reason, setReason] = useState<string>("");
     const router = useRouter();
 
-    const handleApprove = async () => {
-        setLoading(true);
+    const handleApprove = () => {
+        toast("Bạn có chắc muốn duyệt voucher này?", {
+            action: {
+                label: "Duyệt",
+                onClick: async () => {
+                    try {
+                        setLoading(true);
 
-        await approveVoucher(voucherId);
-        router.push("/admin/voucher-management");   
+                        await approveVoucher(voucherId);
+
+                        toast.success("Đã duyệt voucher");
+                        router.push("/admin/voucher-management");
+                    } catch (error) {
+                        toast.error("Duyệt voucher thất bại");
+                    } finally {
+                        setLoading(false);
+                    }
+                },
+            },
+            cancel: {
+                label: "Hủy",
+                onClick: () => { },
+            },
+        });
     };
 
-    const handleReject = async () => {
-        setLoading(true);
+    const handleReject = () => {
+        toast("Bạn có chắc muốn từ chối voucher này?", {
+            action: {
+                label: "Từ chối",
+                onClick: async () => {
+                    try {
+                        setLoading(true);
 
-        await rejectVoucher(voucherId, reason);
-        router.push("/admin/voucher-management");
-        setLoading(false);
+                        await rejectVoucher(voucherId, reason);
+
+                        toast.success("Đã từ chối voucher");
+                        router.push("/admin/voucher-management");
+                    } catch (error) {
+                        toast.error("Từ chối voucher thất bại");
+                    } finally {
+                        setLoading(false);
+                    }
+                },
+            },
+            cancel: {
+                label: "Hủy",
+                onClick: () => { },
+            },
+        });
     };
 
     return (
