@@ -1,54 +1,73 @@
 "use client";
 
 import { useState } from "react";
-import { createVoucher } from "@/api/venue/vouchers/api";
-import { DiscountType } from "@/api/venue/vouchers/type";
+import { CreateVoucherRequest, DiscountType } from "@/api/venue/vouchers/type";
 import SelectLocationModal from "@/app/venue/voucher/component/SelectLocationModal";
 
-export default function VoucherForm() {
+type Props = {
+  initialData?: CreateVoucherRequest;
+  onSubmit: (data: CreateVoucherRequest) => Promise<void>;
+};
 
-  const [discountType, setDiscountType] = useState<DiscountType>("FIXED_AMOUNT");
-  const [selectedLocationIds, setSelectedLocationIds] = useState<number[]>([]);
-  const [openLocationModal, setOpenLocationModal] = useState(false);
+export default function VoucherForm({ initialData, onSubmit }: Props) {
 
-  const [form, setForm] = useState({
+  const isEdit = !!initialData;
+
+  const defaultForm: CreateVoucherRequest = {
     title: "",
     description: "",
     pointPrice: 0,
 
-    discountAmount: 0,
-    discountPercent: 0,
+    discountType: "FIXED_AMOUNT",
+    discountAmount: null,
+    discountPercent: null,
 
     quantity: 1,
+
     usageLimitPerMember: 1,
     usageValidDays: 7,
 
-    venueLocationIds: [] as number[],
+    venueLocationIds: [],
 
     startDate: "",
     endDate: "",
-  });
+  };
 
-  const handleChange = (key: string, value: any) => {
-    setForm(prev => ({
+  const [form, setForm] = useState<CreateVoucherRequest>(
+    initialData ?? defaultForm
+  );
+
+  const [selectedLocationIds, setSelectedLocationIds] = useState<number[]>(
+    initialData?.venueLocationIds ?? []
+  );
+
+  const [openLocationModal, setOpenLocationModal] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = <K extends keyof CreateVoucherRequest>(
+    key: K,
+    value: CreateVoucherRequest[K]
+  ) => {
+    setForm((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
   const handleSubmit = async () => {
 
-    const payload = {
+    const payload: CreateVoucherRequest = {
       ...form,
-      discountType,
+
       venueLocationIds: selectedLocationIds,
+
       discountAmount:
-        discountType === "FIXED_AMOUNT"
+        form.discountType === "FIXED_AMOUNT"
           ? form.discountAmount
           : null,
 
       discountPercent:
-        discountType === "PERCENTAGE"
+        form.discountType === "PERCENTAGE"
           ? form.discountPercent
           : null,
 
@@ -58,15 +77,26 @@ export default function VoucherForm() {
 
     try {
 
-      const res = await createVoucher(payload);
+      setLoading(true);
 
-      console.log(res.data);
+      await onSubmit(payload);
 
-      alert("Voucher created");
+      if (!isEdit) {
+        setForm(defaultForm);
+        setSelectedLocationIds([]);
+      }
 
     } catch (err) {
+
       console.error(err);
+      alert("Submit failed");
+
+    } finally {
+
+      setLoading(false);
+
     }
+
   };
 
   return (
@@ -79,8 +109,7 @@ export default function VoucherForm() {
         </label>
 
         <input
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-          placeholder="Enter voucher title"
+          className="w-full border rounded px-3 py-2"
           value={form.title}
           onChange={(e) =>
             handleChange("title", e.target.value)
@@ -95,8 +124,7 @@ export default function VoucherForm() {
         </label>
 
         <textarea
-          className="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-blue-200"
-          placeholder="Enter voucher description"
+          className="w-full border rounded px-3 py-2"
           value={form.description}
           onChange={(e) =>
             handleChange("description", e.target.value)
@@ -104,7 +132,7 @@ export default function VoucherForm() {
         />
       </div>
 
-      {/* Discount Type */}
+      {/* Discount type */}
       <div>
         <label className="block text-sm font-medium mb-1">
           Discount Type
@@ -112,9 +140,12 @@ export default function VoucherForm() {
 
         <select
           className="w-full border rounded px-3 py-2"
-          value={discountType}
+          value={form.discountType}
           onChange={(e) =>
-            setDiscountType(e.target.value as DiscountType)
+            handleChange(
+              "discountType",
+              e.target.value as DiscountType
+            )
           }
         >
           <option value="FIXED_AMOUNT">
@@ -127,8 +158,8 @@ export default function VoucherForm() {
         </select>
       </div>
 
-      {/* Discount Value */}
-      {discountType === "FIXED_AMOUNT" && (
+      {/* Discount amount */}
+      {form.discountType === "FIXED_AMOUNT" && (
         <div>
           <label className="block text-sm font-medium mb-1">
             Discount Amount (VND)
@@ -137,15 +168,19 @@ export default function VoucherForm() {
           <input
             type="number"
             className="w-full border rounded px-3 py-2"
-            placeholder="50000"
+            value={form.discountAmount ?? ""}
             onChange={(e) =>
-              handleChange("discountAmount", Number(e.target.value))
+              handleChange(
+                "discountAmount",
+                Number(e.target.value)
+              )
             }
           />
         </div>
       )}
 
-      {discountType === "PERCENTAGE" && (
+      {/* Discount percent */}
+      {form.discountType === "PERCENTAGE" && (
         <div>
           <label className="block text-sm font-medium mb-1">
             Discount Percent (%)
@@ -154,109 +189,115 @@ export default function VoucherForm() {
           <input
             type="number"
             className="w-full border rounded px-3 py-2"
-            placeholder="10"
+            value={form.discountPercent ?? ""}
             onChange={(e) =>
-              handleChange("discountPercent", Number(e.target.value))
+              handleChange(
+                "discountPercent",
+                Number(e.target.value)
+              )
             }
           />
         </div>
       )}
 
-      {/* Grid fields */}
-      <div className="grid grid-cols-2 gap-4">
+{/* Grid fields */}
+<div className="grid grid-cols-2 gap-4">
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Point Price
+    </label>
+    <input
+      type="number"
+      className="w-full border rounded px-3 py-2"
+      value={form.pointPrice ?? ""}
+      onChange={(e) =>
+        handleChange("pointPrice", Number(e.target.value))
+      }
+    />
+  </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Point Price
-          </label>
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Quantity
+    </label>
+    <input
+      type="number"
+      className="w-full border rounded px-3 py-2"
+      value={form.quantity ?? ""}
+      onChange={(e) =>
+        handleChange("quantity", Number(e.target.value) || 0)
+      }
+    />
+  </div>
 
-          <input
-            type="number"
-            className="w-full border rounded px-3 py-2"
-            onChange={(e) =>
-              handleChange("pointPrice", Number(e.target.value))
-            }
-          />
-        </div>
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Usage Limit Per Member
+    </label>
+    <input
+      type="number"
+      className="w-full border rounded px-3 py-2"
+      value={form.usageLimitPerMember ?? ""}
+      onChange={(e) =>
+        handleChange(
+          "usageLimitPerMember",
+          Number(e.target.value)
+        )
+      }
+    />
+  </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Quantity
-          </label>
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Usage Valid Days
+    </label>
+    <input
+      type="number"
+      className="w-full border rounded px-3 py-2"
+      value={form.usageValidDays || ""}
+      onChange={(e) =>
+        handleChange(
+          "usageValidDays",
+          Number(e.target.value)
+        )
+      }
+    />
+  </div>
+</div>
 
-          <input
-            type="number"
-            className="w-full border rounded px-3 py-2"
-            onChange={(e) =>
-              handleChange("quantity", Number(e.target.value))
-            }
-          />
-        </div>
+{/* Date */}
+<div className="grid grid-cols-2 gap-4">
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      Start Date
+    </label>
+    <input
+      type="date"
+      className="w-full border rounded px-3 py-2"
+      value={form.startDate}
+      onChange={(e) =>
+        handleChange("startDate", e.target.value)
+      }
+    />
+  </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Usage Limit Per Member
-          </label>
+  <div>
+    <label className="block text-sm font-medium mb-1">
+      End Date
+    </label>
+    <input
+      type="date"
+      className="w-full border rounded px-3 py-2"
+      value={form.endDate}
+      onChange={(e) =>
+        handleChange("endDate", e.target.value)
+      }
+    />
+  </div>
+</div>
 
-          <input
-            type="number"
-            className="w-full border rounded px-3 py-2"
-            onChange={(e) =>
-              handleChange("usageLimitPerMember", Number(e.target.value))
-            }
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Usage Valid Days
-          </label>
-
-          <input
-            type="number"
-            className="w-full border rounded px-3 py-2"
-            onChange={(e) =>
-              handleChange("usageValidDays", Number(e.target.value))
-            }
-          />
-        </div>
-
-      </div>
-
-      {/* Date */}
-      <div className="grid grid-cols-2 gap-4">
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Start Date
-          </label>
-
-          <input
-            type="date"
-            className="w-full border rounded px-3 py-2"
-            onChange={(e) =>
-              handleChange("startDate", e.target.value)
-            }
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            End Date
-          </label>
-
-          <input
-            type="date"
-            className="w-full border rounded px-3 py-2"
-            onChange={(e) =>
-              handleChange("endDate", e.target.value)
-            }
-          />
-        </div>
-
-      </div>
-      <div className="mt-4">
-        <label className="block mb-1">Apply locations</label>
+      {/* Locations */}
+      <div>
 
         <button
           type="button"
@@ -265,22 +306,26 @@ export default function VoucherForm() {
         >
           Choose locations
         </button>
+
         <p className="text-sm text-gray-500 mt-1">
           {selectedLocationIds.length} locations selected
         </p>
+
       </div>
 
       {/* Submit */}
-      <div className="pt-4">
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        className="bg-blue-600 text-white px-5 py-2 rounded"
+      >
+        {loading
+          ? "Saving..."
+          : isEdit
+            ? "Update Voucher"
+            : "Create Voucher"}
+      </button>
 
-        <button
-          onClick={handleSubmit}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded"
-        >
-          Create Voucher
-        </button>
-
-      </div>
       {openLocationModal && (
         <SelectLocationModal
           selectedIds={selectedLocationIds}
@@ -288,7 +333,7 @@ export default function VoucherForm() {
           onClose={() => setOpenLocationModal(false)}
         />
       )}
-    </div>
 
+    </div>
   );
 }

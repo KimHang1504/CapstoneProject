@@ -47,13 +47,13 @@ export default function SelectLocationModal({
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg w-[400px]">
+      <div className="bg-white p-6 rounded-lg w-100">
 
         <h2 className="text-lg font-semibold mb-4">
           Select locations
         </h2>
 
-        <div className="space-y-2 max-h-[300px] overflow-y-auto">
+        <div className="space-y-2 max-h-75 overflow-y-auto">
           {locations.map((loc) => (
             <label key={loc.id} className="flex gap-2">
               <input

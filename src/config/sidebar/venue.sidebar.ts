@@ -7,7 +7,6 @@ import { SidebarConfig } from '@/types/sidebar';
 import {
   LayoutDashboard,
   User,
-  MessageSquareMore ,
 } from 'lucide-react';
 
 export const venueSidebarConfig: SidebarConfig = {
@@ -37,31 +36,22 @@ export const venueSidebarConfig: SidebarConfig = {
       href: '/venue/insight',
       icon: User,
     },
+
+  ],
+  sections: [
     {
-      label: 'Hồ sơ',
-      href: '/venue/profile',
-      icon: User,
-    },
-    {
-      label: 'Đánh giá',
-      href: '/venue/review',
-      icon: MessageSquareMore,
+      title: 'Voucher',
+      icon: LayoutDashboard,
+      items: [
+        {
+          label: 'Voucher của tôi',
+          href: '/venue/voucher',
+        },
+        {
+          label: 'Đổi mã giảm giá',
+          href: '/venue/voucher/redeem',
+        },
+      ],
     },
   ],
-  // sections: [
-  //   {
-  //     title: 'Địa điểm',
-  //     icon: MapPin,
-  //     items: [
-  //       {
-  //         label: 'Đăng ký địa điểm',
-  //         href: '/venue/location/subscriptions',
-  //       },
-  //       {
-  //         label: 'Quản lý địa điểm',
-  //         href: '/venue/location/mylocation',
-  //       },
-  //     ],
-  //   },
-  // ],
 };
