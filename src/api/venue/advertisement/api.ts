@@ -3,9 +3,10 @@ import {
   CreateAdvertisementRequest,
   Advertisement,
   AdvertisementListItem,
-  AdvertisementPackage,
   SubmitAdvertisementPaymentResponse,
   SubmitAdvertisementPaymentRequest,
+  AdvertisementPackagesResponse,
+  UpdateAdvertisementRequest,
 } from "./type";
 
 //create
@@ -39,7 +40,7 @@ export const getAdvertisementById = async (
 
 //get gói quảng cáo
 export const getAdvertisementPackages = async () => {
-  return apiClient.get<ApiResponse<AdvertisementPackage[]>>(
+  return apiClient.get<ApiResponse<AdvertisementPackagesResponse>>(
     "/api/Advertisement/packages"
   );
 };
@@ -57,3 +58,12 @@ export const submitAdvertisementPayment = async (
   );
 };
 
+export const updateAdvertisementDraft = async (
+  id: number,
+  data: UpdateAdvertisementRequest
+): Promise<ApiResponse<Advertisement>> => {
+  return apiClient.put<ApiResponse<Advertisement>>(
+    `/api/Advertisement/${id}/update-and-draft`,
+    data
+  );
+};
