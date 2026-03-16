@@ -20,11 +20,14 @@ export default function AdvertisementDetailPage() {
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+
+
     useEffect(() => {
         const fetchAd = async () => {
             try {
                 const res = await getAdvertisementById(id);
                 setAd(res.data);
+                console.log(res.data);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -82,6 +85,7 @@ export default function AdvertisementDetailPage() {
                         <p className="text-gray-900 text-3xl font-bold">
                             {ad.title}
                         </p>
+
                         <span
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border
                                  ${ad.status === "ACTIVE"
@@ -114,6 +118,7 @@ export default function AdvertisementDetailPage() {
 
                     </div>
 
+
                     <div className="flex justify-end gap-3">
 
                         {isDraft && (
@@ -144,6 +149,14 @@ export default function AdvertisementDetailPage() {
                     </div>
 
                 </div>
+                {ad.status === "REJECTED" && ad.rejectionHistory?.length > 0 && (
+                    <div className="border border-rose-200 bg-rose-50 text-rose-700 rounded-lg p-4">
+                        <p className="font-medium">Quảng cáo bị từ chối</p>
+                        <p className="text-sm mt-1">
+                            Lý do: {ad.rejectionHistory[ad.rejectionHistory.length - 1].reason}
+                        </p>
+                    </div>
+                )}
 
                 {/* BANNER */}
                 <div className="bg-white rounded-2xl">
@@ -299,19 +312,6 @@ export default function AdvertisementDetailPage() {
                     </div>
 
                 </div>
-
-                {/* REJECTION */}
-                {ad.rejectionReason && (
-                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
-                        <p className="text-sm font-semibold text-rose-700">
-                            Lý do từ chối
-                        </p>
-
-                        <p className="text-sm text-rose-600 mt-1">
-                            {ad.rejectionReason}
-                        </p>
-                    </div>
-                )}
 
             </div>
         </div>

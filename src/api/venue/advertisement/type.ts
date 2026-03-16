@@ -30,7 +30,8 @@ export type AdsOrderStatus =
     | "PENDING"
     | "COMPLETED"
     | "FAILED"
-    | "CANCELLED";
+    | "CANCELLED"
+    | "REFUNDED";
 
 export interface AdsOrder {
     id: number;
@@ -38,6 +39,9 @@ export interface AdsOrder {
     pricePaid: number;
     status: AdsOrderStatus;
     createdAt: string;
+
+    hasRefund: boolean;
+    refundInfo: any | null;
 }
 
 // Type gửi lên khi create
@@ -59,7 +63,7 @@ export interface Advertisement {
     targetUrl: string;
     placementType: PlacementType;
     status: AdvertisementStatus;
-    rejectionReason: string | null;
+    rejectionHistory: RejectionHistory[];
     desiredStartDate: string | null;
     createdAt: string;
     updatedAt: string;
@@ -134,4 +138,10 @@ export interface UpdateAdvertisementRequest {
     targetUrl: string;
     placementType: PlacementType;
     desiredStartDate: string;
+}
+
+export interface RejectionHistory {
+    rejectedAt: string;
+    reason: string;
+    rejectedBy: string;
 }

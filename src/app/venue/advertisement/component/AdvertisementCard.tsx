@@ -12,7 +12,7 @@ export default function AdvertisementCard({ ad }: Props) {
   const router = useRouter();
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-sm border flex flex-col h-75">
+    <div className="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200 flex flex-col h-75">
       
       {/* Banner */}
       <div className="relative w-full h-27.5">

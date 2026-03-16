@@ -16,12 +16,12 @@ export default function VoucherTabs({ voucher }: Props) {
         <div className="space-y-4">
 
             {/* TAB HEADER */}
-            <div className="flex gap-6 border-b">
+            <div className="flex gap-6 border-b border-gray-300">
 
                 <button
                     onClick={() => setTab("info")}
                     className={`pb-2 text-sm font-medium border-b-2 transition
-          ${tab === "info"
+                            ${tab === "info"
                             ? "border-violet-500 text-violet-600"
                             : "border-transparent text-gray-500 hover:text-gray-700"
                         }`}
@@ -32,7 +32,7 @@ export default function VoucherTabs({ voucher }: Props) {
                 <button
                     onClick={() => setTab("items")}
                     className={`pb-2 text-sm font-medium border-b-2 transition
-          ${tab === "items"
+                            ${tab === "items"
                             ? "border-violet-500 text-violet-600"
                             : "border-transparent text-gray-500 hover:text-gray-700"
                         }`}
@@ -43,7 +43,7 @@ export default function VoucherTabs({ voucher }: Props) {
                 <button
                     onClick={() => setTab("history")}
                     className={`pb-2 text-sm font-medium border-b-2 transition
-          ${tab === "history"
+                            ${tab === "history"
                             ? "border-violet-500 text-violet-600"
                             : "border-transparent text-gray-500 hover:text-gray-700"
                         }`}

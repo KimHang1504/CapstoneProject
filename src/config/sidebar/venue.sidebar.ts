@@ -13,7 +13,7 @@ export const venueSidebarConfig: SidebarConfig = {
   tabs: [
     {
       label: 'Dashboard',
-      href: '/venue',
+      href: '/venue/dashboard',
       icon: LayoutDashboard,
     },
     {
