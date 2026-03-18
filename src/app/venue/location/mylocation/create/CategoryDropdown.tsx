@@ -75,7 +75,7 @@ export default function CategoryDropdown({ selected, onChange }: Props) {
 
         {selectedCategories.length === 0 && (
           <span className="text-gray-400 text-sm">
-            Chọn danh mục phù hợp với địa điểm của bạn<span className="text-red-500"> *</span>
+            Chọn danh mục phù hợp với địa điểm của bạn
           </span>
         )}
 
