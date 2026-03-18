@@ -20,11 +20,14 @@ export default function AdvertisementDetailPage() {
 
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
+
+
     useEffect(() => {
         const fetchAd = async () => {
             try {
                 const res = await getAdvertisementById(id);
                 setAd(res.data);
+                console.log(res.data);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -60,15 +63,14 @@ export default function AdvertisementDetailPage() {
     const prevImage = () => {
         setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length);
     };
-
-    const isDraft = ad.status === 'DRAFT';
-
+    const isDraft = ad.status === "DRAFT";
+    const canEdit = ad.status === "DRAFT" || ad.status === "REJECTED";
     const handleSubmit = () => {
         router.push(`/venue/advertisement/package?adId=${ad.id}`);
     };
 
     const handleEdit = () => {
-        router.push(`/venue/advertisement/edit/${ad.id}`);
+        router.push(`/venue/advertisement/myadvertisement/${ad.id}/edit`);
     };
 
     return (
@@ -83,9 +85,10 @@ export default function AdvertisementDetailPage() {
                         <p className="text-gray-900 text-3xl font-bold">
                             {ad.title}
                         </p>
+
                         <span
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border
-    ${ad.status === "ACTIVE"
+                                 ${ad.status === "ACTIVE"
                                     ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                     : ad.status === "APPROVED"
                                         ? "bg-blue-50 text-blue-700 border-blue-200"
@@ -115,6 +118,7 @@ export default function AdvertisementDetailPage() {
 
                     </div>
 
+
                     <div className="flex justify-end gap-3">
 
                         {isDraft && (
@@ -130,22 +134,30 @@ export default function AdvertisementDetailPage() {
                             </button>
                         )}
 
-                        <button
-                            onClick={handleEdit}
-                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
-                             bg-gray-100 text-gray-700 border border-gray-200
-                             hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
-                        >
-                            <Pencil size={18} />
-                            Chỉnh sửa
-                        </button>
+                        {canEdit && (
+                            <button
+                                onClick={handleEdit}
+                                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+                                 bg-gray-100 text-gray-700 border border-gray-200
+                                 hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
+                            >
+                                <Pencil size={18} />
+                                Chỉnh sửa
+                            </button>
+                        )}
 
                     </div>
 
                 </div>
-                    <p className="text-gray-800 leading-relaxed text-[15px] whitespace-pre-line">
-                        {ad.content}
-                    </p>
+                {ad.status === "REJECTED" && ad.rejectionHistory?.length > 0 && (
+                    <div className="border border-rose-200 bg-rose-50 text-rose-700 rounded-lg p-4">
+                        <p className="font-medium">Quảng cáo bị từ chối</p>
+                        <p className="text-sm mt-1">
+                            Lý do: {ad.rejectionHistory[ad.rejectionHistory.length - 1].reason}
+                        </p>
+                    </div>
+                )}
+
                 {/* BANNER */}
                 <div className="bg-white rounded-2xl">
 
@@ -207,6 +219,10 @@ export default function AdvertisementDetailPage() {
 
                     </div>
                 )}
+
+                <p className="text-gray-800 leading-relaxed text-[15px] whitespace-pre-line">
+                    {ad.content}
+                </p>
                 {/* CONTENT */}
                 {/* <div className="bg-linear-to-r from-violet-50 to-purple-50 border border-violet-100 rounded-2xl p-6 space-y-4">
 
@@ -296,19 +312,6 @@ export default function AdvertisementDetailPage() {
                     </div>
 
                 </div>
-
-                {/* REJECTION */}
-                {ad.rejectionReason && (
-                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
-                        <p className="text-sm font-semibold text-rose-700">
-                            Lý do từ chối
-                        </p>
-
-                        <p className="text-sm text-rose-600 mt-1">
-                            {ad.rejectionReason}
-                        </p>
-                    </div>
-                )}
 
             </div>
         </div>

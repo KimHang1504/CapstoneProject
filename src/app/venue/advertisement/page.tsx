@@ -103,7 +103,7 @@ export default function AdvertisementPage() {
         sort={sort}
         setSort={setSort}
       />
-      <div className="flex gap-6 border-b mb-4">
+      <div className="flex gap-6 border-b border-gray-300 mb-4">
         {placements.map((p) => (
           <button
             key={p.value}

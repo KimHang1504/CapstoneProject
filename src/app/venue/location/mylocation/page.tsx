@@ -21,7 +21,8 @@ const [data, setData] = useState<MyVenueLocation[]>([]);  const [loading, setLoa
       .then(setData)
       .finally(() => setLoading(false));
   }, []);
-
+  
+  console.log("My locations", data);
   const stats = useMemo(() => {
     return {
       all: data.length,

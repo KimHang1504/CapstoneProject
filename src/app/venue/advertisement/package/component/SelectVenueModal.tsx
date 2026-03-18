@@ -5,89 +5,106 @@ import { getMyVenueLocations } from "@/api/venue/location/api";
 import { MyVenueLocation } from "@/api/venue/location/type";
 
 type Props = {
-    open: boolean;
+    selectedIds: number[];
+    onConfirm: (ids: number[]) => void;
     onClose: () => void;
-    onConfirm: (venueId: number) => void;
 };
 
 export default function SelectVenueModal({
-    open,
-    onClose,
+    selectedIds,
     onConfirm,
+    onClose,
 }: Props) {
-    const [venues, setVenues] = useState<MyVenueLocation[]>([]);
-    const [selectedVenue, setSelectedVenue] = useState<number | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [locations, setLocations] = useState<MyVenueLocation[]>([]);
+    const [tempSelected, setTempSelected] = useState<number[]>([]);
 
     useEffect(() => {
-        if (!open) return;
+        setTempSelected(selectedIds);
+    }, [selectedIds]);
 
-        const fetchVenues = async () => {
+    useEffect(() => {
+        const fetchLocations = async () => {
             try {
-                setLoading(true);
-                const venues = await getMyVenueLocations();
-                setVenues(venues);
-            } catch (error) {
-                console.error(error);
-            } finally {
-                setLoading(false);
+                const res = await getMyVenueLocations();
+
+                const active = res.filter(
+                    (l) => l.status === "ACTIVE"
+                );
+
+                setLocations(active);
+            } catch (err) {
+                console.error(err);
             }
         };
 
-        fetchVenues();
-    }, [open]);
+        fetchLocations();
+    }, []);
 
-    if (!open) return null;
+    const toggle = (id: number) => {
+        setTempSelected((prev) =>
+            prev.includes(id)
+                ? prev.filter((i) => i !== id)
+                : [...prev, id]
+        );
+    };
+
+    const confirm = () => {
+        onConfirm(tempSelected);
+        onClose();
+    };
 
     return (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-            <div className="bg-white w-96 rounded-xl p-6 shadow-lg">
+            <div className="bg-white p-6 rounded-lg w-105">
+
                 <h2 className="text-lg font-semibold mb-4">
-                    Chọn địa điểm quảng cáo
+                    Chọn địa điểm ({tempSelected.length})
                 </h2>
 
-                {loading && <p>Đang tải...</p>}
+                <div className="space-y-2 max-h-75 overflow-y-auto">
 
-                {!loading && venues.length === 0 && (
-                    <p>Không có địa điểm nào</p>
-                )}
-
-                <div className="space-y-3 max-h-60 overflow-y-auto">
-                    {venues.map((venue) => (
-                        <div
-                            key={venue.id}
-                            onClick={() => setSelectedVenue(venue.id)}
-                            className={`p-3 border rounded cursor-pointer ${selectedVenue === venue.id
-                                    ? "border-blue-600 bg-blue-50"
-                                    : ""
-                                }`}
+                    {locations.map((loc) => (
+                        <label
+                            key={loc.id}
+                            className="flex gap-2 items-center cursor-pointer"
                         >
-                            <div className="font-medium">{venue.name}</div>
-                            <div className="text-sm text-gray-500">
-                                {venue.address}
+                            <input
+                                type="checkbox"
+                                checked={tempSelected.includes(loc.id)}
+                                onChange={() => toggle(loc.id)}
+                            />
+
+                            <div>
+                                <div className="font-medium">
+                                    {loc.name}
+                                </div>
+
+                                <div className="text-sm text-gray-500">
+                                    {loc.address}
+                                </div>
                             </div>
-                        </div>
+                        </label>
                     ))}
+
                 </div>
 
-                <div className="flex justify-end gap-3 mt-6">
+                <div className="flex justify-end gap-3 mt-5">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 border rounded"
+                        className="px-3 py-1 border rounded"
                     >
                         Hủy
                     </button>
 
                     <button
-                        disabled={!selectedVenue}
-                        onClick={() =>
-                            selectedVenue && onConfirm(selectedVenue)
-                        }
-                        className="px-4 py-2 bg-blue-600 text-white rounded disabled:bg-gray-400"
+                        disabled={tempSelected.length === 0}
+                        onClick={confirm}
+                        className="px-3 py-1 bg-blue-600 text-white rounded disabled:bg-gray-400"
                     >
-                        Xác nhận
+                        Thanh toán
                     </button>
                 </div>
+
             </div>
         </div>
     );
