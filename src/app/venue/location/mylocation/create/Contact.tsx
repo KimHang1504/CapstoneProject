@@ -16,8 +16,8 @@ export default function Contact({ formData, setFormData }: Props) {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-3xl px-6 py-10 md:px-10">
-        <h1 className="mb-8 text-center text-2xl font-bold text-gray-900">
+      <div className="w-full max-w-3xl px-6 py-6 md:px-10">
+        <h1 className="mb-8 text-center text-2xl font-bold text-blue-900">
           Thông tin liên hệ
         </h1>
 
@@ -81,7 +81,7 @@ export default function Contact({ formData, setFormData }: Props) {
         <div className="mb-4 grid gap-4 md:grid-cols-2">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-800">
-              Số điện thoại hotline<span className="text-pink-500"> *</span>
+              Số điện thoại hotline
             </label>
             <input
               value={formData.phoneNumber}

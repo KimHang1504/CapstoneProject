@@ -11,6 +11,7 @@ import ReviewSection from '@/app/venue/review/component/ReviewSection';
 import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2 } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
+import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
 
 export default function LocationDetailPage() {
     const params = useParams();
@@ -89,10 +90,6 @@ export default function LocationDetailPage() {
     const isPending = location.status === 'PENDING';
     const canSubmitForApproval =
         location.status === 'DRAFTED' || location.status === 'PENDING';
-    const firstImage = location.coverImage && location.coverImage.length > 0
-        ? location.coverImage[0]
-        : '/placeholder.jpg';
-
     const allImages = [
         ...(location.coverImage || []),
         ...(location.interiorImage || [])
@@ -100,7 +97,7 @@ export default function LocationDetailPage() {
 
 
 
-    const images = allImages.length > 0 ? allImages : ['/placeholder.jpg']
+    const images = allImages.length > 0 ? allImages : ['https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg']
 
     const handleEdit = () => {
         router.push(`/venue/location/mylocation/edit/${id}`);
@@ -278,57 +275,53 @@ export default function LocationDetailPage() {
                                 {location.priceMin.toLocaleString('vi-VN')} - {location.priceMax.toLocaleString('vi-VN')} VND
                             </p>
                         </div>
-                        <div className="items-center gap-3">
-                            <div className="flex justify-between">
-                                <div
-                                    className={`inline-flex items-center gap-2 py-1.5 text-sm font-semibold
-                                             ${isOpen
-                                            ? " text-emerald-700"
-                                            : "bg-rose-50 text-rose-600 border-rose-200"}
-                                            `}
-                                >
-                                    <span className={`w-2 h-2 rounded-full ${isOpen ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
-                                    {isOpen && location?.todayOpeningHour ? (
-                                        <>
-                                            Đang mở cửa từ{" "}
-                                            <span className="font-bold">
-                                                {location.todayOpeningHour.openTime.slice(0, 5)}
-                                            </span>{" "}
-                                            đến{" "}
-                                            <span className="font-bold">
-                                                {location.todayOpeningHour.closeTime.slice(0, 5)}
-                                            </span>
-                                        </>
-                                    ) : (
-                                        <>Hôm nay đóng cửa</>
-                                    )}
-                                </div>
-                                <div>
-                                    {canEditOpeningHours && (
-                                        <button
-                                            onClick={() => setShowOpeningHoursModal(true)}
-                                            className="flex items-center gap-2 px-3 py-1.5 text-sm bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 transition"
-                                        >
-                                            <Edit2 size={16} />
-                                            Cập nhật
-                                        </button>
-                                    )}
-                                </div>
+                        {(location.status === 'ACTIVE' || location.status === 'INACTIVE') && (
+                            <div className="items-center gap-3">
+                                <div className="flex justify-between">
+                                    <div
+                                        className={`inline-flex items-center gap-2 py-1.5 text-sm font-semibold
+                                                 ${isOpen
+                                                ? " text-emerald-700"
+                                                : "bg-rose-50 text-rose-600 border-rose-200"}
+                                                `}
+                                    >
+                                        <span className={`w-2 h-2 rounded-full ${isOpen ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
+                                        {isOpen && location?.todayOpeningHour ? (
+                                            <>
+                                                Đang mở cửa từ{" "}
+                                                <span className="font-bold">
+                                                    {location.todayOpeningHour.openTime.slice(0, 5)}
+                                                </span>{" "}
+                                                đến{" "}
+                                                <span className="font-bold">
+                                                    {location.todayOpeningHour.closeTime.slice(0, 5)}
+                                                </span>
+                                            </>
+                                        ) : (
+                                            <>Hôm nay đóng cửa</>
+                                        )}
+                                    </div>
+                                    <div>
+                                        {canEditOpeningHours && (
+                                            <button
+                                                onClick={() => setShowOpeningHoursModal(true)}
+                                                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 transition"
+                                            >
+                                                <Edit2 size={16} />
+                                                Cập nhật
+                                            </button>
+                                        )}
+                                    </div>
 
+                                </div>
                             </div>
-
-                            {/* {location?.todayOpeningHour && !location.todayOpeningHour.isClosed && (
-                                <span className="text-sm text-gray-500">
-                                    {location.todayOpeningHour.openTime.slice(0, 5)} - {location.todayOpeningHour.closeTime.slice(0, 5)}
-                                </span>
-                            )} */}
-                        </div>
+                        )}
                         <div>
                             <p className="text-sm font-bold mb-1">Mô tả</p>
                             <p className="text-sm text-gray-700">{location.description}</p>
                         </div>
 
-                        <div>
+                        {/* <div>
                             <p className="text-sm font-bold mb-2">Danh mục</p>
 
                             <div className="flex flex-wrap gap-2">
@@ -341,36 +334,53 @@ export default function LocationDetailPage() {
                                     </span>
                                 ))}
                             </div>
-                        </div>
+                        </div> */}
 
-                        <div>
-                            <p className="text-sm font-bold mb-2">Tâm trạng
-                            </p>
-                            <div className="flex flex-wrap gap-2">
-                                {location.coupleMoodTypes.map(mood => (
-                                    <span
-                                        key={mood.id}
-                                        className="inline-block rounded-2xl bg-[#C9A7FF] px-4 py-1 text-sm font-medium text-white"
-                                    >
-                                        {mood.name.toLocaleLowerCase()}
-                                    </span>
-                                ))}
+                        {location.coupleMoodTypes?.length ? (
+                            location.coupleMoodTypes.map(mood => (
+                                <span key={mood.id} className="...">
+                                    {mood.name}
+                                </span>
+                            ))
+                        ) : (
+                            <div className="text-sm text-gray-400 flex items-center gap-2">
+                                <span>Chưa chọn tâm trạng</span>
+                                <button
+                                    onClick={handleEdit}
+                                    className="text-violet-500 hover:underline"
+                                >
+                                    Cập nhật ngay
+                                </button>
                             </div>
-                        </div>
+                        )}
 
                         <div>
                             <p className="text-sm font-bold mb-2">Tính cách</p>
+
                             <div className="flex flex-wrap gap-2">
-                                {location.couplePersonalityTypes.map(personality => (
-                                    <span
-                                        key={personality.id}
-                                        className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
-                                    >
-                                        {personality.name.toLocaleLowerCase()}
-                                    </span>
-                                ))}
+                                {location.couplePersonalityTypes?.length ? (
+                                    location.couplePersonalityTypes.map(personality => (
+                                        <span
+                                            key={personality.id}
+                                            className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+                                        >
+                                            {personality.name.toLowerCase()}
+                                        </span>
+                                    ))
+                                ) : (
+                                    <div className="text-sm text-gray-400 flex items-center gap-2">
+                                        <span>Chưa chọn tính cách</span>
+                                        <button
+                                            onClick={handleEdit}
+                                            className="text-violet-500 hover:underline"
+                                        >
+                                            Cập nhật ngay
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
+
                         <div className="bg-white rounded-2xl">
                             <p className="font-semibold mb-2">Địa điểm</p>
                             <p className="text-sm text-green-700 italic "><MapPin className="inline mr-1" />{location.address}</p>
@@ -394,17 +404,23 @@ export default function LocationDetailPage() {
                         <p className="font-semibold mb-2">Thông tin liên hệ</p>
                         <div className="flex gap-3 items-center bg-white rounded-2xl p-4">
                             <Mail />
-                            <p className="text-sm text-gray-700">{location.email || 'Chưa có'}</p>
+                            <FieldDisplay value={location.email} label="email" onEdit={handleEdit}>
+                                <p className="text-sm text-gray-700">{location.email}</p>
+                            </FieldDisplay>
                         </div>
 
                         <div className="flex gap-3 items-center bg-white rounded-2xl p-4">
                             <Phone />
-                            <p className="text-sm text-gray-700">{location.phoneNumber}</p>
+                            <FieldDisplay value={location.phoneNumber} label="số điện thoại" onEdit={handleEdit}>
+                                <p className="text-sm text-gray-700">{location.phoneNumber}</p>
+                            </FieldDisplay>
                         </div>
 
                         <div className="flex gap-3 items-center bg-white rounded-2xl p-4">
                             <Globe />
-                            <p className="text-sm text-gray-700">{location.websiteUrl || 'Chưa có'}</p>
+                            <FieldDisplay value={location.websiteUrl} label="website" onEdit={handleEdit}>
+                                <p className="text-sm text-gray-700">{location.websiteUrl}</p>
+                            </FieldDisplay>
                         </div>
                     </div>
                 </div>
@@ -422,17 +438,6 @@ export default function LocationDetailPage() {
                     </div>
                 )}
 
-                {/* <div className="bg-white rounded-2xl p-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <p className="font-semibold">Giờ hoạt động</p>
-
-                    </div>
-                    <p className="text-sm text-gray-700">
-                        {location.todayDayName && location.todayOpeningHour
-                            ? `${location.todayDayName}: ${location.todayOpeningHour}`
-                            : 'Chưa có thông tin giờ hoạt động'}
-                    </p>
-                </div> */}
                 <div>
                     {canShowReview && (
                         <ReviewSection venueId={location.id} />
