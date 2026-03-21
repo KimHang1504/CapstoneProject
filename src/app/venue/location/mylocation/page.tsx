@@ -66,17 +66,18 @@ export default function MyLocationPage() {
 
         <div className="flex-1 min-w-0 space-y-4">
           {/* Thông báo kết quả hoặc trống */}
-          {locations.length > 0 ? (
-            <p className="mb-4 text-sm text-gray-500">
-              Tìm thấy {locations.length} địa điểm
-              {keyword ? ` cho "${keyword}"` : ''}
-            </p>
-          ) : (
-            <div className="text-center text-gray-500 py-10">
-              Không tìm thấy địa điểm nào
-              {keyword ? ` phù hợp với "${keyword}"` : ''}
-            </div>
+          {keyword && (
+            locations.length > 0 ? (
+              <p className="mb-4 text-sm text-gray-500">
+                Tìm thấy {locations.length} địa điểm {keyword ? `cho "${keyword}"` : ''}
+              </p>
+            ) : (
+              <div className="text-center text-gray-500 py-10">
+                Không tìm thấy địa điểm nào {keyword ? `phù hợp với "${keyword}"` : ''}
+              </div>
+            )
           )}
+
           {locations.map((loc) => {
             return (
               <div

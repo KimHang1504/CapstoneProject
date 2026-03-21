@@ -50,10 +50,15 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
   const CurrentStep = steps[step - 1]
 
-
   function prevStep() {
     if (step === 1) {
-      router.push("/venue/location/mylocation")
+      if (mode === "edit" && locationId) {
+        // Về trang detail
+        router.push(`/venue/location/mylocation/${locationId}`)
+      } else {
+        // Mode create → về trang danh sách
+        router.push("/venue/location/mylocation")
+      }
       return
     }
 
@@ -172,12 +177,13 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       if (mode === 'edit' && locationId) {
         await updateVenueLocation(locationId, payload)
         toast.success("Cập nhật địa điểm thành công")
+        router.push(`/venue/location/mylocation/${locationId}`)
       } else {
         await registerVenueLocation(payload)
         toast.success("Tạo địa điểm thành công")
       }
 
-      router.push("/venue/location/mylocation")
+      // router.push("/venue/location/mylocation")
 
     } catch (e) {
       console.error(e)

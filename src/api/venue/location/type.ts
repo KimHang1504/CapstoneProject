@@ -146,6 +146,7 @@ export type VenueLocationDetail = VenueLocationBase & {
   interiorImage?: string[] | null;
   fullPageMenuImage?: string[] | null;
   category: string[] | null;
+  categories?: { id: number; name: string }[];
 
   createdAt: string;
   updatedAt: string;

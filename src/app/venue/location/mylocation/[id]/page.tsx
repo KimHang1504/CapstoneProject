@@ -12,6 +12,7 @@ import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
+import toast from 'react-hot-toast';
 
 export default function LocationDetailPage() {
     const params = useParams();
@@ -113,13 +114,24 @@ export default function LocationDetailPage() {
         if (!location.address) errors.push("Địa chỉ");
         if (!location.email) errors.push("Email");
         if (!location.phoneNumber) errors.push("Số điện thoại");
+        if (!location.categories?.length) errors.push("Danh mục");
         if (!location.priceMin || !location.priceMax) errors.push("Khoảng giá");
         if (!location.coverImage?.length) errors.push("Hình ảnh bìa");
         if (!location.coupleMoodTypes?.length) errors.push("Tâm trạng");
         if (!location.couplePersonalityTypes?.length) errors.push("Tính cách");
 
         if (errors.length > 0) {
-            alert("Vui lòng hoàn thiện: " + errors.join(", "));
+            toast.error(
+                <div className="flex flex-wrap gap-1">
+                    <span>Vui lòng cập nhật:</span>
+                    {errors.map((err, i) => (
+                        <span key={i} className="bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs">
+                            {err}
+                        </span>
+                    ))}
+                </div>,
+                { duration: 7000 }
+            );
             return;
         }
 
@@ -187,7 +199,6 @@ export default function LocationDetailPage() {
                     </div>
 
                     <div className="flex justify-end gap-3">
-                        {/* SUBMIT */}
                         {/* SUBMIT */}
                         {canSubmitForApproval && (
                             <button
@@ -321,38 +332,45 @@ export default function LocationDetailPage() {
                             <p className="text-sm text-gray-700">{location.description}</p>
                         </div>
 
-                        {/* <div>
-                            <p className="text-sm font-bold mb-2">Danh mục</p>
-
-                            <div className="flex flex-wrap gap-2">
-                                {location.category?.map((cat, index) => (
+                        {location.categories?.length ? (
+                            <div className="flex gap-2 flex-wrap">
+                                {location.categories.map(cat => (
                                     <span
-                                        key={index}
-                                        className="inline-block rounded-2xl bg-gray-200 px-4 py-1 text-sm font-medium text-gray-700"
+                                        key={cat.id}
+                                        className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
                                     >
-                                        {cat}
+                                        {cat.name}
                                     </span>
                                 ))}
                             </div>
-                        </div> */}
-
-                        {location.coupleMoodTypes?.length ? (
-                            location.coupleMoodTypes.map(mood => (
-                                <span key={mood.id} className="...">
-                                    {mood.name}
-                                </span>
-                            ))
                         ) : (
-                            <div className="text-sm text-gray-400 flex items-center gap-2">
-                                <span>Chưa chọn tâm trạng</span>
-                                <button
-                                    onClick={handleEdit}
-                                    className="text-violet-500 hover:underline"
-                                >
-                                    Cập nhật ngay
-                                </button>
-                            </div>
+                            <span className="text-gray-500">Chưa có danh mục</span>
                         )}
+                        <div>
+                            <p className="text-sm font-bold mb-2">Tâm trạng</p>
+                            {location.coupleMoodTypes?.length ? (
+                                location.coupleMoodTypes.map(mood => (
+
+                                    <span key={mood.id}
+                                        className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+
+                                    >
+                                        {mood.name}
+                                    </span>
+                                ))
+                            ) : (
+                                <div className="text-sm text-gray-400 flex items-center gap-2">
+                                    <span>Chưa chọn tâm trạng</span>
+                                    <button
+                                        onClick={handleEdit}
+                                        className="text-violet-500 hover:underline"
+                                    >
+                                        Cập nhật ngay
+                                    </button>
+                                </div>
+                            )}
+
+                        </div>
 
                         <div>
                             <p className="text-sm font-bold mb-2">Tính cách</p>

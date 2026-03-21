@@ -17,12 +17,12 @@ export default function QRContent() {
 
   const [payment, setPayment] = useState<PaymentQrInfoLocation | null>(null);
   console.log("QR payment:", payment);
+
   useEffect(() => {
     if (!transactionId) return;
 
     const fetchQr = async () => {
       const res = await getPaymentQrInfo(Number(transactionId));
-
       setPayment(res.data);
     };
 
@@ -71,59 +71,91 @@ export default function QRContent() {
 
     try {
       await cancelPayment(Number(transactionId));
-
       router.push(`/venue/location/mylocation/${locationId}`);
-
     } catch (err) {
       console.error("Cancel payment error:", err);
       alert("Không thể hủy thanh toán");
     }
   };
 
-  if (!payment) return <div>Loading...</div>;
-
-  return (
-    <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">
-        Thanh toán
-      </h1>
-
-      <Image
-        src={payment.qrCodeUrl}
-        alt="QR code for payment"
-        width={256}
-        height={256}
-        className="w-64 mx-auto mb-6"
-      />
-
-      <div className="space-y-2">
-        <p>
-          <b>Số tiền:</b> {payment.amount.toLocaleString()} đ
-        </p>
-
-        <p>
-          <b>Nội dung CK:</b> {payment.paymentContent}
-        </p>
-
-        <p>
-          <b>Ngân hàng:</b> {payment.bankInfo.BankName}
-        </p>
-
-        <p>
-          <b>Số TK:</b> {payment.bankInfo.AccountNumber}
-        </p>
-
-        <p>
-          <b>Chủ TK:</b> {payment.bankInfo.AccountName}
+  if (!payment) {
+    return (
+      <div className="flex items-center justify-center bg-[#faf7ff]">
+        <p className="text-purple-400 animate-pulse">
+          Đang chuẩn bị thanh toán...
         </p>
       </div>
-      <div className="mt-6 flex justify-center">
-        <button
+    );
+  }
+
+  return (
+    <div className=" bg-[#faf7ff] flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-purple-100 p-6">
+
+        {/* Title */}
+        <h1 className="text-xl font-semibold text-purple-700 text-center mb-5">
+          Thanh toán
+        </h1>
+
+        {/* QR */}
+        <Image
+          src={payment.qrCodeUrl}
+          alt="QR code for payment"
+          width={240}
+          height={240}
+          className="mx-auto mb-5 rounded-lg border border-purple-100"
+        />
+
+        {/* Info */}
+        <div className="space-y-3 text-sm">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Số tiền</span>
+            <span className="font-semibold text-purple-600">
+              {payment.amount.toLocaleString()} đ
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Ngân hàng</span>
+            <span className="text-gray-800">
+              {payment.bankInfo.BankName}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Số TK</span>
+            <span className="text-gray-800">
+              {payment.bankInfo.AccountNumber}
+            </span>
+          </div>
+
+          <div className="flex justify-between">
+            <span className="text-gray-500">Chủ TK</span>
+            <span className="text-gray-800">
+              {payment.bankInfo.AccountName}
+            </span>
+          </div>
+
+          <div>
+            <p className="text-gray-500 mb-1">Nội dung CK</p>
+            <p className="text-gray-800 break-words">
+              {payment.paymentContent}
+            </p>
+          </div>
+        </div>
+
+        {/* Status */}
+        <p className="text-center text-xs text-purple-400 mt-4">
+          Đang chờ thanh toán...
+        </p>
+
+        {/* Button */}
+        <div
           onClick={handleCancelPayment}
-          className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+          className="mt-6 w-full text-center py-3 rounded-md bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer"
         >
           Hủy thanh toán
-        </button>
+        </div>
       </div>
     </div>
   );

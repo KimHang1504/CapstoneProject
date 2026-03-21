@@ -52,5 +52,19 @@ export const venueSidebarConfig: SidebarConfig = {
         },
       ],
     },
+    {
+      title: 'Quảng cáo',
+      icon: TicketPercent,
+      items: [
+        {
+          label: 'Quản lý quảng cáo',
+          href: '/venue/advertisement',
+        },
+        {
+          label: 'Lịch sử giao dịch',
+          href: '/venue/advertisement/transaction',
+        },
+      ],
+    },
   ],
 };
