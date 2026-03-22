@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, SpecialEvent, SpecialEventPagination, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, SpecialEvent, SpecialEventPagination, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
 
 //Dashboard
 export const getDashboardStats = (request: DashboardRequest) => {
@@ -142,4 +142,47 @@ export const approveVoucher = (id: number) => {
 
 export const rejectVoucher = (id: number, rejectReason: string) => {
     return apiClient.post(`/api/admin-vouchers/${id}/reject`, { rejectReason });
+}
+
+//Report management
+export const getReports = (
+    PageNumber: number,
+    PageSize: number,
+    TargetType?: string,
+    Status?: string
+) => {
+    return apiClient.get<ApiResponse<ReportPagination>>("/api/Report", {
+        params: {
+            PageNumber,
+            PageSize,
+            TargetType: TargetType || undefined,
+            Status: Status || undefined,
+        },
+    });
+};
+
+export const getReportDetail = (id: number) => {
+    return apiClient.get<ApiResponse<Report>>(`/api/Report/${id}`);
+};
+
+export const approveReport = (id: number) => {
+    return apiClient.put<ApiResponse<void>>(`/api/Report/${id}/approve`);
+}
+
+export const rejectReport = (id: number) => {
+    return apiClient.put<ApiResponse<void>>(`/api/Report/${id}/reject`);
+}
+
+//Config management
+export const getConfigs = (pageNumber: number, pageSize: number) => {
+    return apiClient.get<ApiResponse<ConfigPagination>>("/api/SystemConfig", {
+        params: {
+            pageNumber,
+            pageSize,
+        }
+    });
+}
+
+export const updateConfig = (body: UpdateConfigRequest) => {
+    return apiClient.put(`/api/SystemConfig`, body);
 }

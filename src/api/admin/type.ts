@@ -432,3 +432,48 @@ export interface VoucherRejectRequest {
   voucherId: number;
   rejectReason: string;
 }
+
+//Report
+export interface Report {
+  id: number;
+  reporterId: number;
+  reporterName: string;
+  targetType: 'POST' | 'REVIEW' | 'USER' | 'VENUE' | 'COMMENT';
+  targetId: number;
+  reason: string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReportPagination {
+  reports: Report[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+//Configuration
+export interface Config {
+  id: number;
+  configKey: string;
+  configValue: string;
+  description: string | null;
+  updatedAt: string;
+}
+
+export interface ConfigPagination {
+  items: Config[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface UpdateConfigRequest {
+  configKey: string;
+  configValue: string;
+}

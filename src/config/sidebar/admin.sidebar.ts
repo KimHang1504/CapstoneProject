@@ -27,9 +27,17 @@ export const adminSidebarConfig: SidebarConfig = {
       label: 'Thử thách',
       href: '/admin/challenge',
     },
-     {
+    {
       label: 'Quản lí voucher',
       href: '/admin/voucher-management',
     },
+    {
+      label: 'Quản lí report',
+      href: '/admin/report-management',
+    },
+    {
+      label: 'Cấu hình hệ thống',
+      href: '/admin/config-management',
+    }
   ],
 };
