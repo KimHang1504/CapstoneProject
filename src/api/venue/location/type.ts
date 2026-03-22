@@ -274,12 +274,16 @@ export interface PaymentQrInfoLocation {
   };
 }
 
+export type OpeningHourItem = {
+  day: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+};
+
 export type UpdateOpeningHoursRequest = {
   venueLocationId: number;
-  day: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  openTime: string; // "HH:mm" format
-  closeTime: string; // "HH:mm" format
-  isClosed: boolean;
+  openingHours: OpeningHourItem[];
 };
 
 export type UpdateOpeningHoursResponse = {

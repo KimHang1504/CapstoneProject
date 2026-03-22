@@ -6,7 +6,11 @@ import {
     redeemVoucherItem,
 } from "@/api/venue/vouchers/api";
 
-export default function VoucherInput() {
+type Props = {
+    venueLocationId: number;
+};
+
+export default function VoucherInput({ venueLocationId }: Props) {
     const [code, setCode] = useState("");
     const [message, setMessage] = useState("");
     const [valid, setValid] = useState(false);
@@ -19,7 +23,7 @@ export default function VoucherInput() {
             setLoading(true);
             setMessage("");
 
-            const res = await validateVoucherItem(voucherCode);
+            const res = await validateVoucherItem(voucherCode, venueLocationId);
             const data = res.data;
 
             if (data.isValid) {

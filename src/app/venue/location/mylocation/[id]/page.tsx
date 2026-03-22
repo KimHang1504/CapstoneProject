@@ -88,6 +88,11 @@ export default function LocationDetailPage() {
         );
     }
 
+    const baseUrl =
+        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+
+    const redeemLink = `${baseUrl}/staff/redeem?locationId=${location.id}`;
+
     const isPending = location.status === 'PENDING';
     const canSubmitForApproval =
         location.status === 'DRAFTED' || location.status === 'PENDING';
@@ -330,6 +335,35 @@ export default function LocationDetailPage() {
                         <div>
                             <p className="text-sm font-bold mb-1">Mô tả</p>
                             <p className="text-sm text-gray-700">{location.description}</p>
+                        </div>
+                        <div className="bg-white rounded-2xl p-4 space-y-3">
+                            <p className="font-semibold">Link quét voucher cho nhân viên</p>
+
+                            <div className="flex items-center gap-2">
+                                <input
+                                    value={redeemLink}
+                                    readOnly
+                                    className="flex-1 text-sm px-3 py-2 border rounded-lg bg-gray-50"
+                                />
+
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(redeemLink);
+                                        toast.success("Đã copy link!");
+                                    }}
+                                    className="px-3 py-2 bg-violet-500 text-white rounded-lg text-sm hover:bg-violet-600"
+                                >
+                                    Copy
+                                </button>
+                            </div>
+
+                            <a
+                                href={redeemLink}
+                                target="_blank"
+                                className="text-sm text-blue-500 hover:underline"
+                            >
+                                Mở trang redeem →
+                            </a>
                         </div>
 
                         {location.categories?.length ? (

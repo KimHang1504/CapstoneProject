@@ -3,7 +3,7 @@ import { jwtDecode } from "jwt-decode";
 
 export const getUserFromToken = (token: string) => {
   const decoded = jwtDecode<JwtPayload>(token);
-
+console.log(decoded);
   return {
     id: decoded.sub,
     email: decoded.email,
