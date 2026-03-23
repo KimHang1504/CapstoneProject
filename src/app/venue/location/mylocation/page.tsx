@@ -95,6 +95,7 @@ export default function MyLocationPage() {
                     }
                     alt={loc.name}
                     fill
+                    unoptimized
                     className="object-cover group-hover:scale-105 transition duration-300"
                   />
                 </div>
