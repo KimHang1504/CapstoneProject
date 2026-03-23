@@ -93,7 +93,7 @@ export default async function VoucherDetailPage({ params }: Props) {
                         <p className="text-sm text-gray-500">Điểm đổi</p>
 
                         <p className="font-medium">
-                            {voucher.pointPrice}
+                            {voucher.voucherPrice}
                         </p>
 
                     </div>

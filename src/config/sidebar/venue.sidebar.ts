@@ -39,6 +39,20 @@ export const venueSidebarConfig: SidebarConfig = {
   ],
   sections: [
     {
+      title: 'Địa điểm',
+      icon: TicketPercent,
+      items: [
+        {
+          label: 'Quản lý địa điểm',
+          href: '/venue/location/mylocation',
+        },
+        {
+          label: 'Lịch sử giao dịch',
+          href: '/venue/location/subscriptions/transaction',
+        },
+      ],
+    },
+    {
       title: 'Voucher',
       icon: TicketPercent,
       items: [
@@ -49,6 +63,20 @@ export const venueSidebarConfig: SidebarConfig = {
         {
           label: 'Đổi mã giảm giá',
           href: '/venue/redeem',
+        },
+      ],
+    },
+    {
+      title: 'Quảng cáo',
+      icon: TicketPercent,
+      items: [
+        {
+          label: 'Quản lý quảng cáo',
+          href: '/venue/advertisement',
+        },
+        {
+          label: 'Lịch sử giao dịch',
+          href: '/venue/advertisement/transaction',
         },
       ],
     },

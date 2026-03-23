@@ -118,7 +118,7 @@ function VoucherCard({ voucher }: { voucher: any }) {
       <div className="flex justify-between mt-4 text-sm">
 
         <span className="text-[#8093F1] font-medium">
-          Points: {voucher.pointPrice}
+          Points: {voucher.voucherPrice}
         </span>
 
         <span className="text-[#72DDF7] font-medium">

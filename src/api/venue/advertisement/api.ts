@@ -67,3 +67,12 @@ export const updateAdvertisementDraft = async (
     data
   );
 };
+
+export const getAdsOrderTransactions = async (
+  status?: string
+): Promise<ApiResponse<import("./type").AdsOrderTransaction[]>> => {
+  return apiClient.get<ApiResponse<import("./type").AdsOrderTransaction[]>>(
+    "/api/Advertisement/my-ads-orders",
+    { params: status ? { status } : undefined }
+  );
+};

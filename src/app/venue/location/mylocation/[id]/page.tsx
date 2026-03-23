@@ -12,6 +12,7 @@ import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
+import toast from 'react-hot-toast';
 
 export default function LocationDetailPage() {
     const params = useParams();
@@ -87,6 +88,11 @@ export default function LocationDetailPage() {
         );
     }
 
+    const baseUrl =
+        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
+
+    const redeemLink = `${baseUrl}/staff/redeem?locationId=${location.id}`;
+
     const isPending = location.status === 'PENDING';
     const canSubmitForApproval =
         location.status === 'DRAFTED' || location.status === 'PENDING';
@@ -113,13 +119,24 @@ export default function LocationDetailPage() {
         if (!location.address) errors.push("Địa chỉ");
         if (!location.email) errors.push("Email");
         if (!location.phoneNumber) errors.push("Số điện thoại");
+        if (!location.categories?.length) errors.push("Danh mục");
         if (!location.priceMin || !location.priceMax) errors.push("Khoảng giá");
         if (!location.coverImage?.length) errors.push("Hình ảnh bìa");
         if (!location.coupleMoodTypes?.length) errors.push("Tâm trạng");
         if (!location.couplePersonalityTypes?.length) errors.push("Tính cách");
 
         if (errors.length > 0) {
-            alert("Vui lòng hoàn thiện: " + errors.join(", "));
+            toast.error(
+                <div className="flex flex-wrap gap-1">
+                    <span>Vui lòng cập nhật:</span>
+                    {errors.map((err, i) => (
+                        <span key={i} className="bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs">
+                            {err}
+                        </span>
+                    ))}
+                </div>,
+                { duration: 7000 }
+            );
             return;
         }
 
@@ -188,7 +205,6 @@ export default function LocationDetailPage() {
 
                     <div className="flex justify-end gap-3">
                         {/* SUBMIT */}
-                        {/* SUBMIT */}
                         {canSubmitForApproval && (
                             <button
                                 onClick={handleSubmitForApproval}
@@ -223,6 +239,7 @@ export default function LocationDetailPage() {
                             src={images[currentImageIndex]}
                             alt={`Image ${currentImageIndex + 1}`}
                             fill
+                            unoptimized
                             className="object-cover transition-all duration-500"
                         />
 
@@ -320,39 +337,75 @@ export default function LocationDetailPage() {
                             <p className="text-sm font-bold mb-1">Mô tả</p>
                             <p className="text-sm text-gray-700">{location.description}</p>
                         </div>
+                        <div className="bg-white rounded-2xl p-4 space-y-3">
+                            <p className="font-semibold">Link quét voucher cho nhân viên</p>
 
-                        {/* <div>
-                            <p className="text-sm font-bold mb-2">Danh mục</p>
+                            <div className="flex items-center gap-2">
+                                <input
+                                    value={redeemLink}
+                                    readOnly
+                                    className="flex-1 text-sm px-3 py-2 border rounded-lg bg-gray-50"
+                                />
 
-                            <div className="flex flex-wrap gap-2">
-                                {location.category?.map((cat, index) => (
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(redeemLink);
+                                        toast.success("Đã copy link!");
+                                    }}
+                                    className="px-3 py-2 bg-violet-500 text-white rounded-lg text-sm hover:bg-violet-600"
+                                >
+                                    Copy
+                                </button>
+                            </div>
+
+                            <a
+                                href={redeemLink}
+                                target="_blank"
+                                className="text-sm text-blue-500 hover:underline"
+                            >
+                                Mở trang redeem →
+                            </a>
+                        </div>
+
+                        {location.categories?.length ? (
+                            <div className="flex gap-2 flex-wrap">
+                                {location.categories.map(cat => (
                                     <span
-                                        key={index}
-                                        className="inline-block rounded-2xl bg-gray-200 px-4 py-1 text-sm font-medium text-gray-700"
+                                        key={cat.id}
+                                        className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
                                     >
-                                        {cat}
+                                        {cat.name}
                                     </span>
                                 ))}
                             </div>
-                        </div> */}
-
-                        {location.coupleMoodTypes?.length ? (
-                            location.coupleMoodTypes.map(mood => (
-                                <span key={mood.id} className="...">
-                                    {mood.name}
-                                </span>
-                            ))
                         ) : (
-                            <div className="text-sm text-gray-400 flex items-center gap-2">
-                                <span>Chưa chọn tâm trạng</span>
-                                <button
-                                    onClick={handleEdit}
-                                    className="text-violet-500 hover:underline"
-                                >
-                                    Cập nhật ngay
-                                </button>
-                            </div>
+                            <span className="text-gray-500">Chưa có danh mục</span>
                         )}
+                        <div>
+                            <p className="text-sm font-bold mb-2">Tâm trạng</p>
+                            {location.coupleMoodTypes?.length ? (
+                                location.coupleMoodTypes.map(mood => (
+
+                                    <span key={mood.id}
+                                        className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+
+                                    >
+                                        {mood.name}
+                                    </span>
+                                ))
+                            ) : (
+                                <div className="text-sm text-gray-400 flex items-center gap-2">
+                                    <span>Chưa chọn tâm trạng</span>
+                                    <button
+                                        onClick={handleEdit}
+                                        className="text-violet-500 hover:underline"
+                                    >
+                                        Cập nhật ngay
+                                    </button>
+                                </div>
+                            )}
+
+                        </div>
 
                         <div>
                             <p className="text-sm font-bold mb-2">Tính cách</p>
@@ -431,7 +484,7 @@ export default function LocationDetailPage() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {location.fullPageMenuImage.map((img, idx) => (
                                 <div key={idx} className="relative w-full h-40 overflow-hidden rounded-xl">
-                                    <Image src={img} alt={`Menu ${idx + 1}`} fill className="object-cover" />
+                                    <Image src={img} alt={`Menu ${idx + 1}`} fill unoptimized className="object-cover" />
                                 </div>
                             ))}
                         </div>

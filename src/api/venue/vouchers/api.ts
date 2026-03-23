@@ -89,10 +89,10 @@ export const getVoucherItems = (params: GetVoucherItemsParams) => {
 //flow redeem voucher
 
 // validate voucher item
-export const validateVoucherItem = (itemCode: string) => {
+export const validateVoucherItem = (itemCode: string, venueLocationId: number) => {
   return apiClient.post<ApiResponse<ValidateVoucherItemData>>(
     "/api/venue-vouchers/voucher-items/validate",
-    { itemCode }
+    { itemCode, venueLocationId }
   );
 };
 

@@ -8,8 +8,8 @@ import { Wallet as WalletIcon, Coins, ArrowDownCircle, Clock } from "lucide-reac
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   APPROVED: { label: "Đã duyệt", cls: "bg-emerald-100 text-emerald-600" },
-  PENDING:  { label: "Đang chờ", cls: "bg-amber-100 text-amber-600" },
-  REJECTED: { label: "Từ chối",  cls: "bg-rose-100 text-rose-500" },
+  PENDING: { label: "Đang chờ", cls: "bg-amber-100 text-amber-600" },
+  REJECTED: { label: "Từ chối", cls: "bg-rose-100 text-rose-500" },
 };
 
 export default function WalletPage() {
@@ -39,7 +39,7 @@ export default function WalletPage() {
   if (loading) {
     return (
       <div className="p-8 grid grid-cols-2 gap-4 animate-pulse">
-        {[1,2].map(i => <div key={i} className="h-32 bg-gray-100 rounded-2xl" />)}
+        {[1, 2].map(i => <div key={i} className="h-32 bg-gray-100 rounded-2xl" />)}
         <div className="col-span-2 h-48 bg-gray-100 rounded-2xl" />
       </div>
     );
@@ -49,37 +49,22 @@ export default function WalletPage() {
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
 
       {/* Balance Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
-          <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10" />
-          <div className="absolute -right-2 -bottom-6 w-32 h-32 rounded-full bg-white/10" />
-          <div className="flex items-center gap-2 mb-3 relative">
-            <WalletIcon size={18} className="opacity-80" />
-            <span className="text-sm opacity-80">Số dư ví</span>
-          </div>
-          <p className="text-3xl font-bold relative">
-            {wallet?.balance.toLocaleString("vi-VN")}
-            <span className="text-base font-normal ml-1 opacity-80">₫</span>
-          </p>
-          <p className="text-xs opacity-60 mt-1 relative">
-            {wallet?.isActive ? "Ví đang hoạt động" : "Ví tạm khóa"}
-          </p>
+      <div className="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+        <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10" />
+        <div className="absolute -right-2 -bottom-6 w-32 h-32 rounded-full bg-white/10" />
+        <div className="flex items-center gap-2 mb-3 relative">
+          <WalletIcon size={18} className="opacity-80" />
+          <span className="text-sm opacity-80">Số dư ví</span>
         </div>
-
-        <div className="relative overflow-hidden bg-gradient-to-br from-pink-400 to-rose-500 rounded-2xl p-6 text-white shadow-lg">
-          <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10" />
-          <div className="absolute -right-2 -bottom-6 w-32 h-32 rounded-full bg-white/10" />
-          <div className="flex items-center gap-2 mb-3 relative">
-            <Coins size={18} className="opacity-80" />
-            <span className="text-sm opacity-80">Điểm tích lũy</span>
-          </div>
-          <p className="text-3xl font-bold relative">
-            {wallet?.points.toLocaleString("vi-VN")}
-            <span className="text-base font-normal ml-1 opacity-80">pts</span>
-          </p>
-          <p className="text-xs opacity-60 mt-1 relative">Dùng để đổi ưu đãi</p>
-        </div>
+        <p className="text-3xl font-bold relative">
+          {wallet?.balance.toLocaleString("vi-VN")}
+          <span className="text-base font-normal ml-1 opacity-80">₫</span>
+        </p>
+        <p className="text-xs opacity-60 mt-1 relative">
+          {wallet?.isActive ? "Ví đang hoạt động" : "Ví tạm khóa"}
+        </p>
       </div>
+
 
       {/* Withdraw Button */}
       <div className="flex items-center justify-between">
@@ -123,6 +108,11 @@ export default function WalletPage() {
                     <p className="text-xs text-gray-400 truncate">
                       {item.bankInfo?.bankName} · {item.bankInfo?.accountNumber}
                     </p>
+                    {item.rejectionReason && (
+                      <p className="text-xs text-rose-500 truncate mt-1">
+                        Lý do từ chối: {item.rejectionReason}
+                      </p>
+                    )}
                   </div>
                   <div className="text-right shrink-0 space-y-1">
                     <span className={`inline-block text-xs px-2.5 py-0.5 rounded-full font-medium ${s.cls}`}>

@@ -20,6 +20,7 @@ export default function LoginPage() {
     const [password, setPassword] = useState("");
     const rememberMe = true;
 
+
     const handleSubmit = async (e: any) => {
         e.preventDefault();
         const payload = { email, password, rememberMe };
@@ -31,11 +32,15 @@ export default function LoginPage() {
             document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=36000;Secure`;
             window.dispatchEvent(new Event('login'));
 
-            const role = getUserFromToken(token).role;
+            const user = getUserFromToken(token);
+            const role = user.role;
             if (role === "ADMIN") {
                 nav.push("/admin");
-            } else {
+            }
+             else if (role === "VENUEOWNER") {
                 nav.push("/venue");
+            } else if (role === "STAFF") {
+                nav.push(`/staff/redeem?locationId=${user.assignedVenueLocationId}`);
             }
         } catch (error) {
             console.error("Error occurred while logging in:", error);

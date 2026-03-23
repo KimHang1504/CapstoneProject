@@ -145,3 +145,43 @@ export interface RejectionHistory {
     reason: string;
     rejectedBy: string;
 }
+
+export type AdsOrderStatusFilter =
+    | "PENDING"
+    | "COMPLETED"
+    | "FAILED"
+    | "CANCELLED"
+    | "REFUNDED";
+
+export interface AdsOrderTransaction {
+    id: number;
+    status: AdsOrderStatusFilter;
+    createdAt: string;
+    updatedAt: string;
+    payment: {
+        transactionId: number;
+        amount: number;
+        paymentStatus: string;
+        paymentMethod: string;
+        paidAt: string;
+        transactionCode: string | null;
+    };
+    package: {
+        id: number;
+        name: string;
+        price: number;
+        durationDays: number;
+        placementType: string;
+    };
+    advertisement: {
+        id: number;
+        title: string;
+        content: string;
+        bannerUrl: string;
+        targetUrl: string;
+        placementType: string;
+        status: string;
+        desiredStartDate: string | null;
+    };
+    venueLocationAds: VenueLocationAd[];
+}
