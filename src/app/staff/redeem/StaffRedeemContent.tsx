@@ -19,6 +19,7 @@ export function StaffRedeemLoading() {
 export default function StaffRedeemContent() {
   const searchParams = useSearchParams();
   const locationId = Number(searchParams.get("locationId"));
+  console.log("Location ID from URL:", locationId);
   const [activeTab, setActiveTab] = useState<"scan" | "input">("scan");
 
   if (!locationId) {
@@ -73,13 +74,13 @@ export default function StaffRedeemContent() {
       <div className="bg-white rounded-lg p-6 shadow-sm">
         {activeTab === "scan" && (
           <div className="animate-in fade-in duration-200">
-            <VoucherScan venueLocationId={locationId} />
+            <VoucherInput venueLocationId={locationId} />
           </div>
         )}
 
         {activeTab === "input" && (
           <div className="animate-in fade-in duration-200">
-            <VoucherInput venueLocationId={locationId} />
+            <VoucherScan venueLocationId={locationId} />
           </div>
         )}
       </div>

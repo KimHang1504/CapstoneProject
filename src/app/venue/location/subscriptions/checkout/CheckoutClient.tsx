@@ -117,14 +117,14 @@ export default function QRContent() {
       window.removeEventListener("popstate", handlePopState);
     };
   }, [transactionId]);
-  
-  useEffect(() => {
-    return () => {
-      if (transactionId) {
-        cancelPayment(Number(transactionId)).catch(() => { });
-      }
-    };
-  }, []);
+
+  // useEffect(() => {
+  //   return () => {
+  //     if (transactionId) {
+  //       cancelPayment(Number(transactionId)).catch(() => { });
+  //     }
+  //   };
+  // }, []);
 
   if (!payment) {
     return (
@@ -151,6 +151,7 @@ export default function QRContent() {
           alt="QR code for payment"
           width={240}
           height={240}
+          unoptimized
           className="mx-auto mb-5 rounded-lg border border-purple-100"
         />
 

@@ -1,51 +1,51 @@
 export type Timeframe = 'all' | 'today' | 'week' | 'month' | 'year';
 
 export interface TopSearch {
-  keyword: string;
-  count: number;
-  percentage: number;
+  Keyword: string;
+  Count: number;
+  Percentage: number;
 }
 
 export interface HotMood {
-  moodTypeId: number;
-  moodName: string;
-  count: number;
-  percentage: number;
+  MoodTypeId: number;
+  MoodName: string;
+  Count: number;
+  Percentage: number;
 }
 
 export interface MoodTrend {
-  month: string;
-  monthName: string;
-  totalCount: number;
-  moods: { moodName: string; count: number }[];
+  Month: string;
+  MonthName: string;
+  TotalCount: number;
+  Moods: { MoodName: string; Count: number }[];
 }
 
 export interface InteractionBreakdown {
-  type: string;
-  count: number;
+  Type: string;
+  Count: number;
 }
 
 export interface TopVenueCategory {
-  category: string;
-  totalInteractions: number;
-  uniqueUsers: number;
-  interactionBreakdown: InteractionBreakdown[];
+  Category: string;
+  TotalInteractions: number;
+  UniqueUsers: number;
+  InteractionBreakdown: InteractionBreakdown[];
 }
 
 export interface TopCheckInVenue {
-  id: number;
-  name: string;
-  category: string | null;
-  checkInCount: number;
-  averageRating: number;
-  status: string;
+  Id: number;
+  Name: string;
+  Category: string | null;
+  CheckInCount: number;
+  AverageRating: number;
+  Status: string;
 }
 
 export interface FavoritesAndInteractions {
-  topVenueCategories: TopVenueCategory[];
-  adPerformanceByCategory: unknown[];
-  topCheckInVenues: TopCheckInVenue[];
-  totalCheckIns: number;
+  TopVenueCategories: TopVenueCategory[];
+  AdPerformanceByCategory: unknown[];
+  TopCheckInVenues: TopCheckInVenue[];
+  TotalCheckIns: number;
 }
 
 export interface TrendKeyword {
@@ -82,13 +82,13 @@ export interface TrendAnalysis {
 }
 
 export interface InsightData {
-  data: {
-    timeframe: Timeframe;
-    generatedAt: string;
-    topSearches: TopSearch[];
-    hotMoods: HotMood[];
-    moodTrendsByMonth: MoodTrend[];
-    favoritesAndInteractions: FavoritesAndInteractions;
+  Data: {
+    Timeframe: Timeframe;
+    GeneratedAt: string;
+    TopSearches: TopSearch[];
+    HotMoods: HotMood[];
+    MoodTrendsByMonth: MoodTrend[];
+    FavoritesAndInteractions: FavoritesAndInteractions;
   };
-  trendAnalysis: TrendAnalysis;
+  TrendAnalysis: TrendAnalysis;
 }

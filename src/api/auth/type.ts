@@ -32,6 +32,7 @@ export interface JwtPayload {
   exp: number;
   iss: string;
   aud: string;
+  assigned_venue_location_id: number | null;
 }
 
 export interface VenueOwnerProfile {

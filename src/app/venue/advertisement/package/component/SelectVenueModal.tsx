@@ -39,7 +39,9 @@ export default function SelectVenueModal({ selectedIds, onConfirm, onClose }: Pr
     };
 
     const confirm = () => {
+        console.log("Selected IDs:", tempSelected);
         onConfirm(tempSelected);
+
         onClose();
     };
 
