@@ -85,8 +85,8 @@ export default function Info({ formData, setFormData }: Props) {
 
   return (
     <div className="flex items-center justify-center ">
-      <div className="w-full max-w-3xl rounded-3xl  px-6 py-10 md:px-10">
-        <h1 className="mb-8 text-center text-2xl font-bold text-gray-900">
+      <div className="w-full max-w-3xl rounded-3xl  px-6 py-6 md:px-10">
+        <h1 className="mb-8 text-center text-2xl font-bold text-blue-900">
           Thông tin địa điểm
         </h1>
 
@@ -120,7 +120,7 @@ export default function Info({ formData, setFormData }: Props) {
         {/* CATEGORY */}
         <div className="mb-6">
           <label className="mb-2 block text-sm font-medium text-gray-800">
-            Danh mục <span className="text-pink-500">*</span>
+            Danh mục
           </label>
 
           <CategoryDropdown
@@ -137,7 +137,7 @@ export default function Info({ formData, setFormData }: Props) {
         {/* Giá cả */}
         <div className="mb-6">
           <label className="mb-2 block text-sm font-medium text-gray-800">
-            Khoảng giá <span className="text-pink-500">*</span>
+            Khoảng giá
           </label>
 
           <div className="grid grid-cols-2 gap-4">
@@ -188,7 +188,7 @@ export default function Info({ formData, setFormData }: Props) {
         </div>
         <div className="mb-6">
           <label className="mb-3 block text-sm font-medium">
-            Thẻ tâm trạng *
+            Thẻ tâm trạng
           </label>
 
           <div className="flex flex-wrap gap-3">
@@ -220,7 +220,7 @@ export default function Info({ formData, setFormData }: Props) {
         </div>
         <div>
           <label className="mb-3 block text-sm font-medium">
-            Thẻ tính cách *
+            Thẻ tính cách
           </label>
 
           <div className="flex flex-wrap gap-3">

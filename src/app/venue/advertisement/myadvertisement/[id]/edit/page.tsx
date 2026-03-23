@@ -17,6 +17,7 @@ export default function EditAdvertisementPage() {
 
     useEffect(() => {
         const fetchData = async () => {
+            setData(null);
             const res = await getAdvertisementById(Number(id));
             setData(res.data);
         };

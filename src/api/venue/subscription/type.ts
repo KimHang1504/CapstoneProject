@@ -17,3 +17,24 @@ export type GetSubscriptionPackagesResponse = {
   traceId?: string;
   timestamp?: string;
 };
+
+export type MySubscription = {
+  id: number;
+  venueId: number;
+  packageId: number;
+  startDate: string | null;
+  endDate: string | null;
+  quantity: number;
+  status: 'ACTIVE' | 'CANCELLED' | 'PENDING_PAYMENT' | 'REFUNDED' | 'EXPIRED';
+  venueName: string;
+  createdAt: string;
+  package: SubscriptionPackage;
+};
+
+export type GetMySubscriptionsResponse = {
+  message: string;
+  code: number;
+  data: MySubscription[];
+  traceId?: string;
+  timestamp?: string;
+};

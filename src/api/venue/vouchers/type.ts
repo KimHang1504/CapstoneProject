@@ -6,7 +6,7 @@ export type CreateVoucherRequest = {
   title: string;
   description?: string;
 
-  pointPrice: number;
+  voucherPrice: number;
 
   discountType: DiscountType;
 
@@ -46,7 +46,7 @@ export type Voucher = {
   title: string;
   description?: string;
 
-  pointPrice: number;
+  voucherPrice: number;
 
   discountType: DiscountType;
   discountAmount: number | null;

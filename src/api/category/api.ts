@@ -4,7 +4,7 @@ import { apiClient, ApiResponse } from "@/lib/api-client"
 
 export const getCategories = async (
   page = 1,
-  pageSize = 10
+  pageSize = 300
 ) => {
   const res = await apiClient.get<ApiResponse<CategoryListData>>(
     "/api/Category",

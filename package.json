@@ -9,12 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "html5-qrcode": "^2.3.8",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
+    "page-agent": "^1.5.11",
     "react": "19.2.3",
     "react-datepicker": "^9.1.0",
     "react-dom": "19.2.3",
+    "react-hot-toast": "^2.6.0",
     "recharts": "^3.8.0",
     "sonner": "^2.0.7"
   },

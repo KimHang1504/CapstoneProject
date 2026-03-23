@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import toast from "react-hot-toast"
 
 import Info from "@/app/venue/location/mylocation/create/Info";
 import Contact from "@/app/venue/location/mylocation/create/Contact";
@@ -49,14 +50,60 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
   const CurrentStep = steps[step - 1]
 
-  function nextStep() {
-    if (step < steps.length) setStep((s) => s + 1)
-  }
-
   function prevStep() {
-    if (step > 1) setStep((s) => s - 1)
+    if (step === 1) {
+      if (mode === "edit" && locationId) {
+        // Về trang detail
+        router.push(`/venue/location/mylocation/${locationId}`)
+      } else {
+        // Mode create → về trang danh sách
+        router.push("/venue/location/mylocation")
+      }
+      return
+    }
+
+    setStep((s) => s - 1)
   }
 
+  function nextStep() {
+    // STEP 1 → check name + description
+    if (step === 1) {
+      if (!formData.name || !formData.description) {
+        toast.error("Vui lòng nhập tên và mô tả");
+        return;
+      }
+    }
+
+    // STEP 2 → check address
+    if (step === 2) {
+      if (!formData.address) {
+        toast.error("Vui lòng nhập địa chỉ");
+        return;
+      }
+    }
+
+    if (step < steps.length) {
+      setStep((s) => s + 1)
+    }
+  }
+  function hasAtLeastOneField(data: VenueFormData) {
+    return (
+      data.name ||
+      data.description ||
+      data.address ||
+      data.selectedCategories.length > 0 ||
+      data.email ||
+      data.phoneNumber ||
+      data.websiteUrl ||
+      data.priceMin > 0 ||
+      data.priceMax > 0 ||
+      data.coverImage ||
+      data.interiorImage.length > 0 ||
+      data.fullPageMenuImage.length > 0 ||
+      data.selectedMoods.length > 0 ||
+      data.selectedStyles.length > 0
+    );
+  }
   async function handleSubmit() {
     try {
       // ===== COVER =====
@@ -96,13 +143,8 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         menuUrls = uploaded
       }
 
-      if (!formData.selectedMoods.length) {
-        alert("Vui lòng chọn ít nhất 1 tâm trạng");
-        return;
-      }
-
-      if (!formData.selectedStyles.length) {
-        alert("Vui lòng chọn ít nhất 1 tính cách");
+      if (!hasAtLeastOneField(formData)) {
+        toast.error("Vui lòng nhập ít nhất một thông tin để lưu bản nháp");
         return;
       }
 
@@ -134,17 +176,18 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
       if (mode === 'edit' && locationId) {
         await updateVenueLocation(locationId, payload)
-        alert('Cập nhật địa điểm thành công')
+        toast.success("Cập nhật địa điểm thành công")
+        router.push(`/venue/location/mylocation/${locationId}`)
       } else {
         await registerVenueLocation(payload)
-        alert('Tạo địa điểm thành công')
+        toast.success("Tạo địa điểm thành công")
       }
 
-      router.push("/venue/location/mylocation")
+      // router.push("/venue/location/mylocation")
 
     } catch (e) {
       console.error(e)
-      alert(mode === 'edit'
+      toast.error(mode === 'edit'
         ? "Cập nhật địa điểm thất bại"
         : "Tạo địa điểm thất bại"
       )
@@ -154,11 +197,11 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
   return (
     <div>
-      <h1 className="text-center text-2xl font-bold text-gray-900 mb-4">
+      <h1 className="text-2xl font-bold text-gray-900 mb-4">
         {mode === 'edit' ? 'Chỉnh sửa địa điểm' : 'Tạo địa điểm mới'}
       </h1>
 
-      <p className="text-blue-900 mb-4 text-center">
+      <p className="text-blue-900 text-center">
         Bước {step} / {steps.length}
       </p>
 
@@ -171,7 +214,6 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         <button
           type="button"
           onClick={prevStep}
-          disabled={step === 1}
           className="rounded-[8.33] border border-[#D3D6FF] bg-white px-6 py-2 text-sm font-medium text-[#4C5A8F] disabled:opacity-50"
         >
           Trở về
@@ -181,7 +223,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#b28bff]"
+            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
           >
             {mode === 'edit' ? 'Cập nhật' : 'Hoàn tất'}
           </button>
@@ -189,7 +231,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={nextStep}
-            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#b28bff]"
+            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
           >
             Tiếp tục
           </button>
