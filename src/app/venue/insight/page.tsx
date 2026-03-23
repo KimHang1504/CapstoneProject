@@ -72,8 +72,8 @@ export default function InsightPage() {
 
   useEffect(() => { fetchInsight(timeframe); }, [timeframe]);
 
-  const inner = data?.Data;
-  const trend = data?.TrendAnalysis;
+  const inner = data?.data;
+  const trend = data?.trendAnalysis;
 
   return (
     <div className="p-6 space-y-6 max-w-6xl mx-auto">
@@ -84,7 +84,7 @@ export default function InsightPage() {
           <h1 className="text-xl font-bold text-gray-900">Insight</h1>
           {inner && (
             <p className="text-xs text-gray-400 mt-0.5">
-              Cập nhật lúc {new Date(inner.GeneratedAt).toLocaleString('vi-VN')}
+              Cập nhật lúc {new Date(inner.generatedAt).toLocaleString('vi-VN')}
             </p>
           )}
         </div>
@@ -119,12 +119,12 @@ export default function InsightPage() {
             <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
               <SectionTitle icon={Search}>Từ khóa tìm kiếm</SectionTitle>
               <div className="space-y-3">
-                {inner?.TopSearches.map((item: TopSearch, i: number) => (
+                {inner?.topSearches.map((item: TopSearch, i: number) => (
                   <ProgressBar
-                    key={item.Keyword}
-                    label={item.Keyword}
-                    value={item.Percentage}
-                    count={item.Count}
+                    key={item.keyword}
+                    label={item.keyword}
+                    value={item.percentage}
+                    count={item.count}
                     color={BAR_COLORS[i % BAR_COLORS.length]}
                   />
                 ))}
@@ -140,12 +140,12 @@ export default function InsightPage() {
             <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
               <SectionTitle icon={Smile}>Tâm trạng nổi bật</SectionTitle>
               <div className="space-y-3">
-                {inner?.HotMoods.map((item: HotMood, i: number) => (
+                {inner?.hotMoods.map((item: HotMood, i: number) => (
                   <ProgressBar
-                    key={item.MoodTypeId}
-                    label={item.MoodName}
-                    value={item.Percentage}
-                    count={item.Count}
+                    key={item.moodTypeId}
+                    label={item.moodName}
+                    value={item.percentage}
+                    count={item.count}
                     color={BAR_COLORS[i % BAR_COLORS.length]}
                   />
                 ))}
@@ -154,26 +154,26 @@ export default function InsightPage() {
           </div>
 
           {/* Row 2: Mood Trends by Month */}
-          {inner.MoodTrendsByMonth.length > 0 && (
+          {inner.moodTrendsByMonth.length > 0 && (
             <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
               <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng theo tháng</SectionTitle>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {inner?.MoodTrendsByMonth.map((month: MoodTrend) => (
-                  <div key={month.Month}>
+                {inner?.moodTrendsByMonth.map((month: MoodTrend) => (
+                  <div key={month.month}>
                     <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium text-gray-700">{month.MonthName} {month.Month.split('-')[0]}</span>
-                      <span className="text-xs text-gray-400">{month.TotalCount} lượt</span>
+                      <span className="font-medium text-gray-700">{month.monthName} {month.month.split('-')[0]}</span>
+                      <span className="text-xs text-gray-400">{month.totalCount} lượt</span>
                     </div>
                     <div className="space-y-2">
-                      {month.Moods.map((m: { MoodName: string; Count: number }, i: number) => {
-                        const pct = Math.round((m.Count / month.TotalCount) * 100);
+                      {month.moods.map((m: { moodName: string; count: number }, i: number) => {
+                        const pct = Math.round((m.count / month.totalCount) * 100);
                         return (
-                          <div key={m.MoodName} className="flex items-center gap-2">
+                          <div key={m.moodName} className="flex items-center gap-2">
                             <div className={`w-2 h-2 rounded-full shrink-0 ${MOOD_COLORS[i % MOOD_COLORS.length]}`} />
                             <div className="flex-1 min-w-0">
                               <div className="flex justify-between text-xs mb-0.5">
-                                <span className="text-gray-600 truncate">{m.MoodName}</span>
-                                <span className="text-gray-400 shrink-0 ml-1">{m.Count}</span>
+                                <span className="text-gray-600 truncate">{m.moodName}</span>
+                                <span className="text-gray-400 shrink-0 ml-1">{m.count}</span>
                               </div>
                               <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
                                 <div
@@ -186,9 +186,9 @@ export default function InsightPage() {
                         );
                       })}
                     </div>
-                    {trend?.moodAnalysis.monthlyTrend.find((t: { month: string; insight: string }) => t.month === month.Month) && (
+                    {trend?.moodAnalysis.monthlyTrend.find((t: { month: string; insight: string }) => t.month === month.monthName) && (
                       <p className="text-xs text-gray-400 italic mt-2">
-                        {trend?.moodAnalysis.monthlyTrend.find((t: { month: string; insight: string }) => t.month === month.Month)?.insight}
+                        {trend?.moodAnalysis.monthlyTrend.find((t: { month: string; insight: string }) => t.month === month.monthName)?.insight}
                       </p>
                     )}
                   </div>
@@ -204,16 +204,16 @@ export default function InsightPage() {
             <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
               <SectionTitle icon={BarChart2}>Danh mục yêu thích</SectionTitle>
               <div className="space-y-3">
-                {inner?.FavoritesAndInteractions.TopVenueCategories.map((cat: TopVenueCategory, i: number) => {
-                  const max = inner.FavoritesAndInteractions.TopVenueCategories[0]?.TotalInteractions || 1;
-                  const pct = Math.round((cat.TotalInteractions / max) * 100);
-                  const view = cat.InteractionBreakdown.find((b: { Type: string; Count: number }) => b.Type === 'VIEW')?.Count ?? 0;
-                  const save = cat.InteractionBreakdown.find((b: { Type: string; Count: number }) => b.Type === 'SAVE')?.Count ?? 0;
+                {inner?.favoritesAndInteractions.topVenueCategories.map((cat: TopVenueCategory, i: number) => {
+                  const max = inner.favoritesAndInteractions.topVenueCategories[0]?.totalInteractions || 1;
+                  const pct = Math.round((cat.totalInteractions / max) * 100);
+                  const view = cat.interactionBreakdown.find((b: { type: string; count: number }) => b.type === 'VIEW')?.count ?? 0;
+                  const save = cat.interactionBreakdown.find((b: { type: string; count: number }) => b.type === 'SAVE')?.count ?? 0;
                   return (
-                    <div key={cat.Category} className="space-y-1">
+                    <div key={cat.category} className="space-y-1">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-700 font-medium">{cat.Category}</span>
-                        <span className="text-gray-400 text-xs">{cat.TotalInteractions} tương tác</span>
+                        <span className="text-gray-700 font-medium">{cat.category}</span>
+                        <span className="text-gray-400 text-xs">{cat.totalInteractions} tương tác</span>
                       </div>
                       <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                         <div className={`h-full rounded-full ${BAR_COLORS[i % BAR_COLORS.length]}`} style={{ width: `${pct}%` }} />
@@ -221,7 +221,7 @@ export default function InsightPage() {
                       <div className="flex gap-3 text-xs text-gray-400">
                         <span>{view} lượt xem</span>
                         <span>{save} lượt lưu</span>
-                        <span className="flex items-center gap-1"><Users size={10} />{cat.UniqueUsers} người</span>
+                        <span className="flex items-center gap-1"><Users size={10} />{cat.uniqueUsers} người</span>
                       </div>
                     </div>
                   );
@@ -237,22 +237,22 @@ export default function InsightPage() {
               <SectionTitle icon={CheckCircle}>Địa điểm check-in nhiều nhất</SectionTitle>
               <div className="mb-3 flex items-center gap-2">
                 <span className="text-2xl font-bold text-violet-600">
-                  {inner.FavoritesAndInteractions.TotalCheckIns}
+                  {inner.favoritesAndInteractions.totalCheckIns}
                 </span>
                 <span className="text-sm text-gray-400">tổng check-in</span>
               </div>
               <div className="space-y-3">
-                {inner?.FavoritesAndInteractions.TopCheckInVenues.map((venue: TopCheckInVenue, i: number) => (
-                  <div key={venue.Id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
+                {inner?.favoritesAndInteractions.topCheckInVenues.map((venue: TopCheckInVenue, i: number) => (
+                  <div key={venue.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
                     <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0 ${MOOD_COLORS[i % MOOD_COLORS.length]}`}>
                       {i + 1}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-800 truncate">{venue.Name}</p>
-                      <p className="text-xs text-gray-400">{venue.Category ?? 'Chưa phân loại'}</p>
+                      <p className="font-medium text-gray-800 truncate">{venue.name}</p>
+                      <p className="text-xs text-gray-400">{venue.category ?? 'Chưa phân loại'}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="font-semibold text-gray-900">{venue.CheckInCount}</p>
+                      <p className="font-semibold text-gray-900">{venue.checkInCount}</p>
                       <p className="text-xs text-gray-400">check-in</p>
                     </div>
                   </div>

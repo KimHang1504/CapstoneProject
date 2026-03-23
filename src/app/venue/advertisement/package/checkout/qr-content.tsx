@@ -69,87 +69,128 @@ export default function QRContent() {
 
         try {
             await cancelPayment(Number(transactionId));
-
-            router.push(
-                `/payment/failure?transactionId=${transactionId}&type=${type}`
-            );
+            router.push(`/venue/advertisement/`);
         } catch (error) {
             console.error("Cancel payment error:", error);
             alert("Không thể huỷ thanh toán");
         }
     };
 
-    if (!payment) return <div>Loading...</div>;
+    useEffect(() => {
+        if (!transactionId) return;
 
-return (
-  <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
-    <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
+        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+            e.preventDefault();
+            e.returnValue = "";
+        };
 
-      <h1 className="text-2xl font-bold text-center mb-6">
-        Thanh toán quảng cáo
-      </h1>
+        const handlePopState = async () => {
+            const confirmLeave = window.confirm(
+                "Nếu bạn thoát đơn hàng sẽ bị hủy"
+            );
 
-      {/* QR CODE */}
-      <div className="flex justify-center mb-6">
-        <Image
-          src={payment.qrCodeUrl}
-          alt="QR code for payment"
-          width={260}
-          height={260}
-          className="rounded-lg border"
-        />
-      </div>
+            if (!confirmLeave) {
+                window.history.pushState(null, "", window.location.href);
+            } else {
+                try {
+                    await cancelPayment(Number(transactionId));
+                } catch (err) {
+                    console.error("Auto cancel error:", err);
+                }
+            }
+        };
 
-      {/* PAYMENT INFO */}
-      <div className="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+        window.history.pushState(null, "", window.location.href);
 
-        <div className="flex justify-between">
-          <span className="text-gray-500">Số tiền</span>
-          <span className="font-semibold">
-            {payment.amount.toLocaleString()} đ
-          </span>
+        window.addEventListener("beforeunload", handleBeforeUnload);
+        window.addEventListener("popstate", handlePopState);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+            window.removeEventListener("popstate", handlePopState);
+        };
+    }, [transactionId]);
+
+    if (!payment) {
+        return (
+            <div className="flex items-center justify-center bg-[#faf7ff] min-h-screen">
+                <p className="text-purple-400 animate-pulse">
+                    Đang chuẩn bị thanh toán...
+                </p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="bg-[#faf7ff] flex items-center justify-center px-4 min-h-screen">
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-purple-100 p-6">
+
+                {/* Title */}
+                <h1 className="text-xl font-semibold text-purple-700 text-center mb-5">
+                    Thanh toán quảng cáo
+                </h1>
+
+                {/* QR */}
+                <Image
+                    src={payment.qrCodeUrl}
+                    alt="QR code for payment"
+                    width={240}
+                    height={240}
+                    unoptimized
+                    className="mx-auto mb-5 rounded-lg border border-purple-100"
+                />
+
+                {/* Info */}
+                <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                        <span className="text-gray-500">Số tiền</span>
+                        <span className="font-semibold text-purple-600">
+                            {payment.amount.toLocaleString()} đ
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                        <span className="text-gray-500">Ngân hàng</span>
+                        <span className="text-gray-800">
+                            {payment.bankInfo.bankName}
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                        <span className="text-gray-500">Số TK</span>
+                        <span className="text-gray-800">
+                            {payment.bankInfo.accountNumber}
+                        </span>
+                    </div>
+
+                    <div className="flex justify-between">
+                        <span className="text-gray-500">Chủ TK</span>
+                        <span className="text-gray-800">
+                            {payment.bankInfo.accountName}
+                        </span>
+                    </div>
+
+                    <div>
+                        <p className="text-gray-500 mb-1">Nội dung CK</p>
+                        <p className="text-gray-800 wrap-break-word">
+                            {payment.paymentContent}
+                        </p>
+                    </div>
+                </div>
+
+                {/* Status */}
+                <p className="text-center text-xs text-purple-400 mt-4">
+                    Đang chờ thanh toán...
+                </p>
+
+                {/* Button */}
+                <div
+                    onClick={handleCancel}
+                    className="mt-6 w-full text-center py-3 rounded-md bg-gray-200 text-gray-600 hover:bg-gray-300 cursor-pointer"
+                >
+                    Hủy thanh toán
+                </div>
+            </div>
         </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-500">Nội dung CK</span>
-          <span className="font-semibold">
-            {payment.paymentContent}
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-500">Ngân hàng</span>
-          <span>{payment.bankInfo.bankName}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-500">Số TK</span>
-          <span>{payment.bankInfo.accountNumber}</span>
-        </div>
-
-        <div className="flex justify-between">
-          <span className="text-gray-500">Chủ TK</span>
-          <span>{payment.bankInfo.accountName}</span>
-        </div>
-
-      </div>
-
-      {/* NOTE */}
-      <p className="text-xs text-gray-500 text-center mt-4">
-        Sau khi chuyển khoản thành công hệ thống sẽ tự động xác nhận.
-      </p>
-
-      {/* CANCEL BUTTON */}
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={handleCancel}
-          className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-        >
-          Huỷ thanh toán
-        </button>
-      </div>
-
-    </div>
-  </div>
-);
+    );
 }
