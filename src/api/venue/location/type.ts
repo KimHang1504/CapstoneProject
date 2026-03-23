@@ -220,6 +220,7 @@ export type GetVenueLocationListResponse = {
 export type SubmitVenueWithPaymentRequest = {
   packageId: number;
   quantity: number;
+  paymentMethod: 'VIETQR' | 'WALLET';
 };
 
 export interface SubmitVenueWithPaymentResponse {

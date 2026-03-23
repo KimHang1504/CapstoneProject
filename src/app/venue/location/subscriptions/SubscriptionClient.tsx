@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { getSubscriptionPackages } from '@/api/venue/subscription/api';
 import { submitVenueWithPayment } from '@/api/venue/location/api';
 import { SubscriptionPackage } from '@/api/venue/subscription/type';
-import { Check } from 'lucide-react';
+import { Check, Wallet, QrCode, X } from 'lucide-react';
 
 export default function LocationRegisterPage() {
     const searchParams = useSearchParams();
@@ -15,6 +15,8 @@ export default function LocationRegisterPage() {
     const [packages, setPackages] = useState<SubscriptionPackage[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [processingPackageId, setProcessingPackageId] = useState<number | null>(null);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedPackage, setSelectedPackage] = useState<SubscriptionPackage | null>(null);
     useEffect(() => {
         const fetchPackages = async () => {
             try {
@@ -32,33 +34,47 @@ export default function LocationRegisterPage() {
         fetchPackages();
     }, []);
 
-    const handleBuyPackage = async (pkg: SubscriptionPackage) => {
-        if (!locationId) {
+    const handleOpenPaymentModal = (pkg: SubscriptionPackage) => {
+        setSelectedPackage(pkg);
+        setShowPaymentModal(true);
+    };
+
+    const handleBuyPackage = async (method: 'WALLET' | 'VIETQR') => {
+        if (!locationId || !selectedPackage) {
             alert('Không tìm thấy thông tin địa điểm');
             return;
         }
 
-        try {
-            setProcessingPackageId(pkg.id);
+        setShowPaymentModal(false);
 
-            const response = await submitVenueWithPayment(Number(locationId), {
-                packageId: pkg.id,
-                quantity: 1
-            });
-            console.log('Payment submission response:', response);
-             const payment = response.data;
+        if (method === 'WALLET') {
+            // Redirect to wallet confirmation page (will call API there)
+            router.push(`/venue/location/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}`);
+        } else {
+            // VietQR: Call API and redirect to checkout
+            try {
+                setProcessingPackageId(selectedPackage.id);
 
-            router.push(`/venue/location/subscriptions/checkout?transactionId=${payment.transactionId}&locationId=${locationId}`);
-        } catch (error: any) {
-            const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
+                const response = await submitVenueWithPayment(Number(locationId), {
+                    packageId: selectedPackage.id,
+                    quantity: 1,
+                    paymentMethod: method
+                });
+                console.log('Payment submission response:', response);
+                const payment = response.data;
 
-            if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
-                alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
-            } else {
-                alert(errorMessage);
+                router.push(`/venue/location/subscriptions/checkout?transactionId=${payment.transactionId}&locationId=${locationId}`);
+            } catch (error: any) {
+                const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
+
+                if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
+                    alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
+                } else {
+                    alert(errorMessage);
+                }
+            } finally {
+                setProcessingPackageId(null);
             }
-        } finally {
-            setProcessingPackageId(null);
         }
     };
 
@@ -104,11 +120,11 @@ export default function LocationRegisterPage() {
 
                             {/* Nút mua */}
                             <button
-                                onClick={() => handleBuyPackage(pkg)}
-                                // disabled={isProcessing}
+                                onClick={() => handleOpenPaymentModal(pkg)}
+                                disabled={processingPackageId === pkg.id}
                                 className="mb-6 rounded-md py-3 text-sm font-semibold bg-white text-[#B388EB] hover:bg-[#fdeaf9] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Mua
+                                {processingPackageId === pkg.id ? 'Đang xử lý...' : 'Mua ngay'}
                             </button>
 
                             {/* FEATURES */}
@@ -144,6 +160,61 @@ export default function LocationRegisterPage() {
                     </div>
                 ))}
             </div>
+
+            {/* Payment Modal */}
+            {showPaymentModal && selectedPackage && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-3xl max-w-md w-full p-8 relative animate-in fade-in zoom-in duration-200">
+                        <button
+                            onClick={() => setShowPaymentModal(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+                        >
+                            <X size={24} />
+                        </button>
+
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                            Chọn phương thức thanh toán
+                        </h2>
+                        <p className="text-sm text-gray-500 mb-6">
+                            {selectedPackage.packageName} - {selectedPackage.price.toLocaleString('vi-VN')} VND
+                        </p>
+
+                        <div className="space-y-3">
+                            {/* Wallet Payment */}
+                            <button
+                                onClick={() => handleBuyPackage('WALLET')}
+                                className="w-full flex items-center gap-4 p-5 border-2 border-purple-200 rounded-2xl hover:border-purple-400 hover:bg-purple-50 transition-all group"
+                            >
+                                <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                    <Wallet className="text-white" size={28} />
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <p className="font-bold text-gray-900 text-lg">Thanh toán bằng Ví</p>
+                                    <p className="text-sm text-gray-500">
+                                        Nhanh chóng và tiện lợi
+                                    </p>
+                                </div>
+                            </button>
+
+                            {/* VietQR Payment */}
+                            <button
+                                onClick={() => handleBuyPackage('VIETQR')}
+                                className="w-full flex items-center gap-4 p-5 border-2 border-blue-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all group"
+                            >
+                                <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                    <QrCode className="text-white" size={28} />
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <p className="font-bold text-gray-900 text-lg">Chuyển khoản VietQR</p>
+                                    <p className="text-sm text-gray-500">
+                                        Quét mã QR để thanh toán
+                                    </p>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

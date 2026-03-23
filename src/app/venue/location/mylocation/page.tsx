@@ -89,8 +89,9 @@ export default function MyLocationPage() {
                 <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
                   <Image
                     src={
-                      loc.coverImage?.[0] ??
-                      "https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg"
+                      loc.coverImage?.[0] && loc.coverImage[0] !== 'string' && loc.coverImage[0].startsWith('http')
+                        ? loc.coverImage[0]
+                        : "https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg"
                     }
                     alt={loc.name}
                     fill
