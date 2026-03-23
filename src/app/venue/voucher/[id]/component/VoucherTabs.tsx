@@ -117,7 +117,7 @@ export default function VoucherTabs({ voucher }: Props) {
                                     Điểm đổi
                                 </p>
                                 <p className="font-semibold">
-                                    {voucher.pointPrice} điểm
+                                    {voucher.voucherPrice} điểm
                                 </p>
                             </div>
 

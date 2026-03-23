@@ -37,7 +37,7 @@ export default function EditVoucherPage() {
           title: data.title,
           description: data.description ?? "",
 
-          pointPrice: data.pointPrice,
+          voucherPrice: data.voucherPrice,
 
           discountType: data.discountType,
           discountAmount: data.discountAmount,

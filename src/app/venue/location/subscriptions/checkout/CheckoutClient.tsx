@@ -78,6 +78,54 @@ export default function QRContent() {
     }
   };
 
+  useEffect(() => {
+    if (!transactionId) return;
+
+    // 1. Reload / đóng tab
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+      e.returnValue = "";
+    };
+
+    // 2. Back button
+    const handlePopState = async () => {
+      const confirmLeave = window.confirm(
+        "Nếu bạn thoát đơn hàng sẽ bị hủy"
+      );
+
+      if (!confirmLeave) {
+        // giữ user ở lại
+        window.history.pushState(null, "", window.location.href);
+      } else {
+        // user đồng ý → gọi API hủy luôn
+        try {
+          await cancelPayment(Number(transactionId));
+        } catch (err) {
+          console.error("Auto cancel error:", err);
+        }
+      }
+    };
+
+    // push state để bắt back
+    window.history.pushState(null, "", window.location.href);
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    window.addEventListener("popstate", handlePopState);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      window.removeEventListener("popstate", handlePopState);
+    };
+  }, [transactionId]);
+  
+  useEffect(() => {
+    return () => {
+      if (transactionId) {
+        cancelPayment(Number(transactionId)).catch(() => { });
+      }
+    };
+  }, []);
+
   if (!payment) {
     return (
       <div className="flex items-center justify-center bg-[#faf7ff]">
@@ -138,7 +186,7 @@ export default function QRContent() {
 
           <div>
             <p className="text-gray-500 mb-1">Nội dung CK</p>
-            <p className="text-gray-800 break-words">
+            <p className="text-gray-800 wrap-break-word">
               {payment.paymentContent}
             </p>
           </div>

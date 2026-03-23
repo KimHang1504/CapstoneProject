@@ -16,7 +16,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const defaultForm: CreateVoucherRequest = {
     title: "",
     description: "",
-    pointPrice: 0,
+    voucherPrice: 0,
 
     discountType: "FIXED_AMOUNT",
     discountAmount: null,
@@ -224,10 +224,10 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
             <input
               type="number"
               className="w-full border border-violet-200 rounded-xl px-4 py-3"
-              value={form.pointPrice ?? ""}
+              value={form.voucherPrice ?? ""}
               onChange={(e) =>
                 handleChange(
-                  "pointPrice",
+                  "voucherPrice",
                   Number(e.target.value)
                 )
               }

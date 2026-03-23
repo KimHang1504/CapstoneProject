@@ -239,6 +239,7 @@ export default function LocationDetailPage() {
                             src={images[currentImageIndex]}
                             alt={`Image ${currentImageIndex + 1}`}
                             fill
+                            unoptimized
                             className="object-cover transition-all duration-500"
                         />
 
@@ -483,7 +484,7 @@ export default function LocationDetailPage() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             {location.fullPageMenuImage.map((img, idx) => (
                                 <div key={idx} className="relative w-full h-40 overflow-hidden rounded-xl">
-                                    <Image src={img} alt={`Menu ${idx + 1}`} fill className="object-cover" />
+                                    <Image src={img} alt={`Menu ${idx + 1}`} fill unoptimized className="object-cover" />
                                 </div>
                             ))}
                         </div>
