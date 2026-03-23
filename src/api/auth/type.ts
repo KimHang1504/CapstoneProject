@@ -33,3 +33,29 @@ export interface JwtPayload {
   iss: string;
   aud: string;
 }
+
+export interface VenueOwnerProfile {
+  id: number;
+  businessName: string;
+  phoneNumber: string;
+  email: string;
+  address: string;
+  citizenIdFrontUrl: string;
+  citizenIdBackUrl: string;
+  businessLicenseUrl: string | null;
+}
+
+export interface UserProfile {
+  id: number;
+  email: string;
+  fullName: string;
+  phoneNumber: string;
+  avatarUrl: string;
+  role: string;
+  isActive: boolean;
+  lastLoginAt: string;
+  createdAt: string;
+  updatedAt: string;
+  memberProfile: null;
+  venueOwnerProfile: VenueOwnerProfile | null;
+}
