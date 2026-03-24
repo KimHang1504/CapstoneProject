@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { getAdsOrderTransactions } from '@/api/venue/advertisement/api';
 import { AdsOrderTransaction } from '@/api/venue/advertisement/type';
 import TransactionCard, { STATUS_LABEL } from './components/TransactionCard';
@@ -15,10 +15,13 @@ const STATUS_OPTIONS = [
   { value: 'CANCELLED', label: STATUS_LABEL.CANCELLED },
 ];
 
+const ITEMS_PER_PAGE = 5;
+
 export default function AdTransactionPage() {
   const [status, setStatus] = useState('all');
   const [data, setData] = useState<AdsOrderTransaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const fetchData = useCallback(async (s: string) => {
     setLoading(true);
@@ -34,7 +37,14 @@ export default function AdTransactionPage() {
 
   useEffect(() => {
     fetchData(status);
+    setCurrentPage(1);
   }, [status, fetchData]);
+
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [data, currentPage]);
 
   const totalPaid = data
     .filter(d => d.status === 'COMPLETED')
@@ -84,7 +94,68 @@ export default function AdTransactionPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {data.map(item => <TransactionCard key={item.id} item={item} />)}
+          {paginatedData.map(item => <TransactionCard key={item.id} item={item} />)}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {!loading && data.length > 0 && totalPages > 1 && (
+        <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+          <p className="text-sm text-gray-500">
+            Hiển thị {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, data.length)} trong tổng số {data.length} giao dịch
+          </p>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:border-violet-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <div className="flex items-center gap-1">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                if (
+                  page === 1 ||
+                  page === totalPages ||
+                  (page >= currentPage - 1 && page <= currentPage + 1)
+                ) {
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                        currentPage === page
+                          ? "bg-violet-600 text-white shadow-md"
+                          : "text-gray-700 hover:bg-violet-50 border border-gray-200 hover:border-violet-300"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  );
+                } else if (page === currentPage - 2 || page === currentPage + 2) {
+                  return (
+                    <span key={page} className="px-2 text-gray-400">
+                      ...
+                    </span>
+                  );
+                }
+                return null;
+              })}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-700 hover:bg-violet-50 hover:border-violet-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
         </div>
       )}
     </div>
