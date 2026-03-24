@@ -38,7 +38,7 @@ export default function LoginPage() {
                 nav.push("/admin");
             }
              else if (role === "VENUEOWNER") {
-                nav.push("/venue");
+                nav.push("/venue/dashboard");
             } else if (role === "STAFF") {
                 nav.push(`/staff/redeem?locationId=${user.assignedVenueLocationId}`);
             }

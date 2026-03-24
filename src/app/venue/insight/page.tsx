@@ -177,8 +177,8 @@ export default function InsightPage() {
             </div>
           </div>
 
-          {/* AI Analysis - Compact */}
-          <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-200 p-3 shadow-sm">
+          {/* AI Analysis */}
+          <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-200 p-3 shadow-sm">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles size={14} className="text-purple-600" />
               <h3 className="text-sm font-semibold text-gray-800">AI Phân tích</h3>
