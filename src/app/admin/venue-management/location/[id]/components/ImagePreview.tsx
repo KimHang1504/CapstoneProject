@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+import placeHolder from "../../../../../../../public/mascot.png";
 
 export default function ImagePreview({
   src,
@@ -14,48 +15,56 @@ export default function ImagePreview({
   width?: number;
   height?: number;
 }) {
+  const fallback = placeHolder;
+
+  const isValidSrc = (url: string) => {
+    if (!url) return false;
+
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return url.startsWith("/");
+    }
+  };
+
+  const [imgSrc, setImgSrc] = useState(
+    isValidSrc(src) ? src : fallback
+  );
+
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      {/* Thumbnail */}
       <Image
-        src={src}
+        src={imgSrc}
         alt={alt}
         width={width}
         height={height}
-        className="rounded-lg object-cover cursor-pointer hover:opacity-80 transition"
+        className="rounded-lg object-cover cursor-pointer"
         onClick={() => setOpen(true)}
+        onError={() => {
+          if (imgSrc !== fallback) {
+            setImgSrc(fallback);
+          }
+        }}
       />
 
-      {/* Modal */}
       {open && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 overflow-y-auto"
+          className="fixed inset-0 bg-black/80 z-50"
           onClick={() => setOpen(false)}
         >
-          <div className="min-h-screen flex items-center justify-center p-6">
-
-            <div
-              className="relative max-w-6xl w-full"
-              onClick={(e) => e.stopPropagation()}
-            >
+          <div className="flex items-center justify-center min-h-screen p-6">
+            <div onClick={(e) => e.stopPropagation()}>
               <Image
-                src={src}
+                src={imgSrc}
                 alt={alt}
-                width={1400}
-                height={900}
-                className="w-full h-auto max-h-[90vh] object-contain rounded-lg"
+                width={1200}
+                height={800}
+                className="max-h-[90vh] object-contain"
               />
-
-              <button
-                onClick={() => setOpen(false)}
-                className="absolute top-4 right-4 text-white text-2xl bg-black/50 w-10 h-10 rounded-full"
-              >
-                ✕
-              </button>
             </div>
-
           </div>
         </div>
       )}
