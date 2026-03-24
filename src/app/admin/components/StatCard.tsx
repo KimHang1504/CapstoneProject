@@ -8,7 +8,7 @@ type Props = {
 
 export default function StatCard({ title, value, icon }: Props) {
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-white p-5 shadow-sm border hover:shadow-lg transition">
+    <div className="relative overflow-hidden rounded-2xl bg-white p-5 shadow-sm border border-gray-200 hover:shadow-lg transition">
 
       <div className="flex items-center justify-between">
 
