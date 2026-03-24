@@ -64,6 +64,15 @@ export default function ImagePreview({
                 height={800}
                 className="max-h-[90vh] object-contain"
               />
+              <button
+                onClick={() => setOpen(false)}
+                className="absolute top-4 right-4 
+               w-10 h-10 flex items-center justify-center
+               rounded-full bg-black/60 text-white text-xl
+               hover:bg-black/80 transition cursor-pointer"
+              >
+                ✕
+              </button>
             </div>
           </div>
         </div>
