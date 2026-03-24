@@ -11,6 +11,7 @@ import {
 
 import SelectVenueModal from "@/app/venue/advertisement/package/component/SelectVenueModal";
 import { Wallet, QrCode, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function PackagesClient() {
     const searchParams = useSearchParams();
@@ -69,9 +70,9 @@ export default function PackagesClient() {
                 const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
                 
                 if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
-                    alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
+                    toast.error('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
                 } else {
-                    alert(errorMessage);
+                    toast.error(errorMessage);
                 }
             } finally {
                 setIsProcessing(false);

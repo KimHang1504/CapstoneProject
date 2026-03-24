@@ -11,6 +11,7 @@ import {
 } from "@/api/venue/vouchers/api";
 
 import { CreateVoucherRequest } from "@/api/venue/vouchers/type";
+import toast from "react-hot-toast";
 
 export default function EditVoucherPage() {
 
@@ -78,7 +79,7 @@ export default function EditVoucherPage() {
 
       await updateVoucher(id, data);
 
-      alert("Voucher updated");
+      toast.success("Voucher updated");
 
       router.push(`/venue/voucher/${id}`);
 
@@ -86,7 +87,7 @@ export default function EditVoucherPage() {
 
       console.error(err);
 
-      alert("Update failed");
+      toast.error("Update failed");
 
     }
 

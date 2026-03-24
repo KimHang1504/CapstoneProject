@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { QrCode, Clock, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function QRContent() {
     const searchParams = useSearchParams();
@@ -68,7 +69,7 @@ export default function QRContent() {
             router.push(`/venue/advertisement/`);
         } catch (error) {
             console.error("Cancel payment error:", error);
-            alert("Không thể huỷ thanh toán");
+            toast.error("Không thể huỷ thanh toán");
         }
     };
 

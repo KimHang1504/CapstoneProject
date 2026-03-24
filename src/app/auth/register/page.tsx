@@ -5,6 +5,7 @@ import { useState } from "react";
 import MascotPanel from "../components/mascot_panel";
 import { register } from "@/api/auth/api";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function RegisterPage() {
     const [errors, setErrors] = useState<any>({});
@@ -56,7 +57,7 @@ export default function RegisterPage() {
             }
             const res = await register(payload);
             if (res.code === 200) {
-                alert("Đăng ký thành công! Vui lòng đăng nhập.");
+                toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
                 setForm({
                     email: "",
                     password: "",
@@ -67,12 +68,12 @@ export default function RegisterPage() {
                 });
                 nav.push("/auth");
             } else {
-                alert(res.message || "Đăng ký thất bại. Vui lòng thử lại.");
+                toast.error(res.message || "Đăng ký thất bại. Vui lòng thử lại.");
             }
 
         } catch (error) {
             console.error("Error occurred while registering:", error);
-            alert("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
+            toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
         }
     };
 

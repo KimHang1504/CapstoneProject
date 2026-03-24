@@ -9,6 +9,7 @@ import { getPaymentQrInfo } from "@/api/venue/location/api";
 import { getPaymentStatus } from "@/api/venue/payment/api";
 import { cancelPayment } from "@/api/venue/payment/api";
 import { QrCode, Clock, X } from "lucide-react";
+import toast from "react-hot-toast";
 
 export default function QRContent() {
   const searchParams = useSearchParams();
@@ -70,7 +71,7 @@ export default function QRContent() {
       router.push(`/venue/location/mylocation/${locationId}`);
     } catch (err) {
       console.error("Cancel payment error:", err);
-      alert("Không thể hủy thanh toán");
+      toast.error("Không thể hủy thanh toán");
     }
   };
 
