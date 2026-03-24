@@ -2,6 +2,7 @@ import { getSpecialEventDetail } from "@/api/admin/api";
 import Image from "next/image";
 import { Calendar, Info } from "lucide-react";
 import BackButton from "@/components/BackButton";
+import Link from "next/link";
 
 type Props = {
     params: Promise<{
@@ -20,12 +21,23 @@ export default async function EventDetailPage({ params }: Props) {
     const banner = event.bannerUrl ?? null;
 
     const formatDate = (date: string) =>
-        new Date(date).toLocaleDateString();
+        new Date(date).toLocaleDateString('vi-VN', {
+            month: '2-digit',
+            day: '2-digit',
+            ...(event.isYearly ? {} : { year: "numeric" }),
+        });
 
     return (
         <div className="max-w-5xl mx-auto p-6 space-y-6">
-            <BackButton />
-            {/* BANNER */}
+            <div className="flex justify-between">
+                <BackButton />
+                <button className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                    <Link href={`/admin/special-event-management/special-event/${id}/edit`}>
+                        Chỉnh sửa
+                    </Link>
+                </button>
+            </div>
+
             <div className="relative rounded-xl overflow-hidden shadow">
 
                 <div className="relative w-full h-80 bg-gray-100 flex items-center justify-center">
@@ -41,12 +53,10 @@ export default async function EventDetailPage({ params }: Props) {
                         <div className="text-gray-400">Không có hình ảnh</div>
                     )}
 
-                    {/* overlay */}
                     <div className="absolute inset-0 bg-black/20" />
 
                 </div>
 
-                {/* badge */}
                 <div className="absolute top-4 left-4 bg-violet-600 text-white text-xs px-3 py-1 rounded-full shadow">
                     Sự kiện đặc biệt
                 </div>
@@ -54,7 +64,6 @@ export default async function EventDetailPage({ params }: Props) {
             </div>
 
 
-            {/* HEADER */}
             <div className="bg-white rounded-xl shadow p-6 space-y-4">
 
                 <h1 className="text-3xl font-bold text-gray-800">
@@ -66,7 +75,7 @@ export default async function EventDetailPage({ params }: Props) {
                     <Calendar size={18} />
 
                     <span>
-                        {formatDate(event.startDate)} → {formatDate(event.endDate)}
+                        {formatDate(event.startDate)} → {formatDate(event.endDate)} {event.isYearly && "(Hàng năm)"}
                     </span>
 
                 </div>
@@ -74,7 +83,6 @@ export default async function EventDetailPage({ params }: Props) {
             </div>
 
 
-            {/* DESCRIPTION */}
             <div className="bg-white rounded-xl shadow p-6">
 
                 <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
@@ -89,7 +97,6 @@ export default async function EventDetailPage({ params }: Props) {
             </div>
 
 
-            {/* EVENT INFO */}
             <div className="bg-white rounded-xl shadow p-6">
 
                 <h2 className="text-xl font-semibold mb-4">
@@ -126,6 +133,6 @@ export default async function EventDetailPage({ params }: Props) {
 
             </div>
 
-        </div>
+        </div >
     );
 }

@@ -52,6 +52,10 @@ export const createSpecialEvent = (body: CreateSpecialEventRequest) => {
     return apiClient.post<ApiResponse<void>>("/api/SpecialEvent", body);
 };
 
+export const updateSpecialEvent = (id: number, body: CreateSpecialEventRequest) => {
+    return apiClient.patch<ApiResponse<void>>(`/api/SpecialEvent/${id}`, body);
+}
+
 // Challenge
 export const getAllChallenges = (page: number, pageSize: number) => {
     return apiClient.get<ApiResponse<ChallengePagination>>("/api/Challenge", {

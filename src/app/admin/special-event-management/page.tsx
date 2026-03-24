@@ -70,8 +70,16 @@ export default function SpecialEventListPage() {
 
     }, [data, keyword]);
 
-    const formatDate = (date: string) => {
-        return new Date(date).toLocaleDateString();
+    const formatDate = (iso: string, isYearly: boolean) => {
+        if (!iso) return "";
+
+        const date = new Date(iso);
+
+        return date.toLocaleDateString("vi-VN", {
+            day: "2-digit",
+            month: "2-digit",
+            ...(isYearly ? {} : { year: "numeric" }),
+        });
     };
 
     return (
@@ -148,7 +156,9 @@ export default function SpecialEventListPage() {
                                 </p>
 
                                 <p className="text-sm text-violet-600 font-medium mt-2">
-                                    {formatDate(event.startDate)} → {formatDate(event.endDate)}
+                                    {event.isYearly ? "Hàng năm" : "Một lần"} &middot;{" "}
+                                    {formatDate(event.startDate, event.isYearly)} →{" "}
+                                    {formatDate(event.endDate, event.isYearly)}
                                 </p>
 
                             </div>

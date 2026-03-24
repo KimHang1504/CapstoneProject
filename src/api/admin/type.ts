@@ -209,6 +209,7 @@ export type SpecialEvent = {
   bannerUrl: string;
   startDate: string;
   endDate: string;
+  isYearly: boolean;
 };
 
 export interface SpecialEventPagination {
