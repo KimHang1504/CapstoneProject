@@ -146,6 +146,7 @@ export type VenueLocationDetail = VenueLocationBase & {
   interiorImage?: string[] | null;
   fullPageMenuImage?: string[] | null;
   category: string[] | null;
+  categories?: { id: number; name: string }[];
 
   createdAt: string;
   updatedAt: string;
@@ -219,6 +220,7 @@ export type GetVenueLocationListResponse = {
 export type SubmitVenueWithPaymentRequest = {
   packageId: number;
   quantity: number;
+  paymentMethod: 'VIETQR' | 'WALLET';
 };
 
 export interface SubmitVenueWithPaymentResponse {
@@ -273,12 +275,16 @@ export interface PaymentQrInfoLocation {
   };
 }
 
+export type OpeningHourItem = {
+  day: number;
+  openTime: string;
+  closeTime: string;
+  isClosed: boolean;
+};
+
 export type UpdateOpeningHoursRequest = {
   venueLocationId: number;
-  day: number; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-  openTime: string; // "HH:mm" format
-  closeTime: string; // "HH:mm" format
-  isClosed: boolean;
+  openingHours: OpeningHourItem[];
 };
 
 export type UpdateOpeningHoursResponse = {

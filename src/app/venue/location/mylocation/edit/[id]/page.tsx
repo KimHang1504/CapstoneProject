@@ -19,19 +19,21 @@ export default function EditPage() {
         setIsLoading(true)
         const response = await getVenueLocationDetail(locationId)
         const data = response.data
+        console.log("LẤY CHI TIẾT ĐỂ CHỈNH SỬA:", data) // Debug log
 
         // Extract mood and personality IDs
-        const moodIds = data.coupleMoodTypes.map(m => m.id)
-        const styleIds = data.couplePersonalityTypes.map(p => p.id)
+        const moodIds = data.coupleMoodTypes?.map(m => m.id) || []
+        const styleIds = data.couplePersonalityTypes?.map(p => p.id) || []
 
         setInitialData({
           name: data.name,
           description: data.description,
-selectedCategories: [],
+          selectedCategories: data.categories?.map(c => c.id) || [],
           address: data.address,
           latitude: data.latitude,
           longitude: data.longitude,
           email: data.email,
+
           phoneNumber: data.phoneNumber,
           websiteUrl: data.websiteUrl || "",
           priceMin: data.priceMin,
@@ -39,12 +41,12 @@ selectedCategories: [],
           selectedMoods: moodIds,
           selectedStyles: styleIds,
 
-          // ❗ FILE mới = rỗng
+          // FILE mới = rỗng
           coverImage: null,
           interiorImage: [],
           fullPageMenuImage: [],
 
-          // ✅ URL cũ
+          // URL cũ
           existingCoverUrl: data.coverImage?.[0] ?? undefined,
           existingInteriorUrls: data.interiorImage ?? [],
           existingMenuUrls: data.fullPageMenuImage ?? [],

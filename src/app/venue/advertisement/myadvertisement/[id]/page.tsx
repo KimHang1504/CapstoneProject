@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import { Advertisement, PLACEMENT_LABEL } from '@/api/venue/advertisement/type';
 import { getAdvertisementById } from '@/api/venue/advertisement/api';
 
-import { Send, Pencil, Clock, CheckCircle2, XCircle, FileEdit, MapPin } from 'lucide-react';
+import { Send, Pencil, Clock, CheckCircle2, XCircle, FileEdit, MapPin, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdvertisementDetailPage() {
@@ -17,21 +17,22 @@ export default function AdvertisementDetailPage() {
 
     const [ad, setAd] = useState<Advertisement | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+    const [showFullContent, setShowFullContent] = useState(false);
 
     useEffect(() => {
         const fetchAd = async () => {
             try {
                 const res = await getAdvertisementById(id);
                 setAd(res.data);
+                console.log(res.data);
             } catch (error) {
                 console.error(error);
             } finally {
                 setIsLoading(false);
             }
         };
-
         fetchAd();
     }, [id]);
 
@@ -51,25 +52,19 @@ export default function AdvertisementDetailPage() {
         );
     }
 
-    const images = ad.bannerUrl ? [ad.bannerUrl] : ['/placeholder.jpg'];
+    const images = ad.bannerUrl
+        ? ad.bannerUrl.split(',').map(url => url.trim()).filter(Boolean)
+        : ['/placeholder.jpg'];
 
-    const nextImage = () => {
-        setCurrentImageIndex(prev => (prev + 1) % images.length);
-    };
+    const safeIndex = currentImageIndex % images.length;
+    const nextImage = () => setCurrentImageIndex(prev => (prev + 1) % images.length);
+    const prevImage = () => setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length);
 
-    const prevImage = () => {
-        setCurrentImageIndex(prev => (prev - 1 + images.length) % images.length);
-    };
+    const isDraft = ad.status === "DRAFT";
+    const canEdit = ad.status === "DRAFT" || ad.status === "REJECTED";
 
-    const isDraft = ad.status === 'DRAFT';
-
-    const handleSubmit = () => {
-        router.push(`/venue/advertisement/package?adId=${ad.id}`);
-    };
-
-    const handleEdit = () => {
-        router.push(`/venue/advertisement/edit/${ad.id}`);
-    };
+    const handleSubmit = () => router.push(`/venue/advertisement/package?adId=${ad.id}`);
+    const handleEdit = () => router.push(`/venue/advertisement/myadvertisement/${ad.id}/edit`);
 
     return (
         <div className="min-h-screen p-8">
@@ -77,15 +72,11 @@ export default function AdvertisementDetailPage() {
 
                 {/* HEADER */}
                 <div className="flex flex-col md:flex-row items-start justify-between gap-6">
-
                     <div className="flex gap-4">
-
-                        <p className="text-gray-900 text-3xl font-bold">
-                            {ad.title}
-                        </p>
+                        <p className="text-gray-900 text-3xl font-bold">{ad.title}</p>
                         <span
                             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border
-    ${ad.status === "ACTIVE"
+                                ${ad.status === "ACTIVE"
                                     ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                     : ad.status === "APPROVED"
                                         ? "bg-blue-50 text-blue-700 border-blue-200"
@@ -101,212 +92,221 @@ export default function AdvertisementDetailPage() {
                             {ad.status === "PENDING" && <Clock size={16} />}
                             {ad.status === "DRAFT" && <FileEdit size={16} />}
                             {ad.status === "REJECTED" && <XCircle size={16} />}
-
-                            {ad.status === "ACTIVE"
-                                ? "Đang chạy"
-                                : ad.status === "APPROVED"
-                                    ? "Đã duyệt"
-                                    : ad.status === "PENDING"
-                                        ? "Chờ duyệt"
-                                        : ad.status === "DRAFT"
-                                            ? "Bản nháp"
+                            {ad.status === "ACTIVE" ? "Đang chạy"
+                                : ad.status === "APPROVED" ? "Đã duyệt"
+                                    : ad.status === "PENDING" ? "Chờ duyệt"
+                                        : ad.status === "DRAFT" ? "Bản nháp"
                                             : "Từ chối"}
                         </span>
-
                     </div>
 
                     <div className="flex justify-end gap-3">
-
                         {isDraft && (
                             <button
                                 onClick={handleSubmit}
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm
-                                bg-linear-to-r from-violet-500 to-purple-500 text-white
-                                hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
-                                transition-all duration-200"
+                                    bg-linear-to-r from-violet-500 to-purple-500 text-white
+                                    hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
+                                    transition-all duration-200"
                             >
                                 <Send size={18} />
                                 Gửi duyệt
                             </button>
                         )}
+                        {canEdit && (
+                            <button
+                                onClick={handleEdit}
+                                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+                                    bg-gray-100 text-gray-700 border border-gray-200
+                                    hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
+                            >
+                                <Pencil size={18} />
+                                Chỉnh sửa
+                            </button>
+                        )}
+                    </div>
+                </div>
 
-                        <button
-                            onClick={handleEdit}
-                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
-                             bg-gray-100 text-gray-700 border border-gray-200
-                             hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
-                        >
-                            <Pencil size={18} />
-                            Chỉnh sửa
-                        </button>
+                {/* REJECTION HISTORY */}
+                {ad.status === "REJECTED" && ad.rejectionHistory?.length > 0 && (
+                    <div className="relative overflow-hidden border border-rose-200 bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl p-5">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-rose-400 to-pink-500 rounded-l-2xl" />
+                        <div className="pl-3">
+                            <div className="flex items-center gap-2 mb-1">
+                                <XCircle size={16} className="text-rose-500" />
+                                <p className="font-semibold text-rose-700">Quảng cáo bị từ chối</p>
+                            </div>
+                            <p className="text-sm text-rose-600 leading-relaxed">
+                                {ad.rejectionHistory[ad.rejectionHistory.length - 1].reason}
+                            </p>
+                        </div>
+                    </div>
+                )}
 
+                {/* BANNER */}
+                <div className="relative w-full rounded-3xl overflow-hidden shadow-xl group" style={{ height: '420px' }}>
+                    <Image
+                        src={images[safeIndex]}
+                        alt="Advertisement banner"
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 960px"
+                        className="object-cover cursor-zoom-in"
+                        onClick={() => setIsLightboxOpen(true)}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-violet-900/25 to-transparent pointer-events-none" />
+
+                    {/* Prev / Next */}
+                    {images.length > 1 && (
+                        <>
+                            <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full p-3 shadow-lg transition-all duration-200 border border-white/30">❮</button>
+                            <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full p-3 shadow-lg transition-all duration-200 border border-white/30">❯</button>
+                            {/* Dot indicators */}
+                            <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                {images.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => setCurrentImageIndex(i)}
+                                        className={`h-1.5 rounded-full transition-all duration-200 ${i === safeIndex ? 'w-5 bg-white' : 'w-1.5 bg-white/50'}`}
+                                    />
+                                ))}
+                            </div>
+                        </>
+                    )}
+
+                    {/* Zoom hint */}
+                    <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+                        Click để phóng to
                     </div>
 
+                    {/* Bottom overlay: content + link */}
+                    <div className="absolute bottom-0 left-0 right-0 p-7 flex items-end justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                            <p className="text-white/50 text-[10px] uppercase tracking-widest mb-1.5">Nội dung</p>
+                            <p className={`text-white text-sm leading-relaxed drop-shadow ${!showFullContent ? "line-clamp-2" : ""}`}>
+                                {ad.content}
+                            </p>
+                            <button
+                                onClick={() => setShowFullContent(prev => !prev)}
+                                className="text-xs text-white/70 underline mt-1"
+                            >
+                                {showFullContent ? "Thu gọn" : "Đọc thêm"}
+                            </button>                        </div>
+                        <a
+                            href={ad.targetUrl}
+                            target="_blank"
+                            className="flex items-center gap-2 bg-white/15 hover:bg-white/30 backdrop-blur-md text-white text-xs font-semibold px-4 py-2.5 rounded-xl border border-white/25 transition-all duration-200 shrink-0"
+                        >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                            Mở link
+                        </a>
+                    </div>
                 </div>
-                    <p className="text-gray-800 leading-relaxed text-[15px] whitespace-pre-line">
-                        {ad.content}
-                    </p>
-                {/* BANNER */}
-                <div className="bg-white rounded-2xl">
 
-                    <div className="relative w-full h-95 overflow-hidden rounded-xl">
-
-                        <Image
-                            src={images[currentImageIndex]}
-                            alt="Advertisement banner"
-                            fill
-                            className="object-cover"
-                        />
-
+                {/* LIGHTBOX */}
+                {isLightboxOpen && (
+                    <div
+                        className="fixed inset-0 bg-black/85 z-50 flex items-center justify-center"
+                        onClick={() => setIsLightboxOpen(false)}
+                    >
+                        <button
+                            onClick={() => setIsLightboxOpen(false)}
+                            className="absolute top-5 right-5 text-white p-2 rounded-full hover:bg-white/20 transition"
+                        >
+                            <X size={24} />
+                        </button>
                         {images.length > 1 && (
                             <>
                                 <button
-                                    onClick={prevImage}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2
-                                    bg-white/70 hover:bg-white text-gray-700
-                                    rounded-full p-2 shadow-md"
-                                >
-                                    ❮
-                                </button>
-
+                                    onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                                    className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition"
+                                >❮</button>
                                 <button
-                                    onClick={nextImage}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2
-                                    bg-white/70 hover:bg-white text-gray-700
-                                    rounded-full p-2 shadow-md"
-                                >
-                                    ❯
-                                </button>
+                                    onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                                    className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition"
+                                >❯</button>
                             </>
                         )}
-
-                    </div>
-                </div>
-                {ad.venueLocationAds?.length > 0 && (
-                    <div className="mt-6 rounded-xl border border-indigo-200 bg-indigo-50 p-4">
-
-                        <div className="flex items-center gap-2 mb-3">
-                            <MapPin size={18} className="text-indigo-600" />
-                            <p className="font-semibold text-indigo-700">
-                                Địa điểm đang chạy quảng cáo
-                            </p>
+                        <div
+                            className="relative max-w-[90vw] max-h-[90vh]"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Image
+                                src={images[safeIndex]}
+                                alt="Full advertisement"
+                                width={1200}
+                                height={800}
+                                className="object-contain rounded-xl max-h-[90vh] w-auto"
+                            />
+                            {images.length > 1 && (
+                                <p className="text-center text-white/60 text-xs mt-3">
+                                    {safeIndex + 1} / {images.length}
+                                </p>
+                            )}
                         </div>
+                    </div>
+                )}
 
-                        <div className="flex flex-wrap gap-2">
+                {/* INFO STRIP */}
+                <div className="grid grid-cols-3 gap-4">
+                    {[{
+                        label: "Vị trí hiển thị",
+                        value: PLACEMENT_LABEL[ad.placementType],
+                        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" /></svg>,
+                        bar: "from-violet-500 to-purple-600",
+                        iconBg: "bg-violet-100 text-violet-600",
+                    }, {
+                        label: "Ngày bắt đầu",
+                        value: ad.desiredStartDate ? new Date(ad.desiredStartDate).toLocaleDateString('vi-VN') : 'Chưa đặt',
+                        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
+                        bar: "from-pink-500 to-rose-500",
+                        iconBg: "bg-pink-100 text-pink-600",
+                    }, {
+                        label: "Ngày tạo",
+                        value: new Date(ad.createdAt).toLocaleDateString('vi-VN'),
+                        icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+                        bar: "from-purple-500 to-indigo-500",
+                        iconBg: "bg-purple-100 text-purple-600",
+                    }].map((item) => (
+                        <div key={item.label} className="bg-white rounded-2xl border border-violet-100 shadow-sm p-5 flex items-center gap-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden relative">
+                            <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${item.bar}`} />
+                            <div className={`w-11 h-11 rounded-2xl ${item.iconBg} flex items-center justify-center shrink-0`}>
+                                {item.icon}
+                            </div>
+                            <div>
+                                <p className="text-[11px] text-gray-400 uppercase tracking-widest mb-0.5">{item.label}</p>
+                                <p className="text-base font-bold text-gray-800">{item.value}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* VENUE LOCATIONS */}
+                {ad.venueLocationAds?.length > 0 && (
+                    <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
+                        <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+                            <div className="flex items-center gap-2.5">
+                                <MapPin size={17} className="text-white" />
+                                <p className="font-semibold text-white text-sm">Địa điểm đang chạy quảng cáo</p>
+                            </div>
+                            <span className="bg-white/25 text-white text-xs font-bold px-2.5 py-1 rounded-full">
+                                {ad.venueLocationAds.length}
+                            </span>
+                        </div>
+                        <div className="p-5 flex flex-wrap gap-2.5">
                             {ad.venueLocationAds.map((venue) => (
                                 <Link
                                     key={venue.id}
                                     href={`/venue/location/mylocation/${venue.venueId}`}
-                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white border border-indigo-200 text-sm font-medium text-gray-800 shadow-sm hover:bg-indigo-50 hover:border-indigo-300 transition"
+                                    className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-50 border border-violet-200 text-sm font-medium text-violet-700 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600 hover:text-white hover:border-transparent hover:shadow-md transition-all duration-200"
                                 >
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                                    <span className="w-2 h-2 rounded-full bg-emerald-400 group-hover:bg-white/70 transition-colors" />
                                     {venue.venueName}
                                 </Link>
                             ))}
                         </div>
-
-                    </div>
-                )}
-                {/* CONTENT */}
-                {/* <div className="bg-linear-to-r from-violet-50 to-purple-50 border border-violet-100 rounded-2xl p-6 space-y-4">
-
-                    <p className="text-sm font-semibold text-violet-700 uppercase tracking-wide">
-                        Nội dung quảng cáo
-                    </p>
-
-                    <p className="text-gray-800 leading-relaxed text-[15px] whitespace-pre-line">
-                        {ad.content}
-                    </p>
-
-                </div> */}
-
-
-                {/* TARGET URL */}
-                <a
-                    href={ad.targetUrl}
-                    target="_blank"
-                    className="block group bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-md transition"
-                >
-
-                    <p className="text-xs font-semibold text-gray-500 mb-1">
-                        LINK ĐÍCH
-                    </p>
-
-                    <div className="flex items-center justify-between">
-
-                        <p className="text-sm text-blue-600 break-all group-hover:underline">
-                            {ad.targetUrl}
-                        </p>
-
-                        <span className="text-xs text-gray-400 group-hover:text-gray-600">
-                            mở →
-                        </span>
-
-                    </div>
-
-                </a>
-
-
-                {/* INFO */}
-                <div className="grid md:grid-cols-3 gap-5">
-
-                    {/* PLACEMENT */}
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-sm transition">
-
-                        <p className="text-xs text-gray-500 uppercase mb-1">
-                            Vị trí hiển thị
-                        </p>
-
-                        <p className="text-lg font-semibold text-gray-900">
-                            {PLACEMENT_LABEL[ad.placementType]}
-                        </p>
-
-                    </div>
-
-
-                    {/* START DATE */}
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-sm transition">
-
-                        <p className="text-xs text-gray-500 uppercase mb-1">
-                            Ngày bắt đầu
-                        </p>
-
-                        <p className="text-lg font-semibold text-gray-900">
-
-                            {ad.desiredStartDate
-                                ? new Date(ad.desiredStartDate).toLocaleDateString('vi-VN')
-                                : 'Chưa đặt'}
-
-                        </p>
-
-                    </div>
-
-
-                    {/* CREATED */}
-                    <div className="bg-white border border-gray-200 rounded-2xl p-5 hover:shadow-sm transition">
-
-                        <p className="text-xs text-gray-500 uppercase mb-1">
-                            Ngày tạo
-                        </p>
-
-                        <p className="text-lg font-semibold text-gray-900">
-                            {new Date(ad.createdAt).toLocaleDateString('vi-VN')}
-                        </p>
-
-                    </div>
-
-                </div>
-
-                {/* REJECTION */}
-                {ad.rejectionReason && (
-                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
-                        <p className="text-sm font-semibold text-rose-700">
-                            Lý do từ chối
-                        </p>
-
-                        <p className="text-sm text-rose-600 mt-1">
-                            {ad.rejectionReason}
-                        </p>
                     </div>
                 )}
 

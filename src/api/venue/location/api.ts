@@ -10,7 +10,7 @@ import {
   UpdateOpeningHoursRequest,
   UpdateOpeningHoursResponse,
   MyVenueLocation,
-  PaymentQrInfoLocation
+  PaymentQrInfoLocation,
 } from "./type";
 
 
@@ -64,7 +64,7 @@ export const getPaymentQrInfo = async (
 
 export const updateOpeningHours = (payload: UpdateOpeningHoursRequest) => {
   return apiClient.post<UpdateOpeningHoursResponse>(
-    `/api/VenueLocation/opening-hours/update`,
+    `/api/VenueLocation/opening-hours/update-all`,
     payload
   );
 };

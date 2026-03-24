@@ -21,48 +21,38 @@ const DAYS = [
 ];
 
 export default function OpeningHoursModal({ locationId, onClose, onSuccess }: OpeningHoursModalProps) {
-
-  const [savingDays, setSavingDays] = useState<number[]>([]);
+  const [saving, setSaving] = useState(false);
 
   const [schedules, setSchedules] = useState(
     DAYS.map(d => ({
       day: d.value,
       openTime: '09:00',
       closeTime: '22:00',
-      isClosed: false
+      isClosed: false,
     }))
   );
 
-  const saveDay = async (daySchedule: typeof schedules[number]) => {
-    try {
-      setSavingDays(prev => [...prev, daySchedule.day]);
-
-      await updateOpeningHours({
-        venueLocationId: locationId,
-        ...daySchedule
-      });
-
-      onSuccess(); // refresh data bên ngoài
-    } catch (err) {
-      console.error("Save failed", err);
-      alert("Không thể lưu thay đổi");
-    } finally {
-      setSavingDays(prev => prev.filter(d => d !== daySchedule.day));
-    }
+  const updateDay = (day: number, field: string, value: any) => {
+    setSchedules(prev =>
+      prev.map(d => d.day === day ? { ...d, [field]: value } : d)
+    );
   };
 
-  const updateDay = (day: number, field: string, value: any) => {
-    setSchedules(prev => {
-      const updated = prev.map(d =>
-        d.day === day ? { ...d, [field]: value } : d
-      );
-
-      const changedDay = updated.find(d => d.day === day)!;
-
-      saveDay(changedDay);
-
-      return updated;
-    });
+  const saveAll = async () => {
+    try {
+      setSaving(true);
+      await updateOpeningHours({
+        venueLocationId: locationId,
+        openingHours: schedules,
+      });
+      onSuccess();
+      onClose();
+    } catch (err) {
+      console.error('Save failed', err);
+      alert('Không thể lưu thay đổi');
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -73,7 +63,7 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-xl font-bold">Giờ mở cửa trong tuần</h2>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full">
-            <X size={20}/>
+            <X size={20} />
           </button>
         </div>
 
@@ -85,40 +75,32 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
                 <th className="p-3 text-center">Mở cửa</th>
                 <th className="p-3 text-center">Thời gian mở</th>
                 <th className="p-3 text-center">Thời gian đóng</th>
-                {/* <th className="p-3 text-center">Trạng thái</th> */}
               </tr>
             </thead>
 
             <tbody>
               {DAYS.map(day => {
                 const schedule = schedules.find(s => s.day === day.value)!;
-                const isSaving = savingDays.includes(day.value);
 
                 return (
                   <tr key={day.value} className="border-t">
                     <td className="p-3 font-medium">{day.label}</td>
 
-                    {/* Toggle */}
                     <td className="p-3 text-center">
                       <input
                         type="checkbox"
                         checked={!schedule.isClosed}
-                        onChange={(e) =>
-                          updateDay(day.value, 'isClosed', !e.target.checked)
-                        }
+                        onChange={(e) => updateDay(day.value, 'isClosed', !e.target.checked)}
                         className="w-4 h-4 text-violet-600"
                       />
                     </td>
 
-                    {/* Open */}
                     <td className="p-3 text-center">
                       <input
                         type="time"
                         disabled={schedule.isClosed}
                         value={schedule.openTime}
-                        onChange={(e) =>
-                          updateDay(day.value, 'openTime', e.target.value)
-                        }
+                        onChange={(e) => updateDay(day.value, 'openTime', e.target.value)}
                         className="border border-gray-300 rounded-lg px-2 py-1 disabled:bg-gray-100"
                       />
                     </td>
@@ -128,32 +110,31 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
                         type="time"
                         disabled={schedule.isClosed}
                         value={schedule.closeTime}
-                        onChange={(e) =>
-                          updateDay(day.value, 'closeTime', e.target.value)
-                        }
+                        onChange={(e) => updateDay(day.value, 'closeTime', e.target.value)}
                         className="border border-gray-300 rounded-lg px-2 py-1 disabled:bg-gray-100"
                       />
                     </td>
-
-                    {/* <td className="p-3 text-center text-xs">
-                      {isSaving
-                        ? <span className="text-violet-500">Đang lưu...</span>
-                        : <span className="text-green-600">✓</span>}
-                    </td> */}
                   </tr>
-                )
+                );
               })}
             </tbody>
           </table>
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end pt-6">
+        <div className="flex justify-end gap-3 pt-6">
           <button
             onClick={onClose}
             className="px-6 py-2.5 border-2 border-gray-300 rounded-full font-semibold"
           >
             Đóng
+          </button>
+          <button
+            onClick={saveAll}
+            disabled={saving}
+            className="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-full font-semibold disabled:opacity-60"
+          >
+            {saving ? 'Đang lưu...' : 'Lưu tất cả'}
           </button>
         </div>
 

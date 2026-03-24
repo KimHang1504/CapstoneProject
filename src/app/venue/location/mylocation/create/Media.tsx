@@ -30,9 +30,9 @@ export default function Media({ formData, setFormData }: Props) {
 console.log('render media', { coverPreview, interiorPreview, menuPreview }) 
     return (
         <div className="flex justify-center">
-            <div className="w-full max-w-4xl px-6 py-10 md:px-10">
+            <div className="w-full max-w-4xl px-6 py-6 md:px-10">
 
-                <h1 className="mb-8 text-center text-2xl font-bold text-gray-900">
+                <h1 className="mb-8 text-center text-2xl font-bold text-blue-900">
                     Tải lên phương tiện
                 </h1>
 

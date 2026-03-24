@@ -30,7 +30,8 @@ export type AdsOrderStatus =
     | "PENDING"
     | "COMPLETED"
     | "FAILED"
-    | "CANCELLED";
+    | "CANCELLED"
+    | "REFUNDED";
 
 export interface AdsOrder {
     id: number;
@@ -38,6 +39,9 @@ export interface AdsOrder {
     pricePaid: number;
     status: AdsOrderStatus;
     createdAt: string;
+
+    hasRefund: boolean;
+    refundInfo: any | null;
 }
 
 // Type gửi lên khi create
@@ -59,7 +63,7 @@ export interface Advertisement {
     targetUrl: string;
     placementType: PlacementType;
     status: AdvertisementStatus;
-    rejectionReason: string | null;
+    rejectionHistory: RejectionHistory[];
     desiredStartDate: string | null;
     createdAt: string;
     updatedAt: string;
@@ -94,10 +98,19 @@ export interface AdvertisementPackage {
     createdAt: string;
 }
 
+export type AdvertisementPackageGroup = Record<
+    PlacementType,
+    AdvertisementPackage[]
+>;
+
+export interface AdvertisementPackagesResponse {
+    data: AdvertisementPackageGroup;
+}
+
 // Type gửi lên khi submit payment
 export interface SubmitAdvertisementPaymentRequest {
     packageId: number;
-    venueId: number;
+    venueIds: number[];
 }
 
 export interface SubmitAdvertisementPaymentResponse {
@@ -118,3 +131,57 @@ export interface SubmitAdvertisementPaymentResponse {
     };
 }
 
+export interface UpdateAdvertisementRequest {
+    title: string;
+    content: string;
+    bannerUrl: string;
+    targetUrl: string;
+    placementType: PlacementType;
+    desiredStartDate: string;
+}
+
+export interface RejectionHistory {
+    rejectedAt: string;
+    reason: string;
+    rejectedBy: string;
+}
+
+export type AdsOrderStatusFilter =
+    | "PENDING"
+    | "COMPLETED"
+    | "FAILED"
+    | "CANCELLED"
+    | "REFUNDED";
+
+export interface AdsOrderTransaction {
+    id: number;
+    status: AdsOrderStatusFilter;
+    createdAt: string;
+    updatedAt: string;
+    payment: {
+        transactionId: number;
+        amount: number;
+        paymentStatus: string;
+        paymentMethod: string;
+        paidAt: string;
+        transactionCode: string | null;
+    };
+    package: {
+        id: number;
+        name: string;
+        price: number;
+        durationDays: number;
+        placementType: string;
+    };
+    advertisement: {
+        id: number;
+        title: string;
+        content: string;
+        bannerUrl: string;
+        targetUrl: string;
+        placementType: string;
+        status: string;
+        desiredStartDate: string | null;
+    };
+    venueLocationAds: VenueLocationAd[];
+}
