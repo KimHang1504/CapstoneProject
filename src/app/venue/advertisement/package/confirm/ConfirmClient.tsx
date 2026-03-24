@@ -3,13 +3,14 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Wallet, CheckCircle2, XCircle } from "lucide-react";
-import { submitVenueWithPayment } from "@/api/venue/location/api";
+import { submitAdvertisementPayment } from "@/api/venue/advertisement/api";
 
 export default function ConfirmClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const packageId = searchParams.get("packageId");
-  const locationId = searchParams.get("locationId");
+  const advertisementId = searchParams.get("advertisementId");
+  const venueIds = searchParams.get("venueIds");
 
   const [status, setStatus] = useState<"confirming" | "processing" | "success" | "error">("confirming");
   const [errorMessage, setErrorMessage] = useState("");
@@ -36,8 +37,8 @@ export default function ConfirmClient() {
   }, [status]);
 
   const handleConfirm = async () => {
-    if (!packageId || !locationId) {
-      setErrorMessage("Không tìm thấy thông tin gói đăng ký");
+    if (!packageId || !advertisementId || !venueIds) {
+      setErrorMessage("Không tìm thấy thông tin gói quảng cáo");
       setStatus("error");
       return;
     }
@@ -46,9 +47,11 @@ export default function ConfirmClient() {
     setProgress(0);
 
     try {
-      const response = await submitVenueWithPayment(Number(locationId), {
+      const venueIdArray = venueIds.split(",").map(id => Number(id));
+      
+      const response = await submitAdvertisementPayment(Number(advertisementId), {
         packageId: Number(packageId),
-        quantity: 1,
+        venueIds: venueIdArray,
         paymentMethod: 'WALLET'
       });
       
@@ -65,7 +68,7 @@ export default function ConfirmClient() {
       
       setTimeout(() => {
         router.push(
-          `/payment/success?transactionId=${payment.transactionId}&type=location&locationId=${locationId}`
+          `/payment/success?transactionId=${payment.transactionId}&type=advertisement&advertisementId=${advertisementId}`
         );
       }, 1500);
 
@@ -156,7 +159,7 @@ export default function ConfirmClient() {
 
             {/* Description */}
             <p className="text-center text-gray-600 px-6 text-sm md:text-base">
-              {status === "confirming" && "Vui lòng xác nhận thanh toán bằng ví của bạn"}
+              {status === "confirming" && "Vui lòng xác nhận thanh toán quảng cáo bằng ví của bạn"}
               {status === "processing" && "Đang xử lý giao dịch, vui lòng đợi..."}
               {status === "success" && "Thanh toán đã được xử lý thành công"}
               {status === "error" && errorMessage}
@@ -268,7 +271,7 @@ export default function ConfirmClient() {
           animation: bounce-once 0.6s ease-out;
         }
         .animate-shake {
-          animation: 0.5s ease-out;
+          animation: shake 0.5s ease-out;
         }
       `}</style>
     </div>

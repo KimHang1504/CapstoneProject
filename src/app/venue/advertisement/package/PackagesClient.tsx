@@ -10,6 +10,7 @@ import {
 } from "@/api/venue/advertisement/api";
 
 import SelectVenueModal from "@/app/venue/advertisement/package/component/SelectVenueModal";
+import { Wallet, QrCode, X } from "lucide-react";
 
 export default function PackagesClient() {
     const searchParams = useSearchParams();
@@ -23,6 +24,8 @@ export default function PackagesClient() {
     const [selectedPlacementPackages, setSelectedPlacementPackages] = useState<AdvertisementPackage[]>([]);
     const [selectedVenues, setSelectedVenues] = useState<number[]>([]);
     const [openVenueModal, setOpenVenueModal] = useState(false);
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     useEffect(() => {
         const fetchPackages = async () => {
@@ -37,18 +40,42 @@ export default function PackagesClient() {
         fetchPackages();
     }, []);
 
-    const handleConfirmVenue = async (venueIds: number[]) => {
-        if (!adId || !selectedPackageId) return;
-        try {
-            const res = await submitAdvertisementPayment(Number(adId), {
-                packageId: selectedPackageId,
-                venueIds: venueIds,
-            });
-            const transactionId = res.data.transactionId;
-            router.push(`/venue/advertisement/package/checkout?transactionId=${transactionId}&type=advertisement`);
-        } catch (error) {
-            console.error(error);
-            alert("Có lỗi xảy ra khi submit payment");
+    const handleConfirmVenue = (venueIds: number[]) => {
+        setSelectedVenues(venueIds);
+        setOpenVenueModal(false);
+        setShowPaymentModal(true);
+    };
+
+    const handlePaymentMethod = async (method: 'WALLET' | 'VIETQR') => {
+        if (!adId || !selectedPackageId || selectedVenues.length === 0) return;
+
+        setShowPaymentModal(false);
+
+        if (method === 'WALLET') {
+            const venueIdsStr = selectedVenues.join(',');
+            router.push(`/venue/advertisement/package/confirm?packageId=${selectedPackageId}&advertisementId=${adId}&venueIds=${venueIdsStr}`);
+        } else {
+            try {
+                setIsProcessing(true);
+                const res = await submitAdvertisementPayment(Number(adId), {
+                    packageId: selectedPackageId,
+                    venueIds: selectedVenues,
+                    paymentMethod: 'VIETQR'
+                });
+                const transactionId = res.data.transactionId;
+                router.push(`/venue/advertisement/package/checkout?transactionId=${transactionId}&type=advertisement`);
+            } catch (error: any) {
+                console.error(error);
+                const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
+                
+                if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
+                    alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
+                } else {
+                    alert(errorMessage);
+                }
+            } finally {
+                setIsProcessing(false);
+            }
         }
     };
 
@@ -218,12 +245,72 @@ export default function PackagesClient() {
             {openVenueModal && (
                 <SelectVenueModal
                     selectedIds={selectedVenues}
-                    onConfirm={(ids) => {
-                        setSelectedVenues(ids);
-                        handleConfirmVenue(ids);
-                    }}
+                    onConfirm={handleConfirmVenue}
                     onClose={() => setOpenVenueModal(false)}
                 />
+            )}
+
+            {/* PAYMENT METHOD MODAL */}
+            {showPaymentModal && (
+                <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+                    <div className="bg-white rounded-3xl max-w-md w-full p-8 relative animate-in fade-in zoom-in duration-200">
+                        <button
+                            onClick={() => setShowPaymentModal(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+                        >
+                            <X size={24} />
+                        </button>
+
+                        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                            Chọn phương thức thanh toán
+                        </h2>
+                        <p className="text-sm text-gray-500 mb-6">
+                            Chọn cách thanh toán phù hợp với bạn
+                        </p>
+
+                        <div className="space-y-3">
+                            {/* Wallet Payment */}
+                            <button
+                                onClick={() => handlePaymentMethod('WALLET')}
+                                disabled={isProcessing}
+                                className="w-full flex items-center gap-4 p-5 border-2 border-purple-200 rounded-2xl hover:border-purple-400 hover:bg-purple-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                    <Wallet className="text-white" size={28} />
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <p className="font-bold text-gray-900 text-lg">Thanh toán bằng Ví</p>
+                                    <p className="text-sm text-gray-500">
+                                        Nhanh chóng và tiện lợi
+                                    </p>
+                                </div>
+                            </button>
+
+                            {/* VietQR Payment */}
+                            <button
+                                onClick={() => handlePaymentMethod('VIETQR')}
+                                disabled={isProcessing}
+                                className="w-full flex items-center gap-4 p-5 border-2 border-blue-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                    <QrCode className="text-white" size={28} />
+                                </div>
+                                <div className="flex-1 text-left">
+                                    <p className="font-bold text-gray-900 text-lg">Chuyển khoản VietQR</p>
+                                    <p className="text-sm text-gray-500">
+                                        Quét mã QR để thanh toán
+                                    </p>
+                                </div>
+                            </button>
+                        </div>
+
+                        {isProcessing && (
+                            <div className="mt-4 text-center text-sm text-gray-500">
+                                Đang xử lý...
+                            </div>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );

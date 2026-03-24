@@ -30,3 +30,12 @@ export async function getWithdrawRequests() {
 
   return res.data;
 }
+
+export async function getTransactionHistory(pageNumber: number = 1, pageSize: number = 5) {
+  const res = await apiClient.get<ApiResponse<import("./type").PaginatedTransactionResponse>>(
+    "/api/Wallet/transaction-history",
+    { params: { pageNumber, pageSize } }
+  );
+
+  return res.data;
+}

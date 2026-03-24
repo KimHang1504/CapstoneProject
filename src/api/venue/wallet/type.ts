@@ -34,3 +34,35 @@ export type WithdrawResponse = {
     amount: number;
     status?: string;
 };
+
+export type TransactionDirection = 'IN' | 'OUT';
+
+export type TransactionType = 
+    | 'ADS_ORDER' 
+    | 'VENUE_SUBSCRIPTION' 
+    | 'REFUND' 
+    | 'DEPOSIT' 
+    | 'WITHDRAW';
+
+export type WalletTransaction = {
+    transactionId: number;
+    amount: number;
+    currency: string;
+    paymentMethod: string;
+    transactionType: TransactionType;
+    description: string;
+    status: string;
+    createdAt: string;
+    direction: TransactionDirection;
+    balanceChange: number;
+};
+
+export type PaginatedTransactionResponse = {
+    items: WalletTransaction[];
+    pageNumber: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+};

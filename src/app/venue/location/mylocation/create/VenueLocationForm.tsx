@@ -179,11 +179,16 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         toast.success("Cập nhật địa điểm thành công")
         router.push(`/venue/location/mylocation/${locationId}`)
       } else {
-        await registerVenueLocation(payload)
+        const response = await registerVenueLocation(payload)
         toast.success("Tạo địa điểm thành công")
+        
+        // Chuyển đến trang chọn gói subscription
+        if (response?.data?.id) {
+          router.push(`/venue/location/subscriptions?locationId=${response.data.id}`)
+        } else {
+          router.push("/venue/location/mylocation")
+        }
       }
-
-      // router.push("/venue/location/mylocation")
 
     } catch (e) {
       console.error(e)
