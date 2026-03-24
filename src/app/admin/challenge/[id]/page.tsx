@@ -10,6 +10,7 @@ import {
     ListChecks,
     Zap
 } from "lucide-react";
+import Link from "next/link";
 
 type Props = {
     params: Promise<{
@@ -28,6 +29,22 @@ export default async function ChallengeDetailPage({ params }: Props) {
     const formatDate = (date: string | null) =>
         date ? new Date(date).toLocaleDateString("vi-VN") : "Không giới hạn";
 
+    const statusConfig =
+        challenge.status === "ACTIVE"
+            ? {
+                label: "Đang hoạt động",
+                className: "bg-emerald-100 text-emerald-700"
+            }
+            : challenge.status === "INACTIVE"
+                ? {
+                    label: "Không hoạt động",
+                    className: "bg-amber-100 text-amber-700"
+                }
+                : {
+                    label: "Đã kết thúc",
+                    className: "bg-slate-100 text-slate-700"
+                };
+
     return (
         <div className="max-w-5xl mx-auto p-6 space-y-6">
             <BackButton />
@@ -40,9 +57,19 @@ export default async function ChallengeDetailPage({ params }: Props) {
                         {challenge.title}
                     </h1>
 
-                    <span className="text-xs bg-violet-100 text-violet-700 px-3 py-1 rounded-full font-medium">
-                        Challenge
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <span className={`text-xs px-3 py-1 rounded-full font-medium ${statusConfig.className}`}>
+                            {statusConfig.label}
+                        </span>
+
+                        <div className="flex items-center gap-3 bg-[#8093F1] hover:bg-[#6f7bd9] transition rounded-3xl px-4 py-3">
+                            <Link href={`/admin/challenge/${challenge.id}/edit`}
+                                className="text-sm text-white font-medium"
+                            >
+                                Chỉnh sửa
+                            </Link>
+                        </div>
+                    </div>
 
                 </div>
 

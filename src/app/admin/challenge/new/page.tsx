@@ -19,6 +19,19 @@ import { useRouter } from "next/navigation";
 
 export default function CreateChallengePage() {
     const router = useRouter();
+
+    const goalMetricOptions: Record<string, string[]> = {
+        POST: ["COUNT"],
+        CHECKIN: ["STREAK"],
+        REVIEW: ["COUNT", "UNIQUE_LIST"]
+    };
+
+    const goalMetricLabel: Record<string, string> = {
+        COUNT: "Đếm số lượng",
+        UNIQUE_LIST: "Danh sách duy nhất",
+        STREAK: "Chuỗi liên tiếp"
+    };
+
     const [form, setForm] = useState({
         title: "",
         description: "",
@@ -42,31 +55,47 @@ export default function CreateChallengePage() {
     const handleChange = (e: any) => {
         const { name, value } = e.target;
 
-        setForm({
-            ...form,
-            [name]: value
-        });
-
-        // reset ruleData khi đổi trigger
+        // ===== TRIGGER EVENT =====
         if (name === "triggerEvent") {
-            setRuleData({
-                has_image: false,
-                venue_id: [] as number[],
-                hash_tags: []
-            });
-            setSelectedLocations([]);
-        }
 
-        if (name === "goalMetric") {
+            const defaultMetric = goalMetricOptions[value]?.[0] || "";
+
+            setForm({
+                ...form,
+                triggerEvent: value,
+                goalMetric: defaultMetric // auto set
+            });
 
             setRuleData({
                 has_image: false,
                 venue_id: [],
                 hash_tags: []
             });
-            setSelectedLocations([]);
 
+            setSelectedLocations([]);
+            return;
         }
+
+        if (name === "goalMetric") {
+            setForm({
+                ...form,
+                goalMetric: value
+            });
+
+            setRuleData({
+                has_image: false,
+                venue_id: [],
+                hash_tags: []
+            });
+
+            setSelectedLocations([]);
+            return;
+        }
+
+        setForm({
+            ...form,
+            [name]: value
+        });
     };
 
     const toISO = (date: string) => {
@@ -230,26 +259,21 @@ export default function CreateChallengePage() {
 
                         <select
                             name="goalMetric"
-                            className="w-full border rounded-lg p-3"
+                            value={form.goalMetric}
                             onChange={handleChange}
+                            className="w-full border rounded-lg p-3"
+                            disabled={
+                                !form.triggerEvent ||
+                                goalMetricOptions[form.triggerEvent]?.length === 1
+                            }
                         >
+                            <option value="">Chọn goal metric</option>
 
-                            <option value="">
-                                Chọn goal metric
-                            </option>
-
-                            <option value="COUNT">
-                                COUNT
-                            </option>
-
-                            <option value="UNIQUE_LIST">
-                                UNIQUE_LIST
-                            </option>
-
-                            <option value="STREAK">
-                                STREAK
-                            </option>
-
+                            {goalMetricOptions[form.triggerEvent]?.map((metric) => (
+                                <option key={metric} value={metric}>
+                                    {goalMetricLabel[metric]}
+                                </option>
+                            ))}
                         </select>
 
                     </div>

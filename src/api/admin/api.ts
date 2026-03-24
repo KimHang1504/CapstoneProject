@@ -88,6 +88,16 @@ export const getChallengeConfig = () => {
     return apiClient.get<ApiResponse<ChallengeConfigResponse>>("/api/Challenge/definitions");
 }
 
+export const updateStatusChallenge = (challengeId: number, newStatus: string) => {
+    return apiClient.patch(`/api/Challenge/${challengeId}/status`, null, {
+        params: { newStatus }
+    });
+}
+
+export const updateChallenge = (challengeId: number, body: ChallengeRequest) => {
+    return apiClient.put(`/api/Challenge/${challengeId}`, body);
+}
+
 //Advertisement management
 export const getPendingAdvertisements = () => {
     return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/pending");
