@@ -146,16 +146,14 @@ export default function AdvertisementList() {
           {data.map((ad) => (
             <div
               key={ad.id}
-              className="bg-white rounded-xl shadow border overflow-hidden"
+              className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden"
             >
-              {/* Banner */}
               <div className="relative h-50 w-full rounded-xl overflow-hidden">
                 <ImagePreview src={ad.bannerUrl} alt={ad.title} />
               </div>
 
-              {/* Content */}
               <div className="p-4 space-y-2">
-                <h2 className="font-semibold text-lg">{ad.title}</h2>
+                <h2 className="font-semibold text-lg truncate">{ad.title}</h2>
 
                 <p className="text-sm text-gray-500">
                   Vị trí: {ad.placementType}
