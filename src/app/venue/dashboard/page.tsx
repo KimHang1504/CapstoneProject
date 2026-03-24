@@ -5,50 +5,61 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
   Star, MapPin, Heart, CheckCircle, Ticket, Users,
-  TrendingUp, TrendingDown, Calendar, BookOpen,
-  BarChart2, ArrowUpRight, ArrowDownRight
+  TrendingUp, ChevronLeft, ChevronRight,
+  BarChart2, Sparkles, Megaphone
 } from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
+} from 'recharts';
 import { getVenueOwnerDashboardOverview } from '@/api/venue/dashboard/api';
-import { VenueOwnerDashboardOverview, VenuePerformance } from '@/api/venue/dashboard/type';
+import { VenueOwnerDashboardOverview, VenuePerformance, RecentAdvertisement } from '@/api/venue/dashboard/type';
+
+const CHART_COLORS = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#f43f5e'];
+const ITEMS_PER_PAGE = 5;
 
 function StatCard({
-  label, value, sub, icon: Icon, color, trend
+  label, value, icon: Icon, color
 }: {
   label: string;
   value: string | number;
-  sub?: string;
   icon: React.ElementType;
   color: string;
-  trend?: number;
 }) {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-violet-100 flex flex-col gap-2 shadow-sm">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-gray-500">{label}</span>
-        <div className={`w-9 h-9 rounded-xl flex items-center justify-center ${color}`}>
-          <Icon size={18} className="text-white" />
-        </div>
+    <div className="bg-white rounded-xl p-3 border border-gray-200 flex items-center gap-3 shadow-sm">
+      <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${color}`}>
+        <Icon size={18} className="text-white" />
       </div>
-      <div className="flex items-end gap-2">
-        <span className="text-2xl font-bold text-gray-900">{value}</span>
-        {trend !== undefined && (
-          <span className={`flex items-center text-xs font-medium mb-0.5 ${trend >= 0 ? 'text-emerald-500' : 'text-red-400'}`}>
-            {trend >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-            {Math.abs(trend).toFixed(1)}%
-          </span>
-        )}
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-gray-500 truncate">{label}</p>
+        <p className="text-xl font-bold text-gray-900">{value}</p>
       </div>
-      {sub && <span className="text-xs text-gray-400">{sub}</span>}
     </div>
   );
 }
 
-function SectionTitle({ children }: { children: React.ReactNode }) {
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-200">
+        <p className="font-medium text-gray-900 text-sm">{payload[0].name}</p>
+        <p className="text-xs text-gray-600">{payload[0].value}</p>
+      </div>
+    );
+  }
+  return null;
+};
+
+function SectionTitle({ children, icon: Icon }: { children: React.ReactNode; icon?: React.ElementType }) {
   return (
-    <h2 className="text-base font-semibold text-gray-700 mb-3 flex items-center gap-2">
-      <span className="w-1 h-4 rounded-full bg-violet-400 inline-block" />
-      {children}
-    </h2>
+    <div className="flex items-center gap-2 mb-3">
+      {Icon && (
+        <div className="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center">
+          <Icon size={14} className="text-violet-600" />
+        </div>
+      )}
+      <h2 className="text-sm font-semibold text-gray-800">{children}</h2>
+    </div>
   );
 }
 
@@ -66,8 +77,8 @@ function VenueRow({ v }: { v: VenuePerformance }) {
   };
   return (
     <Link href={`/venue/location/mylocation/${v.venueId}`}>
-      <div className="flex items-center gap-4 p-3 rounded-xl hover:bg-violet-50 transition cursor-pointer">
-        <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+      <div className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-violet-50 transition cursor-pointer">
+        <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0 bg-gray-100">
           <Image
             src={safeImg(v.coverImage)}
             alt={v.venueName}
@@ -76,19 +87,18 @@ function VenueRow({ v }: { v: VenuePerformance }) {
           />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-medium text-gray-900 truncate">{v.venueName}</p>
-          <p className="text-xs text-gray-400 truncate">{v.area ?? v.category ?? '—'}</p>
+          <p className="font-medium text-sm text-gray-900 truncate">{v.venueName}</p>
+          <p className="text-xs text-gray-400 truncate">{v.category ?? '—'}</p>
         </div>
-        <div className="flex items-center gap-1 text-amber-400 text-sm font-semibold shrink-0">
-          <Star size={13} fill="currentColor" />
+        <div className="flex items-center gap-1 text-amber-400 text-xs font-semibold shrink-0">
+          <Star size={11} fill="currentColor" />
           {v.averageRating.toFixed(1)}
         </div>
-        <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[v.status] ?? 'bg-gray-100 text-gray-500'}`}>
+        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[v.status] ?? 'bg-gray-100 text-gray-500'}`}>
           {v.status}
         </span>
-        <div className="text-xs text-gray-500 shrink-0 text-right">
+        <div className="text-[10px] text-gray-500 shrink-0 text-right">
           <div>{v.checkInCount} check-in</div>
-          <div>{v.reviewCount} review</div>
         </div>
       </div>
     </Link>
@@ -98,6 +108,7 @@ function VenueRow({ v }: { v: VenuePerformance }) {
 export default function VenueDashboardPage() {
   const [data, setData] = useState<VenueOwnerDashboardOverview | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     getVenueOwnerDashboardOverview()
@@ -107,177 +118,329 @@ export default function VenueDashboardPage() {
 
   if (loading) {
     return (
-      <div className="p-8 grid grid-cols-2 md:grid-cols-4 gap-4 animate-pulse">
+      <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-3 animate-pulse">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="h-28 bg-gray-100 rounded-2xl" />
+          <div key={i} className="h-20 bg-gray-100 rounded-xl" />
         ))}
       </div>
     );
   }
 
   if (!data) {
-    return <div className="p-8 text-gray-500">Không thể tải dữ liệu dashboard.</div>;
+    return <div className="p-6 text-gray-500 text-sm">Không thể tải dữ liệu dashboard.</div>;
   }
 
-  const top = data.topPerformingVenue;
+  // Pagination
+  const totalPages = Math.ceil(data.venues.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedVenues = data.venues.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+
+  // Chart data
+  const voucherData = [
+    { name: 'Tổng', value: data.totalVouchers },
+    { name: 'Active', value: data.activeVouchers },
+    { name: 'Đã đổi', value: data.totalVoucherExchanged },
+    { name: 'Đã dùng', value: data.totalVoucherUsed },
+  ];
+
+  const engagementData = [
+    { name: 'Reviews', value: data.totalReviews },
+    { name: 'Check-ins', value: data.totalCheckIns },
+    { name: 'Favorites', value: data.totalFavorites },
+  ];
 
   return (
-    <div className="p-6 space-y-8 max-w-7xl mx-auto">
+    <div className="p-4 space-y-4 max-w-[1400px] mx-auto">
 
-      {/* Venue Stats */}
-      <section>
-        <SectionTitle>Tổng quan địa điểm</SectionTitle>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Tổng địa điểm" value={data.totalVenues} icon={MapPin} color="bg-violet-400" />
-          <StatCard label="Đang hoạt động" value={data.activeVenues} icon={CheckCircle} color="bg-emerald-400" />
-          <StatCard label="Không hoạt động" value={data.inactiveVenues} icon={MapPin} color="bg-gray-400" />
-          <StatCard
-            label="Đánh giá trung bình"
-            value={data.averageRating.toFixed(1)}
-            icon={Star}
-            color="bg-amber-400"
-            trend={data.ratingTrend}
-          />
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
+          <p className="text-xs text-gray-400">Tổng quan hoạt động của bạn</p>
         </div>
-      </section>
-
-      {/* Review & Engagement */}
-      <section>
-        <SectionTitle>Tương tác & Đánh giá</SectionTitle>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard
-            label="Tổng đánh giá"
-            value={data.totalReviews}
-            sub={`+${data.newReviewsThisMonth} tháng này`}
-            icon={Star}
-            color="bg-pink-400"
-            trend={data.reviewGrowthRate}
-          />
-          <StatCard
-            label="Tổng check-in"
-            value={data.totalCheckIns}
-            sub={`+${data.newCheckInsThisMonth} tháng này`}
-            icon={CheckCircle}
-            color="bg-sky-400"
-            trend={data.checkInGrowthRate}
-          />
-          <StatCard label="Yêu thích" value={data.totalFavorites} icon={Heart} color="bg-rose-400" />
-          <StatCard label="Khách hàng duy nhất" value={data.uniqueCustomers} sub={`${data.returningCustomers} quay lại`} icon={Users} color="bg-indigo-400" />
+        <div className="flex items-center gap-2 bg-gradient-to-r from-purple-50 to-violet-50 px-3 py-1.5 rounded-lg border border-purple-200">
+          <Sparkles size={14} className="text-purple-600" />
+          <span className="text-xs font-medium text-purple-700">AI Insights</span>
         </div>
-      </section>
-
-      {/* Voucher */}
-      <section>
-        <SectionTitle>Voucher</SectionTitle>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <StatCard label="Tổng voucher" value={data.totalVouchers} icon={Ticket} color="bg-violet-400" />
-          <StatCard label="Đang hoạt động" value={data.activeVouchers} icon={Ticket} color="bg-emerald-400" />
-          <StatCard
-            label="Đã đổi"
-            value={data.totalVoucherExchanged}
-            sub={`Tỉ lệ: ${(data.voucherExchangeRate * 100).toFixed(1)}%`}
-            icon={TrendingUp}
-            color="bg-orange-400"
-          />
-          <StatCard
-            label="Đã sử dụng"
-            value={data.totalVoucherUsed}
-            sub={`Tỉ lệ: ${(data.voucherUsageRate * 100).toFixed(1)}%`}
-            icon={BarChart2}
-            color="bg-teal-400"
-          />
-        </div>
-      </section>
-
-      {/* Engagement */}
-      <section>
-        <SectionTitle>Kế hoạch & Bộ sưu tập</SectionTitle>
-        <div className="grid grid-cols-2 gap-4">
-          <StatCard label="Trong kế hoạch hẹn hò" value={data.totalDatePlanInclusions} icon={Calendar} color="bg-fuchsia-400" />
-          <StatCard label="Lưu vào bộ sưu tập" value={data.totalCollectionSaves} icon={BookOpen} color="bg-cyan-400" />
-        </div>
-      </section>
-
-      {/* Top Venue + Venue List */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        {/* Top Performing */}
-        {top && (
-          <section className="lg:col-span-1">
-            <SectionTitle>Địa điểm nổi bật nhất</SectionTitle>
-            <Link href={`/venue/location/mylocation/${top.venueId}`}>
-              <div className="bg-white rounded-2xl border border-violet-100 overflow-hidden shadow-sm hover:shadow-md transition">
-                <div className="relative w-full h-40">
-                  <Image
-                    src={safeImg(top.coverImage)}
-                    alt={top.venueName}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                  <div className="absolute bottom-3 left-3 text-white">
-                    <p className="font-semibold text-base leading-tight">{top.venueName}</p>
-                    <p className="text-xs opacity-80">{top.area ?? top.category ?? '—'}</p>
-                  </div>
-                </div>
-                <div className="p-4 grid grid-cols-2 gap-3">
-                  {[
-                    { label: 'Đánh giá', value: `${top.averageRating.toFixed(1)} ★` },
-                    { label: 'Reviews', value: top.reviewCount },
-                    { label: 'Check-in', value: top.checkInCount },
-                    { label: 'Yêu thích', value: top.favoriteCount },
-                    { label: 'Kế hoạch', value: top.datePlanCount },
-                    { label: 'Bộ sưu tập', value: top.collectionCount },
-                  ].map(item => (
-                    <div key={item.label}>
-                      <p className="text-xs text-gray-400">{item.label}</p>
-                      <p className="font-semibold text-gray-800">{item.value}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </Link>
-          </section>
-        )}
-
-        {/* All Venues */}
-        <section className={top ? 'lg:col-span-2' : 'lg:col-span-3'}>
-          <SectionTitle>Tất cả địa điểm</SectionTitle>
-          <div className="bg-white rounded-2xl border border-violet-100 shadow-sm divide-y divide-gray-50">
-            {data.venues.length === 0 && (
-              <p className="text-center text-gray-400 py-8 text-sm">Chưa có địa điểm nào.</p>
-            )}
-            {data.venues.map(v => (
-              <VenueRow key={v.venueId} v={v} />
-            ))}
-          </div>
-        </section>
       </div>
 
-      {/* Weekly Activity */}
-      <section>
-        <SectionTitle>Hoạt động tuần này</SectionTitle>
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-pink-100 flex items-center justify-center">
-              <Star size={18} className="text-pink-500" />
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Review mới tuần này</p>
-              <p className="text-2xl font-bold text-gray-900">{data.newReviewsThisWeek}</p>
+      {/* Key Metrics */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        <StatCard label="Địa điểm" value={data.totalVenues} icon={MapPin} color="bg-violet-500" />
+        <StatCard label="Active" value={data.activeVenues} icon={CheckCircle} color="bg-emerald-500" />
+        <StatCard label="Đánh giá" value={data.averageRating.toFixed(1)} icon={Star} color="bg-amber-500" />
+        <StatCard label="Check-in" value={data.totalCheckIns} icon={CheckCircle} color="bg-sky-500" />
+        <StatCard label="Yêu thích" value={data.totalFavorites} icon={Heart} color="bg-rose-500" />
+        <StatCard label="Khách hàng" value={data.uniqueCustomers} icon={Users} color="bg-indigo-500" />
+        <StatCard label="Quảng cáo" value={data.totalAdvertisements} icon={Megaphone} color="bg-purple-500" />
+      </div>
+
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        
+        {/* Left Column - Charts */}
+        <div className="lg:col-span-2 space-y-4">
+          
+          {/* Status Overview - Simple Stats */}
+          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+            <SectionTitle icon={BarChart2}>Trạng thái tổng quan</SectionTitle>
+            <div className="grid grid-cols-2 gap-6 mt-3">
+              {/* Venue Status */}
+              <div className="min-w-0">
+                <p className="text-xs text-gray-600 mb-2.5 font-medium">Địa điểm</p>
+                <div className="space-y-2.5">
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Active</span>
+                      <span className="font-semibold text-emerald-600">{data.activeVenues}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.activeVenues / data.totalVenues) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Inactive</span>
+                      <span className="font-semibold text-gray-600">{data.inactiveVenues}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gray-400 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.inactiveVenues / data.totalVenues) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
+                  {/* Spacer để cân bằng với cột bên phải */}
+                  <div className="h-[30px]"></div>
+                </div>
+                <div className="mt-2.5 pt-2.5 border-t border-gray-100">
+                  <p className="text-[11px] text-gray-400">Tổng: <span className="font-bold text-gray-900">{data.totalVenues}</span></p>
+                </div>
+              </div>
+
+              {/* Ads Status */}
+              <div className="min-w-0">
+                <p className="text-xs text-gray-600 mb-2.5 font-medium">Quảng cáo</p>
+                <div className="space-y-2.5">
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Active</span>
+                      <span className="font-semibold text-emerald-600">{data.activeAdvertisements}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-emerald-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalAdvertisements > 0 ? Math.min(100, (data.activeAdvertisements / data.totalAdvertisements) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Pending</span>
+                      <span className="font-semibold text-yellow-600">{data.pendingAdvertisements}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-yellow-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalAdvertisements > 0 ? Math.min(100, (data.pendingAdvertisements / data.totalAdvertisements) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Rejected</span>
+                      <span className="font-semibold text-red-600">{data.rejectedAdvertisements}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-red-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalAdvertisements > 0 ? Math.min(100, (data.rejectedAdvertisements / data.totalAdvertisements) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-2.5 pt-2.5 border-t border-gray-100">
+                  <p className="text-[11px] text-gray-400">Tổng: <span className="font-bold text-gray-900">{data.totalAdvertisements}</span></p>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm flex items-center gap-4">
-            <div className="w-10 h-10 rounded-xl bg-sky-100 flex items-center justify-center">
-              <CheckCircle size={18} className="text-sky-500" />
+
+          {/* Engagement + Recent Ads */}
+          <div className="grid grid-cols-2 gap-4">
+            
+            {/* Engagement Bar */}
+            <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-[240px] flex flex-col">
+              <SectionTitle icon={TrendingUp}>Tương tác</SectionTitle>
+              <div className="flex-1">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={engagementData}>
+                    <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                    <YAxis tick={{ fontSize: 10 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="value" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <div>
-              <p className="text-sm text-gray-500">Check-in mới tuần này</p>
-              <p className="text-2xl font-bold text-gray-900">{data.newCheckInsThisWeek}</p>
+
+            {/* Recent Ads */}
+            <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-[240px] flex flex-col">
+              <SectionTitle icon={Megaphone}>Quảng cáo gần đây</SectionTitle>
+              <div className="flex-1 overflow-y-auto space-y-2">
+                {data.recentAdvertisements.length === 0 && (
+                  <p className="text-center text-gray-400 py-6 text-xs">Chưa có quảng cáo nào.</p>
+                )}
+                {data.recentAdvertisements.slice(0, 3).map((ad: RecentAdvertisement) => {
+                  const statusColor: Record<string, string> = {
+                    DRAFT: 'bg-gray-100 text-gray-600',
+                    PENDING: 'bg-yellow-100 text-yellow-600',
+                    APPROVED: 'bg-green-100 text-green-600',
+                    REJECTED: 'bg-red-100 text-red-600',
+                    ACTIVE: 'bg-emerald-100 text-emerald-600',
+                  };
+                  return (
+                    <Link key={ad.id} href={`/venue/advertisement/${ad.id}`}>
+                      <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-violet-50 transition cursor-pointer border border-gray-100">
+                        <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-100">
+                          <Image
+                            src={ad.bannerUrl}
+                            alt={ad.title}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-xs text-gray-900 truncate">{ad.title}</p>
+                          <p className="text-[10px] text-gray-400">{ad.venueCount} địa điểm</p>
+                        </div>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[ad.status] ?? 'bg-gray-100 text-gray-500'}`}>
+                          {ad.status}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+              {data.recentAdvertisements.length > 0 && (
+                <Link href="/venue/advertisement" className="mt-2 text-center">
+                  <button className="w-full text-xs text-violet-600 hover:text-violet-700 font-medium py-2 hover:bg-violet-50 rounded-lg transition">
+                    Xem tất cả →
+                  </button>
+                </Link>
+              )}
+            </div>
+          </div>
+
+          {/* Voucher Chart */}
+          <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-[240px] flex flex-col">
+            <SectionTitle icon={Ticket}>Voucher</SectionTitle>
+            <div className="flex-1">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={voucherData}>
+                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                  <YAxis tick={{ fontSize: 11 }} />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Bar dataKey="value" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
+              <div className="bg-orange-50 rounded-lg p-2">
+                <p className="text-gray-600">Tỉ lệ đổi</p>
+                <p className="font-bold text-orange-600">{data.voucherExchangeRate.toFixed(1)}%</p>
+              </div>
+              <div className="bg-teal-50 rounded-lg p-2">
+                <p className="text-gray-600">Tỉ lệ dùng</p>
+                <p className="font-bold text-teal-600">{data.voucherUsageRate.toFixed(1)}%</p>
+              </div>
             </div>
           </div>
         </div>
-      </section>
+
+        {/* Right Column - Venues List */}
+        <div className="space-y-4">
+          
+          {/* Top Venue - Larger */}
+          {data.topPerformingVenue && (
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden h-[300px] flex flex-col">
+              <div className="p-3 pb-2">
+                <SectionTitle icon={Star}>Địa điểm nổi bật</SectionTitle>
+              </div>
+              <Link href={`/venue/location/mylocation/${data.topPerformingVenue.venueId}`} className="flex-1 flex flex-col">
+                <div className="relative w-full flex-1 group cursor-pointer">
+                  <Image
+                    src={safeImg(data.topPerformingVenue.coverImage)}
+                    alt={data.topPerformingVenue.venueName}
+                    fill
+                    className="object-cover group-hover:scale-105 transition"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-3 left-3 right-3 text-white">
+                    <p className="font-bold text-base leading-tight mb-1">{data.topPerformingVenue.venueName}</p>
+                    <p className="text-xs opacity-90">{data.topPerformingVenue.category ?? '—'}</p>
+                  </div>
+                </div>
+                <div className="p-4 grid grid-cols-3 gap-3 text-center border-t border-gray-100">
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Check-in</p>
+                    <p className="font-bold text-lg text-gray-900">{data.topPerformingVenue.checkInCount}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Reviews</p>
+                    <p className="font-bold text-lg text-gray-900">{data.topPerformingVenue.reviewCount}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Yêu thích</p>
+                    <p className="font-bold text-lg text-gray-900">{data.topPerformingVenue.favoriteCount}</p>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          )}
+
+          {/* Venues List with Pagination */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-[438px] flex flex-col">
+            <div className="p-3 border-b border-gray-100">
+              <SectionTitle icon={BarChart2}>Địa điểm ({data.venues.length})</SectionTitle>
+            </div>
+            <div className="flex-1 overflow-y-auto divide-y divide-gray-50">
+              {paginatedVenues.length === 0 && (
+                <p className="text-center text-gray-400 py-6 text-xs">Chưa có địa điểm nào.</p>
+              )}
+              {paginatedVenues.map(v => (
+                <VenueRow key={v.venueId} v={v} />
+              ))}
+            </div>
+            {totalPages > 1 && (
+              <div className="p-3 border-t border-gray-100 flex items-center justify-between">
+                <button
+                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition"
+                >
+                  <ChevronLeft size={14} />
+                  Trước
+                </button>
+                <span className="text-xs text-gray-500">
+                  Trang {currentPage} / {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 transition"
+                >
+                  Sau
+                  <ChevronRight size={14} />
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
 
     </div>
   );
