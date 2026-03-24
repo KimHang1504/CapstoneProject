@@ -46,16 +46,22 @@ export default function ReportDetailPage() {
       action: {
         label: "Duyệt",
         onClick: async () => {
-          const res = await approveReport(report.id);
-          if (res.code === 200) {
-            toast.success("Đã duyệt báo cáo");
-            setReport({ ...report, status: "APPROVED" });
-            setTimeout(() => {
-              router.push("/admin/report-management");
-            }, 800);
-          } else {
-            toast.error("Duyệt báo cáo thất bại");
-            return;
+          try {
+            const res = await approveReport(report.id);
+            if (res.code === 200) {
+              toast.success("Đã duyệt báo cáo");
+              setReport({ ...report, status: "APPROVED" });
+              setTimeout(() => {
+                router.push("/admin/report-management");
+              }, 800);
+            } else {
+              toast.error("Duyệt báo cáo thất bại");
+              return;
+            }
+          } catch (error) {
+            console.error(error);
+            const errorMessage = error instanceof Error ? error.message : "Duyệt báo cáo thất bại";
+            toast.error(errorMessage);
           }
         },
       },
@@ -72,16 +78,22 @@ export default function ReportDetailPage() {
       action: {
         label: "Từ chối",
         onClick: async () => {
-          const res = await rejectReport(report.id);
-          if (res.code === 200) {
-            toast.success("Đã từ chối báo cáo");
-            setReport({ ...report, status: "REJECTED" });
-            setTimeout(() => {
-              router.push("/admin/report-management");
-            }, 800);
-          } else {
-            toast.error("Từ chối báo cáo thất bại");
-            return;
+          try {
+            const res = await rejectReport(report.id);
+            if (res.code === 200) {
+              toast.success("Đã từ chối báo cáo");
+              setReport({ ...report, status: "REJECTED" });
+              setTimeout(() => {
+                router.push("/admin/report-management");
+              }, 800);
+            } else {
+              toast.error("Từ chối báo cáo thất bại");
+              return;
+            }
+          } catch (error) {
+            console.error(error);
+            const errorMessage = error instanceof Error ? error.message : "Từ chối báo cáo thất bại";
+            toast.error(errorMessage);
           }
         },
       },

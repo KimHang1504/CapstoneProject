@@ -49,7 +49,8 @@ export default function AdvertisementList() {
             }
           } catch (error) {
             console.error("Error accepting advertisement:", error);
-            toast.error("Có lỗi xảy ra");
+            const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra";
+            toast.error(errorMessage);
           }
         },
       },
@@ -81,7 +82,8 @@ export default function AdvertisementList() {
           }
         } catch (error) {
           console.error("Error rejecting advertisement:", error);
-          toast.error("Có lỗi xảy ra");
+          const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra";
+          toast.error(errorMessage);
         } finally {
           setOpen(false);
           setReason("");

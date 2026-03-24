@@ -43,7 +43,8 @@ export default function VenueApprovalActions({ id }: { id: number }) {
             router.push("/admin/venue-management");
           } catch (error) {
             console.error(error);
-            toast.error("Thao tác thất bại");
+            const errorMessage = error instanceof Error ? error.message : "Thao tác thất bại";
+            toast.error(errorMessage);
           }
         },
       },

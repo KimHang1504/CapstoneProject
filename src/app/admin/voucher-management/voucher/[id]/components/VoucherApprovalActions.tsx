@@ -28,7 +28,9 @@ export default function VoucherApprovalActions({ voucherId }: Props) {
                         toast.success("Đã duyệt voucher");
                         router.push("/admin/voucher-management");
                     } catch (error) {
-                        toast.error("Duyệt voucher thất bại");
+                        console.error(error);
+                        const errorMessage = error instanceof Error ? error.message : "Duyệt voucher thất bại";
+                        toast.error(errorMessage);
                     } finally {
                         setLoading(false);
                     }
@@ -54,7 +56,9 @@ export default function VoucherApprovalActions({ voucherId }: Props) {
                         toast.success("Đã từ chối voucher");
                         router.push("/admin/voucher-management");
                     } catch (error) {
-                        toast.error("Từ chối voucher thất bại");
+                        console.error(error);
+                        const errorMessage = error instanceof Error ? error.message : "Từ chối voucher thất bại";
+                        toast.error(errorMessage);
                     } finally {
                         setLoading(false);
                     }

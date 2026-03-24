@@ -40,7 +40,7 @@ export default function SettingsPage() {
         }
 
         setSavingKey(config.configKey);
-        if(config.configKey.includes("PERCENT") && (Number(value) < 0 || Number(value) > 100)) {
+        if (config.configKey.includes("PERCENT") && (Number(value) < 0 || Number(value) > 100)) {
             toast.error("Giá trị phần trăm phải từ 0 đến 100");
             setSavingKey(null);
             return;
@@ -63,7 +63,8 @@ export default function SettingsPage() {
             setEditingKey(null);
         } catch (err) {
             console.error(err);
-            toast.error("Lỗi khi cập nhật cấu hình");
+            const errorMessage = err instanceof Error ? err.message : "Lỗi khi cập nhật cấu hình";
+            toast.error(errorMessage);
         }
 
         setSavingKey(null);

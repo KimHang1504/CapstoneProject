@@ -4,10 +4,12 @@ import { createSpecialEvent } from "@/api/admin/api";
 import { CreateSpecialEventRequest } from "@/api/admin/type";
 import { uploadImage } from "@/api/upload";
 import BackButton from "@/components/BackButton";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function CreateEventPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     eventName: "",
     description: "",
@@ -63,12 +65,14 @@ export default function CreateEventPage() {
       const res = await createSpecialEvent(payload);
       if (res.code === 201) {
         toast.success("Tạo sự kiện thành công");
+        router.push("/admin/special-event-management");
       } else {
         toast.error("Tạo sự kiện thất bại: " + res.message);
       }
     } catch (error) {
       console.error("Error creating event:", error);
-      toast.error("Có lỗi xảy ra khi tạo sự kiện");
+      const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra khi tạo sự kiện";
+      toast.error(errorMessage);
     } finally {
       setForm({
         eventName: "",

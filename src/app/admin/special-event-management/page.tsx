@@ -37,13 +37,20 @@ export default function SpecialEventListPage() {
             action: {
                 label: "Xóa",
                 onClick: async () => {
-                    await deleteSpecialEvent(id);
+                    try {
+                        await deleteSpecialEvent(id);
 
-                    const res = await getAllSpecialEvents(page, 10);
-                    setData(res.data.items);
-                    setTotalPages(res.data.totalPages);
+                        const res = await getAllSpecialEvents(page, 10);
+                        setData(res.data.items);
+                        setTotalPages(res.data.totalPages);
 
-                    toast.success("Đã xóa sự kiện");
+                        toast.success("Đã xóa sự kiện");
+                    } catch (error) {
+                        console.error(error);
+                        const errorMessage = error instanceof Error ? error.message : "Xóa sự kiện thất bại";
+                        toast.error(errorMessage);
+
+                    }
                 },
             },
             cancel: {
