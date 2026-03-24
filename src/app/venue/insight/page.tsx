@@ -5,8 +5,12 @@ import { InsightData, Timeframe, TopSearch, HotMood, MoodTrend, TopVenueCategory
 import { useEffect, useState } from 'react';
 import {
   Search, Smile, TrendingUp, MapPin, CheckCircle,
-  Lightbulb, BarChart2, Users
+  Lightbulb, BarChart2, Users, Eye, Heart, Sparkles
 } from 'lucide-react';
+import {
+  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
+} from 'recharts';
 
 const TIMEFRAME_OPTIONS: { value: Timeframe; label: string }[] = [
   { value: 'all',   label: 'Tất cả' },
@@ -24,6 +28,11 @@ const MOOD_COLORS = [
 const BAR_COLORS = [
   'bg-violet-500', 'bg-pink-500', 'bg-sky-500',
   'bg-emerald-500', 'bg-amber-500', 'bg-rose-500',
+];
+
+const CHART_COLORS = [
+  '#8b5cf6', '#ec4899', '#0ea5e9',
+  '#10b981', '#f59e0b', '#f43f5e',
 ];
 
 function SectionTitle({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
@@ -52,6 +61,22 @@ function ProgressBar({ label, value, count, color = 'bg-violet-500' }: {
     </div>
   );
 }
+
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white px-4 py-2 rounded-lg shadow-lg border border-gray-200">
+        <p className="font-medium text-gray-900">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <p key={index} className="text-sm" style={{ color: entry.color }}>
+            {entry.name}: {entry.value}
+          </p>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 export default function InsightPage() {
   const [timeframe, setTimeframe] = useState<Timeframe>('all');
@@ -112,178 +137,204 @@ export default function InsightPage() {
 
       {!loading && inner && trend && (
         <>
-          {/* Row 1: Top Searches + Hot Moods */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-
-            {/* Top Searches */}
-            <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
-              <SectionTitle icon={Search}>Từ khóa tìm kiếm</SectionTitle>
-              <div className="space-y-3">
-                {inner?.topSearches.map((item: TopSearch, i: number) => (
-                  <ProgressBar
-                    key={item.keyword}
-                    label={item.keyword}
-                    value={item.percentage}
-                    count={item.count}
-                    color={BAR_COLORS[i % BAR_COLORS.length]}
-                  />
-                ))}
+          {/* Stats Overview */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="bg-gradient-to-br from-violet-50 to-white rounded-xl p-4 border border-violet-100">
+              <div className="flex items-center gap-2 mb-1">
+                <Search size={16} className="text-violet-600" />
+                <span className="text-xs text-gray-500">Tìm kiếm</span>
               </div>
-              {trend.searchTrends.summary && (
-                <p className="text-xs text-gray-400 mt-4 italic border-t pt-3">
-                  {trend.searchTrends.summary}
+              <p className="text-2xl font-bold text-gray-900">
+                {inner.topSearches.reduce((sum, s) => sum + s.count, 0)}
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-pink-50 to-white rounded-xl p-4 border border-pink-100">
+              <div className="flex items-center gap-2 mb-1">
+                <Smile size={16} className="text-pink-600" />
+                <span className="text-xs text-gray-500">Tâm trạng</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">
+                {inner.hotMoods.reduce((sum, m) => sum + m.count, 0)}
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-4 border border-emerald-100">
+              <div className="flex items-center gap-2 mb-1">
+                <CheckCircle size={16} className="text-emerald-600" />
+                <span className="text-xs text-gray-500">Check-in</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">
+                {inner.favoritesAndInteractions.totalCheckIns}
+              </p>
+            </div>
+            <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl p-4 border border-sky-100">
+              <div className="flex items-center gap-2 mb-1">
+                <BarChart2 size={16} className="text-sky-600" />
+                <span className="text-xs text-gray-500">Danh mục</span>
+              </div>
+              <p className="text-2xl font-bold text-gray-900">
+                {inner.favoritesAndInteractions.topVenueCategories.length}
+              </p>
+            </div>
+          </div>
+
+          {/* AI Analysis - Compact */}
+          <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-lg border border-purple-200 p-3 shadow-sm">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles size={14} className="text-purple-600" />
+              <h3 className="text-sm font-semibold text-gray-800">AI Phân tích</h3>
+              <span className="ml-auto text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">
+                AI
+              </span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div className="space-y-1">
+                <p className="font-medium text-gray-700 flex items-center gap-1">
+                  <Lightbulb size={12} className="text-violet-600" />
+                  Đề xuất chiến lược
                 </p>
-              )}
+                <ul className="space-y-0.5 text-gray-600">
+                  {trend?.businessStrategy.recommendations.slice(0, 2).map((r: string, i: number) => (
+                    <li key={i} className="flex gap-1.5 leading-snug">
+                      <span className="text-violet-500 shrink-0">•</span>
+                      <span className="line-clamp-2">{r}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-gray-700 flex items-center gap-1">
+                  <MapPin size={12} className="text-emerald-600" />
+                  Cơ hội phát triển
+                </p>
+                <ul className="space-y-0.5 text-gray-600">
+                  {trend?.businessStrategy.opportunities.slice(0, 2).map((o: string, i: number) => (
+                    <li key={i} className="flex gap-1.5 leading-snug">
+                      <span className="text-emerald-500 shrink-0">•</span>
+                      <span className="line-clamp-2">{o}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Charts Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            {/* Top Searches */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+              <SectionTitle icon={Search}>Từ khóa tìm kiếm</SectionTitle>
+              <div className="h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={inner.topSearches.slice(0, 5)} layout="vertical" margin={{ left: 10, right: 10 }}>
+                    <XAxis type="number" tick={{ fontSize: 11 }} />
+                    <YAxis dataKey="keyword" type="category" width={80} tick={{ fontSize: 11 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
             </div>
 
             {/* Hot Moods */}
-            <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
               <SectionTitle icon={Smile}>Tâm trạng nổi bật</SectionTitle>
-              <div className="space-y-3">
-                {inner?.hotMoods.map((item: HotMood, i: number) => (
-                  <ProgressBar
-                    key={item.moodTypeId}
-                    label={item.moodName}
-                    value={item.percentage}
-                    count={item.count}
-                    color={BAR_COLORS[i % BAR_COLORS.length]}
-                  />
-                ))}
+              <div className="h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={inner.hotMoods}
+                      dataKey="count"
+                      nameKey="moodName"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}
+                      outerRadius={70}
+                      paddingAngle={2}
+                    >
+                      {inner.hotMoods.map((entry: HotMood, index: number) => (
+                        <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
               </div>
-            </div>
-          </div>
-
-          {/* Row 2: Mood Trends by Month */}
-          {inner.moodTrendsByMonth.length > 0 && (
-            <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
-              <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng theo tháng</SectionTitle>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {inner?.moodTrendsByMonth.map((month: MoodTrend) => (
-                  <div key={month.month}>
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="font-medium text-gray-700">{month.monthName} {month.month.split('-')[0]}</span>
-                      <span className="text-xs text-gray-400">{month.totalCount} lượt</span>
-                    </div>
-                    <div className="space-y-2">
-                      {month.moods.map((m: { moodName: string; count: number }, i: number) => {
-                        const pct = Math.round((m.count / month.totalCount) * 100);
-                        return (
-                          <div key={m.moodName} className="flex items-center gap-2">
-                            <div className={`w-2 h-2 rounded-full shrink-0 ${MOOD_COLORS[i % MOOD_COLORS.length]}`} />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex justify-between text-xs mb-0.5">
-                                <span className="text-gray-600 truncate">{m.moodName}</span>
-                                <span className="text-gray-400 shrink-0 ml-1">{m.count}</span>
-                              </div>
-                              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                                <div
-                                  className={`h-full rounded-full ${MOOD_COLORS[i % MOOD_COLORS.length]}`}
-                                  style={{ width: `${pct}%` }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {trend?.moodAnalysis.monthlyTrend.find((t: { month: string; insight: string }) => t.month === month.monthName) && (
-                      <p className="text-xs text-gray-400 italic mt-2">
-                        {trend?.moodAnalysis.monthlyTrend.find((t: { month: string; insight: string }) => t.month === month.monthName)?.insight}
-                      </p>
-                    )}
+              <div className="flex flex-wrap gap-2 justify-center mt-2">
+                {inner.hotMoods.map((mood: HotMood, i: number) => (
+                  <div key={mood.moodTypeId} className="flex items-center gap-1">
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                    <span className="text-xs text-gray-600">{mood.moodName}</span>
                   </div>
                 ))}
               </div>
             </div>
-          )}
 
-          {/* Row 3: Top Categories + Check-in */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Top Check-in */}
+            <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+              <SectionTitle icon={CheckCircle}>Top Check-in</SectionTitle>
+              <div className="h-56">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={inner.favoritesAndInteractions.topCheckInVenues.slice(0, 5)}>
+                    <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="checkInCount" fill="#10b981" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+          {/* Mood Trends + Categories */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            
+            {/* Mood Trends - Line Chart */}
+            {inner.moodTrendsByMonth.length > 0 && (
+              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng</SectionTitle>
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={inner.moodTrendsByMonth}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                      <XAxis dataKey="monthName" tick={{ fontSize: 11 }} />
+                      <YAxis tick={{ fontSize: 11 }} />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Legend wrapperStyle={{ fontSize: '11px' }} />
+                      {inner.moodTrendsByMonth[0]?.moods.slice(0, 4).map((mood: { moodName: string }, idx: number) => (
+                        <Line
+                          key={mood.moodName}
+                          type="monotone"
+                          dataKey={(data: MoodTrend) => data.moods.find(m => m.moodName === mood.moodName)?.count || 0}
+                          name={mood.moodName}
+                          stroke={CHART_COLORS[idx % CHART_COLORS.length]}
+                          strokeWidth={2}
+                          dot={{ r: 4 }}
+                          activeDot={{ r: 6 }}
+                        />
+                      ))}
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
+            )}
 
             {/* Top Categories */}
-            <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
+            <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
               <SectionTitle icon={BarChart2}>Danh mục yêu thích</SectionTitle>
-              <div className="space-y-3">
-                {inner?.favoritesAndInteractions.topVenueCategories.map((cat: TopVenueCategory, i: number) => {
-                  const max = inner.favoritesAndInteractions.topVenueCategories[0]?.totalInteractions || 1;
-                  const pct = Math.round((cat.totalInteractions / max) * 100);
-                  const view = cat.interactionBreakdown.find((b: { type: string; count: number }) => b.type === 'VIEW')?.count ?? 0;
-                  const save = cat.interactionBreakdown.find((b: { type: string; count: number }) => b.type === 'SAVE')?.count ?? 0;
-                  return (
-                    <div key={cat.category} className="space-y-1">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-700 font-medium">{cat.category}</span>
-                        <span className="text-gray-400 text-xs">{cat.totalInteractions} tương tác</span>
-                      </div>
-                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full ${BAR_COLORS[i % BAR_COLORS.length]}`} style={{ width: `${pct}%` }} />
-                      </div>
-                      <div className="flex gap-3 text-xs text-gray-400">
-                        <span>{view} lượt xem</span>
-                        <span>{save} lượt lưu</span>
-                        <span className="flex items-center gap-1"><Users size={10} />{cat.uniqueUsers} người</span>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={inner.favoritesAndInteractions.topVenueCategories.slice(0, 6)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                    <XAxis dataKey="category" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Legend wrapperStyle={{ fontSize: '11px' }} />
+                    <Bar dataKey="totalInteractions" name="Tương tác" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="uniqueUsers" name="Người dùng" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              <p className="text-xs text-gray-400 italic mt-4 border-t pt-3">
-                {trend.venuePreferences.userBehavior}
-              </p>
-            </div>
-
-            {/* Top Check-in Venues */}
-            <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
-              <SectionTitle icon={CheckCircle}>Địa điểm check-in nhiều nhất</SectionTitle>
-              <div className="mb-3 flex items-center gap-2">
-                <span className="text-2xl font-bold text-violet-600">
-                  {inner.favoritesAndInteractions.totalCheckIns}
-                </span>
-                <span className="text-sm text-gray-400">tổng check-in</span>
-              </div>
-              <div className="space-y-3">
-                {inner?.favoritesAndInteractions.topCheckInVenues.map((venue: TopCheckInVenue, i: number) => (
-                  <div key={venue.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0 ${MOOD_COLORS[i % MOOD_COLORS.length]}`}>
-                      {i + 1}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-gray-800 truncate">{venue.name}</p>
-                      <p className="text-xs text-gray-400">{venue.category ?? 'Chưa phân loại'}</p>
-                    </div>
-                    <div className="text-right shrink-0">
-                      <p className="font-semibold text-gray-900">{venue.checkInCount}</p>
-                      <p className="text-xs text-gray-400">check-in</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Row 4: Business Strategy */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
-              <SectionTitle icon={Lightbulb}>Đề xuất chiến lược</SectionTitle>
-              <ul className="space-y-2">
-                {trend?.businessStrategy.recommendations.map((r: string, i: number) => (
-                  <li key={i} className="flex gap-2 text-sm text-gray-700">
-                    <span className="w-5 h-5 rounded-full bg-violet-100 text-violet-600 flex items-center justify-center text-xs shrink-0 mt-0.5">{i + 1}</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-white rounded-2xl border border-violet-100 p-5 shadow-sm">
-              <SectionTitle icon={MapPin}>Cơ hội phát triển</SectionTitle>
-              <ul className="space-y-2">
-                {trend?.businessStrategy.opportunities.map((o: string, i: number) => (
-                  <li key={i} className="flex gap-2 text-sm text-gray-700">
-                    <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs shrink-0 mt-0.5">{i + 1}</span>
-                    {o}
-                  </li>
-                ))}
-              </ul>
             </div>
           </div>
         </>
