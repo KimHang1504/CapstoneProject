@@ -606,3 +606,88 @@ export interface UpdateConfigRequest {
   configKey: string;
   configValue: string;
 }
+
+//WithDraw Request
+export interface WithdrawRequest {
+  id: number;
+  walletId: number;
+  amount: number;
+  bankInfo: BankInfo;
+  status: "PENDING" | "APPROVED" | "REJECTED" | "COMPLETED" | "CANCELLED";
+  rejectionReason: string | null;
+  proofImageUrl: string | null;
+  requestedAt: string;
+}
+
+export interface BankInfo {
+  bankName: string | null;
+  accountNumber: string | null;
+  accountName: string | null;
+}
+
+//Transaction management
+
+export type TransactionStatus =
+  | "SUCCESS"
+  | "PENDING"
+  | "CANCELLED"
+  | "EXPIRED";
+
+export type TransactionType =
+  | "WALLET_TOPUP"
+  | "MEMBER_SUBSCRIPTION"
+  | "MONEY_TO_POINT"
+  | "ADS_ORDER"
+  | "VENUE_SUBSCRIPTION";
+
+export const TransactionTypeToInt: Record<TransactionType, number> = {
+  VENUE_SUBSCRIPTION: 1,
+  MEMBER_SUBSCRIPTION: 2,
+  MONEY_TO_POINT: 3,
+  ADS_ORDER: 4,
+  WALLET_TOPUP: 5,
+};
+
+export const TransactionTypeFromInt: Record<number, TransactionType> = {
+  1: "WALLET_TOPUP",
+  2: "MEMBER_SUBSCRIPTION",
+  3: "MONEY_TO_POINT",
+  4: "ADS_ORDER",
+  5: "VENUE_SUBSCRIPTION",
+};
+
+export interface Transaction {
+  transactionId: number;
+  userId: number;
+  userName: string;
+  userEmail: string;
+  amount: number;
+  currency: string;
+  paymentMethod: string;
+  transactionType: TransactionType;
+  docNo: number;
+  description: string;
+  externalRefCode: ExternalRefCode | null;
+  status: TransactionStatus;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ExternalRefCode {
+  sepayTransactionId: number;
+  qrCodeUrl: string | null;
+  qrData: string | null;
+  orderCode: string | null;
+  expireAt: string | null;
+  bankInfo: any;
+}
+
+export interface TransactionPagination {
+  items: Transaction[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
