@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import VenueLocationForm from "../../create/VenueLocationForm"
 import { getVenueLocationDetail } from "@/api/venue/location/api"
 import { VenueFormData } from "../../create/Info"
+import toast from "react-hot-toast";
 
 export default function EditPage() {
   const params = useParams()
@@ -53,7 +54,7 @@ export default function EditPage() {
         })
       } catch (error) {
         console.error('Error loading location:', error)
-        alert('Không thể tải thông tin địa điểm')
+        toast.error('Không thể tải thông tin địa điểm')
       } finally {
         setIsLoading(false)
       }

@@ -6,6 +6,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { PlacementType } from "@/api/venue/advertisement/type";
 import toast from "react-hot-toast";
+import { generateText, generateImage } from "@/utils/ai";
+import { Sparkles, Wand2 } from "lucide-react";
 
 type Props = {
   initialData?: {
@@ -46,10 +48,70 @@ export default function AdvertisementForm({
     placementType: initialData?.placementType || "HOME_BANNER",
   });
 
+  const [isGeneratingContent, setIsGeneratingContent] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleGenerateContent = async () => {
+    if (!form.title.trim()) {
+      toast.error("Vui lòng nhập mục đích quảng cáo trước");
+      return;
+    }
+
+    setIsGeneratingContent(true);
+    try {
+      const systemPrompt = "Bạn là chuyên gia viết nội dung quảng cáo hấp dẫn và chuyên nghiệp cho các địa điểm giải trí, nhà hàng, cafe.";
+      const userPrompt = `Viết nội dung quảng cáo hấp dẫn cho mục đích: "${form.title}". Nội dung ngắn gọn, thu hút, tối đa 150 từ, phù hợp để hiển thị trên banner hoặc popup quảng cáo.`;
+      
+      const content = await generateText(userPrompt, systemPrompt);
+      
+      if (content) {
+        setForm({ ...form, content });
+        toast.success("Đã tạo nội dung thành công!");
+      } else {
+        toast.error("Không thể tạo nội dung, vui lòng thử lại");
+      }
+    } catch (error: any) {
+      console.error("Generate content error:", error);
+      toast.error("Có lỗi xảy ra khi tạo nội dung");
+    } finally {
+      setIsGeneratingContent(false);
+    }
+  };
+
+  const handleGenerateImage = async () => {
+    if (!form.title.trim()) {
+      toast.error("Vui lòng nhập mục đích quảng cáo trước");
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    try {
+      const imagePrompt = `Professional advertisement banner for: ${form.title}. High quality, attractive, modern design, suitable for restaurant/cafe/entertainment venue promotion.`;
+      
+      const imageUrl = await generateImage(imagePrompt, {
+        size: '1792x1024',
+        quality: 'hd',
+        style: 'vivid'
+      });
+      
+      if (imageUrl) {
+        setForm({ ...form, bannerUrl: imageUrl });
+        toast.success("Đã tạo banner thành công!");
+      } else {
+        toast.error("Không thể tạo banner, vui lòng thử lại");
+      }
+    } catch (error: any) {
+      console.error("Generate image error:", error);
+      toast.error("Có lỗi xảy ra khi tạo banner");
+    } finally {
+      setIsGeneratingImage(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -95,7 +157,27 @@ export default function AdvertisementForm({
 
       {/* Content */}
       <FieldWrapper>
-        <label className={labelClass}>Nội dung</label>
+        <div className="flex items-center justify-between">
+          <label className={labelClass}>Nội dung</label>
+          <button
+            type="button"
+            onClick={handleGenerateContent}
+            disabled={isGeneratingContent || !form.title.trim()}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-lg hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+          >
+            {isGeneratingContent ? (
+              <>
+                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Đang tạo...
+              </>
+            ) : (
+              <>
+                <Sparkles size={14} />
+                Tạo bằng AI
+              </>
+            )}
+          </button>
+        </div>
         <textarea
           name="content"
           value={form.content}
@@ -107,7 +189,7 @@ export default function AdvertisementForm({
             }
           }}
           placeholder="Mô tả ngắn về quảng cáo..."
-          className={`${inputClass} resize-none h-32`} // h-32 để cao hơn, resize-none để cố định chiều cao
+          className={`${inputClass} resize-none h-32`}
         />
         <div className="text-xs text-gray-400 mt-1 text-right">
           {form.content.length} / 1000 ký tự
@@ -135,7 +217,27 @@ export default function AdvertisementForm({
 
       {/* Banner URL + Preview */}
       <FieldWrapper>
-        <label className={labelClass}>Banner URL</label>
+        <div className="flex items-center justify-between">
+          <label className={labelClass}>Banner URL</label>
+          <button
+            type="button"
+            onClick={handleGenerateImage}
+            disabled={isGeneratingImage || !form.title.trim()}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+          >
+            {isGeneratingImage ? (
+              <>
+                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Đang tạo...
+              </>
+            ) : (
+              <>
+                <Wand2 size={14} />
+                Tạo banner AI
+              </>
+            )}
+          </button>
+        </div>
         <div className="relative mt-2">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-violet-400">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -12,11 +12,14 @@ const statusConfig: Record<string, { label: string; badge: string; dot: string }
   EXPIRED:         { label: "Hết hạn",        badge: "bg-rose-50 text-rose-600 border-rose-200",          dot: "bg-rose-400" },
 };
 
+const ITEMS_PER_PAGE = 5;
+
 export default function SubscriptionTransactionPage() {
   const [subs, setSubs] = useState<MySubscription[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [search, setSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     getMySubscriptions()
@@ -31,6 +34,16 @@ export default function SubscriptionTransactionPage() {
       .filter((s) => statusFilter === "ALL" || s.status === statusFilter)
       .filter((s) => s.venueName.toLowerCase().includes(search.toLowerCase()));
   }, [subs, statusFilter, search]);
+
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filtered.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filtered, currentPage]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [statusFilter, search]);
 
   const countByStatus = (value: string) =>
     value === "ALL" ? subs.length : subs.filter((s) => s.status === value).length;
@@ -99,7 +112,7 @@ export default function SubscriptionTransactionPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map((sub) => {
+            {paginatedData.map((sub) => {
               const st = statusConfig[sub.status] ?? statusConfig["CANCELLED"];
               return (
                 <div key={sub.id} className="bg-white rounded-2xl border border-violet-100 shadow-sm p-5 flex items-center gap-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
@@ -136,6 +149,67 @@ export default function SubscriptionTransactionPage() {
                 </div>
               );
             })}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && filtered.length > 0 && totalPages > 1 && (
+          <div className="flex items-center justify-between pt-4 border-t border-violet-100">
+            <p className="text-sm text-gray-500">
+              Hiển thị {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} trong tổng số {filtered.length} kết quả
+            </p>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+
+              <div className="flex items-center gap-1">
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                  if (
+                    page === 1 ||
+                    page === totalPages ||
+                    (page >= currentPage - 1 && page <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                          currentPage === page
+                            ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
+                            : "text-gray-700 hover:bg-violet-50 border border-violet-100"
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    );
+                  } else if (page === currentPage - 2 || page === currentPage + 2) {
+                    return (
+                      <span key={page} className="px-2 text-gray-400">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+
+              <button
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
           </div>
         )}
 

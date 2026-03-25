@@ -24,6 +24,8 @@ export default function Dashboard() {
   const fetchData = async () => {
     setLoading(true);
 
+
+
     try {
       const request: DashboardRequest =
         month === 0
@@ -42,97 +44,129 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+  const formatChartCurrency = (value: number) => {
+    if (value >= 1_000_000_000) return (value / 1_000_000_000).toFixed(1) + "B";
+    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
+    if (value >= 1_000) return (value / 1_000).toFixed(1) + "k";
+    return value.toString();
+  };
 
+  const formatNumber = (value: number) => value.toString();
 
   return (
-    <div>
+    <div >
       {loading ? (
         <DashboardSkeleton />
       ) : (
-        <div className="p-6 space-y-6 bg-gray-50 min-h-screen">
+        <div className="p-6 space-y-6 min-h-screen bg-linear-to-br from-[#e7ebf9] via-[#fae6f5] to-[#d3e9fc]">
           <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-
             <StatCard
               title="Tổng người dùng"
               value={data.totalUsers}
               icon={<Users size={20} />}
+              color="#C4B5FD"
             />
 
             <StatCard
               title="Tổng địa điểm"
               value={data.totalVenueLocations}
               icon={<MapPin size={20} />}
+              color="#A78BFA"
             />
 
             <StatCard
               title="Tổng doanh thu"
               value={formatCurrency(data.totalRevenue)}
               icon={<DollarSign size={20} />}
+              color="#F0ABFC"
             />
 
             <StatCard
               title="Tổng giao dịch"
               value={data.totalTransactions}
               icon={<CreditCard size={20} />}
+              color="#F9A8D4"
             />
 
           </div>
 
-          <div className="flex items-center gap-5">
-
-            <h2 className="text-lg font-semibold text-gray-700">
+          <div className="py-3 flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-gray-700">
               Thống kê theo thời gian
             </h2>
+            {/* LEFT */}
+            <div className="flex items-center gap-4">
 
-            <select
-              value={month}
-              onChange={(e) => setMonth(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 text-sm bg-white shadow-sm"
-            >
-              <option value={0}>Tất cả</option>
-              {[...Array(12)].map((_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  Tháng {i + 1}
-                </option>
-              ))}
-            </select>
 
-            <select
-              value={year}
-              onChange={(e) => setYear(Number(e.target.value))}
-              className="border rounded-lg px-3 py-2 text-sm bg-white shadow-sm"
-            >
-              {Array.from({ length: 5 }).map((_, i) => {
-                const y = new Date().getFullYear() - i;
-                return (
-                  <option key={y} value={y}>
-                    {y}
-                  </option>
-                );
-              })}
-            </select>
+              {/* divider */}
+              <div className="h-5 w-px bg-gray-200" />
 
-            <button
-              onClick={() => {
-                setMonth(new Date().getMonth() + 1);
-                setYear(new Date().getFullYear());
-              }}
-              className="border rounded-lg px-3 py-2 text-sm bg-white shadow-sm cursor-pointer"
-            >
-              Reset
-            </button>
+              {/* Month */}
+              <div className="relative">
+                <select
+                  value={month}
+                  onChange={(e) => setMonth(Number(e.target.value))}
+                  className="appearance-none rounded-xl border border-purple-100 bg-white/70 backdrop-blur-md px-4 py-2 pr-10 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-300 transition"
+                >
+                  <option value={0}>Tất cả</option>
+                  {[...Array(12)].map((_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      Tháng {i + 1}
+                    </option>
+                  ))}
+                </select>
 
+                {/* custom arrow */}
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-purple-400 text-xs">
+                  ▼
+                </span>
+              </div>
+
+              {/* Year */}
+              <div className="relative">
+                <select
+                  value={year}
+                  onChange={(e) => setYear(Number(e.target.value))}
+                  className="appearance-none rounded-xl border border-pink-100 bg-white/70 backdrop-blur-md px-4 py-2 pr-10 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 transition"
+                >
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const y = new Date().getFullYear() - i;
+                    return (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    );
+                  })}
+                </select>
+
+                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-pink-400 text-xs">
+                  ▼
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setMonth(new Date().getMonth() + 1);
+                  setYear(new Date().getFullYear());
+                }}
+                className="text-sm font-medium px-4 py-2 rounded-lg border border-purple-200 bg-gray-100 text-purple-600 hover:bg-purple-50 active:scale-95 transition"
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
           <ChartCard
             title={
               month === 0
                 ? `Doanh thu năm ${year}`
-                : `Doanh thu ${month}/${year}`
+                : `Doanh thu tháng ${month}/${year}`
             }
             data={data.revenueChart}
             type="bar"
             color="#72DDF7"
+            yFormatter={formatChartCurrency}
+            yLabel="VNĐ"
+
           />
 
 
@@ -143,6 +177,8 @@ export default function Dashboard() {
               data={data.userGrowthChart}
               type="line"
               color="#8093F1"
+              yLabel="người"
+
             />
 
             <ChartCard
@@ -150,6 +186,7 @@ export default function Dashboard() {
               data={data.transactionChart}
               type="area"
               color="#B388EB"
+              yLabel="giao dịch"
             />
 
           </div>
@@ -162,6 +199,7 @@ export default function Dashboard() {
               data={data.venueGrowthChart}
               type="bar"
               color="#F7AEF8"
+              yLabel="địa điểm"
             />
 
             <ChartCard
@@ -169,6 +207,7 @@ export default function Dashboard() {
               data={data.postActivityChart}
               type="area"
               color="#FDC5F5"
+              yLabel="bài viết"
             />
 
           </div>

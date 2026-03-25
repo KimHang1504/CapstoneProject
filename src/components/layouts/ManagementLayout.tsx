@@ -123,24 +123,7 @@ export default function ManagementLayout({
 
         {/* Navigation */}
         <nav className="flex-1 p-3 overflow-y-auto">
-          {/* Dashboard */}
-          <div className="mb-6">
-            <Link
-              href="/admin"
-              className={`
-                flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                ${pathname === '/admin'
-                  ? 'bg-linear-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
-                  : 'text-gray-600 hover:bg-purple-50 hover:text-purple-600'
-                }
-              `}
-            >
-              <div className="w-5 h-5 flex items-center justify-center">
-                <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-              </div>
-              {isSidebarOpen && <span className="font-medium">Dashboard</span>}
-            </Link>
-          </div>
+
 
                     {/* Fallback for tabs without sections */}
           {sidebarConfig.tabs && (
@@ -392,7 +375,7 @@ export default function ManagementLayout({
 
         {/* Content */}
         <div className="flex-1">
-          <div className="p-8">{children}</div>
+          <div className="">{children}</div>
         </div>
       </main>
 

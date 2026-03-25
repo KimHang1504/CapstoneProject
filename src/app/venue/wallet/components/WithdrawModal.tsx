@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { withdrawWallet } from "@/api/venue/wallet/api";
 import { X, ArrowDownCircle } from "lucide-react";
+import toast from "react-hot-toast";
 
 type Props = {
   onClose: () => void;
@@ -36,7 +37,7 @@ export default function WithdrawModal({ onClose, onSuccess }: Props) {
       onClose();
     } catch (err) {
       console.error(err);
-      alert("Yêu cầu rút tiền thất bại");
+      toast.error("Yêu cầu rút tiền thất bại");
     } finally {
       setSubmitting(false);
     }

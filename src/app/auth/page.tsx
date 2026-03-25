@@ -1,14 +1,17 @@
 "use client";
 import { useState } from "react";
+import type { FormEvent } from "react";
 import Link from "next/link";
 import MascotPanel from "./components/mascot_panel";
-import { login } from "@/api/auth/api";
+import { login, loginWithGoogle } from "@/api/auth/api";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import { JwtPayload } from "@/api/auth/type";
 import { get } from "http";
 import { getUserFromToken } from "@/utils/jwt";
 import { apiClient } from "@/lib/api-client";
+import toast from "react-hot-toast";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 type UserPayload = {
     Role: string
@@ -21,32 +24,79 @@ export default function LoginPage() {
     const rememberMe = true;
 
 
-    const handleSubmit = async (e: any) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const payload = { email, password, rememberMe };
         try {
             const res = await login(payload);
             const token = res.data.accessToken;
-            apiClient.setAuthToken(token);
-
-            document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=36000;Secure`;
-            window.dispatchEvent(new Event('login'));
 
             const user = getUserFromToken(token);
             const role = user.role;
+            if (role === "MEMBER") {
+                toast.error("Tài khoản MEMBER không được phép đăng nhập.");
+                return;
+            }
+
+            apiClient.setAuthToken(token);
+            document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=36000;Secure`;
+            window.dispatchEvent(new Event('login'));
+
             if (role === "ADMIN") {
                 nav.push("/admin");
             }
              else if (role === "VENUEOWNER") {
-                nav.push("/venue");
+                nav.push("/venue/dashboard");
             } else if (role === "STAFF") {
                 nav.push(`/staff/redeem?locationId=${user.assignedVenueLocationId}`);
             }
         } catch (error) {
             console.error("Error occurred while logging in:", error);
-            alert("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
+            toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
         }
     };
+
+    const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
+        const idToken = credentialResponse.credential;
+
+        if (!idToken) {
+            toast.error("Không lấy được Google ID token.");
+            return;
+        }
+
+        try {
+            const res = await loginWithGoogle({ idToken });
+            const token = res.data.accessToken;
+
+            const user = getUserFromToken(token);
+            const role = user.role;
+            if (role === "MEMBER") {
+                toast.error("Tài khoản MEMBER không được phép đăng nhập bằng Google.");
+                return;
+            }
+
+            apiClient.setAuthToken(token);
+            document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=36000;Secure`;
+            window.dispatchEvent(new Event('login'));
+
+            if (role === "ADMIN") {
+                nav.push("/admin");
+            }
+            else if (role === "VENUEOWNER") {
+                nav.push("/venue/dashboard");
+            } else if (role === "STAFF") {
+                nav.push(`/staff/redeem?locationId=${user.assignedVenueLocationId}`);
+            }
+        } catch (error) {
+            console.error("Error occurred while logging in with Google:", error);
+            toast.error("Đăng nhập Google thất bại. Vui lòng thử lại.");
+        }
+    };
+
+    const handleGoogleError = () => {
+        toast.error("Google login bị hủy hoặc xảy ra lỗi.");
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-[#FDC5F5] via-[#B388EB] to-[#72DDF7] p-4 sm:p-6">
 
@@ -109,19 +159,16 @@ export default function LoginPage() {
                         <div className="flex-1 h-px bg-gray-300"></div>
                     </div>
 
-                    <button className="w-full flex items-center justify-center gap-3 border border-gray-300 py-3 rounded-xl hover:bg-gray-50 transition cursor-pointer">
-
-                        <img
-                            src="https://cdn-icons-png.flaticon.com/512/300/300221.png"
-                            alt="Google"
-                            className="w-5 h-5"
+                    <div className="w-full flex justify-center">
+                        <GoogleLogin
+                            onSuccess={handleGoogleLogin}
+                            onError={handleGoogleError}
+                            text="continue_with"
+                            shape="pill"
+                            size="large"
+                            width="320"
                         />
-
-                        <span className="font-medium text-sm sm:text-base">
-                            Tiếp tục với Google
-                        </span>
-
-                    </button>
+                    </div>
 
                     <p className="text-center text-sm text-gray-500 mt-6">
                         Chưa có tài khoản?

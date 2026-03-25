@@ -13,6 +13,7 @@ export type CoupleMoodType = {
 export type CouplePersonalityType = {
   id: number;
   name: string;
+  description: string;
 };
 
 
