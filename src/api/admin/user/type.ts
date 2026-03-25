@@ -21,7 +21,7 @@ export type Users = {
 
 // Get list users response
 export type GetListUserResponse = {
-  items: User[];
+  items: Users[];
   pageNumber: number;
   pageSize: number;
   totalCount: number;

@@ -1,4 +1,4 @@
-import { GetListUserResponse, GetListUserParams, User, UpdateUserRequest } from './type';
+import { GetListUserResponse, GetListUserParams, Users, UpdateUserRequest } from './type';
 import { apiClient, ApiResponse } from '@/lib/api-client';
 
 export const getListUsers = async (params: GetListUserParams) => {
@@ -10,7 +10,7 @@ export const getListUsers = async (params: GetListUserParams) => {
 };
 
 export const updateUser = async (id: number, body: UpdateUserRequest) => {
-  const response = await apiClient.put<ApiResponse<User>>(
+  const response = await apiClient.put<ApiResponse<Users>>(
     `/api/Users/${id}`,
     body
   );

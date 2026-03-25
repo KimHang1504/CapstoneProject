@@ -24,7 +24,7 @@ export default function CategoryManagementPage() {
             const res = await getCategories(pageNum, 10);
             setCategories(res.items);
             setTotalPages(res.totalPages);
-        } catch (error) {
+        } catch{
             toast.error('Lỗi khi tải danh sách');
         } finally {
             setLoading(false);
@@ -77,7 +77,7 @@ export default function CategoryManagementPage() {
             }
             closeModal();
             fetchCategories(page);
-        } catch (error) {
+        } catch {
             toast.error('Có lỗi xảy ra');
         } finally {
             setIsSubmitting(false);
@@ -114,16 +114,16 @@ export default function CategoryManagementPage() {
     };
 
     return (
-        <div className="flex-1 space-y-6 p-6 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 min-h-screen">
+        <div className="flex-1 space-y-6 p-6 bg-linear-to-br from-purple-50 via-pink-50 to-purple-100 min-h-screen">
             {/* Header */}
             <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                    <h1 className="text-3xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                         Quản lí Danh mục
                     </h1>
                     <button
                         onClick={openAddModal}
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition"
+                        className="flex items-center gap-2 px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition"
                     >
                         <Plus size={20} /> Thêm mới
                     </button>
@@ -156,7 +156,7 @@ export default function CategoryManagementPage() {
                     <div className="overflow-x-auto">
                         <table className="w-full">
                             <thead>
-                                <tr className="bg-gradient-to-r from-purple-100 to-pink-100 border-b border-purple-200">
+                                <tr className="bg-linear-to-r from-purple-100 to-pink-100 border-b border-purple-200">
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-purple-900">Tên</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-purple-900">Mô tả</th>
                                     <th className="px-6 py-4 text-left text-sm font-semibold text-purple-900">Trạng thái</th>
@@ -280,7 +280,7 @@ export default function CategoryManagementPage() {
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg disabled:opacity-50 flex items-center gap-2"
+                                    className="px-4 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg disabled:opacity-50 flex items-center gap-2"
                                 >
                                     {isSubmitting && <Loader size={16} className="animate-spin" />}
                                     {editingCategory ? 'Cập nhật' : 'Tạo mới'}

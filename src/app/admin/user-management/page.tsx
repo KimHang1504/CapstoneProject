@@ -3,18 +3,18 @@
 import { useEffect, useState } from 'react';
 import { Search, ChevronLeft, ChevronRight, Eye, Loader } from 'lucide-react';
 import { getListUsers } from '@/api/admin/user/api';
-import { User } from '@/api/admin/user/type';
+import { Users } from '@/api/admin/user/type';
 import { toast } from 'sonner';
 import StatusToggleButton from '@/app/admin/user-management/components/status-toggle-button';
 
 export default function UserManagementPage() {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<Users[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [inputValue, setInputValue] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<Users | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const fetchUsers = async (pageNum: number) => {
@@ -73,7 +73,7 @@ export default function UserManagementPage() {
     return colorMap[role] || 'bg-gray-100 text-gray-700';
   };
 
-  const openDetailModal = (user: User) => {
+  const openDetailModal = (user: Users) => {
     setSelectedUser(user);
     setIsDetailOpen(true);
   };
@@ -83,7 +83,7 @@ export default function UserManagementPage() {
     setSelectedUser(null);
   };
 
-  const handleUserUpdated = (updatedUser: User) => {
+  const handleUserUpdated = (updatedUser: Users) => {
     setUsers((prev) =>
       prev.map((u) => (u.id === updatedUser.id ? updatedUser : u))
     );
@@ -94,9 +94,9 @@ export default function UserManagementPage() {
   };
 
   return (
-    <div className="flex-1 space-y-6 p-6 bg-gradient-to-br from-purple-50 via-pink-50 to-purple-100 min-h-screen">
+    <div className="flex-1 space-y-6 p-6 bg-linear-to-br from-purple-50 via-pink-50 to-purple-100 min-h-screen">
       <div className="space-y-4">
-        <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="text-3xl font-bold bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
           Quản lý Người dùng
         </h1>
 
@@ -115,7 +115,7 @@ export default function UserManagementPage() {
 
           <button
             onClick={handleSearch}
-            className="px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition font-medium"
+            className="px-6 py-2 bg-linear-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition font-medium"
           >
             Tìm kiếm
           </button>
@@ -135,7 +135,7 @@ export default function UserManagementPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-gradient-to-r from-purple-100 to-pink-100 border-b border-purple-200">
+                <tr className="bg-linear-to-r from-purple-100 to-pink-100 border-b border-purple-200">
                   <th className="px-6 py-4 text-left text-sm font-semibold text-purple-900">
                     Họ tên
                   </th>
@@ -240,7 +240,7 @@ export default function UserManagementPage() {
       {isDetailOpen && selectedUser && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-96 overflow-y-auto">
-            <div className="sticky top-0 bg-gradient-to-r from-purple-600 to-pink-600 p-6 text-white flex justify-between items-center">
+            <div className="sticky top-0 bg-linear-to-r from-purple-600 to-pink-600 p-6 text-white flex justify-between items-center">
               <h2 className="text-xl font-bold">Chi tiết người dùng</h2>
               <button
                 onClick={closeDetailModal}
