@@ -2,7 +2,7 @@
 
 import { acceptPendingAdvertisements, getPendingAdvertisements, rejectPendingAdvertisements } from "@/api/admin/api";
 import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest } from "@/api/admin/type";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ImagePreview from "../venue-management/location/[id]/components/ImagePreview";
 import { toast } from "sonner";
 import { MapPin, Megaphone, CalendarDays } from "lucide-react";
@@ -11,7 +11,6 @@ import { MapPin, Megaphone, CalendarDays } from "lucide-react";
 export default function AdvertisementList() {
   const [data, setData] = useState<Advertisement[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [reason, setReason] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
 
@@ -108,7 +107,7 @@ export default function AdvertisementList() {
   return (
     <div className="px-8 py-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+        <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
           Quản lý quảng cáo
         </h2>
 
@@ -178,7 +177,7 @@ export default function AdvertisementList() {
               <div className="relative h-44 w-full overflow-hidden">
                 <ImagePreview src={ad.bannerUrl} alt={ad.title} />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
                 <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur">
                   {ad.placementType}
@@ -247,7 +246,7 @@ export default function AdvertisementList() {
 
                 <button
                   onClick={() => handleAccept(ad.id)}
-                  className="flex-1 bg-gradient-to-r from-violet-500 to-pink-500 hover:opacity-90 text-white py-2 rounded-lg text-sm font-medium transition"
+                  className="flex-1 bg-linear-to-r from-violet-500 to-pink-500 hover:opacity-90 text-white py-2 rounded-lg text-sm font-medium transition"
                 >
                   Chấp nhận
                 </button>

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Toaster } from "react-hot-toast"
+import { Toaster } from "sonner"
 import "./globals.css";
+import Script from "next/script";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,55 +25,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-
-<Toaster
-  position="top-center"
-  gutter={12}
-  containerStyle={{
-    top: 24,
-  }}
-  toastOptions={{
-    duration: 3000,
-    style: {
-      borderRadius: "14px",
-      background: "#ffffff",
-      color: "#111827",
-      boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
-      padding: "16px 18px",
-      fontSize: "14px",
-      fontWeight: 500,
-      border: "1px solid #e5e7eb",
-    },
-
-    success: {
-      style: {
-        border: "1px solid #4ade80",
-        background: "#f0fdf4",
-      },
-      iconTheme: {
-        primary: "#16a34a",
-        secondary: "#dcfce7",
-      },
-    },
-
-    error: {
-      style: {
-        border: "1.5px solid #ef4444",
-        background: "#fef2f2",
-      },
-      iconTheme: {
-        primary: "#dc2626",
-        secondary: "#fee2e2",
-      },
-    },
-  }}
-/>
+        <Script
+          src="https://accounts.google.com/gsi/client"
+          strategy="afterInteractive"
+        />
+        <GoogleOAuthProvider clientId={googleClientId}>
+          {children}
+          <Toaster position="top-center" />
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

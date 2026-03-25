@@ -14,3 +14,4 @@ export type CategoryListData = {
     hasNextPage: boolean
     hasPreviousPage: boolean
 }
+
