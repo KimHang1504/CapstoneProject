@@ -38,6 +38,10 @@ export const adminSidebarConfig: SidebarConfig = {
     {
       label: 'Cấu hình hệ thống',
       href: '/admin/config-management',
+    },
+    {
+      label: 'Quản lí danh muc',
+      href: '/admin/category-management',
     }
   ],
 };
