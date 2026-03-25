@@ -30,13 +30,18 @@ export default function LoginPage() {
         try {
             const res = await login(payload);
             const token = res.data.accessToken;
-            apiClient.setAuthToken(token);
-
-            document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=36000;Secure`;
-            window.dispatchEvent(new Event('login'));
 
             const user = getUserFromToken(token);
             const role = user.role;
+            if (role === "MEMBER") {
+                toast.error("Tài khoản MEMBER không được phép đăng nhập.");
+                return;
+            }
+
+            apiClient.setAuthToken(token);
+            document.cookie = `accessToken=${res.data.accessToken}; path=/; max-age=36000;Secure`;
+            window.dispatchEvent(new Event('login'));
+
             if (role === "ADMIN") {
                 nav.push("/admin");
             }
