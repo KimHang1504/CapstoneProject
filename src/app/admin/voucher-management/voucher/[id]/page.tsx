@@ -1,4 +1,4 @@
-import { ArrowLeft } from "lucide-react";
+import { AlignLeft, ArrowLeft, CalendarDays, Coins, Hash, MapPin, Percent } from "lucide-react";
 import Link from "next/link";
 import { Voucher, VoucherStatus } from "@/api/admin/type";
 import { getVoucherDetail } from "@/api/admin/api";
@@ -44,115 +44,105 @@ export default async function VoucherDetailPage({ params }: Props) {
     }
 
     return (
-
         <div className="p-8 max-w-3xl mx-auto space-y-6">
-
             <BackButton />
 
-            <div className="bg-white rounded-2xl border border-black p-6 space-y-4">
-
-                <div className="flex justify-between items-start">
-
-                    <h1 className="text-xl font-bold text-gray-900">
+            <div className="bg-white rounded-2xl border border-violet-100 shadow-sm p-6 space-y-5">
+                <div className="flex justify-between items-start gap-4">
+                    <h1 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
                         {voucher.title}
                     </h1>
 
                     <span
-                        className={`text-xs px-3 py-1 rounded-full ${getStatusColor(voucher.status)}`}
+                        className={`text-xs px-3 py-1 rounded-full border font-semibold ${getStatusColor(
+                            voucher.status
+                        )}`}
                     >
                         {voucher.status}
                     </span>
-
                 </div>
 
-                <p className="text-sm text-gray-500">
-                    Code: <span className="font-medium">{voucher.code}</span>
-                </p>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <Hash className="w-4 h-4 text-pink-400" />
+                    Code:
+                    <span className="font-medium text-gray-700">
+                        {voucher.code}
+                    </span>
+                </div>
 
-                <p className="text-gray-800 whitespace-pre-line">
-                    {voucher.description}
-                </p>
+                <div className="flex items-start gap-2 text-gray-700">
+                    <AlignLeft className="w-4 h-4 text-violet-400 mt-1" />
+                    <p className="whitespace-pre-line">{voucher.description}</p>
+                </div>
 
-                <div className="grid grid-cols-2 gap-4 pt-4">
+                <div className="grid grid-cols-2 gap-4 pt-4 text-sm">
+                    <div className="flex items-center justify-between bg-violet-50 px-4 py-3 rounded-xl">
+                        <span className="flex items-center gap-2 text-gray-500">
+                            <Percent className="w-4 h-4 text-violet-400" />
+                            Giảm giá
+                        </span>
 
-                    <div>
-                        <p className="text-sm text-gray-500">Giảm giá</p>
-
-                        <p className="font-medium text-green-600">
-
+                        <span className="font-semibold text-pink-500">
                             {voucher.discountType === "PERCENTAGE"
                                 ? `${voucher.discountPercent}%`
-                                : `${voucher.discountAmount?.toLocaleString()}đ`
-                            }
-
-                        </p>
-
+                                : `${voucher.discountAmount?.toLocaleString()}đ`}
+                        </span>
                     </div>
 
-                    <div>
-                        <p className="text-sm text-gray-500">Điểm đổi</p>
+                    <div className="flex items-center justify-between bg-pink-50 px-4 py-3 rounded-xl">
+                        <span className="flex items-center gap-2 text-gray-500">
+                            <Coins className="w-4 h-4 text-pink-400" />
+                            Điểm đổi
+                        </span>
 
-                        <p className="font-medium">
+                        <span className="font-semibold text-violet-600">
                             {voucher.voucherPrice}
-                        </p>
-
+                        </span>
                     </div>
 
-                    <div>
-                        <p className="text-sm text-gray-500">Thời gian</p>
+                    <div className="flex items-center justify-between bg-violet-50 px-4 py-3 rounded-xl">
+                        <span className="flex items-center gap-2 text-gray-500">
+                            <CalendarDays className="w-4 h-4 text-purple-400" />
+                            Thời gian
+                        </span>
 
-                        <p className="font-medium">
-
-                            {formatDate(voucher.startDate)} → {formatDate(voucher.endDate)}
-
-                        </p>
-
+                        <span className="font-medium text-gray-700">
+                            {formatDate(voucher.startDate)} →{" "}
+                            {formatDate(voucher.endDate)}
+                        </span>
                     </div>
 
-                    <div>
-                        <p className="text-sm text-gray-500">Số lượng</p>
+                    <div className="flex items-center justify-between bg-pink-50 px-4 py-3 rounded-xl">
+                        <span className="text-gray-500">Số lượng</span>
 
-                        <p className="font-medium">
-
+                        <span className="font-semibold text-violet-600">
                             {voucher.remainingQuantity}/{voucher.quantity}
-
-                        </p>
-
+                        </span>
                     </div>
-
                 </div>
-
             </div>
 
-            <div className="bg-white rounded-2xl border border-black p-6">
-
-                <h2 className="font-semibold mb-3">
+            <div className="bg-white rounded-2xl border border-violet-100 shadow-sm p-6">
+                <h2 className="font-semibold mb-4 flex items-center gap-2 text-gray-800">
+                    <MapPin className="w-4 h-4 text-violet-500" />
                     Địa điểm áp dụng
                 </h2>
 
-                <div className="space-y-2">
-
-                    {voucher.locations.map(location => (
-
+                <div className="flex flex-wrap gap-2">
+                    {voucher.locations.map((location) => (
                         <div
                             key={location.venueLocationId}
-                            className="px-3 py-2 rounded-lg bg-gray-200 text-sm"
+                            className="px-3 py-1.5 rounded-full bg-linear-to-r from-violet-100 to-pink-100 text-xs font-medium text-violet-700"
                         >
-
                             {location.venueLocationName}
-
                         </div>
-
                     ))}
-
                 </div>
-
             </div>
+
             {voucher.status === "PENDING" && (
                 <VoucherApprovalActions voucherId={voucher.id} />
             )}
         </div>
-
     );
-
 }

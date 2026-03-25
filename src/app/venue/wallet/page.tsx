@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getWalletBalance, getWithdrawRequests } from "@/api/venue/wallet/api";
-import { Wallet, WithdrawRequest } from "@/api/venue/wallet/type";
+import { getWalletBalance, getWithdrawRequests, getTransactionHistory } from "@/api/venue/wallet/api";
+import { Wallet, WithdrawRequest, PaginatedTransactionResponse } from "@/api/venue/wallet/type";
 import WithdrawModal from "@/app/venue/wallet/components/WithdrawModal";
-import { Wallet as WalletIcon, Coins, ArrowDownCircle, Clock } from "lucide-react";
+import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight } from "lucide-react";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   APPROVED: { label: "Đã duyệt", cls: "bg-emerald-100 text-emerald-600" },
@@ -12,13 +12,32 @@ const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   REJECTED: { label: "Từ chối", cls: "bg-rose-100 text-rose-500" },
 };
 
+const TRANSACTION_TYPE_MAP: Record<string, string> = {
+  ADS_ORDER: "Quảng cáo",
+  VENUE_SUBSCRIPTION: "Đăng ký địa điểm",
+  REFUND: "Hoàn tiền",
+  DEPOSIT: "Nạp tiền",
+  WITHDRAW: "Rút tiền",
+};
+
 export default function WalletPage() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [withdraws, setWithdraws] = useState<WithdrawRequest[]>([]);
+  const [transactionData, setTransactionData] = useState<PaginatedTransactionResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadingTransactions, setLoadingTransactions] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [activeTab, setActiveTab] = useState<'transactions' | 'withdraws'>('transactions');
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5;
 
   useEffect(() => { loadWallet(); }, []);
+
+  useEffect(() => {
+    if (activeTab === 'transactions') {
+      loadTransactions(currentPage);
+    }
+  }, [currentPage, activeTab]);
 
   const loadWallet = async () => {
     try {
@@ -29,11 +48,32 @@ export default function WalletPage() {
       ]);
       setWallet(walletData);
       setWithdraws(withdrawData);
+      
+      // Load first page of transactions
+      const transactionResponse = await getTransactionHistory(1, pageSize);
+      setTransactionData(transactionResponse);
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadTransactions = async (page: number) => {
+    try {
+      setLoadingTransactions(true);
+      const response = await getTransactionHistory(page, pageSize);
+      setTransactionData(response);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingTransactions(false);
+    }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (loading) {
@@ -69,8 +109,10 @@ export default function WalletPage() {
       {/* Withdraw Button */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 text-gray-600">
-          <Clock size={16} />
-          <span className="text-sm">{withdraws.length} yêu cầu rút tiền</span>
+          <History size={16} />
+          <span className="text-sm">
+            {transactionData?.totalCount || 0} giao dịch
+          </span>
         </div>
         <button
           onClick={() => setShowWithdraw(true)}
@@ -81,53 +123,180 @@ export default function WalletPage() {
         </button>
       </div>
 
-      {/* Withdraw History */}
-      <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
-        <div className="px-5 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-800">Lịch sử rút tiền</h2>
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-2 border-b border-gray-200">
+        <button
+          onClick={() => {
+            setActiveTab('transactions');
+            setCurrentPage(1);
+          }}
+          className={`px-4 py-2.5 text-sm font-medium transition relative ${
+            activeTab === 'transactions'
+              ? 'text-violet-600'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Biến động số dư
+          {activeTab === 'transactions' && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-600" />
+          )}
+        </button>
+        <button
+          onClick={() => setActiveTab('withdraws')}
+          className={`px-4 py-2.5 text-sm font-medium transition relative ${
+            activeTab === 'withdraws'
+              ? 'text-violet-600'
+              : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Lịch sử rút tiền
+          {activeTab === 'withdraws' && (
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-violet-600" />
+          )}
+        </button>
+      </div>
 
-        {withdraws.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
-            <ArrowDownCircle size={36} className="opacity-30" />
-            <p className="text-sm">Chưa có yêu cầu rút tiền nào</p>
+      {/* Transaction History */}
+      {activeTab === 'transactions' && (
+        <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100">
+            <h2 className="font-semibold text-gray-800">Biến động số dư</h2>
           </div>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {withdraws.map((item) => {
-              const s = STATUS_MAP[item.status] ?? { label: item.status, cls: "bg-gray-100 text-gray-500" };
-              return (
-                <div key={item.id} className="flex items-center gap-4 px-5 py-4 hover:bg-violet-50/40 transition">
-                  <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
-                    <ArrowDownCircle size={18} className="text-violet-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900">
-                      {item.amount.toLocaleString("vi-VN")} ₫
-                    </p>
-                    <p className="text-xs text-gray-400 truncate">
-                      {item.bankInfo?.bankName} · {item.bankInfo?.accountNumber}
-                    </p>
-                    {item.rejectionReason && (
-                      <p className="text-xs text-rose-500 truncate mt-1">
-                        Lý do từ chối: {item.rejectionReason}
-                      </p>
-                    )}
-                  </div>
-                  <div className="text-right shrink-0 space-y-1">
-                    <span className={`inline-block text-xs px-2.5 py-0.5 rounded-full font-medium ${s.cls}`}>
-                      {s.label}
+
+          {loadingTransactions ? (
+            <div className="flex items-center justify-center py-14">
+              <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin" />
+            </div>
+          ) : !transactionData || transactionData.items.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
+              <History size={36} className="opacity-30" />
+              <p className="text-sm">Chưa có giao dịch nào</p>
+            </div>
+          ) : (
+            <>
+              <div className="divide-y divide-gray-50">
+                {transactionData.items.map((item) => {
+                  const isIncoming = item.direction === 'IN';
+                  return (
+                    <div key={item.transactionId} className="flex items-center gap-4 px-5 py-4 hover:bg-violet-50/40 transition">
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        isIncoming ? 'bg-emerald-100' : 'bg-rose-100'
+                      }`}>
+                        {isIncoming ? (
+                          <ArrowDownRight size={18} className="text-emerald-600" />
+                        ) : (
+                          <ArrowUpRight size={18} className="text-rose-600" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-gray-900 text-sm">
+                          {TRANSACTION_TYPE_MAP[item.transactionType] || item.transactionType}
+                        </p>
+                        <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
+                          {item.description}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {new Date(item.createdAt).toLocaleString("vi-VN")}
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className={`font-bold text-base ${
+                          isIncoming ? 'text-emerald-600' : 'text-rose-600'
+                        }`}>
+                          {isIncoming ? '+' : '-'}{Math.abs(item.balanceChange).toLocaleString("vi-VN")} ₫
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          {item.paymentMethod}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Pagination */}
+              {transactionData.totalPages > 1 && (
+                <div className="px-5 py-4 border-t border-gray-100 flex items-center justify-between">
+                  <p className="text-sm text-gray-500">
+                    Trang {transactionData.pageNumber} / {transactionData.totalPages} 
+                    <span className="ml-2 text-gray-400">
+                      ({transactionData.totalCount} giao dịch)
                     </span>
-                    <p className="text-xs text-gray-400">
-                      {new Date(item.requestedAt).toLocaleDateString("vi-VN")}
-                    </p>
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={!transactionData.hasPreviousPage}
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                    >
+                      <ChevronLeft size={16} />
+                      Trước
+                    </button>
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={!transactionData.hasNextPage}
+                      className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                    >
+                      Sau
+                      <ChevronRight size={16} />
+                    </button>
                   </div>
                 </div>
-              );
-            })}
+              )}
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Withdraw History */}
+      {activeTab === 'withdraws' && (
+        <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
+          <div className="px-5 py-4 border-b border-gray-100">
+            <h2 className="font-semibold text-gray-800">Lịch sử rút tiền</h2>
           </div>
-        )}
-      </div>
+
+          {withdraws.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
+              <ArrowDownCircle size={36} className="opacity-30" />
+              <p className="text-sm">Chưa có yêu cầu rút tiền nào</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-50">
+              {withdraws.map((item) => {
+                const s = STATUS_MAP[item.status] ?? { label: item.status, cls: "bg-gray-100 text-gray-500" };
+                return (
+                  <div key={item.id} className="flex items-center gap-4 px-5 py-4 hover:bg-violet-50/40 transition">
+                    <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
+                      <ArrowDownCircle size={18} className="text-violet-500" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-semibold text-gray-900">
+                        {item.amount.toLocaleString("vi-VN")} ₫
+                      </p>
+                      <p className="text-xs text-gray-400 truncate">
+                        {item.bankInfo?.bankName} · {item.bankInfo?.accountNumber}
+                      </p>
+                      {item.rejectionReason && (
+                        <p className="text-xs text-rose-500 truncate mt-1">
+                          Lý do từ chối: {item.rejectionReason}
+                        </p>
+                      )}
+                    </div>
+                    <div className="text-right shrink-0 space-y-1">
+                      <span className={`inline-block text-xs px-2.5 py-0.5 rounded-full font-medium ${s.cls}`}>
+                        {s.label}
+                      </span>
+                      <p className="text-xs text-gray-400">
+                        {new Date(item.requestedAt).toLocaleDateString("vi-VN")}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       {showWithdraw && (
         <WithdrawModal onClose={() => setShowWithdraw(false)} onSuccess={loadWallet} />

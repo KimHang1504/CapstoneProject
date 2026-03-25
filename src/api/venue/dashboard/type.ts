@@ -30,6 +30,18 @@ export interface VenuePerformance {
   coverImage: string;
 }
 
+export interface RecentAdvertisement {
+  id: number;
+  title: string;
+  bannerUrl: string;
+  placementType: 'HOME_BANNER' | 'POPUP';
+  status: 'DRAFT' | 'PENDING' | 'APPROVED' | 'REJECTED' | 'ACTIVE' | 'INACTIVE';
+  category: string | null;
+  desiredStartDate: string;
+  createdAt: string;
+  venueCount: number;
+}
+
 export interface VenueOwnerDashboardOverview {
   // venue metrics
   totalVenues: number;
@@ -66,6 +78,13 @@ export interface VenueOwnerDashboardOverview {
   reviewGrowthRate: number;
   checkInGrowthRate: number;
   ratingTrend: number;
+
+  // advertisement metrics
+  totalAdvertisements: number;
+  activeAdvertisements: number;
+  pendingAdvertisements: number;
+  rejectedAdvertisements: number;
+  recentAdvertisements: RecentAdvertisement[];
 
   // top venue
   topPerformingVenue: TopPerformingVenue | null;

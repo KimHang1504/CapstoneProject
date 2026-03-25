@@ -9,6 +9,7 @@ import { JwtPayload } from "@/api/auth/type";
 import { get } from "http";
 import { getUserFromToken } from "@/utils/jwt";
 import { apiClient } from "@/lib/api-client";
+import toast from "react-hot-toast";
 
 type UserPayload = {
     Role: string
@@ -38,13 +39,13 @@ export default function LoginPage() {
                 nav.push("/admin");
             }
              else if (role === "VENUEOWNER") {
-                nav.push("/venue");
+                nav.push("/venue/dashboard");
             } else if (role === "STAFF") {
                 nav.push(`/staff/redeem?locationId=${user.assignedVenueLocationId}`);
             }
         } catch (error) {
             console.error("Error occurred while logging in:", error);
-            alert("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
+            toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
         }
     };
     return (

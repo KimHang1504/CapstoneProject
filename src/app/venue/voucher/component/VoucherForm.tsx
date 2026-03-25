@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { CreateVoucherRequest, DiscountType } from "@/api/venue/vouchers/type";
 import SelectLocationModal from "@/app/venue/voucher/component/SelectLocationModal";
+import toast from "react-hot-toast";
 
 type Props = {
   initialData?: CreateVoucherRequest;
@@ -89,7 +90,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     } catch (err) {
 
       console.error(err);
-      alert("Submit failed");
+      toast.error("Submit failed");
 
     } finally {
 

@@ -7,6 +7,7 @@ import {
   CouplePersonalityType,
 } from "@/api/mood/type";
 import CategoryDropdown from "@/app/venue/location/mylocation/create/CategoryDropdown";
+import { Info as InfoCircle } from "lucide-react";
 
 
 export type VenueFormData = {
@@ -196,24 +197,38 @@ export default function Info({ formData, setFormData }: Props) {
               const active = formData.selectedMoods.includes(mood.id);
 
               return (
-                <button
-                  key={mood.id}
-                  type="button"
-                  onClick={() =>
-                    toggleItem(
-                      formData.selectedMoods,
-                      mood.id,
-                      "selectedMoods"
-                    )
-                  }
-                  className={`rounded-full px-4 py-2 text-xs font-medium
+                <div key={mood.id} className="relative group">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toggleItem(
+                        formData.selectedMoods,
+                        mood.id,
+                        "selectedMoods"
+                      )
+                    }
+                    className={`rounded-full px-4 py-2 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
             ${active
-                      ? "bg-[#9f5ff2] text-white"
-                      : "bg-white border border-[#E4D7FF]"
-                    }`}
-                >
-                  {mood.name.toLowerCase()}
-                </button>
+                        ? "bg-[#9f5ff2] text-white shadow-md hover:shadow-lg hover:scale-105"
+                        : "bg-white border border-[#E4D7FF] hover:border-[#9f5ff2] hover:shadow-sm"
+                      }`}
+                  >
+                    {mood.name.toLowerCase()}
+                    <InfoCircle size={12} className={`transition-opacity ${active ? 'opacity-80' : 'opacity-40'}`} />
+                  </button>
+                  
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
+                    <div className="relative bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-purple-500/30 backdrop-blur-sm min-w-[200px] max-w-[280px]">
+                      <p className="font-semibold mb-1 text-purple-100">{mood.name}</p>
+                      <p className="text-purple-50/90 leading-relaxed text-[11px]">{mood.description}</p>
+                      {/* Arrow */}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2">
+                        <div className="border-[5px] border-transparent border-t-purple-700" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>
@@ -228,24 +243,38 @@ export default function Info({ formData, setFormData }: Props) {
               const active = formData.selectedStyles.includes(style.id);
 
               return (
-                <button
-                  key={style.id}
-                  type="button"
-                  onClick={() =>
-                    toggleItem(
-                      formData.selectedStyles,
-                      style.id,
-                      "selectedStyles"
-                    )
-                  }
-                  className={`rounded-full px-4 py-2 text-xs font-medium
+                <div key={style.id} className="relative group">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      toggleItem(
+                        formData.selectedStyles,
+                        style.id,
+                        "selectedStyles"
+                      )
+                    }
+                    className={`rounded-full px-4 py-2 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
             ${active
-                      ? "bg-[#7C4DFF] text-white"
-                      : "bg-white border border-[#E4D7FF]"
-                    }`}
-                >
-                  {style.name.toLowerCase()}
-                </button>
+                        ? "bg-[#7C4DFF] text-white shadow-md hover:shadow-lg hover:scale-105"
+                        : "bg-white border border-[#E4D7FF] hover:border-[#7C4DFF] hover:shadow-sm"
+                      }`}
+                  >
+                    {style.name.toLowerCase()}
+                    <InfoCircle size={12} className={`transition-opacity ${active ? 'opacity-80' : 'opacity-40'}`} />
+                  </button>
+                  
+                  {/* Tooltip */}
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
+                    <div className="relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-indigo-500/30 backdrop-blur-sm min-w-[200px] max-w-[280px]">
+                      <p className="font-semibold mb-1 text-indigo-100">{style.name}</p>
+                      <p className="text-indigo-50/90 leading-relaxed text-[11px]">{style.description}</p>
+                      {/* Arrow */}
+                      <div className="absolute top-full left-1/2 -translate-x-1/2">
+                        <div className="border-[5px] border-transparent border-t-indigo-700" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>

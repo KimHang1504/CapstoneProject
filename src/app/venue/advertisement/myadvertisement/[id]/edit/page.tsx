@@ -7,6 +7,7 @@ import {
     updateAdvertisementDraft,
 } from "@/api/venue/advertisement/api";
 import AdvertisementForm from "@/app/venue/advertisement/component/AdvertisementForm";
+import toast from "react-hot-toast";
 
 export default function EditAdvertisementPage() {
 
@@ -28,7 +29,7 @@ export default function EditAdvertisementPage() {
     const handleUpdate = async (formData: any) => {
         await updateAdvertisementDraft(Number(id), formData);
 
-        alert("Cập nhật thành công");
+        toast.success("Cập nhật thành công");
 
         router.push(`/venue/advertisement/myadvertisement/${id}`);
     };

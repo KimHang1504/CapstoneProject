@@ -392,7 +392,7 @@ export default function ManagementLayout({
 
         {/* Content */}
         <div className="flex-1">
-          <div className="p-8">{children}</div>
+          <div className="">{children}</div>
         </div>
       </main>
 
