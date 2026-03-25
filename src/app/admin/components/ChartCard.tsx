@@ -26,6 +26,9 @@ type Props = {
   data: ChartItem[];
   type?: ChartType;
   color?: string;
+
+  yFormatter?: (value: number) => string; // 👈 thêm
+  yLabel?: string; // 👈 thêm
 };
 
 export default function ChartCard({
@@ -33,6 +36,8 @@ export default function ChartCard({
   data,
   type = "line",
   color = "#8093F1",
+  yFormatter,
+  yLabel
 }: Props) {
   const renderChart = () => {
     if (type === "bar") {
@@ -45,7 +50,10 @@ export default function ChartCard({
             tick={{ fontSize: 12 }}
           />
 
-          <YAxis tick={{ fontSize: 12 }} />
+          <YAxis
+            tickFormatter={yFormatter}
+            width={60}
+          />
 
           <Tooltip />
 
@@ -75,7 +83,10 @@ export default function ChartCard({
             tick={{ fontSize: 12 }}
           />
 
-          <YAxis tick={{ fontSize: 12 }} />
+          <YAxis
+            tickFormatter={yFormatter}
+            width={60}
+          />
 
           <Tooltip />
 
@@ -99,7 +110,10 @@ export default function ChartCard({
           tick={{ fontSize: 12 }}
         />
 
-        <YAxis tick={{ fontSize: 12 }} />
+        <YAxis
+          tickFormatter={yFormatter}
+          width={60}
+        />
 
         <Tooltip />
 
@@ -115,12 +129,20 @@ export default function ChartCard({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 h-85 flex flex-col">
-      <h3 className="font-semibold text-gray-700 mb-4">
-        {title}
-      </h3>
+    <div className="bg-white rounded-2xl border border-gray-200 p-6 h-85 flex flex-col">
+      <div className="flex items-center gap-2 mb-4">
+        <div className="w-1.5 h-5 rounded bg-indigo-400"></div>
+        <h3 className="text-lg font-semibold text-gray-800">
+          {title}
+        </h3>
+      </div>
 
-      <div className="flex-1">
+      <div className="flex-1 flex flex-col">
+        {yLabel && (
+          <div className="text-xs font-medium text-gray-500 mb-2 ml-10">
+            {yLabel}
+          </div>
+        )}
         <ResponsiveContainer width="100%" height="100%">
           {renderChart()}
         </ResponsiveContainer>

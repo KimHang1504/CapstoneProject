@@ -5,6 +5,8 @@ import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest }
 import { use, useEffect, useState } from "react";
 import ImagePreview from "../venue-management/location/[id]/components/ImagePreview";
 import { toast } from "sonner";
+import { MapPin, Megaphone, CalendarDays } from "lucide-react";
+
 
 export default function AdvertisementList() {
   const [data, setData] = useState<Advertisement[]>([]);
@@ -61,41 +63,41 @@ export default function AdvertisementList() {
     });
   };
 
- const handleReject = (id: number) => {
-  toast("Bạn có chắc chắn muốn từ chối yêu cầu quảng cáo này?", {
-    action: {
-      label: "Từ chối",
-      onClick: async () => {
-        const body: AdvertisementRejectRequest = {
-          advertisementId: id,
-          reason: reason,
-        };
+  const handleReject = (id: number) => {
+    toast("Bạn có chắc chắn muốn từ chối yêu cầu quảng cáo này?", {
+      action: {
+        label: "Từ chối",
+        onClick: async () => {
+          const body: AdvertisementRejectRequest = {
+            advertisementId: id,
+            reason: reason,
+          };
 
-        try {
-          const res = await rejectPendingAdvertisements(body);
+          try {
+            const res = await rejectPendingAdvertisements(body);
 
-          if (res.code === 200) {
-            toast.success("Đã từ chối yêu cầu quảng cáo");
-            fetchAdvertisements();
-          } else {
-            toast.error(res.message || "Không thể từ chối yêu cầu");
+            if (res.code === 200) {
+              toast.success("Đã từ chối yêu cầu quảng cáo");
+              fetchAdvertisements();
+            } else {
+              toast.error(res.message || "Không thể từ chối yêu cầu");
+            }
+          } catch (error) {
+            console.error("Error rejecting advertisement:", error);
+            const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra";
+            toast.error(errorMessage);
+          } finally {
+            setOpen(false);
+            setReason("");
           }
-        } catch (error) {
-          console.error("Error rejecting advertisement:", error);
-          const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra";
-          toast.error(errorMessage);
-        } finally {
-          setOpen(false);
-          setReason("");
-        }
+        },
       },
-    },
-    cancel: {
-      label: "Hủy",
-      onClick: () => { },
-    },
-  });
-};
+      cancel: {
+        label: "Hủy",
+        onClick: () => { },
+      },
+    });
+  };
 
 
   useEffect(() => {
@@ -105,7 +107,29 @@ export default function AdvertisementList() {
 
   return (
     <div className="px-8 py-4">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí quảng cáo</h2>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+        <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+          Quản lý quảng cáo
+        </h2>
+
+        <div className="relative w-full md:w-80">
+          <input
+            type="text"
+            placeholder="Tìm kiếm quảng cáo..."
+            className="w-full pl-10 pr-4 py-2 rounded-xl border border-violet-200 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-300"
+          />
+          <svg
+            className="absolute left-3 top-2.5 w-5 h-5 text-pink-400"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M21 21l-4.35-4.35" />
+            <circle cx="11" cy="11" r="8" />
+          </svg>
+        </div>
+      </div>
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -146,91 +170,87 @@ export default function AdvertisementList() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((ad) => (
+
             <div
               key={ad.id}
-              className="bg-white rounded-xl shadow border border-gray-200 overflow-hidden"
+              className="group bg-white rounded-2xl overflow-hidden border border-violet-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >
-              <div className="relative h-50 w-full rounded-xl overflow-hidden">
+              <div className="relative h-44 w-full overflow-hidden">
                 <ImagePreview src={ad.bannerUrl} alt={ad.title} />
-              </div>
 
-              <div className="p-4 space-y-2">
-                <h2 className="font-semibold text-lg truncate">{ad.title}</h2>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                <p className="text-sm text-gray-500">
-                  Vị trí: {ad.placementType}
-                </p>
-
-                <p className="text-sm text-gray-500">
-                  Địa điểm sự kiện: {ad.venueLocationCount}
-                </p>
-
-                <p className="text-sm text-gray-500">
-                  Ngày bắt đầu:{" "}
-                  {ad.desiredStartDate
-                    ? new Date(ad.desiredStartDate).toLocaleDateString()
-                    : "Chưa đặt"}
-                </p>
+                <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur">
+                  {ad.placementType}
+                </span>
 
                 <span
-                  className={`inline-block px-3 py-1 text-xs rounded-full font-medium
-                  ${ad.status === "PENDING"
-                      ? "bg-yellow-100 text-yellow-700"
+                  className={`absolute top-3 right-3 text-xs font-semibold px-2.5 py-1 rounded-full border
+      ${ad.status === "PENDING"
+                      ? "bg-yellow-100 text-yellow-700 border-yellow-200"
                       : ad.status === "APPROVED"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-red-100 text-red-700"
+                        ? "bg-emerald-100 text-emerald-600 border-emerald-200"
+                        : "bg-red-100 text-red-500 border-red-200"
                     }`}
                 >
                   {ad.status}
                 </span>
-                <div className="flex gap-2 pt-2">
 
-                  <button
-                    onClick={() => setOpen(true)}
-                    className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-medium py-2 rounded-lg transition"
-                  >
-                    Từ chối
-                  </button>
-                  <button
-                    onClick={() => handleAccept(ad.id)}
-                    className="flex-1 bg-green-500 hover:bg-green-600 text-white text-sm font-medium py-2 rounded-lg transition"
-                  >
-                    Chấp nhận
-                  </button>
+                <div className="absolute bottom-0 left-0 right-0 px-4 py-3">
+                  <h2 className="text-white font-semibold text-sm truncate drop-shadow">
+                    {ad.title}
+                  </h2>
                 </div>
-                {open && (
-                  <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+              </div>
 
-                    <div className="bg-white p-6 rounded-xl w-100 space-y-4">
-                      <h2 className="text-lg font-semibold">
-                        Từ chối
-                      </h2>
-                      <textarea
-                        className="w-full border rounded-lg p-2"
-                        rows={4}
-                        placeholder="Nhập lý do..."
-                        value={reason}
-                        onChange={(e) => setReason(e.target.value)}
-                      />
+              <div className="px-4 py-3 border-b border-violet-50 space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-gray-500">
+                    <MapPin className="w-4 h-4 text-violet-400 group-hover:scale-110 transition" />
+                    Địa điểm
+                  </span>
+                  <span className="font-medium text-violet-600">
+                    {ad.venueLocationCount}
+                  </span>
+                </div>
 
-                      <div className="flex justify-end gap-3">
-                        <button
-                          onClick={() => setOpen(false)}
-                          className="px-4 py-2 border rounded-lg"
-                        >
-                          Hủy
-                        </button>
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-gray-500">
+                    <Megaphone className="w-4 h-4 text-pink-400 group-hover:scale-110 transition" />
+                    Vị trí
+                  </span>
+                  <span className="font-medium text-pink-500">
+                    {ad.placementType}
+                  </span>
+                </div>
 
-                        <button
-                          onClick={() => handleReject(ad.id)}
-                          className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-                        >
-                          Xác nhận
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-2 text-gray-500">
+                    <CalendarDays className="w-4 h-4 text-purple-400 group-hover:scale-110 transition" />
+                    Bắt đầu
+                  </span>
+                  <span className="font-medium text-gray-700">
+                    {ad.desiredStartDate
+                      ? new Date(ad.desiredStartDate).toLocaleDateString("vi-VN")
+                      : "Chưa đặt"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-4 flex gap-2">
+                <button
+                  onClick={() => handleReject(ad.id)}
+                  className="flex-1 border border-pink-400 text-pink-500 hover:bg-pink-50 py-2 rounded-lg text-sm font-medium transition"
+                >
+                  Từ chối
+                </button>
+
+                <button
+                  onClick={() => handleAccept(ad.id)}
+                  className="flex-1 bg-gradient-to-r from-violet-500 to-pink-500 hover:opacity-90 text-white py-2 rounded-lg text-sm font-medium transition"
+                >
+                  Chấp nhận
+                </button>
               </div>
             </div>
           ))}
