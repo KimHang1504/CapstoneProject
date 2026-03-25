@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import VoucherForm from "../component/VoucherForm";
 import { createVoucher } from "@/api/venue/vouchers/api";
+import toast from "react-hot-toast";
 
 export default function CreateVoucherPage() {
 
@@ -12,7 +13,7 @@ export default function CreateVoucherPage() {
     const res = await createVoucher(data);
     const voucherId = res.data.id;
 
-    alert("Voucher created");
+    toast.success("Voucher created");
     router.push(`/venue/voucher/${voucherId}`);
   };
 

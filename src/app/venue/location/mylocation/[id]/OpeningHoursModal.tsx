@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { updateOpeningHours } from '@/api/venue/location/api';
+import toast from 'react-hot-toast';
 
 type OpeningHoursModalProps = {
   locationId: number;
@@ -49,7 +50,7 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
       onClose();
     } catch (err) {
       console.error('Save failed', err);
-      alert('Không thể lưu thay đổi');
+      toast.error('Không thể lưu thay đổi');
     } finally {
       setSaving(false);
     }

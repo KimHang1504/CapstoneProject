@@ -6,6 +6,7 @@ import { getSubscriptionPackages } from '@/api/venue/subscription/api';
 import { submitVenueWithPayment } from '@/api/venue/location/api';
 import { SubscriptionPackage } from '@/api/venue/subscription/type';
 import { Check, Wallet, QrCode, X } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 export default function LocationRegisterPage() {
     const searchParams = useSearchParams();
@@ -41,7 +42,7 @@ export default function LocationRegisterPage() {
 
     const handleBuyPackage = async (method: 'WALLET' | 'VIETQR') => {
         if (!locationId || !selectedPackage) {
-            alert('Không tìm thấy thông tin địa điểm');
+            toast.error('Không tìm thấy thông tin địa điểm');
             return;
         }
 
@@ -68,9 +69,9 @@ export default function LocationRegisterPage() {
                 const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
 
                 if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
-                    alert('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
+                    toast.error('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
                 } else {
-                    alert(errorMessage);
+                    toast.error(errorMessage);
                 }
             } finally {
                 setProcessingPackageId(null);

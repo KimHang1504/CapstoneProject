@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { generateDescription, generateImage, generateText, imagePrompt } from '@/utils/ai';
+import toast from 'react-hot-toast';
 
 export default function TestAIPage() {
   const [venueName, setVenueName] = useState('');
@@ -16,7 +17,7 @@ export default function TestAIPage() {
   const [loading, setLoading] = useState(false);
 
   const handleGenerateDescription = async () => {
-    if (!venueName) return alert('Nhập tên venue');
+    if (!venueName) return toast.error('Nhập tên venue');
     
     setLoading(true);
     const result = await generateDescription(venueName, {
@@ -29,12 +30,12 @@ export default function TestAIPage() {
     if (result) {
       setDescription(result);
     } else {
-      alert('Lỗi khi tạo description');
+      toast.error('Lỗi khi tạo description');
     }
   };
 
   const handleGenerateImage = async () => {
-    if (!venueName) return alert('Nhập tên venue');
+    if (!venueName) return toast.error('Nhập tên venue');
     
     setLoading(true);
     const prompt = imagePrompt.venue(venueName, category || undefined, mood || undefined);
@@ -44,7 +45,7 @@ export default function TestAIPage() {
     if (result) {
       setImageUrl(result);
     } else {
-      alert('Lỗi khi tạo hình ảnh');
+      toast.error('Lỗi khi tạo hình ảnh');
     }
   };
 
@@ -59,7 +60,7 @@ export default function TestAIPage() {
     if (result) {
       setCustomText(result);
     } else {
-      alert('Lỗi khi tạo text');
+      toast.error('Lỗi khi tạo text');
     }
   };
 
