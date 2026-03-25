@@ -12,27 +12,31 @@ export const adminSidebarConfig: SidebarConfig = {
       href: '/admin',
     },
     {
-      label: 'Quản lý Venue',
+      label: 'Duyệt Địa điểm',
       href: '/admin/venue-management',
     },
+      {
+      label: 'Quản lý Người dùng',
+      href: '/admin/user-management',
+    },
     {
-      label: 'Quản lí quảng cáo',
+      label: 'Duyệt quảng cáo',
       href: '/admin/advertisement-management',
     },
     {
-      label: 'Quản lí sự kiện đặc biệt',
+      label: 'Quản lý sự kiện đặc biệt',
       href: '/admin/special-event-management',
     },
     {
-      label: 'Thử thách',
+      label: 'Quản lý thử thách',
       href: '/admin/challenge',
     },
     {
-      label: 'Quản lí voucher',
+      label: 'Duyệt voucher',
       href: '/admin/voucher-management',
     },
     {
-      label: 'Quản lí report',
+      label: 'Quản lý report',
       href: '/admin/report-management',
     },
     {
@@ -40,7 +44,7 @@ export const adminSidebarConfig: SidebarConfig = {
       href: '/admin/config-management',
     },
     {
-      label: 'Quản lí danh muc',
+      label: 'Quản lý danh mục',
       href: '/admin/category-management',
     }
   ],
