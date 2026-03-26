@@ -16,3 +16,8 @@ export const updateUser = async (id: number, body: UpdateUserRequest) => {
   );
   return response.data;
 };
+
+export const getUserById = async (id: number) => {
+  const response = await apiClient.get<ApiResponse<Users>>(`/api/Users/${id}`);
+  return response.data;
+};
