@@ -46,6 +46,10 @@ export const adminSidebarConfig: SidebarConfig = {
     {
       label: 'Quản lý danh mục',
       href: '/admin/category-management',
-    }
+    },
+    {
+      label: 'Quản lý bài kiểm tra tính cách',
+      href: '/admin/testtype-management',
+    },
   ],
 };
