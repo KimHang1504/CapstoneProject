@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, SpecialEvent, SpecialEventPagination, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
 
 //Dashboard
 export const getDashboardStats = (request: DashboardRequest) => {
@@ -185,6 +185,31 @@ export const approveReport = (id: number) => {
 
 export const rejectReport = (id: number) => {
     return apiClient.put<ApiResponse<void>>(`/api/Report/${id}/reject`);
+}
+
+export const getReportTypes = (page: number, pageSize: number) => {
+    return apiClient.get<ApiResponse<ReportTypePagination>>("/api/ReportType", {
+        params: {
+            page,
+            pageSize
+        }
+    });
+}
+
+export const getReportTypeDetail = (id: number) => {
+    return apiClient.get<ApiResponse<ReportType>>(`/api/ReportType/${id}`);
+}
+
+export const createReportType = (body: CreateReportTypeRequest) => {
+    return apiClient.post<ApiResponse<void>>("/api/ReportType", body);
+};
+
+export const deleteReportType = (id: number) => {
+    return apiClient.delete(`/api/ReportType/${id}`);
+}
+
+export const updateReportType = (id: number, body: CreateReportTypeRequest) => {
+    return apiClient.put(`/api/ReportType/${id}`, body);
 }
 
 //Config management

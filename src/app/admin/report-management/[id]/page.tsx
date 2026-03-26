@@ -9,6 +9,7 @@ import { Report } from "@/api/admin/type";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
+import EvidenceSnapshotView from "./components/EvidenceSnapshotView";
 
 export default function ReportDetailPage() {
   const params = useParams();
@@ -110,6 +111,7 @@ export default function ReportDetailPage() {
   if (!report) return <div className="p-6">Không tìm thấy báo cáo</div>;
 
   const isDone = report.status !== "PENDING";
+  const snapshot = report.evidenceSnapshot;
 
   return (
     <div className="min-h-screen bg-linear-to-br from-[#f5f3ff] to-white p-8">
@@ -144,7 +146,14 @@ export default function ReportDetailPage() {
 
         <div className="grid grid-cols-2 gap-6 p-6">
           <InfoCard label="Người báo cáo" value={report.reporterName} />
-          <InfoCard label="Loại mục tiêu" value={report.targetType} />
+          <InfoCard
+            label="Loại mục tiêu"
+            value={
+              <span className="px-2 py-1 bg-indigo-100 text-indigo-600 rounded-md text-xs">
+                {report.targetType}
+              </span>
+            }
+          />
           <InfoCard
             label="Được báo cáo vào lúc"
             value={new Date(report.createdAt).toLocaleString()}
@@ -153,12 +162,33 @@ export default function ReportDetailPage() {
 
         <div className="px-6 pb-6">
           <p className="text-sm mb-2">Lí do báo cáo</p>
-          <div className="bg-gray-50 border border-gray-300 rounded-xl p-4 text-gray-700">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-red-700">
             {report.reason}
           </div>
         </div>
 
+        <div className="px-6 pb-6">
+          <p className="text-sm mb-2 font-semibold text-gray-700">
+            Nội dung bị báo cáo
+          </p>
+
+          {report.evidenceSnapshot?.data ? (
+            <EvidenceSnapshotView snapshot={report.evidenceSnapshot} />
+          ) : (
+            <div className="text-gray-400 text-sm italic">
+              Không có dữ liệu snapshot
+            </div>
+          )}
+        </div>
+
         <div className="bg-gray-50 px-6 py-4 flex justify-end gap-3">
+          {isDone && (
+            <div className="bg-green-100 text-green-700 border border-green-200 rounded-lg px-4 py-2 flex items-center gap-2">
+              <p className="text-sm mr-auto ">
+                Báo cáo đã được xử lý
+              </p>
+            </div>
+          )}
           <button
             disabled={actionLoading || report.status !== "PENDING"}
             onClick={handleReject}

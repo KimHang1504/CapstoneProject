@@ -40,13 +40,21 @@ export default function ReportPage() {
                 <h1 className="text-3xl font-bold text-gray-800">
                     Quản lí báo cáo
                 </h1>
+                <div className="flex gap-5">
+                    <button
+                        onClick={() => router.push("/admin/report-management/report-types")}
+                        className="ml-3 px-4 py-2 border border-[#B388EB] text-[#B388EB] rounded-lg hover:bg-purple-50 cursor-pointer"
+                    >
+                        Loại báo cáo
+                    </button>
 
-                <button
-                    onClick={fetchReports}
-                    className="bg-[#B388EB] text-white px-4 py-2 rounded-lg shadow hover:opacity-90"
-                >
-                    Tải lại
-                </button>
+                    <button
+                        onClick={fetchReports}
+                        className="bg-[#B388EB] text-white px-4 py-2 rounded-lg shadow hover:opacity-90 cursor-pointer"
+                    >
+                        Tải lại
+                    </button>
+                </div>
             </div>
 
             {/* FILTER CARD */}
@@ -160,8 +168,8 @@ export default function ReportPage() {
                     <button
                         key={p}
                         className={`px-3 py-1 rounded-lg border ${page === p
-                                ? "bg-[#B388EB] text-white border-[#B388EB]"
-                                : "hover:bg-gray-100"
+                            ? "bg-[#B388EB] text-white border-[#B388EB]"
+                            : "hover:bg-gray-100"
                             }`}
                         onClick={() => setPage(p)}
                     >

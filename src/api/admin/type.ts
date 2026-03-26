@@ -441,11 +441,114 @@ export interface Report {
   reporterName: string;
   targetType: 'POST' | 'REVIEW' | 'USER' | 'VENUE' | 'COMMENT';
   targetId: number;
+  evidenceSnapshot: EvidenceSnapshot;
   reason: string;
   status: 'PENDING' | 'APPROVED' | 'REJECTED';
   createdAt: string;
   updatedAt: string;
 }
+
+export type EvidenceSnapshot =
+  | {
+    targetType: "POST";
+    targetId: number;
+    capturedAt: string;
+    data: PostData;
+  }
+  | {
+    targetType: "REVIEW";
+    targetId: number;
+    capturedAt: string;
+    data: ReviewData;
+  }
+  | {
+    targetType: "VENUE";
+    targetId: number;
+    capturedAt: string;
+    data: VenueData;
+  }
+  | {
+    targetType: "COMMENT";
+    targetId: number;
+    capturedAt: string;
+    data: CommentData;
+  }
+  | {
+    targetType: "USER";
+    targetId: number;
+    capturedAt: string;
+    data: UserData;
+  };
+
+
+export interface PostData {
+  Id: number;
+  Status: "PUBLISHED" | "DRAFT" | string;
+  Content: string;
+  AuthorId: number;
+  HashTags: string[];
+  CreatedAt: string;
+  UpdatedAt: string;
+  MediaPayload: MediaItem[];
+}
+
+export interface ReviewData {
+  Id: number;
+  Rating: number;
+  Status: string;
+  Content: string;
+  VenueId: number;
+  MemberId: number;
+  CreatedAt: string;
+  UpdatedAt: string;
+  ImageUrls: string[] | null;
+  VisitedAt: string | null;
+}
+
+export interface VenueData {
+  Id: number;
+  Name: string;
+  Email: string;
+  Status: string;
+  Address: string;
+  Category: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+  CoverImage: string;
+  Description: string;
+  PhoneNumber: string;
+  VenueOwnerId: number;
+}
+
+export interface CommentData {
+  Id: number;
+  PostId: number;
+  AuthorId: number;
+  TargetMemberId: number;
+  Content: string;
+  ParentId: number | null;
+  RootId: number | null;
+  Status: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface UserData {
+  Id: number;
+  UserId: number;
+  FullName: string;
+  Gender: "MALE" | "FEMALE" | string;
+  Bio: string | null;
+  RelationshipStatus: string;
+  CreatedAt: string;
+  UpdatedAt: string;
+}
+
+export interface MediaItem {
+  Url: string;
+  Type: "IMAGE" | "VIDEO" | string;
+}
+
 
 export interface ReportPagination {
   reports: Report[];
@@ -453,6 +556,31 @@ export interface ReportPagination {
   pageSize: number;
   totalCount: number;
   totalPages: number;
+}
+
+export interface ReportType {
+  id: number;
+  typeName: string;
+  description: string | null;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ReportTypePagination {
+  items: ReportType[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
+export interface CreateReportTypeRequest {
+  typeName: string;
+  description?: string;
+  isActive?: boolean;
 }
 
 //Configuration
