@@ -1,5 +1,3 @@
-import { access } from "fs";
-
 export interface LoginRequest {
     email: string;
     password: string;
@@ -17,6 +15,28 @@ export interface RegisterRequest {
     businessName: string;
     phoneNumber: string;
     address: string;
+}
+
+export interface UpdatePasswordRequest {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+}
+
+export interface ForgotPasswordRequest {
+    email: string;
+}
+
+export interface VerifyOtpRequest {
+    email: string;
+    otpCode: string;
+}
+
+export interface ResetPasswordRequest {
+    email: string;
+    otpCode: string;
+    newPassword: string;
+    confirmPassword: string;
 }
 
 export interface LoginResponse {

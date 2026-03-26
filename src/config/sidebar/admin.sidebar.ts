@@ -46,6 +46,14 @@ export const adminSidebarConfig: SidebarConfig = {
     {
       label: 'Quản lý danh mục',
       href: '/admin/category-management',
+    },
+    {
+      label: 'Quản lý rút tiền',
+      href: '/admin/withdraw-request',
+    },
+    {
+      label: 'Quản lý giao dịch',
+      href: '/admin/transaction-management',
     }
   ],
 };
