@@ -625,6 +625,25 @@ export interface BankInfo {
   accountName: string | null;
 }
 
+export interface RejectWithdrawRequestBody {
+  reason: string;
+}
+
+export interface CompleteWithdrawRequestBody {
+  status: "COMPLETED";
+  proofImageUrl: string;
+}
+
+export interface WithdrawRequestPagination {
+  items: WithdrawRequest[];
+  pageNumber: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
+
 //Transaction management
 
 export type TransactionStatus =

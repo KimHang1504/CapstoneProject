@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
 
 //Dashboard
 export const getDashboardStats = (request: DashboardRequest) => {
@@ -227,11 +227,28 @@ export const updateConfig = (body: UpdateConfigRequest) => {
 }
 
 //Withdraw management
-export const getWithdrawRequests = (status: string) => {
-    return apiClient.get<ApiResponse<WithdrawRequest[]>>("/api/withdraw-requests", {
+export const getWithdrawRequests = (status: string, pageNumber?: number, pageSize?: number) => {
+    return apiClient.get<ApiResponse<WithdrawRequestPagination>>("/api/withdraw-requests", {
         params: {
-            status
+            status: status || undefined,
+            pageNumber,
+            pageSize
         }
+    });
+}
+
+export const approveWithdrawRequest = (withdrawRequestId: number) => {
+    return apiClient.post<ApiResponse<WithdrawRequest>>(`/api/withdraw-requests/${withdrawRequestId}/approve`);
+}
+
+export const rejectWithdrawRequest = (withdrawRequestId: number, reason: string) => {
+    return apiClient.post<ApiResponse<WithdrawRequest>>(`/api/withdraw-requests/${withdrawRequestId}/reject`, { reason });
+}
+
+export const completeWithdrawRequest = (withdrawRequestId: number, proofImageUrl: string) => {
+    return apiClient.put<ApiResponse<WithdrawRequest>>(`/api/withdraw-requests/${withdrawRequestId}/complete`, {
+        status: "COMPLETED",
+        proofImageUrl
     });
 }
 

@@ -251,8 +251,9 @@ export default function WalletPage() {
       {/* Withdraw History */}
       {activeTab === 'withdraws' && (
         <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
-          <div className="px-5 py-4 border-b border-gray-100">
+          <div className="px-5 py-4 border-b border-gray-100 flex items-center justify-between">
             <h2 className="font-semibold text-gray-800">Lịch sử rút tiền</h2>
+            <span className="text-xs text-gray-400">{withdraws.length} yêu cầu</span>
           </div>
 
           {withdraws.length === 0 ? (
@@ -264,31 +265,85 @@ export default function WalletPage() {
             <div className="divide-y divide-gray-50">
               {withdraws.map((item) => {
                 const s = STATUS_MAP[item.status] ?? { label: item.status, cls: "bg-gray-100 text-gray-500" };
+                const hasBankInfo = item.bankInfo?.bankName && item.bankInfo?.accountNumber;
                 return (
-                  <div key={item.id} className="flex items-center gap-4 px-5 py-4 hover:bg-violet-50/40 transition">
-                    <div className="w-10 h-10 rounded-xl bg-violet-100 flex items-center justify-center shrink-0">
-                      <ArrowDownCircle size={18} className="text-violet-500" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-gray-900">
-                        {item.amount.toLocaleString("vi-VN")} ₫
-                      </p>
-                      <p className="text-xs text-gray-400 truncate">
-                        {item.bankInfo?.bankName} · {item.bankInfo?.accountNumber}
-                      </p>
-                      {item.rejectionReason && (
-                        <p className="text-xs text-rose-500 truncate mt-1">
-                          Lý do từ chối: {item.rejectionReason}
+                  <div key={item.id} className="px-5 py-4 hover:bg-violet-50/40 transition">
+                    <div className="flex items-start gap-4">
+                      {/* Icon */}
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                        item.status === 'APPROVED' ? 'bg-emerald-100' : 
+                        item.status === 'REJECTED' ? 'bg-rose-100' : 'bg-violet-100'
+                      }`}>
+                        <ArrowDownCircle size={18} className={
+                          item.status === 'APPROVED' ? 'text-emerald-500' : 
+                          item.status === 'REJECTED' ? 'text-rose-500' : 'text-violet-500'
+                        } />
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="font-bold text-gray-900 text-lg">
+                            {item.amount.toLocaleString("vi-VN")} ₫
+                          </p>
+                          <span className={`inline-block text-xs px-2.5 py-1 rounded-full font-medium ${s.cls}`}>
+                            {s.label}
+                          </span>
+                        </div>
+
+                        {/* Bank Info */}
+                        {hasBankInfo ? (
+                          <div className="mt-2 p-3 bg-gray-50 rounded-lg">
+                            <div className="flex items-center gap-2 text-sm text-gray-700">
+                              <span className="font-medium">{item.bankInfo?.bankName}</span>
+                              <span className="text-gray-300">|</span>
+                              <span className="font-mono">{item.bankInfo?.accountNumber}</span>
+                            </div>
+                            {item.bankInfo?.accountName && (
+                              <p className="text-xs text-gray-500 mt-1 uppercase">
+                                {item.bankInfo.accountName}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <p className="mt-2 text-xs text-gray-400 italic">
+                            Không có thông tin ngân hàng
+                          </p>
+                        )}
+
+                        {/* Rejection Reason */}
+                        {item.rejectionReason && (
+                          <div className="mt-2 p-2 bg-rose-50 rounded-lg border border-rose-100">
+                            <p className="text-xs text-rose-600">
+                              <span className="font-medium">Lý do từ chối:</span> {item.rejectionReason}
+                            </p>
+                          </div>
+                        )}
+
+                        {/* Proof Image */}
+                        {item.proofImageUrl && (
+                          <div className="mt-2">
+                            <a 
+                              href={item.proofImageUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-700 hover:underline"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                <circle cx="9" cy="9" r="2"/>
+                                <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                              </svg>
+                              Xem ảnh chứng từ
+                            </a>
+                          </div>
+                        )}
+
+                        {/* Timestamp */}
+                        <p className="text-xs text-gray-400 mt-2">
+                          Yêu cầu lúc {new Date(item.requestedAt).toLocaleString("vi-VN")}
                         </p>
-                      )}
-                    </div>
-                    <div className="text-right shrink-0 space-y-1">
-                      <span className={`inline-block text-xs px-2.5 py-0.5 rounded-full font-medium ${s.cls}`}>
-                        {s.label}
-                      </span>
-                      <p className="text-xs text-gray-400">
-                        {new Date(item.requestedAt).toLocaleDateString("vi-VN")}
-                      </p>
+                      </div>
                     </div>
                   </div>
                 );
