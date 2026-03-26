@@ -10,7 +10,7 @@ import { JwtPayload } from "@/api/auth/type";
 import { get } from "http";
 import { getUserFromToken } from "@/utils/jwt";
 import { apiClient } from "@/lib/api-client";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 type UserPayload = {
@@ -22,6 +22,13 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const rememberMe = true;
+
+    const getErrorMessage = (error: unknown, fallback: string) => {
+        if (error instanceof Error && error.message) {
+            return error.message;
+        }
+        return fallback;
+    };
 
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -52,7 +59,8 @@ export default function LoginPage() {
             }
         } catch (error) {
             console.error("Error occurred while logging in:", error);
-            toast.error("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
+            toast.error(getErrorMessage(error, "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin và thử lại."));
+            return;
         }
     };
 
@@ -89,7 +97,8 @@ export default function LoginPage() {
             }
         } catch (error) {
             console.error("Error occurred while logging in with Google:", error);
-            toast.error("Đăng nhập Google thất bại. Vui lòng thử lại.");
+            toast.error(getErrorMessage(error, "Đăng nhập Google thất bại. Vui lòng thử lại."));
+            return;
         }
     };
 
