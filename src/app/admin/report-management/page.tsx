@@ -2,9 +2,28 @@
 import { getReports } from "@/api/admin/api";
 import { Report } from "@/api/admin/type";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { 
+  RefreshCw, 
+  ChevronDown, 
+  X, 
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  Flag,
+  User,
+  CheckCircle,
+  Clock,
+  XCircle,
+  FileText,
+  MessageSquare,
+  Star,
+  MapPin
+} from "lucide-react";
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 5;
 
 export default function ReportPage() {
     const [reports, setReports] = useState<Report[]>([]);
@@ -12,14 +31,36 @@ export default function ReportPage() {
 
     const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [totalCount, setTotalCount] = useState(0);
 
     const [status, setStatus] = useState<Report["status"] | "">("");
     const [targetType, setTargetType] = useState<Report["targetType"] | "">("");
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
+    const [targetTypeDropdownOpen, setTargetTypeDropdownOpen] = useState(false);
+
+    const statusDropdownRef = useRef<HTMLDivElement>(null);
+    const targetTypeDropdownRef = useRef<HTMLDivElement>(null);
 
     const router = useRouter();
     useEffect(() => {
         fetchReports();
     }, [page, status, targetType]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target as Node)) {
+                setStatusDropdownOpen(false);
+            }
+            if (targetTypeDropdownRef.current && !targetTypeDropdownRef.current.contains(event.target as Node)) {
+                setTargetTypeDropdownOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     const fetchReports = async () => {
         setLoading(true);
@@ -27,180 +68,389 @@ export default function ReportPage() {
             const res = await getReports(page, PAGE_SIZE, targetType, status);
             setReports(res.data.reports);
             setTotalPages(res.data.totalPages);
+            setTotalCount(res.data.totalCount || 0);
         } catch (err) {
             console.error(err);
         }
         setLoading(false);
     };
 
+    // Filter reports based on search query (reporter name or reason)
+    const filteredReports = reports.filter((r) => {
+        if (!searchQuery) return true;
+        const query = searchQuery.toLowerCase();
+        return (
+            r.reporterName?.toLowerCase().includes(query) ||
+            r.reason?.toLowerCase().includes(query)
+        );
+    });
+
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
-            {/* HEADER */}
-            <div className="mb-6 flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-gray-800">
-                    Quản lí báo cáo
-                </h1>
-                <div className="flex gap-5">
-                    <button
-                        onClick={() => router.push("/admin/report-management/report-types")}
-                        className="ml-3 px-4 py-2 border border-[#B388EB] text-[#B388EB] rounded-lg hover:bg-purple-50 cursor-pointer"
-                    >
-                        Loại báo cáo
-                    </button>
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+            <div className="max-w-7xl mx-auto p-6 space-y-5">
+                {/* HEADER */}
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h1 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
+                            <Flag className="w-6 h-6 text-blue-600" />
+                            Quản lý báo cáo
+                        </h1>
+                        <p className="text-sm text-slate-500 mt-1.5">
+                            {totalCount} báo cáo
+                        </p>
+                    </div>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => router.push("/admin/report-management/report-types")}
+                            className="px-4 py-2.5 border border-blue-600 text-blue-600 rounded-xl hover:bg-blue-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2 text-sm font-medium"
+                        >
+                            <FileText className="w-4 h-4" />
+                            Loại báo cáo
+                        </button>
 
-                    <button
-                        onClick={fetchReports}
-                        className="bg-[#B388EB] text-white px-4 py-2 rounded-lg shadow hover:opacity-90 cursor-pointer"
-                    >
-                        Tải lại
-                    </button>
+                        <button
+                            onClick={fetchReports}
+                            disabled={loading}
+                            className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                        >
+                            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
+                            <span className="text-sm font-medium">Tải lại</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            {/* FILTER CARD */}
-            <div className="bg-white p-4 rounded-2xl shadow mb-6 flex gap-4 items-center">
-                <select
-                    value={status}
-                    onChange={(e) => {
-                        setPage(1);
-                        setStatus(e.target.value as Report["status"] | "");
-                    }}
-                    className="border px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#B388EB]"
-                >
-                    <option value="">Tất cả trạng thái</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="APPROVED">APPROVED</option>
-                    <option value="REJECTED">REJECTED</option>
-                </select>
-
-                <select
-                    value={targetType}
-                    onChange={(e) => {
-                        setPage(1);
-                        setTargetType(e.target.value as Report["targetType"] | "");
-                    }}
-                    className="border px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#B388EB]"
-                >
-                    <option value="">Tất cả</option>
-                    <option value="POST">POST</option>
-                    <option value="COMMENT">COMMENT</option>
-                    <option value="REVIEW">REVIEW</option>
-                    <option value="USER">USER</option>
-                    <option value="VENUE">VENUE</option>
-                </select>
-
-                <button
-                    onClick={() => {
-                        setStatus("");
-                        setTargetType("");
-                        setPage(1);
-                    }}
-                    className="px-4 py-2 border rounded-lg hover:bg-gray-100"
-                >
-                    Mặc định
-                </button>
-            </div>
-
-            {/* TABLE */}
-            <div className="bg-white rounded-2xl shadow overflow-hidden">
-                <table className="w-full text-sm">
-                    <thead className="bg-gray-100 text-gray-600">
-                        <tr>
-                            <th className="p-4 text-left">ID</th>
-                            <th className="p-4 text-left">Người báo cáo</th>
-                            <th className="p-4 text-left">Mục tiêu</th>
-                            <th className="p-4 text-left">Lý do</th>
-                            <th className="p-4 text-left">Trạng thái</th>
-                            <th className="p-4 text-left">Được tạo</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        {loading ? (
-                            Array.from({ length: 6 }).map((_, i) => (
-                                <SkeletonRow key={i} />
-                            ))
-                        ) : reports.length === 0 ? (
-                            <tr>
-                                <td colSpan={6} className="text-center p-10 text-gray-400">
-                                    Không tìm thấy báo cáo
-                                </td>
-                            </tr>
-                        ) : (
-                            reports.map((r) => (
-                                <tr
-                                    key={r.id}
-                                    onClick={() => router.push(`/admin/report-management/${r.id}`)}
-                                    className="border-t border-gray-300 hover:bg-purple-50 transition cursor-pointer"
+                {/* FILTER CARD */}
+                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                    <div className="flex gap-3 flex-wrap items-center">
+                        
+                        {/* SEARCH */}
+                        <div className="relative flex-1 min-w-[250px]">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <input
+                                type="text"
+                                placeholder="Tìm theo người báo cáo hoặc lý do..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
+                            />
+                            {searchQuery && (
+                                <button
+                                    onClick={() => setSearchQuery("")}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                 >
-                                    <td className="p-4 font-medium">{r.id}</td>
-                                    <td className="p-4">{r.reporterName}</td>
-                                    <td className="p-4">
-                                        <span className="bg-gray-100 px-2 py-1 rounded">
-                                            {r.targetType}
-                                        </span>
-                                    </td>
-                                    <td className="p-4">{r.reason}</td>
-                                    <td className="p-4">
-                                        <StatusBadge status={r.status} />
-                                    </td>
-                                    <td className="p-4 text-gray-500">
-                                        {new Date(r.createdAt).toLocaleString()}
-                                    </td>
-                                </tr>
-                            ))
+                                    <X className="w-4 h-4" />
+                                </button>
+                            )}
+                        </div>
+
+                        {/* STATUS DROPDOWN */}
+                        <div className="relative" ref={statusDropdownRef}>
+                            <button
+                                onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
+                                className="min-w-[150px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                            >
+                                <span className="text-slate-700">
+                                    {status === "" ? "Tất cả trạng thái" : 
+                                     status === "PENDING" ? "Chờ xử lý" :
+                                     status === "APPROVED" ? "Đã duyệt" : "Từ chối"}
+                                </span>
+                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${statusDropdownOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {statusDropdownOpen && (
+                                <div className="absolute top-full left-0 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg z-10 overflow-hidden">
+                                    {[
+                                        { value: "", label: "Tất cả trạng thái", icon: null },
+                                        { value: "PENDING", label: "Chờ xử lý", icon: Clock },
+                                        { value: "APPROVED", label: "Đã duyệt", icon: CheckCircle },
+                                        { value: "REJECTED", label: "Từ chối", icon: XCircle },
+                                    ].map((option) => {
+                                        const Icon = option.icon;
+                                        return (
+                                            <button
+                                                key={option.value}
+                                                onClick={() => {
+                                                    setPage(1);
+                                                    setStatus(option.value as Report["status"] | "");
+                                                    setStatusDropdownOpen(false);
+                                                }}
+                                                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
+                                                    status === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                }`}
+                                            >
+                                                {Icon && <Icon className="w-4 h-4" />}
+                                                {option.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* TARGET TYPE DROPDOWN */}
+                        <div className="relative" ref={targetTypeDropdownRef}>
+                            <button
+                                onClick={() => setTargetTypeDropdownOpen(!targetTypeDropdownOpen)}
+                                className="min-w-[150px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                            >
+                                <span className="text-slate-700">
+                                    {targetType === "" ? "Tất cả loại" : targetType}
+                                </span>
+                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${targetTypeDropdownOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {targetTypeDropdownOpen && (
+                                <div className="absolute top-full left-0 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg z-10 overflow-hidden">
+                                    {[
+                                        { value: "", label: "Tất cả loại", icon: null },
+                                        { value: "POST", label: "Bài viết", icon: FileText },
+                                        { value: "COMMENT", label: "Bình luận", icon: MessageSquare },
+                                        { value: "REVIEW", label: "Đánh giá", icon: Star },
+                                        { value: "USER", label: "Người dùng", icon: User },
+                                        { value: "VENUE", label: "Địa điểm", icon: MapPin },
+                                    ].map((option) => {
+                                        const Icon = option.icon;
+                                        return (
+                                            <button
+                                                key={option.value}
+                                                onClick={() => {
+                                                    setPage(1);
+                                                    setTargetType(option.value as Report["targetType"] | "");
+                                                    setTargetTypeDropdownOpen(false);
+                                                }}
+                                                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
+                                                    targetType === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                }`}
+                                            >
+                                                {Icon && <Icon className="w-4 h-4" />}
+                                                {option.label}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+
+                        {(status || targetType || searchQuery) && (
+                            <button
+                                onClick={() => {
+                                    setStatus("");
+                                    setTargetType("");
+                                    setSearchQuery("");
+                                    setPage(1);
+                                }}
+                                className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                                Xóa bộ lọc
+                            </button>
                         )}
-                    </tbody>
-                </table>
-            </div>
+                    </div>
+                </div>
 
-            {/* PAGINATION */}
-            <div className="flex justify-center mt-6 gap-2">
-                <button
-                    className="px-3 py-1 border rounded-lg hover:bg-gray-100"
-                    disabled={page === 1}
-                    onClick={() => setPage(page - 1)}
-                >
-                    Prev
-                </button>
+                {/* TABLE */}
+                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead className="bg-gradient-to-r from-slate-50 to-blue-50/50 border-b border-slate-200">
+                                <tr>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Người báo cáo</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Mục tiêu</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Lý do</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Trạng thái</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Được tạo</th>
+                                </tr>
+                            </thead>
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                    <button
-                        key={p}
-                        className={`px-3 py-1 rounded-lg border ${page === p
-                            ? "bg-[#B388EB] text-white border-[#B388EB]"
-                            : "hover:bg-gray-100"
-                            }`}
-                        onClick={() => setPage(p)}
-                    >
-                        {p}
-                    </button>
-                ))}
+                            <tbody className="divide-y divide-slate-200">
+                                {loading ? (
+                                    Array.from({ length: 6 }).map((_, i) => (
+                                        <SkeletonRow key={i} />
+                                    ))
+                                ) : filteredReports.length === 0 ? (
+                                    <tr>
+                                        <td colSpan={6} className="px-4 py-16 text-center">
+                                            <div className="flex flex-col items-center justify-center text-slate-400">
+                                                <Flag className="w-16 h-16 mb-3 text-slate-300" strokeWidth={1.5} />
+                                                <p className="text-sm font-medium text-slate-600">Không tìm thấy báo cáo</p>
+                                                <p className="text-xs text-slate-400 mt-1">Các báo cáo sẽ hiển thị ở đây</p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ) : (
+                                    filteredReports.map((r) => (
+                                        <tr
+                                            key={r.id}
+                                            onClick={() => router.push(`/admin/report-management/${r.id}`)}
+                                            className="border-b border-slate-100 hover:bg-blue-50/30 transition-colors duration-150 cursor-pointer"
+                                        >
+                                            <td className="px-4 py-4">
+                                                <span className="text-sm font-semibold text-slate-700">#{r.id}</span>
+                                            </td>
+                                            <td className="px-4 py-4">
+                                                <div className="flex items-center gap-1.5 text-sm text-slate-700">
+                                                    <User className="w-3.5 h-3.5 text-slate-400" />
+                                                    {r.reporterName}
+                                                </div>
+                                            </td>
+                                            <td className="px-4 py-4">
+                                                <TargetTypeBadge type={r.targetType} />
+                                            </td>
+                                            <td className="px-4 py-4">
+                                                <span className="text-sm text-slate-600 line-clamp-2">{r.reason}</span>
+                                            </td>
+                                            <td className="px-4 py-4">
+                                                <StatusBadge status={r.status} />
+                                            </td>
+                                            <td className="px-4 py-4">
+                                                <div className="text-sm text-slate-600">
+                                                    {new Date(r.createdAt).toLocaleDateString("vi-VN")}
+                                                </div>
+                                                <div className="text-xs text-slate-400">
+                                                    {new Date(r.createdAt).toLocaleTimeString("vi-VN", { hour: '2-digit', minute: '2-digit' })}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))
+                                )}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-                <button
-                    className="px-3 py-1 border rounded-lg hover:bg-gray-100"
-                    disabled={page === totalPages}
-                    onClick={() => setPage(page + 1)}
-                >
-                    Next
-                </button>
+                {/* PAGINATION */}
+                {totalPages > 1 && (
+                    <div className="bg-white rounded-xl border border-slate-200 px-5 py-4 shadow-sm">
+                        <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-slate-600">
+                                    Hiển thị <span className="font-semibold text-slate-800">{((page - 1) * PAGE_SIZE) + 1}</span> đến{" "}
+                                    <span className="font-semibold text-slate-800">{Math.min(page * PAGE_SIZE, totalCount)}</span> trong tổng số{" "}
+                                    <span className="font-semibold text-slate-800">{totalCount}</span> kết quả
+                                </span>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <button
+                                    onClick={() => setPage(1)}
+                                    disabled={page === 1}
+                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    title="Trang đầu"
+                                >
+                                    <ChevronsLeft className="w-4 h-4 text-slate-600" />
+                                </button>
+                                <button
+                                    onClick={() => setPage(page - 1)}
+                                    disabled={page === 1}
+                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    title="Trang trước"
+                                >
+                                    <ChevronLeft className="w-4 h-4 text-slate-600" />
+                                </button>
+                                
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                        let pageNum;
+                                        if (totalPages <= 5) {
+                                            pageNum = i + 1;
+                                        } else if (page <= 3) {
+                                            pageNum = i + 1;
+                                        } else if (page >= totalPages - 2) {
+                                            pageNum = totalPages - 4 + i;
+                                        } else {
+                                            pageNum = page - 2 + i;
+                                        }
+                                        
+                                        return (
+                                            <button
+                                                key={pageNum}
+                                                onClick={() => setPage(pageNum)}
+                                                className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                                                    page === pageNum
+                                                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                                                        : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
+                                                }`}
+                                            >
+                                                {pageNum}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                <button
+                                    onClick={() => setPage(page + 1)}
+                                    disabled={page === totalPages}
+                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    title="Trang sau"
+                                >
+                                    <ChevronRight className="w-4 h-4 text-slate-600" />
+                                </button>
+                                <button
+                                    onClick={() => setPage(totalPages)}
+                                    disabled={page === totalPages}
+                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    title="Trang cuối"
+                                >
+                                    <ChevronsRight className="w-4 h-4 text-slate-600" />
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
 }
 
-/* STATUS BADGE */
-function StatusBadge({ status }: { status: string }) {
-    const style =
-        status === "PENDING"
-            ? "bg-yellow-100 text-yellow-700"
-            : status === "REJECTED"
-                ? "bg-red-100 text-red-600"
-                : "bg-green-100 text-green-600";
+/* TARGET TYPE BADGE */
+function TargetTypeBadge({ type }: { type: string }) {
+    const config: Record<string, { label: string; icon: any; color: string }> = {
+        POST: { label: "Bài viết", icon: FileText, color: "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 border-blue-200" },
+        COMMENT: { label: "Bình luận", icon: MessageSquare, color: "bg-gradient-to-r from-purple-50 to-violet-50 text-purple-700 border-purple-200" },
+        REVIEW: { label: "Đánh giá", icon: Star, color: "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border-amber-200" },
+        USER: { label: "Người dùng", icon: User, color: "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border-green-200" },
+        VENUE: { label: "Địa điểm", icon: MapPin, color: "bg-gradient-to-r from-rose-50 to-pink-50 text-rose-700 border-rose-200" },
+    };
+
+    const style = config[type] || { label: type, icon: FileText, color: "bg-slate-50 text-slate-700 border-slate-200" };
+    const Icon = style.icon;
 
     return (
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${style}`}>
-            {status}
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${style.color}`}>
+            <Icon className="w-3.5 h-3.5" />
+            {style.label}
+        </span>
+    );
+}
+
+/* STATUS BADGE */
+function StatusBadge({ status }: { status: string }) {
+    const config: Record<string, { label: string; icon: any; color: string }> = {
+        PENDING: {
+            label: "Chờ xử lý",
+            icon: Clock,
+            color: "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border-amber-200"
+        },
+        APPROVED: {
+            label: "Đã duyệt",
+            icon: CheckCircle,
+            color: "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200"
+        },
+        REJECTED: {
+            label: "Từ chối",
+            icon: XCircle,
+            color: "bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200"
+        },
+    };
+
+    const style = config[status] || config.PENDING;
+    const Icon = style.icon;
+
+    return (
+        <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border ${style.color}`}>
+            <Icon className="w-3.5 h-3.5" />
+            {style.label}
         </span>
     );
 }
@@ -208,10 +458,10 @@ function StatusBadge({ status }: { status: string }) {
 /* SKELETON */
 function SkeletonRow() {
     return (
-        <tr className="border-t animate-pulse">
+        <tr className="animate-pulse border-b border-slate-100">
             {Array.from({ length: 6 }).map((_, i) => (
-                <td key={i} className="p-4">
-                    <div className="h-4 bg-gray-200 rounded w-full"></div>
+                <td key={i} className="px-4 py-4">
+                    <div className="h-4 bg-slate-200 rounded-lg w-full"></div>
                 </td>
             ))}
         </tr>
