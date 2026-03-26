@@ -77,8 +77,8 @@ export default function StatusToggleButton({
             <span
                 className={`
           absolute top-1/2 -translate-y-1/2 flex items-center justify-center
-          w-6.5 h-6.5unded-full text-white shadow-sm
-          transition-all duration-300
+ w-6.5 h-6.5 rounded-full text-white shadow-sm
+           transition-all duration-300
           ${user.isActive
                         ? 'left-15 bg-green-500'
                         : 'left-1 bg-purple-500'}
