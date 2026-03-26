@@ -12,12 +12,18 @@ export const getDashboardStats = (request: DashboardRequest) => {
 }
 
 //Venue management
-export const getAllPendingVenues = (page: number, pageSize: number) => {
-    console.log(apiClient);
-    return apiClient.get<ApiResponse<VenuePagination>>("/api/VenueLocation/pending", {
+export const getAllPendingVenues = (
+    page: number, 
+    pageSize: number,
+    status?: string,
+    search?: string
+) => {
+    return apiClient.get<ApiResponse<VenuePagination>>("/api/VenueLocation/my-venues/by-status", {
         params: {
             page,
             pageSize,
+            status: status || undefined,
+            search: search || undefined,
         }
     });
 };

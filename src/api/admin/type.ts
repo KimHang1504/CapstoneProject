@@ -56,7 +56,7 @@ export interface Venue {
   avarageCost?: number;
   reviewCount?: number;
 
-  status: 'REJECTED' | 'APPROVED' | 'PENDING';
+  status: 'DRAFTED' | 'PENDING' | 'ACTIVE' | 'REJECTED';
 
   coverImage?: string[];
   interiorImage?: string[];
