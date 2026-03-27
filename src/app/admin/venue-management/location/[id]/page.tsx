@@ -160,8 +160,10 @@ export default async function VenueDetailPage({ params }: Props) {
 
             </div>
 
-            {/* APPROVAL */}
-            <VenueApprovalActions id={id} />
+            {/* APPROVAL - Only show for PENDING status */}
+            {venue.status === 'PENDING' && (
+                <VenueApprovalActions id={id} />
+            )}
 
         </div>
     );

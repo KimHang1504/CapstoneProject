@@ -58,13 +58,13 @@ export default function ManagementLayout({
   const handleLogout = () => {
     // Xóa token từ localStorage và api client
     apiClient.clearAuthToken();
-    
+
     // Xóa cookie
     document.cookie = 'accessToken=; path=/; max-age=0';
-    
+
     // Đóng menu
     setShowProfileMenu(false);
-    
+
     // Redirect về trang auth
     window.location.replace('/auth');
   };
@@ -125,7 +125,7 @@ export default function ManagementLayout({
         <nav className="flex-1 p-3 overflow-y-auto">
 
 
-                    {/* Fallback for tabs without sections */}
+          {/* Fallback for tabs without sections */}
           {sidebarConfig.tabs && (
             <div className="space-y-1">
               {sidebarConfig.tabs.map((tab) => {
@@ -163,9 +163,9 @@ export default function ManagementLayout({
                 >
                   <div className="flex items-center gap-2">
                     {section.icon && <section.icon className="w-5 h-5" />}
-                  <span>{section.title}</span>
+                    <span>{section.title}</span>
                   </div>
-                  
+
                   <ChevronDown
                     className={`w-4 h-4 transition-transform duration-200 ${expandedSections.includes(section.title) ? 'rotate-180' : ''
                       }`}
@@ -174,12 +174,12 @@ export default function ManagementLayout({
               )}
 
               <div className={`space-y-1 ${isSidebarOpen && !expandedSections.includes(section.title)
-                  ? 'hidden'
-                  : ''
+                ? 'hidden'
+                : ''
                 }`}>
                 {section.items.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-                   const Icon = item.icon;
+                  const Icon = item.icon;
 
                   return (
                     <Link

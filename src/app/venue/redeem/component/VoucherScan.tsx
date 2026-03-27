@@ -16,8 +16,9 @@ export default function VoucherScan({ venueLocationId }: Props) {
     const [message, setMessage] = useState("");
     const [valid, setValid] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [validatedCode, setValidatedCode] = useState("");
 
-        useEffect(() => {
+    useEffect(() => {
         console.log("🟢 VoucherScan mounted");
 
         return () => {
@@ -25,42 +26,86 @@ export default function VoucherScan({ venueLocationId }: Props) {
         };
     }, []);
 
-    const handleScan = async (text: string) => {
-        const value = text.toUpperCase();
+    const handleScan = async (scannedText: string) => {
+        const normalizedCode = scannedText.trim().toUpperCase();
 
-        setCode(value);
-        setLoading(true);
-        setMessage("");
+        if (!normalizedCode) {
+            setValid(false);
+            setCode("");
+            setValidatedCode("");
+            setMessage("Không đọc được mã voucher");
+            return;
+        }
+
+        if (!venueLocationId) {
+            setValid(false);
+            setValidatedCode("");
+            setMessage("Vui lòng chọn địa điểm");
+            return;
+        }
 
         try {
-            const res = await validateVoucherItem(value, venueLocationId);
+            setLoading(true);
+            setMessage("");
+            setValid(false);
+
+            setCode(normalizedCode);
+
+            const res = await validateVoucherItem({
+                itemCode: normalizedCode,
+                venueLocationId,
+            });
+
             const data = res.data;
 
-            if (data.isValid) {
+            if (data?.isValid) {
                 setValid(true);
-                setMessage("Voucher hợp lệ. Có thể sử dụng.");
+                setValidatedCode(normalizedCode);
+                setMessage(data.validationMessage || "Voucher hợp lệ. Có thể sử dụng.");
             } else {
                 setValid(false);
-                setMessage(data.validationMessage || "Không hợp lệ");
+                setValidatedCode("");
+                setMessage(data?.validationMessage || "Voucher không hợp lệ");
             }
         } catch (err: any) {
             setValid(false);
-            setMessage(err?.response?.data?.message || "Không hợp lệ");
+            setValidatedCode("");
+            setMessage(
+                err?.response?.data?.message || "Voucher không hợp lệ"
+            );
         } finally {
             setLoading(false);
         }
     };
 
     const handleRedeem = async () => {
+        if (!validatedCode) {
+            setMessage("Vui lòng quét và kiểm tra voucher hợp lệ trước");
+            return;
+        }
+
+        if (!venueLocationId) {
+            setMessage("Vui lòng chọn địa điểm");
+            return;
+        }
+
         try {
             setLoading(true);
+            setMessage("");
 
-            await redeemVoucherItem(code);
+            await redeemVoucherItem({
+                itemCode: validatedCode,
+                venueLocationId,
+            });
 
-            setMessage("Redeem thành công!");
+            setMessage("Redeem voucher thành công!");
             setValid(false);
-        } catch {
-            setMessage("Redeem thất bại");
+            setCode("");
+            setValidatedCode("");
+        } catch (err: any) {
+            setMessage(
+                err?.response?.data?.message || "Redeem thất bại"
+            );
         } finally {
             setLoading(false);
         }
@@ -134,7 +179,7 @@ export default function VoucherScan({ venueLocationId }: Props) {
             )}
 
             {/* Error Message */}
-            {message && !valid && !loading && (
+            {message && !valid && !loading && !message.includes("thành công") && (
                 <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-xl">
                     <div className="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center mt-0.5">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

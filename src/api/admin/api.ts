@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
 
 //Dashboard
 export const getDashboardStats = (request: DashboardRequest) => {
@@ -12,12 +12,18 @@ export const getDashboardStats = (request: DashboardRequest) => {
 }
 
 //Venue management
-export const getAllPendingVenues = (page: number, pageSize: number) => {
-    console.log(apiClient);
-    return apiClient.get<ApiResponse<VenuePagination>>("/api/VenueLocation/pending", {
+export const getAllPendingVenues = (
+    page: number, 
+    pageSize: number,
+    status?: string,
+    search?: string
+) => {
+    return apiClient.get<ApiResponse<VenuePagination>>("/api/VenueLocation/my-venues/by-status", {
         params: {
             page,
             pageSize,
+            status: status || undefined,
+            search: search || undefined,
         }
     });
 };
@@ -225,3 +231,53 @@ export const getConfigs = (pageNumber: number, pageSize: number) => {
 export const updateConfig = (body: UpdateConfigRequest) => {
     return apiClient.put(`/api/SystemConfig`, body);
 }
+
+//Withdraw management
+export const getWithdrawRequests = (status: string, pageNumber?: number, pageSize?: number) => {
+    return apiClient.get<ApiResponse<WithdrawRequestPagination>>("/api/withdraw-requests", {
+        params: {
+            status: status || undefined,
+            pageNumber,
+            pageSize
+        }
+    });
+}
+
+export const approveWithdrawRequest = (withdrawRequestId: number) => {
+    return apiClient.post<ApiResponse<WithdrawRequest>>(`/api/withdraw-requests/${withdrawRequestId}/approve`);
+}
+
+export const rejectWithdrawRequest = (withdrawRequestId: number, reason: string) => {
+    return apiClient.post<ApiResponse<WithdrawRequest>>(`/api/withdraw-requests/${withdrawRequestId}/reject`, { reason });
+}
+
+export const completeWithdrawRequest = (withdrawRequestId: number, proofImageUrl: string) => {
+    return apiClient.put<ApiResponse<WithdrawRequest>>(`/api/withdraw-requests/${withdrawRequestId}/complete`, {
+        status: "COMPLETED",
+        proofImageUrl
+    });
+}
+
+//Transaction management
+export const getTransactions = (
+    pageNumber: number,
+    pageSize: number,
+    status?: string,
+    transType?: TransactionType,
+    userId?: number
+) => {
+    return apiClient.get<ApiResponse<TransactionPagination>>(
+        "/api/Admin/transactions",
+        {
+            params: {
+                pageNumber,
+                pageSize,
+                status: status || undefined,
+                transType: transType
+                    ? TransactionTypeToInt[transType]
+                    : undefined,
+                userId: userId || undefined,
+            },
+        }
+    );
+};

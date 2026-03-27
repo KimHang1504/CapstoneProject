@@ -12,6 +12,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
+  TooltipProps,
 } from "recharts";
 
 type ChartItem = {
@@ -27,8 +28,40 @@ type Props = {
   type?: ChartType;
   color?: string;
 
-  yFormatter?: (value: number) => string; // 👈 thêm
-  yLabel?: string; // 👈 thêm
+  yFormatter?: (value: number) => string;
+  yLabel?: string;
+};
+
+const CustomTooltip = ({ active, payload, yLabel }: TooltipProps<number, string> & { yLabel?: string }) => {
+  if (active && payload && payload.length) {
+    const value = payload[0].value as number;
+    
+    // Format based on yLabel
+    let formattedValue = value.toLocaleString("vi-VN");
+    
+    if (yLabel === "VNĐ") {
+      formattedValue = formattedValue + " đ";
+    } else if (yLabel === "người") {
+      formattedValue = formattedValue + " người";
+    } else if (yLabel === "giao dịch") {
+      formattedValue = formattedValue + " giao dịch";
+    } else if (yLabel === "địa điểm") {
+      formattedValue = formattedValue + " địa điểm";
+    } else if (yLabel === "bài viết") {
+      formattedValue = formattedValue + " bài viết";
+    }
+
+    return (
+      <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3">
+        <p className="text-xs font-medium text-slate-600 mb-1">{payload[0].payload.label}</p>
+        <p className="text-sm font-bold text-slate-800">
+          {formattedValue}
+        </p>
+      </div>
+    );
+  }
+
+  return null;
 };
 
 export default function ChartCard({
@@ -55,7 +88,7 @@ export default function ChartCard({
             width={60}
           />
 
-          <Tooltip />
+          <Tooltip content={<CustomTooltip yLabel={yLabel} />} />
 
           <Bar
             dataKey="value"
@@ -88,7 +121,7 @@ export default function ChartCard({
             width={60}
           />
 
-          <Tooltip />
+          <Tooltip content={<CustomTooltip yLabel={yLabel} />} />
 
           <Area
             type="monotone"
@@ -115,7 +148,7 @@ export default function ChartCard({
           width={60}
         />
 
-        <Tooltip />
+        <Tooltip content={<CustomTooltip yLabel={yLabel} />} />
 
         <Line
           type="monotone"

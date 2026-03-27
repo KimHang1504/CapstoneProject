@@ -2,11 +2,11 @@
 import { SidebarConfig } from '@/types/sidebar';
 import {
   LayoutDashboard,
-  MapPin,
-  Megaphone,
   Wallet,
   BarChart3,
   TicketPercent,
+  MapPin,
+  Megaphone,
 } from 'lucide-react';
 
 export const venueSidebarConfig: SidebarConfig = {
@@ -16,31 +16,33 @@ export const venueSidebarConfig: SidebarConfig = {
       href: '/venue/dashboard',
       icon: LayoutDashboard,
     },
+    // {
+    //   label: 'Địa điểm',
+    //   href: '/venue/location/mylocation',
+    //   icon: MapPin,
+    // },
+    // {
+    //   label: 'Quảng cáo',
+    //   href: '/venue/advertisement',
+    //   icon: Megaphone,
+    // },
+
     {
-      label: 'Địa điểm',
-      href: '/venue/location/mylocation',
-      icon: MapPin,
-    },
-    {
-      label: 'Quảng cáo',
-      href: '/venue/advertisement',
-      icon: Megaphone,
+      label: 'Insight',
+      href: '/venue/insight',
+      icon: BarChart3,
     },
     {
       label: 'Wallet',
       href: '/venue/wallet',
       icon: Wallet,
     },
-    {
-      label: 'Insight',
-      href: '/venue/insight',
-      icon: BarChart3,
-    },
+
   ],
   sections: [
     {
       title: 'Địa điểm',
-      icon: TicketPercent,
+      icon: MapPin,
       items: [
         {
           label: 'Quản lý địa điểm',
@@ -68,7 +70,7 @@ export const venueSidebarConfig: SidebarConfig = {
     },
     {
       title: 'Quảng cáo',
-      icon: TicketPercent,
+      icon: Megaphone,
       items: [
         {
           label: 'Quản lý quảng cáo',

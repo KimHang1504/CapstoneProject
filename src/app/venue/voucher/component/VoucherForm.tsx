@@ -25,7 +25,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
     quantity: 1,
 
-    usageLimitPerMember: 1,
+    usageLimitPerMember: null,
     usageValiDays: 7,
 
     venueLocationIds: [],
@@ -268,12 +268,14 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
               type="number"
               className="w-full border border-violet-200 rounded-xl px-4 py-3"
               value={form.usageLimitPerMember ?? ""}
-              onChange={(e) =>
+              onChange={(e) => {
+                const value = e.target.value;
+
                 handleChange(
                   "usageLimitPerMember",
-                  Number(e.target.value)
-                )
-              }
+                  value === "" ? null : Number(value)
+                );
+              }}
             />
           </div>
 
@@ -368,8 +370,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
             {loading
               ? "Đang lưu..."
               : isEdit
-              ? "Cập nhật"
-              : "Tiếp tục"}
+                ? "Cập nhật"
+                : "Tiếp tục"}
           </button>
 
         </div>
