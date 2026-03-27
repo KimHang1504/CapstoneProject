@@ -66,6 +66,10 @@ export const venueSidebarConfig: SidebarConfig = {
           label: 'Đổi mã giảm giá',
           href: '/venue/redeem',
         },
+        {
+          label: 'Quyết toán voucher',
+          href: '/venue/voucher/settlement',
+        },
       ],
     },
     {

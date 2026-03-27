@@ -122,7 +122,7 @@ export default function MyLocationPage() {
                       </span>
 
                       {loc.status === "ACTIVE" && "Đang mở"}
-                      {loc.status === "INACTIVE" && "Đang đóng"}
+                      {loc.status === "INACTIVE" && "Hết hạn"}
                       {loc.status === "PENDING" && "Chờ duyệt"}
                       {loc.status === "DRAFTED" && "Bản nháp"}
                     </span>
@@ -180,7 +180,7 @@ export default function MyLocationPage() {
             { key: 'all', label: 'Tất cả', value: stats.all },
             { key: 'DRAFTED', label: 'Bản nháp', value: stats.DRAFTED },
             { key: 'ACTIVE', label: 'Đang mở', value: stats.ACTIVE },
-            { key: 'INACTIVE', label: 'Đang đóng', value: stats.INACTIVE },
+            { key: 'INACTIVE', label: 'Hết hạn', value: stats.INACTIVE },
             { key: 'PENDING', label: 'Chờ duyệt', value: stats.PENDING },
           ].map(item => (
             <div
