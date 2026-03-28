@@ -54,6 +54,10 @@ export type MyVenueLocation = {
 
   createdAt: string;
   updatedAt: string;
+  durationDays: number;
+  startDate: string;
+  endDate: string;
+
 
   locationTags: LocationTag[];
 };

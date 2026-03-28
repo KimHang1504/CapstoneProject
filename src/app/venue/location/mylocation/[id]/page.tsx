@@ -209,8 +209,8 @@ export default function LocationDetailPage() {
                             <button
                                 onClick={handleSubmitForApproval}
                                 disabled={isPending}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200
-        ${isPending
+                                className={`flex items-center gap-2 px-4 py-2 cursor-pointer rounded-lg font-semibold text-sm transition-all duration-200
+                                ${isPending
                                         ? 'bg-amber-100 text-amber-600 cursor-not-allowed'
                                         : 'bg-linear-to-r from-violet-500 to-purple-500 text-white hover:shadow-md hover:scale-[1.02] active:scale-[0.98]'
                                     }`}
