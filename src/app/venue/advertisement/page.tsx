@@ -62,7 +62,7 @@ export default function AdvertisementPage() {
     placement === "ALL" ? ads.length : ads.filter((ad) => ad.placementType === placement).length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 p-6">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
         <div>
@@ -71,7 +71,7 @@ export default function AdvertisementPage() {
         </div>
         <button
           onClick={() => router.push("/venue/advertisement/myadvertisement/create")}
-          className="bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+          className="bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
         >
           <span className="text-lg leading-none">+</span> Tạo mới
         </button>

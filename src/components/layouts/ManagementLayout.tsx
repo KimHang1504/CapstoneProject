@@ -93,7 +93,7 @@ export default function ManagementLayout({
   };
 
   return (
-    <div className="min-h-screen flex ">
+    <div className="h-screen flex overflow-hidden">
       {/* Sidebar */}
       <aside
         className={`
@@ -230,7 +230,7 @@ export default function ManagementLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Header */}
         <header className="bg-white border-b border-purple-100">
           <div className="px-8 py-4">
@@ -379,8 +379,8 @@ export default function ManagementLayout({
         </header>
 
         {/* Content */}
-        <div className="flex-1">
-          <div className="">{children}</div>
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <div>{children}</div>
         </div>
       </main>
 

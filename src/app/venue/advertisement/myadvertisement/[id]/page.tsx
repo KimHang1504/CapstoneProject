@@ -129,8 +129,8 @@ export default function AdvertisementDetailPage() {
 
                 {/* REJECTION HISTORY */}
                 {ad.status === "REJECTED" && ad.rejectionHistory?.length > 0 && (
-                    <div className="relative overflow-hidden border border-rose-200 bg-gradient-to-r from-rose-50 to-pink-50 rounded-2xl p-5">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-rose-400 to-pink-500 rounded-l-2xl" />
+                    <div className="relative overflow-hidden border border-rose-200 bg-linear-to-r from-rose-50 to-pink-50 rounded-2xl p-5">
+                        <div className="absolute top-0 left-0 w-1 h-full bg-linear-to-brom-rose-400 to-pink-500 rounded-l-2xl" />
                         <div className="pl-3">
                             <div className="flex items-center gap-2 mb-1">
                                 <XCircle size={16} className="text-rose-500" />
@@ -153,8 +153,8 @@ export default function AdvertisementDetailPage() {
                         className="object-cover cursor-zoom-in"
                         onClick={() => setIsLightboxOpen(true)}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-violet-900/25 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
+                    <div className="absolute inset-0 bg-linear-to-rrom-violet-900/25 to-transparent pointer-events-none" />
 
                     {/* Prev / Next */}
                     {images.length > 1 && (
@@ -271,7 +271,7 @@ export default function AdvertisementDetailPage() {
                         iconBg: "bg-purple-100 text-purple-600",
                     }].map((item) => (
                         <div key={item.label} className="bg-white rounded-2xl border border-violet-100 shadow-sm p-5 flex items-center gap-4 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 overflow-hidden relative">
-                            <div className={`absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r ${item.bar}`} />
+                            <div className={`absolute top-0 left-0 right-0 h-0.5 bg-linear-to-r ${item.bar}`} />
                             <div className={`w-11 h-11 rounded-2xl ${item.iconBg} flex items-center justify-center shrink-0`}>
                                 {item.icon}
                             </div>
@@ -286,7 +286,7 @@ export default function AdvertisementDetailPage() {
                 {/* VENUE LOCATIONS */}
                 {ad.venueLocationAds?.length > 0 && (
                     <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
-                        <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-6 py-4 flex items-center justify-between">
+                        <div className="bg-linear-to-r from-violet-500 to-purple-600 px-6 py-4 flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
                                 <MapPin size={17} className="text-white" />
                                 <p className="font-semibold text-white text-sm">Địa điểm đang chạy quảng cáo</p>
@@ -300,7 +300,7 @@ export default function AdvertisementDetailPage() {
                                 <Link
                                     key={venue.id}
                                     href={`/venue/location/mylocation/${venue.venueId}`}
-                                    className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-50 border border-violet-200 text-sm font-medium text-violet-700 hover:bg-gradient-to-r hover:from-violet-500 hover:to-purple-600 hover:text-white hover:border-transparent hover:shadow-md transition-all duration-200"
+                                    className="group flex items-center gap-2 px-4 py-2 rounded-xl bg-violet-50 border border-violet-200 text-sm font-medium text-violet-700 hover:bg-linear-to-r hover:from-violet-500 hover:to-purple-600 hover:text-white hover:border-transparent hover:shadow-md transition-all duration-200"
                                 >
                                     <span className="w-2 h-2 rounded-full bg-emerald-400 group-hover:bg-white/70 transition-colors" />
                                     {venue.venueName}
