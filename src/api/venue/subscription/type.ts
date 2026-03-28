@@ -3,7 +3,7 @@ export type SubscriptionPackage = {
   packageName: string;
   price: number;
   durationDays: number;
-  type: 'VENUE' | 'MEMBER';
+  type: 'VENUE' | 'MEMBER' | 'VENUEOWNER';
   description: string;
   isActive: boolean;
   createdAt: string;
@@ -37,4 +37,28 @@ export type GetMySubscriptionsResponse = {
   data: MySubscription[];
   traceId?: string;
   timestamp?: string;
+};
+
+export type PurchaseSubscriptionRequest = {
+  packageId: number;
+  quantity: number;
+  paymentMethod: 'VIETQR' | 'WALLET';
+};
+
+export type PurchaseSubscriptionResponse = {
+  isSuccess: boolean;
+  message: string;
+  transactionId: number;
+  subscriptionId: number;
+  qrCodeUrl: string;
+  amount: number;
+  paymentContent: string;
+  packageName: string;
+  totalDays: number;
+  expireAt: string;
+  bankInfo: {
+    bankName: string;
+    accountNumber: string;
+    accountName: string;
+  };
 };
