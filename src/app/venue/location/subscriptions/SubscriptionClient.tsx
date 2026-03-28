@@ -186,7 +186,7 @@ export default function LocationRegisterPage() {
                                 onClick={() => handleBuyPackage('WALLET')}
                                 className="w-full flex items-center gap-4 p-5 border-2 border-purple-200 rounded-2xl hover:border-purple-400 hover:bg-purple-50 transition-all group"
                             >
-                                <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                <div className="w-14 h-14 bg-linear-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                                     <Wallet className="text-white" size={28} />
                                 </div>
                                 <div className="flex-1 text-left">
@@ -202,7 +202,7 @@ export default function LocationRegisterPage() {
                                 onClick={() => handleBuyPackage('VIETQR')}
                                 className="w-full flex items-center gap-4 p-5 border-2 border-blue-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all group"
                             >
-                                <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                <div className="w-14 h-14 bg-linear-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                                     <QrCode className="text-white" size={28} />
                                 </div>
                                 <div className="flex-1 text-left">

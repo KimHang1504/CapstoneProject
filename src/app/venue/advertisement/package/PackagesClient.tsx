@@ -92,7 +92,7 @@ export default function PackagesClient() {
 
     if (!packages) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-3 text-gray-400">
                     <div className="w-10 h-10 border-4 border-violet-200 border-t-violet-500 rounded-full animate-spin" />
                     <p className="text-sm">Đang tải gói quảng cáo...</p>
@@ -102,7 +102,7 @@ export default function PackagesClient() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-pink-50 p-8">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-8">
             <div className="max-w-6xl mx-auto">
 
                 {/* Header */}
@@ -134,7 +134,7 @@ export default function PackagesClient() {
 
                                         <div className="flex items-baseline gap-1.5 mb-8">
                                             <span className="text-xs text-gray-400 font-medium">Từ</span>
-                                            <span className="text-3xl font-extrabold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
+                                            <span className="text-3xl font-extrabold bg-linear-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
                                                 {cheapestPackage.price.toLocaleString()}
                                             </span>
                                             <span className="text-sm text-gray-400">VND / {cheapestPackage.durationDays} ngày</span>
@@ -146,7 +146,7 @@ export default function PackagesClient() {
                                                 setSelectedPackageId(null);
                                                 setOpenDurationModal(true);
                                             }}
-                                            className="flex items-center gap-2 w-fit px-7 py-3 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                                            className="flex items-center gap-2 w-fit px-7 py-3 bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                                         >
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -163,7 +163,7 @@ export default function PackagesClient() {
                                             fill
                                             className="object-cover"
                                         />
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                                        <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
                                         <div className="absolute bottom-4 right-4 bg-black/40 backdrop-blur-sm text-white text-xs font-semibold px-3 py-1.5 rounded-full">
                                             Preview
                                         </div>
@@ -181,7 +181,7 @@ export default function PackagesClient() {
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
                         {/* Modal header */}
-                        <div className="bg-gradient-to-r from-violet-500 to-purple-600 px-7 py-5">
+                        <div className="bg-linear-to-r from-violet-500 to-purple-600 px-7 py-5">
                             <h2 className="text-lg font-bold text-white">Chọn thời hạn quảng cáo</h2>
                             <p className="text-violet-200 text-xs mt-1">Chọn gói phù hợp với nhu cầu của bạn</p>
                         </div>
@@ -234,7 +234,7 @@ export default function PackagesClient() {
                                     setOpenDurationModal(false);
                                     setOpenVenueModal(true);
                                 }}
-                                className="flex-1 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-sm"
+                                className="flex-1 py-3 bg-linear-to-r from-violet-500 to-purple-600 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-sm"
                             >
                                 Tiếp tục
                             </button>
@@ -277,7 +277,7 @@ export default function PackagesClient() {
                                 disabled={isProcessing}
                                 className="w-full flex items-center gap-4 p-5 border-2 border-purple-200 rounded-2xl hover:border-purple-400 hover:bg-purple-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <div className="w-14 h-14 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                <div className="w-14 h-14 bg-linear-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                                     <Wallet className="text-white" size={28} />
                                 </div>
                                 <div className="flex-1 text-left">
@@ -294,7 +294,7 @@ export default function PackagesClient() {
                                 disabled={isProcessing}
                                 className="w-full flex items-center gap-4 p-5 border-2 border-blue-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                <div className="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
+                                <div className="w-14 h-14 bg-linear-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                                     <QrCode className="text-white" size={28} />
                                 </div>
                                 <div className="flex-1 text-left">

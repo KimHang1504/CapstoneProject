@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { QrCode, Clock, X } from "lucide-react";
+import { QrCode,X } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function QRContent() {
@@ -102,7 +102,7 @@ export default function QRContent() {
 
     if (!payment) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center px-4">
+            <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center px-4">
                 <div className="text-center">
                     <div className="w-16 h-16 mx-auto mb-4 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin" />
                     <p className="text-purple-600 font-medium animate-pulse">
@@ -114,11 +114,11 @@ export default function QRContent() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-linear-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center p-4">
             <div className="w-full max-w-4xl">
 
                 <div className="text-center mb-3">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl mb-2 shadow-lg">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-linear-to-br from-purple-500 to-indigo-600 rounded-xl mb-2 shadow-lg">
                         <QrCode className="text-white" size={24} />
                     </div>
                     <h1 className="text-lg md:text-xl font-bold text-gray-900 mb-1">
@@ -133,8 +133,8 @@ export default function QRContent() {
 
                     <div className="grid md:grid-cols-2 gap-0">
                         {/* QR Section */}
-                        <div className="relative p-4 md:p-6 bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center">
-                            <div className="relative w-full max-w-[280px] aspect-square">
+                        <div className="relative p-4 md:p-6 bg-linear-to-br from-purple-50 to-indigo-50 flex items-center justify-center">
+                            <div className="relative w-full max-w-70 aspect-square">
                                 <div className="absolute inset-0 flex items-center justify-center bg-white rounded-2xl shadow-lg p-4">
                                     <Image
                                         src={payment.qrCodeUrl}
@@ -147,7 +147,7 @@ export default function QRContent() {
                                 </div>
 
                                 <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
-                                    <div className="absolute w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-75 animate-scan" />
+                                    <div className="absolute w-full h-1 bg-linear-to-r from-transparent via-purple-500 to-transparent opacity-75 animate-scan" />
                                 </div>
 
                                 <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-purple-500 rounded-tl-2xl" />
@@ -160,9 +160,9 @@ export default function QRContent() {
                         {/* Info Section */}
                         <div className="p-4 md:p-6 space-y-3 flex flex-col justify-between">
                             <div>
-                                <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-xl p-3 border border-purple-100 mb-3">
+                                <div className="bg-linear-to-r from-purple-50 to-indigo-50 rounded-xl p-3 border border-purple-100 mb-3">
                                     <p className="text-xs text-gray-500 mb-1">Số tiền thanh toán</p>
-                                    <p className="text-xl md:text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
+                                    <p className="text-xl md:text-2xl font-bold bg-linear-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">
                                         {payment.amount.toLocaleString()} ₫
                                     </p>
                                 </div>
@@ -227,7 +227,7 @@ export default function QRContent() {
             </div>
             {showLeavePopup && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl p-6 w-[360px] shadow-xl">
+                    <div className="bg-white rounded-xl p-6 w-90 shadow-xl">
                         <h2 className="text-lg font-semibold mb-2">
                             Xác nhận rời trang
                         </h2>
