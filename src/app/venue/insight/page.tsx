@@ -11,6 +11,7 @@ import {
   BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
+import SubscriptionExpiredModal from '@/components/SubscriptionExpiredModal';
 
 const TIMEFRAME_OPTIONS: { value: Timeframe; label: string }[] = [
   { value: 'all',   label: 'Tất cả' },
@@ -82,14 +83,30 @@ export default function InsightPage() {
   const [timeframe, setTimeframe] = useState<Timeframe>('all');
   const [data, setData] = useState<InsightData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
+  const [subscriptionMessage, setSubscriptionMessage] = useState('');
 
   const fetchInsight = async (tf: Timeframe) => {
     try {
       setLoading(true);
       const res = await getInsights(tf);
+      
+      // Kiểm tra code 402
+      if (res.code === 402) {
+        setSubscriptionMessage(res.message);
+        setShowSubscriptionModal(true);
+        return;
+      }
+      
       if (res.code === 200) setData(res.data);
-    } catch (error) {
-      console.error(error);
+    } catch (error: any) {
+      console.error('Fetch insight error:', error);
+      
+      // Nếu có message chứa "hết hạn" thì hiển thị modal
+      if (error?.message?.includes('hết hạn')) {
+        setSubscriptionMessage(error.message);
+        setShowSubscriptionModal(true);
+      }
     } finally {
       setLoading(false);
     }
@@ -101,7 +118,14 @@ export default function InsightPage() {
   const trend = data?.trendAnalysis;
 
   return (
-    <div className="p-6 space-y-6 max-w-6xl mx-auto">
+    <>
+      <SubscriptionExpiredModal 
+        isOpen={showSubscriptionModal} 
+        onClose={() => setShowSubscriptionModal(false)}
+        message={subscriptionMessage}
+      />
+      
+      <div className="p-6 space-y-6 max-w-6xl mx-auto">
 
       {/* Header + Timeframe */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -339,6 +363,7 @@ export default function InsightPage() {
           </div>
         </>
       )}
-    </div>
+      </div>
+    </>
   );
 }
