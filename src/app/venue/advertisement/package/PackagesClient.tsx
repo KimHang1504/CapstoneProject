@@ -64,11 +64,13 @@ export default function PackagesClient() {
                     paymentMethod: 'VIETQR'
                 });
                 const transactionId = res.data.transactionId;
-                router.push(`/venue/advertisement/package/checkout?transactionId=${transactionId}&type=advertisement`);
+                router.push(
+                    `/venue/advertisement/package/checkout?transactionId=${transactionId}&type=advertisement&adId=${adId}`
+                );
             } catch (error: any) {
                 console.error(error);
                 const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
-                
+
                 if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
                     toast.error('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
                 } else {
@@ -193,11 +195,10 @@ export default function PackagesClient() {
                                         <div
                                             key={pkg.id}
                                             onClick={() => setSelectedPackageId(pkg.id)}
-                                            className={`relative border-2 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all duration-200 ${
-                                                isSelected
+                                            className={`relative border-2 rounded-2xl p-4 flex justify-between items-center cursor-pointer transition-all duration-200 ${isSelected
                                                     ? "border-violet-500 bg-violet-50 shadow-sm"
                                                     : "border-gray-100 hover:border-violet-200 hover:bg-violet-50/40"
-                                            }`}
+                                                }`}
                                         >
                                             {isSelected && (
                                                 <div className="absolute top-3 right-3 w-5 h-5 bg-violet-500 rounded-full flex items-center justify-center">

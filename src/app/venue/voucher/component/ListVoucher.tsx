@@ -2,7 +2,7 @@
 
 import { Voucher } from "@/api/venue/vouchers/type";
 import Link from "next/link";
-import { Calendar, Tag, Package, MapPin } from "lucide-react";
+import { Calendar, Tag, Package} from "lucide-react";
 
 type Props = {
   vouchers: Voucher[];
@@ -67,7 +67,7 @@ export default function ListVoucher({ vouchers, loading }: Props) {
               </div>
 
               {/* Title */}
-              <h3 className="font-semibold text-sm line-clamp-2 min-h-[2.5rem] text-gray-800">
+              <h3 className="font-semibold text-sm line-clamp-2 min-h-10 text-gray-800">
                 {v.title}
               </h3>
 
@@ -116,7 +116,7 @@ export default function ListVoucher({ vouchers, loading }: Props) {
             {/* Action */}
             <Link
               href={`/venue/voucher/${v.id}`}
-              className="block text-center bg-gradient-to-r from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 py-2.5 text-sm font-medium text-purple-700 transition-all border-t border-purple-100"
+              className="block text-center bg-linear-to-r from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 py-2.5 text-sm font-medium text-purple-700 transition-all border-t border-purple-100"
             >
               Quản lý
             </Link>

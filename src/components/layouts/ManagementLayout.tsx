@@ -15,6 +15,7 @@ import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 import EditProfileModal from '@/components/EditProfileModal';
 import { apiClient } from '@/lib/api-client';
+import Image from 'next/image';
 
 type ManagementLayoutProps = {
   children: React.ReactNode;
@@ -140,7 +141,7 @@ export default function ManagementLayout({
                       flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 mb-4
                       group relative overflow-hidden
                       ${isActive
-                        ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
+                        ? 'bg-linear-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
                         : 'text-white hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
                       }
                     `}
@@ -275,13 +276,15 @@ export default function ManagementLayout({
                       </p>
                     </div>
                     {userProfile?.avatarUrl ? (
-                      <img
-                        src={userProfile.avatarUrl}
+                      <Image
+                        src={userProfile.avatarUrl || "/default-avatar.png"}
                         alt={userProfile.fullName}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-200 hover:ring-purple-400 transition-all duration-200"
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover ring-2 ring-purple-200 hover:ring-purple-400 transition-all duration-200"
                       />
                     ) : (
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all duration-200">
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all duration-200">
                         {userProfile ? getInitials(userProfile.fullName) : '?'}
                       </div>
                     )}
@@ -292,13 +295,15 @@ export default function ManagementLayout({
                   {showProfileMenu && (
                     <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-purple-100 overflow-hidden z-50">
                       {/* Profile Header */}
-                      <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+                      <div className="bg-linear-to-r from-purple-500 to-pink-500 p-4">
                         <div className="flex items-center gap-3">
                           {userProfile?.avatarUrl ? (
-                            <img
-                              src={userProfile.avatarUrl}
-                              alt={userProfile.fullName}
-                              className="w-14 h-14 rounded-full object-cover ring-4 ring-white/30"
+                            <Image
+                              src={userProfile.avatarUrl || "/default-avatar.png"}
+                              alt={userProfile.fullName || "avatar"}
+                              width={56}
+                              height={56}
+                              className="rounded-full object-cover ring-4 ring-white/30"
                             />
                           ) : (
                             <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-lg ring-4 ring-white/30">

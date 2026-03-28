@@ -53,7 +53,7 @@ export default async function Page({ params }: Props) {
     <div className="p-6">
       {/* HEADER */}
       <div>
-        <h1 className="bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
+        <h1 className="bg-linear-to-r from-violet-600 via-fuchsia-500 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
           Chi tiết đối soát #{data.settlementId}
         </h1>
         <p className="mt-1 text-sm text-slate-500">

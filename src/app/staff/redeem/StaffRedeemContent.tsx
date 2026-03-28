@@ -6,8 +6,6 @@ import {
   MapPin,
   QrCode,
   Keyboard,
-  Sparkles,
-  UserRound,
   Phone,
   FileText,
   Globe,
@@ -22,9 +20,9 @@ import Image from "next/image";
 
 export function StaffRedeemLoading() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white p-6 flex items-center justify-center">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white p-6 flex items-center justify-center">
       <div className="text-center bg-white/80 backdrop-blur-sm border border-purple-100 rounded-3xl px-8 py-10 shadow-sm">
-        <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-100 to-pink-100 animate-pulse" />
+        <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-linear-to-br from-purple-100 to-pink-100 animate-pulse" />
         <p className="text-gray-600 font-medium">Đang tải dữ liệu quầy redeem...</p>
       </div>
     </div>
@@ -57,7 +55,7 @@ export default function StaffRedeemContent() {
 
   if (!locationId) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white p-6 flex items-center justify-center">
+      <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white p-6 flex items-center justify-center">
         <div className="text-center bg-white border border-rose-100 rounded-3xl px-8 py-10 shadow-sm">
           <p className="text-rose-500 font-semibold text-lg">Vị trí không hợp lệ</p>
           <p className="text-sm text-gray-500 mt-2">
@@ -76,12 +74,12 @@ export default function StaffRedeemContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-white p-4 md:p-6">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
           {/* LEFT COLUMN - LOCATION INFO */}
           <div className="bg-white/95 backdrop-blur-sm rounded-3xl border border-purple-100 shadow-sm overflow-hidden">
-            <div className="px-5 py-4 border-b border-purple-100 bg-gradient-to-r from-purple-50 to-pink-50">
+            <div className="px-5 py-4 border-b border-purple-100 bg-linear-to-r from-purple-50 to-pink-50">
               <div className="flex items-center gap-3">
                 <div className="w-11 h-11 rounded-2xl bg-white border border-purple-100 flex items-center justify-center shadow-sm">
                   <MapPin className="w-5 h-5 text-purple-600" />
@@ -109,9 +107,11 @@ export default function StaffRedeemContent() {
               ) : (
                 <div className="space-y-5">
                   {location?.coverImage?.[0] && (
-                    <img
+                    <Image
                       src={location.coverImage[0]}
                       alt={location.name}
+                      width={800}
+                      height={400}
                       className="w-full h-56 md:h-72 object-cover rounded-2xl border border-purple-100"
                     />
                   )}
@@ -209,7 +209,7 @@ export default function StaffRedeemContent() {
                       href={`https://www.google.com/maps?q=${location.latitude},${location.longitude}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 rounded-2xl bg-gradient-to-r from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 px-4 py-3 text-sm font-medium text-purple-700 transition-colors"
+                      className="inline-flex items-center gap-2 rounded-2xl bg-linear-to-r from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 px-4 py-3 text-sm font-medium text-purple-700 transition-colors"
                     >
                       <MapPin className="w-4 h-4" />
                       Xem trên bản đồ
@@ -223,7 +223,7 @@ export default function StaffRedeemContent() {
           {/* RIGHT COLUMN - STAFF + REDEEM */}
           <div className="">
             <div className="bg-white/95 backdrop-blur-sm rounded-4xl border border-purple-100 shadow-sm overflow-visible">
-              <div className="relative overflow-visible rounded-[30px] bg-purple-300 px-7 py-8 pr-24 md:px-8 md:py-9 md:pr-32 text-gray-700 shadow-lg min-h-[220px]">
+              <div className="relative overflow-visible rounded-[30px] bg-purple-300 px-7 py-8 pr-24 md:px-8 md:py-9 md:pr-32 text-gray-700 shadow-lg min-h-55">
                 {/* light overlay */}
                 <div className="absolute inset-0 rounded-[30px] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.18),transparent_32%)]" />
 
@@ -269,7 +269,7 @@ export default function StaffRedeemContent() {
                     <button
                       onClick={() => setActiveTab("scan")}
                       className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === "scan"
-                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm"
+                        ? "bg-linear-to-r from-purple-500 to-pink-500 text-white shadow-sm"
                         : "text-gray-600 hover:bg-white"
                         }`}
                     >
@@ -280,7 +280,7 @@ export default function StaffRedeemContent() {
                     <button
                       onClick={() => setActiveTab("input")}
                       className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === "input"
-                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-sm"
+                        ? "bg-linear-to-r from-purple-500 to-pink-500 text-white shadow-sm"
                         : "text-gray-600 hover:bg-white"
                         }`}
                     >

@@ -13,7 +13,10 @@ export default function QRContent() {
     const searchParams = useSearchParams();
     const transactionId = searchParams.get("transactionId");
     const type = searchParams.get("type");
+    const adId = searchParams.get("adId");
     const router = useRouter();
+    const [showLeavePopup, setShowLeavePopup] = useState(false);
+    const [isLeaving, setIsLeaving] = useState(false);
 
     const [payment, setPayment] = useState<PaymentQrInfo | null>(null);
 
@@ -50,7 +53,7 @@ export default function QRContent() {
                 ) {
                     clearInterval(interval);
                     router.push(
-                        `/payment/failure?transactionId=${transactionId}&type=${type}`
+                        `/payment/failure?transactionId=${transactionId}&type=${type}&adId=${adId}`
                     );
                 }
             } catch (err) {
@@ -66,7 +69,9 @@ export default function QRContent() {
 
         try {
             await cancelPayment(Number(transactionId));
-            router.push(`/venue/advertisement/`);
+            router.push(
+                `/payment/failure?transactionId=${transactionId}&type=${type}&adId=${adId}`
+            );
         } catch (error) {
             console.error("Cancel payment error:", error);
             toast.error("Không thể huỷ thanh toán");
@@ -76,37 +81,24 @@ export default function QRContent() {
     useEffect(() => {
         if (!transactionId) return;
 
-        const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-            e.preventDefault();
-            e.returnValue = "";
-        };
 
-        const handlePopState = async () => {
-            const confirmLeave = window.confirm(
-                "Nếu bạn thoát đơn hàng sẽ bị hủy"
-            );
+        const handlePopState = () => {
+            if (isLeaving) return;
 
-            if (!confirmLeave) {
-                window.history.pushState(null, "", window.location.href);
-            } else {
-                try {
-                    await cancelPayment(Number(transactionId));
-                } catch (err) {
-                    console.error("Auto cancel error:", err);
-                }
-            }
+            setShowLeavePopup(true);
+
+            // giữ user ở lại trang hiện tại
+            window.history.pushState(null, "", window.location.href);
         };
 
         window.history.pushState(null, "", window.location.href);
 
-        window.addEventListener("beforeunload", handleBeforeUnload);
         window.addEventListener("popstate", handlePopState);
 
         return () => {
-            window.removeEventListener("beforeunload", handleBeforeUnload);
             window.removeEventListener("popstate", handlePopState);
         };
-    }, [transactionId]);
+    }, [transactionId, isLeaving]);
 
     if (!payment) {
         return (
@@ -124,7 +116,7 @@ export default function QRContent() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-indigo-50 flex items-center justify-center p-4">
             <div className="w-full max-w-4xl">
-                
+
                 <div className="text-center mb-3">
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl mb-2 shadow-lg">
                         <QrCode className="text-white" size={24} />
@@ -138,7 +130,7 @@ export default function QRContent() {
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-2xl border border-purple-100 overflow-hidden">
-                    
+
                     <div className="grid md:grid-cols-2 gap-0">
                         {/* QR Section */}
                         <div className="relative p-4 md:p-6 bg-gradient-to-br from-purple-50 to-indigo-50 flex items-center justify-center">
@@ -153,7 +145,7 @@ export default function QRContent() {
                                         className="w-full h-full object-contain"
                                     />
                                 </div>
-                                
+
                                 <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
                                     <div className="absolute w-full h-1 bg-gradient-to-r from-transparent via-purple-500 to-transparent opacity-75 animate-scan" />
                                 </div>
@@ -214,7 +206,7 @@ export default function QRContent() {
                                     <span className="text-[10px] text-purple-600 font-medium">Đang chờ thanh toán</span>
                                     <div className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse" style={{ animationDelay: '0.5s' }} />
                                 </div>
-                                
+
                                 <button
                                     onClick={handleCancel}
                                     className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-all duration-200 group"
@@ -233,6 +225,49 @@ export default function QRContent() {
                     </p>
                 </div>
             </div>
+            {showLeavePopup && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-xl p-6 w-[360px] shadow-xl">
+                        <h2 className="text-lg font-semibold mb-2">
+                            Xác nhận rời trang
+                        </h2>
+                        <p className="text-sm text-gray-500 mb-4">
+                            Nếu bạn thoát đơn hàng sẽ bị hủy
+                        </p>
+
+                        <div className="flex justify-end gap-2">
+                            <button
+                                onClick={() => {
+                                    setShowLeavePopup(false);
+                                    window.history.pushState(null, "", window.location.href);
+                                }}
+                                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+                            >
+                                Ở lại
+                            </button>
+
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        setIsLeaving(true);
+                                        await cancelPayment(Number(transactionId));
+                                        router.push(
+                                            `/payment/failure?transactionId=${transactionId}&type=${type}&adId=${adId}`
+                                        );
+                                    } catch (error) {
+                                        console.error("Auto cancel error:", error);
+                                        setIsLeaving(false);
+                                        toast.error("Không thể huỷ thanh toán");
+                                    }
+                                }}
+                                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                            >
+                                Rời khỏi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <style jsx>{`
                 @keyframes scan {

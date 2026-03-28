@@ -37,12 +37,12 @@ export default function RedeemVoucherPage() {
     const selectedLocation = locations.find((loc) => loc.id === selectedLocationId);
     console.log("Location ID:", selectedLocationId);
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 md:p-8">
+        <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 md:p-8">
             <div className="max-w-5xl mx-auto space-y-6">
                 {/* Header */}
                 <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
+                        <div className="w-10 h-10 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
                             <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z" />
                             </svg>
@@ -127,16 +127,16 @@ export default function RedeemVoucherPage() {
                             <div className="relative" ref={dropdownRef}>
                                 <button
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                    className="w-full border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-gradient-to-br from-gray-50 to-white hover:from-white hover:to-gray-50 flex items-center justify-between group"
+                                    className="w-full border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-linear-to-br from-gray-50 to-white hover:from-white hover:to-gray-50 flex items-center justify-between group"
                                 >
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                                        <div className="w-2 h-2 bg-emerald-500 rounded-full flex-shrink-0"></div>
+                                        <div className="w-2 h-2 bg-emerald-500 rounded-full shrink-0"></div>
                                         <span className="font-medium text-gray-900 truncate">
                                             {selectedLocation?.name || "Chọn địa điểm"}
                                         </span>
                                     </div>
                                     <svg
-                                        className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${
+                                        className={`w-5 h-5 text-gray-400 transition-transform shrink-0 ${
                                             isDropdownOpen ? "rotate-180" : ""
                                         }`}
                                         fill="none"
@@ -165,7 +165,7 @@ export default function RedeemVoucherPage() {
                                                     } ${index !== 0 ? "border-t border-gray-100" : ""}`}
                                                 >
                                                     <div
-                                                        className={`w-2 h-2 rounded-full flex-shrink-0 ${
+                                                        className={`w-2 h-2 rounded-full shrink-0 ${
                                                             selectedLocationId === loc.id
                                                                 ? "bg-emerald-500"
                                                                 : "bg-gray-300"
@@ -174,7 +174,7 @@ export default function RedeemVoucherPage() {
                                                     <span className="flex-1 font-medium truncate">{loc.name}</span>
                                                     {selectedLocationId === loc.id && (
                                                         <svg
-                                                            className="w-5 h-5 text-emerald-600 flex-shrink-0"
+                                                            className="w-5 h-5 text-emerald-600 shrink-0"
                                                             fill="none"
                                                             stroke="currentColor"
                                                             viewBox="0 0 24 24"
@@ -195,7 +195,7 @@ export default function RedeemVoucherPage() {
                             </div>
 
                             {selectedLocationId && (
-                                <div className="mt-4 p-3 bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl border border-emerald-200">
+                                <div className="mt-4 p-3 bg-linear-to-br from-emerald-50 to-emerald-100/50 rounded-xl border border-emerald-200">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
                                         <span className="text-xs font-semibold text-emerald-700">Đang hoạt động</span>

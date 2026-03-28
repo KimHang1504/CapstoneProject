@@ -66,7 +66,7 @@ export default async function SettlementSummary() {
                             className="rounded-3xl border border-gray-200 p-4 transition duration-300 hover:-translate-y-1 hover:bg-white/65"
                         >
                             <div className="    flex items-center justify-between">
-                                <div className={`h-1.5 w-14 rounded-full bg-gradient-to-r ${item.accent}`} />
+                                <div className={`h-1.5 w-14 rounded-full bg-linear-to-r ${item.accent}`} />
                                 <div className="rounded-2xl border border-white/70 bg-white/70 p-3">
                                     <Icon className={`h-5 w-5 ${item.text}`} />
                                 </div>

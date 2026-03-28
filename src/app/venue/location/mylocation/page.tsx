@@ -135,7 +135,7 @@ export default function MyLocationPage() {
 
                   <div className="mt-1 space-y-1 text-sm text-gray-500">
                     <div className="flex items-start gap-1">
-                      <MapPin size={14} className="mt-[2px] shrink-0" />
+                      <MapPin size={14} className="mt-0.5 shrink-0" />
                       <span className="line-clamp-2">
                         {loc.address}
                       </span>

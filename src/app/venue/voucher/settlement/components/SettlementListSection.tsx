@@ -104,7 +104,7 @@ export default async function SettlementListSection({ searchParams }: Props) {
             />
 
             {data.items.length === 0 ? (
-                <div className="rounded-3xl border border-dashed border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-10 text-center">
+                <div className="rounded-3xl border border-dashed border-violet-200 bg-linear-to-br from-violet-50 to-pink-50 p-10 text-center">
                     <h3 className="text-lg font-semibold text-slate-800">
                         Không có dữ liệu đối soát
                     </h3>
@@ -115,8 +115,8 @@ export default async function SettlementListSection({ searchParams }: Props) {
             ) : (
                 <div className="overflow-hidden rounded-3xl border border-violet-100 bg-white shadow-[0_10px_40px_rgba(168,85,247,0.08)]">
                     <div className="overflow-x-auto">
-                        <table className="min-w-[1100px] w-full">
-                            <thead className="bg-gradient-to-r from-violet-50 to-pink-50">
+                        <table className="min-w-275 w-full">
+                            <thead className="bg-linear-to-r from-violet-50 to-pink-50">
                                 <tr className="text-left text-sm text-slate-600">
                                     <th className="px-5 py-4 font-semibold">Mã voucher item</th>
                                     <th className="px-5 py-4 font-semibold">Voucher</th>
@@ -194,7 +194,7 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                                 {formatDateTime(item.paidAt)}
                                             </td>
 
-                                            <td className="max-w-[260px] px-5 py-4 text-slate-500">
+                                            <td className="max-w-65 px-5 py-4 text-slate-500">
                                                 <div className="line-clamp-2">{item.note || "--"}</div>
                                             </td>
                                         </tr>
@@ -224,7 +224,7 @@ export default async function SettlementListSection({ searchParams }: Props) {
                         Trước
                     </a>
 
-                    <div className="rounded-2xl bg-gradient-to-r from-violet-600 to-pink-500 px-4 py-2 text-sm font-semibold text-white">
+                    <div className="rounded-2xl bg-linear-to-r from-violet-600 to-pink-500 px-4 py-2 text-sm font-semibold text-white">
                         Trang {data.pageNumber} / {data.totalPages || 1}
                     </div>
 
