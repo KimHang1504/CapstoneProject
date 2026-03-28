@@ -95,7 +95,9 @@ export default function LocationDetailPage() {
 
     const isPending = location.status === 'PENDING';
     const canSubmitForApproval =
-        location.status === 'DRAFTED' || location.status === 'PENDING';
+        location.status === 'DRAFTED' ||
+        location.status === 'PENDING' ||
+        location.status === 'INACTIVE';
     const allImages = [
         ...(location.coverImage || []),
         ...(location.interiorImage || [])
@@ -216,7 +218,12 @@ export default function LocationDetailPage() {
                                     }`}
                             >
                                 <Send size={18} />
-                                {isPending ? 'Đang chờ duyệt' : 'Gửi duyệt'}
+                                {isPending
+                                    ? 'Đang chờ duyệt'
+                                    : location.status === 'INACTIVE'
+                                        ? 'Gia hạn'
+                                        : 'Gửi duyệt'
+                                }
                             </button>
                         )}
 

@@ -5,7 +5,7 @@ import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { PlacementType } from "@/api/venue/advertisement/type";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { generateText, generateImage } from "@/utils/ai";
 import { Sparkles, Wand2 } from "lucide-react";
 
@@ -155,6 +155,15 @@ export default function AdvertisementForm({
     }
   };
 
+  const isValidUrl = (value: string) => {
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
   return (
     <div className="bg-white rounded-3xl border border-violet-100 shadow-sm p-8 mx-50 space-y-7">
 
@@ -268,7 +277,7 @@ export default function AdvertisementForm({
           />
         </div>
 
-        {form.bannerUrl && (
+        {isValidUrl(form.bannerUrl) && (
           <div className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm relative">
             <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">
               Preview
