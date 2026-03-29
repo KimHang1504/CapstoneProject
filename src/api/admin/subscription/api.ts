@@ -9,7 +9,7 @@ import {
 export const getSubscriptionPackages = (params?: GetPackagesParams) => {
   return apiClient.get<ApiResponse<SubscriptionPackage[]>>(
     "/api/admin-subscription-packages",
-    { params }
+    params ? { params } : undefined
   );
 };
 

@@ -20,8 +20,10 @@ export type IconName =
   | 'Calendar'
   | 'MessageSquare'
   | 'BarChart'
+  | 'BarChart3'
   | 'FileText'
-  | 'MapPin';
+  | 'MapPin'
+  | 'TicketPercent';
 
 export type SidebarTab = {
   label: string;

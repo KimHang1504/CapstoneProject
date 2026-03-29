@@ -27,8 +27,10 @@ import {
   Calendar,
   MessageSquare,
   BarChart,
+  BarChart3,
   FileText,
   MapPin,
+  TicketPercent,
 } from 'lucide-react';
 import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
@@ -61,8 +63,10 @@ const iconMap: Record<IconName, React.ComponentType<{ className?: string }>> = {
   Calendar,
   MessageSquare,
   BarChart,
+  BarChart3,
   FileText,
   MapPin,
+  TicketPercent,
 };
 
 const getIcon = (iconName?: IconName) => {

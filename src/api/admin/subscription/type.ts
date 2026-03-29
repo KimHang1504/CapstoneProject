@@ -31,4 +31,5 @@ export interface UpdateSubscriptionPackageRequest {
 
 export interface GetPackagesParams {
   type?: PackageType;
+  [key: string]: string | undefined;
 }
