@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarConfig } from '@/types/sidebar';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Menu,
   X,
@@ -88,8 +88,13 @@ export default function ManagementLayout({
     return roleMap[role] || role;
   };
 
-  const handleProfileUpdate = (updatedProfile: UserProfile) => {
-    setUserProfile(updatedProfile);
+  const fetchUserProfile = useCallback(async () => {
+    const response = await getMe();
+    setUserProfile(response.data);
+  }, []);
+
+  const handleProfileUpdated = async () => {
+    await fetchUserProfile();
   };
 
   return (
@@ -390,7 +395,7 @@ export default function ManagementLayout({
           isOpen={showEditModal}
           onClose={() => setShowEditModal(false)}
           userProfile={userProfile}
-          onUpdate={handleProfileUpdate}
+          onUpdate={handleProfileUpdated}
         />
       )}
     </div>
