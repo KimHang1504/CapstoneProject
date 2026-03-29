@@ -133,7 +133,7 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
           <button
             onClick={saveAll}
             disabled={saving}
-            className="px-6 py-2.5 bg-gradient-to-r from-violet-500 to-purple-600 text-white rounded-full font-semibold disabled:opacity-60"
+            className="px-6 py-2.5 bg-linear-to-r from-violet-500 to-purple-600 text-white rounded-full font-semibold disabled:opacity-60"
           >
             {saving ? 'Đang lưu...' : 'Lưu tất cả'}
           </button>

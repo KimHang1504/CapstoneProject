@@ -89,7 +89,7 @@ export default function WalletPage() {
     <div className="p-6 space-y-6 max-w-4xl mx-auto">
 
       {/* Balance Cards */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
+      <div className="relative overflow-hidden bg-linear-to-br from-violet-500 to-purple-600 rounded-2xl p-6 text-white shadow-lg">
         <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10" />
         <div className="absolute -right-2 -bottom-6 w-32 h-32 rounded-full bg-white/10" />
         <div className="flex items-center gap-2 mb-3 relative">
@@ -100,9 +100,9 @@ export default function WalletPage() {
           {wallet?.balance.toLocaleString("vi-VN")}
           <span className="text-base font-normal ml-1 opacity-80">₫</span>
         </p>
-        <p className="text-xs opacity-60 mt-1 relative">
+        {/* <p className="text-xs opacity-60 mt-1 relative">
           {wallet?.isActive ? "Ví đang hoạt động" : "Ví tạm khóa"}
-        </p>
+        </p> */}
       </div>
 
 

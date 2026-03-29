@@ -9,6 +9,9 @@ import { getAdvertisementById } from '@/api/venue/advertisement/api';
 
 import { Send, Pencil, Clock, CheckCircle2, XCircle, FileEdit, MapPin, X } from 'lucide-react';
 import Link from 'next/link';
+import { checkVenueOwnerVerification } from '@/app/venue/location/utils/venue-location-submit';
+import MissingCitizenPopup from '@/app/venue/advertisement/component/MissingCitizenPopup';
+import { getMe } from '@/api/auth/api';
 
 export default function AdvertisementDetailPage() {
     const params = useParams();
@@ -20,6 +23,21 @@ export default function AdvertisementDetailPage() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isLightboxOpen, setIsLightboxOpen] = useState(false);
     const [showFullContent, setShowFullContent] = useState(false);
+    const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
+    const [userProfile, setUserProfile] = useState<any>(null);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await getMe(); // API của bạn
+                setUserProfile(res.data);
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     useEffect(() => {
         const fetchAd = async () => {
@@ -63,8 +81,16 @@ export default function AdvertisementDetailPage() {
     const isDraft = ad.status === "DRAFT";
     const canEdit = ad.status === "DRAFT" || ad.status === "REJECTED";
 
-    const handleSubmit = () => router.push(`/venue/advertisement/package?adId=${ad.id}`);
-    const handleEdit = () => router.push(`/venue/advertisement/myadvertisement/${ad.id}/edit`);
+    const handleSubmit = () => {
+        const { missingCitizenId } = checkVenueOwnerVerification(userProfile);
+
+        if (missingCitizenId) {
+            setOpenMissingCitizenPopup(true);
+            return;
+        }
+
+        router.push(`/venue/advertisement/package?adId=${ad.id}`);
+    }; const handleEdit = () => router.push(`/venue/advertisement/myadvertisement/${ad.id}/edit`);
 
     return (
         <div className="min-h-screen p-8">
@@ -311,6 +337,15 @@ export default function AdvertisementDetailPage() {
                 )}
 
             </div>
+            <MissingCitizenPopup
+                open={openMissingCitizenPopup}
+                onClose={() => setOpenMissingCitizenPopup(false)}
+                onConfirm={() => {
+                    setOpenMissingCitizenPopup(false);
+                    window.dispatchEvent(new CustomEvent("openProfileModal"));
+                }}
+                description="Bạn chưa cập nhật CCCD (mặt trước và mặt sau). Vui lòng cập nhật trước khi gửi duyệt quảng cáo."
+            />
         </div>
     );
 }

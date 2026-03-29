@@ -33,7 +33,7 @@ export const getMyVenueLocations = async () => {
 
 export const getVenueLocationDetail = (id: number) => {
   return apiClient.get<GetVenueLocationDetailResponse>(
-    `/api/VenueLocation/${id}`
+    `/api/VenueLocation/my-venues/${id}`
   );
 };
 

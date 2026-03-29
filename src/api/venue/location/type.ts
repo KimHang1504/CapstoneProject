@@ -89,7 +89,7 @@ export type VenueLocationBase = {
   interiorImage?: string[];
   fullPageMenuImage?: string[];
 
-  isOwnerVerified: boolean;
+  // isOwnerVerified: boolean;
 
   venueTags: VenueTag[];
 };
@@ -142,43 +142,48 @@ export type VenueLocationDetail = VenueLocationBase & {
   averageRating: number;
   avarageCost: number;
   reviewCount: number;
-  favoriteCount: number | null;
+  favoriteCount?: number | null;
 
   status: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DRAFTED';
 
   coverImage?: string[] | null;
   interiorImage?: string[] | null;
   fullPageMenuImage?: string[] | null;
-  category: string[] | null;
-  categories?: { id: number; name: string }[];
+
+  category: string | null;
+  categories?: { id: number; name: string }[] | null;
 
   createdAt: string;
   updatedAt: string;
 
-  coupleMoodTypes: {
+  locationTags?: {
     id: number;
-    name: string;
+    tagName: string;
+    detailTag: string[];
+    coupleMoodType?: {
+      id: number;
+      name: string;
+      description?: string;
+      isActive?: boolean;
+    } | null;
+    couplePersonalityType?: {
+      id: number;
+      name: string;
+      description?: string;
+      isActive?: boolean;
+    } | null;
   }[];
 
-  couplePersonalityTypes: {
-    id: number;
-    name: string;
-  }[];
+  isOwnerVerified?: boolean;
+  businessLicenseUrl?: string | null;
+  rejectionDetails?: string | null;
+  durationDays?: number | null;
+  startDate?: string | null;
+  endDate?: string | null;
 
-  venueOwner: {
-    id: number;
-    businessName: string;
-    phoneNumber: string;
-    email: string;
-    address: string;
-    citizenIdFrontUrl: string | null;
-    citizenIdBackUrl: string | null;
-    businessLicenseUrl: string | null;
-  };
-
-  todayDayName: string | null;
-  todayOpeningHour: TodayOpeningHour | null;
-  openingHours: OpeningHour[] | null;
+  todayDayName?: string | null;
+  todayOpeningHour?: TodayOpeningHour | null;
+  openingHours?: OpeningHour[] | null;
 };
 
 export type GetVenueLocationDetailResponse = {

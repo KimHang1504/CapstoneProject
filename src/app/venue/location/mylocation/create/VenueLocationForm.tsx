@@ -167,7 +167,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         websiteUrl: formData.websiteUrl,
         priceMin: formData.priceMin,
         priceMax: formData.priceMax,
-        isOwnerVerified: true,
+        // isOwnerVerified: true,
         coverImage: coverUrl ? [coverUrl] : [],
         interiorImage: interiorUrls,
         fullPageMenuImage: menuUrls,
@@ -179,16 +179,12 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         toast.success("Cập nhật địa điểm thành công")
         router.push(`/venue/location/mylocation/${locationId}`)
       } else {
-        const response = await registerVenueLocation(payload)
+        // const response = await registerVenueLocation(payload)
         toast.success("Tạo địa điểm thành công")
         
-        // Chuyển đến trang chọn gói subscription
-        if (response?.data?.id) {
-          router.push(`/venue/location/subscriptions?locationId=${response.data.id}`)
-        } else {
+
           router.push("/venue/location/mylocation")
         }
-      }
 
     } catch (e) {
       console.error(e)
@@ -201,10 +197,10 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">
+    <div className="p-6">
+      {/* <h1 className="text-2xl font-bold text-gray-900 mb-4">
         {mode === 'edit' ? 'Chỉnh sửa địa điểm' : 'Tạo địa điểm mới'}
-      </h1>
+      </h1> */}
 
       <p className="text-blue-900 text-center">
         Bước {step} / {steps.length}

@@ -255,7 +255,7 @@ export default function EditProfileModal({
       }}
     >
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[95vh] overflow-hidden animate-slideUp">
-        <div className="relative bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 p-6">
+        <div className="relative bg-linear-to-r from-purple-500 via-pink-500 to-purple-500 p-6">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold text-white">
@@ -372,7 +372,7 @@ export default function EditProfileModal({
 
                   <div className="pt-6 border-t border-gray-200">
                     <div className="flex items-center gap-2 mb-5">
-                      <div className="w-1 h-6 bg-gradient-to-b from-purple-500 to-pink-500 rounded-full"></div>
+                      <div className="w-1 h-6 bg-linear-to-b from-purple-500 to-pink-500 rounded-full"></div>
                       <h3 className="text-lg font-bold text-gray-800">
                         CCCD / CMND
                       </h3>
@@ -442,7 +442,7 @@ export default function EditProfileModal({
               {error && (
                 <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                       <X className="w-3 h-3 text-white" />
                     </div>
                     <p className="text-sm text-red-700 font-medium">{error}</p>
@@ -573,7 +573,7 @@ export default function EditProfileModal({
               {error && (
                 <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-xl">
                   <div className="flex items-start gap-3">
-                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center shrink-0 mt-0.5">
                       <X className="w-3 h-3 text-white" />
                     </div>
                     <p className="text-sm text-red-700 font-medium">{error}</p>
@@ -596,7 +596,7 @@ export default function EditProfileModal({
           <button
             type="submit"
             onClick={activeTab === 'profile' ? handleSubmit : handleChangePassword}
-            className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            className="flex-1 px-6 py-3 bg-linear-to-r from-purple-500 via-pink-500 to-purple-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
             disabled={isSubmitting || (activeTab === 'profile' && !userProfile.venueOwnerProfile)}
           >
             {isSubmitting ? (
