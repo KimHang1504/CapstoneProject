@@ -91,22 +91,18 @@ export default function InsightPage() {
       setLoading(true);
       const res = await getInsights(tf);
       
-      // Kiểm tra code 402
+      // Kiểm tra code 402 - gói không hỗ trợ
       if (res.code === 402) {
         setSubscriptionMessage(res.message);
         setShowSubscriptionModal(true);
         return;
       }
       
-      if (res.code === 200) setData(res.data);
+      if (res.code === 200) {
+        setData(res.data);
+      }
     } catch (error: any) {
       console.error('Fetch insight error:', error);
-      
-      // Nếu có message chứa "hết hạn" thì hiển thị modal
-      if (error?.message?.includes('hết hạn')) {
-        setSubscriptionMessage(error.message);
-        setShowSubscriptionModal(true);
-      }
     } finally {
       setLoading(false);
     }
