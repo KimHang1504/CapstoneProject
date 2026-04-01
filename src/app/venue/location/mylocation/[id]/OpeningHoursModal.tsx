@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { updateOpeningHours } from '@/api/venue/location/api';
-import toast from 'react-hot-toast';
+import {toast} from 'sonner';
 
 type OpeningHoursModalProps = {
   locationId: number;

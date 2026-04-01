@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { createAdvertisement} from "@/api/venue/advertisement/api";
 import AdvertisementForm from "@/app/venue/advertisement/component/AdvertisementForm";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 import { getMoodTypes } from "@/api/mood/api";
 
 type MoodOption = {

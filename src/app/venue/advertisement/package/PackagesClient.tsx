@@ -11,7 +11,7 @@ import {
 
 import SelectVenueModal from "@/app/venue/advertisement/package/component/SelectVenueModal";
 import { Wallet, QrCode, X } from "lucide-react";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 
 export default function PackagesClient() {
     const searchParams = useSearchParams();

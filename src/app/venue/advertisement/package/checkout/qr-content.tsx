@@ -7,7 +7,7 @@ import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { QrCode,X } from "lucide-react";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 
 export default function QRContent() {
     const searchParams = useSearchParams();

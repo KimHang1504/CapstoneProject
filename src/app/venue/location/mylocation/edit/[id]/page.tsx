@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import VenueLocationForm from "../../create/VenueLocationForm"
 import { getVenueLocationDetail } from "@/api/venue/location/api"
 import { VenueFormData } from "../../create/Info"
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 
 export default function EditPage() {
   const params = useParams()

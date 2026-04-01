@@ -18,6 +18,9 @@ export default function Media({ formData, setFormData }: Props) {
     const coverPreview =
         formData.coverImage ?? formData.existingCoverUrl ?? null
 
+    const businessLicensePreview =
+        formData.businessLicense ?? formData.existingBusinessLicenseUrl ?? null
+
     const interiorPreview = [
         ...(formData.existingInteriorUrls ?? []),
         ...(formData.interiorImage ?? [])
@@ -81,6 +84,14 @@ export default function Media({ formData, setFormData }: Props) {
         setFormData({
             ...formData,
             fullPageMenuImage: updated
+        })
+    }
+
+    const removeBusinessLicense = () => {
+        setFormData({
+            ...formData,
+            businessLicense: null,
+            existingBusinessLicenseUrl: null
         })
     }
 
@@ -242,6 +253,71 @@ export default function Media({ formData, setFormData }: Props) {
                                         </button>
                                     </div>
                                 ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mb-6">
+                        <p className="text-sm font-semibold text-gray-900">
+                            Giấy phép kinh doanh <span className="text-pink-500">*</span>
+                        </p>
+
+                        <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
+                            <span>
+                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
+                            </span>
+                            <span className="mt-1 text-xs text-gray-400">
+                                JPG / PNG - tối đa 10MB
+                            </span>
+
+                            <input
+                                type="file"
+                                accept="image/*,application/pdf"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0] ?? null
+                                    setFormData({ ...formData, businessLicense: file })
+                                }}
+                            />
+                        </label>
+
+                        {businessLicensePreview && (
+                            <div className="relative mt-3 flex items-center gap-3">
+
+                                {/* preview */}
+                                {typeof businessLicensePreview === "string" &&
+                                    businessLicensePreview.endsWith(".pdf") ? (
+                                    <a
+                                        href={businessLicensePreview}
+                                        target="_blank"
+                                        className="text-blue-600 underline text-sm"
+                                    >
+                                        Xem file PDF
+                                    </a>
+                                ) : typeof businessLicensePreview !== "string" &&
+                                    businessLicensePreview.type === "application/pdf" ? (
+                                    <span className="text-sm text-gray-600">
+                                        {businessLicensePreview.name}
+                                    </span>
+                                ) : (
+                                    <Image
+                                        src={getPreviewUrl(businessLicensePreview)}
+                                        alt="license-preview"
+                                        width={120}
+                                        height={80}
+                                        className="rounded-xl object-cover"
+                                        unoptimized
+                                    />
+                                )}
+
+                                {/* remove */}
+                                <button
+                                    type="button"
+                                    onClick={removeBusinessLicense}
+                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white"
+                                >
+                                    ×
+                                </button>
                             </div>
                         )}
                     </div>

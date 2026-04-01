@@ -36,6 +36,8 @@ export type VenueFormData = {
   existingCoverUrl?: string | null
   existingInteriorUrls?: string[]
   existingMenuUrls?: string[]
+  businessLicense?: File | null
+  existingBusinessLicenseUrl?: string | null
 }
 
 

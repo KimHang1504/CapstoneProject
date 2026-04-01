@@ -7,7 +7,7 @@ import {
   updateAdvertisementDraft,
 } from "@/api/venue/advertisement/api";
 import AdvertisementForm from "@/app/venue/advertisement/component/AdvertisementForm";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 import { getMoodTypes } from "@/api/mood/api";
 
 type MoodOption = {

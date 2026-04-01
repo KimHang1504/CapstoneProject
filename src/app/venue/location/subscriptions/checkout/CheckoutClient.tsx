@@ -9,7 +9,7 @@ import { getPaymentQrInfo } from "@/api/venue/location/api";
 import { getPaymentStatus } from "@/api/venue/payment/api";
 import { cancelPayment } from "@/api/venue/payment/api";
 import { QrCode,X } from "lucide-react";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 
 export default function QRContent() {
   const searchParams = useSearchParams();

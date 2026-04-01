@@ -164,7 +164,7 @@ export default function EditProfileModal({
         citizenIdFrontUrl,
         citizenIdBackUrl,
       });
-
+      await new Promise((resolve) => setTimeout(resolve, 300));
       await onUpdate();
       toast.success('Cập nhật hồ sơ thành công!');
       onClose();
@@ -283,22 +283,20 @@ export default function EditProfileModal({
         <div className="flex border-b border-gray-200 bg-gray-50">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 ${
-              activeTab === 'profile'
+            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 ${activeTab === 'profile'
                 ? 'text-purple-600 border-b-2 border-purple-600 bg-white'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-            }`}
+              }`}
             disabled={isSubmitting}
           >
             Thông tin cá nhân
           </button>
           <button
             onClick={() => setActiveTab('password')}
-            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
-              activeTab === 'password'
+            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${activeTab === 'password'
                 ? 'text-purple-600 border-b-2 border-purple-600 bg-white'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-            }`}
+              }`}
             disabled={isSubmitting}
           >
             <Lock className="w-4 h-4" />
