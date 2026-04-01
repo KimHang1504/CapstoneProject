@@ -297,15 +297,12 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
         </button>
 
         {step === 'packages' && (
-          <div className="p-6">
-            <div className="text-center mb-6">
-              <div className="inline-flex items-center justify-center w-14 h-14 bg-orange-500 rounded-xl mb-3">
-                <AlertCircle className="text-white" size={28} />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                {message || 'Gói của bạn đã hết hạn'}
+          <div className="p-4 sm:p-6 lg:p-8">
+            <div className="text-center mb-6 sm:mb-8">
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+                {message || 'Chọn gói phù hợp để tiếp tục trải nghiệm'}
               </h2>
-              <p className="text-gray-600">Chọn gói phù hợp để tiếp tục trải nghiệm</p>
+              <p className="text-sm sm:text-base text-gray-600">Nâng cấp để truy cập đầy đủ tính năng</p>
             </div>
 
             {isLoading ? (
@@ -314,61 +311,67 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
                 <p className="text-gray-600">Đang tải gói...</p>
               </div>
             ) : packages.length > 0 ? (
-              <div className="flex flex-wrap justify-center gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 max-w-3xl mx-auto">
                 {packages.map((pkg, index) => (
                   <div
                     key={pkg.id}
                     onClick={() => handleSelectPackage(pkg)}
-                    className="relative w-[320px] border-2 border-purple-200 rounded-xl p-5 hover:border-purple-400 hover:shadow-md transition-all cursor-pointer"
+                    className="relative bg-white border-2 border-gray-200 rounded-xl sm:rounded-2xl p-5 sm:p-6 hover:border-purple-400 hover:shadow-lg transition-all cursor-pointer group"
                   >
                     {index === 0 && (
-                      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                        <div className="bg-yellow-400 text-yellow-900 px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                          <Sparkles size={10} />
+                      <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                        <div className="bg-yellow-400 text-yellow-900 px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1.5 shadow-sm">
+                          <Sparkles size={12} />
                           Phổ biến nhất
                         </div>
                       </div>
                     )}
                     
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-purple-100 rounded-xl flex items-center justify-center group-hover:bg-purple-200 transition-colors">
                         <Crown className="text-purple-600" size={20} />
                       </div>
-                      <div className="text-right">
-                        <div className="text-xs text-gray-500">Thời hạn</div>
-                        <div className="text-sm font-bold text-gray-900">{pkg.durationDays} ngày</div>
+                      <div className="text-right bg-gray-50 px-2.5 sm:px-3 py-1.5 rounded-lg">
+                        <div className="text-xs text-gray-500 mb-0.5">Thời hạn</div>
+                        <div className="text-sm sm:text-base font-bold text-gray-900">{pkg.durationDays} ngày</div>
                       </div>
                     </div>
 
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">{pkg.packageName}</h3>
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">{pkg.description}</p>
+                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2">{pkg.packageName}</h3>
+                    <p className="text-xs sm:text-sm text-gray-600 mb-4 sm:mb-5 min-h-[36px] sm:min-h-[40px]">{pkg.description}</p>
 
-                    <div className="space-y-2 mb-4">
-                      <div className="flex items-center gap-2">
-                        <Check className="text-purple-600" size={16} />
-                        <span className="text-sm text-gray-700">Truy cập toàn bộ Insight</span>
+                    <div className="space-y-2 sm:space-y-2.5 mb-5 sm:mb-6">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="text-purple-600" size={14} />
+                        </div>
+                        <span className="text-xs sm:text-sm text-gray-700">Truy cập toàn bộ Insight</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="text-purple-600" size={16} />
-                        <span className="text-sm text-gray-700">Báo cáo & phân tích AI</span>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="text-purple-600" size={14} />
+                        </div>
+                        <span className="text-xs sm:text-sm text-gray-700">Báo cáo & phân tích AI</span>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Check className="text-purple-600" size={16} />
-                        <span className="text-sm text-gray-700">Theo dõi xu hướng</span>
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Check className="text-purple-600" size={14} />
+                        </div>
+                        <span className="text-xs sm:text-sm text-gray-700">Theo dõi xu hướng</span>
                       </div>
                     </div>
 
-                    <div className="pt-4 border-t border-gray-200">
-                      <div className="flex items-baseline justify-center gap-1 mb-3">
-                        <span className="text-3xl font-bold text-gray-900">
+                    <div className="pt-4 sm:pt-5 border-t border-gray-200">
+                      <div className="flex items-baseline justify-center gap-1 mb-3 sm:mb-4">
+                        <span className="text-3xl sm:text-4xl font-bold text-gray-900">
                           {pkg.price.toLocaleString('vi-VN')}
                         </span>
-                        <span className="text-base font-medium text-gray-500">VND</span>
+                        <span className="text-base sm:text-lg font-medium text-gray-500">VND</span>
                       </div>
                       
-                      <button className="w-full bg-purple-600 text-white py-2.5 rounded-lg font-semibold hover:bg-purple-700 transition-colors flex items-center justify-center gap-2">
+                      <button className="w-full bg-purple-600 text-white py-2.5 sm:py-3 rounded-xl font-semibold hover:bg-purple-700 transition-all flex items-center justify-center gap-2 group-hover:shadow-md text-sm sm:text-base">
                         Chọn gói này
-                        <ChevronRight size={16} />
+                        <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
                       </button>
                     </div>
                   </div>

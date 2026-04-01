@@ -45,6 +45,7 @@ export default function EditVoucherPage() {
           discountPercent: data.discountPercent,
 
           quantity: data.quantity,
+          imageUrl: data.imageUrl ?? "",
 
           usageLimitPerMember: data.usageLimitPerMember,
           usageValiDays: data.usageValiDays ?? 7,
