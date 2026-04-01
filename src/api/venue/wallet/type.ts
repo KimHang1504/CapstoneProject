@@ -66,3 +66,19 @@ export type PaginatedTransactionResponse = {
     hasPreviousPage: boolean;
     hasNextPage: boolean;
 };
+
+export type WalletTopupRequest = {
+    amount: number;
+};
+
+export type WalletTopupResponse = {
+    isSuccess: boolean;
+    message: string;
+    transactionId: number;
+    amount: number;
+    currency: string;
+    paymentContent: string;
+    qrCodeUrl?: string | null;
+    expireAt?: string | null;
+    bankInfo?: BankInfo | null;
+};

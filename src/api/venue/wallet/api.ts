@@ -1,6 +1,8 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
 import {
   WalletBalanceResponse,
+  WalletTopupRequest,
+  WalletTopupResponse,
   WithdrawRequest,
   WithdrawResponse,
   WithdrawWalletRequest,
@@ -35,6 +37,15 @@ export async function getTransactionHistory(pageNumber: number = 1, pageSize: nu
   const res = await apiClient.get<ApiResponse<import("./type").PaginatedTransactionResponse>>(
     "/api/Wallet/transaction-history",
     { params: { pageNumber, pageSize } }
+  );
+
+  return res.data;
+}
+
+export async function createWalletTopup(data: WalletTopupRequest) {
+  const res = await apiClient.post<ApiResponse<WalletTopupResponse>>(
+    "/api/Wallet/topup",
+    data
   );
 
   return res.data;

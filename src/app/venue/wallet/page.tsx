@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { getWalletBalance, getWithdrawRequests, getTransactionHistory } from "@/api/venue/wallet/api";
 import { Wallet, WithdrawRequest, PaginatedTransactionResponse } from "@/api/venue/wallet/type";
 import WithdrawModal from "@/app/venue/wallet/components/WithdrawModal";
-import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight } from "lucide-react";
+import TopupModal from "@/app/venue/wallet/components/TopupModal";
+import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight, QrCode } from "lucide-react";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   APPROVED: { label: "Đã duyệt", cls: "bg-emerald-100 text-emerald-600" },
@@ -27,6 +28,7 @@ export default function WalletPage() {
   const [loading, setLoading] = useState(true);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [showTopup, setShowTopup] = useState(false);
   const [activeTab, setActiveTab] = useState<'transactions' | 'withdraws'>('transactions');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
@@ -114,13 +116,22 @@ export default function WalletPage() {
             {transactionData?.totalCount || 0} giao dịch
           </span>
         </div>
-        <button
-          onClick={() => setShowWithdraw(true)}
-          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
-        >
-          <ArrowDownCircle size={16} />
-          Rút tiền
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowTopup(true)}
+            className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
+          >
+            <QrCode size={16} />
+            Nạp tiền
+          </button>
+          <button
+            onClick={() => setShowWithdraw(true)}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
+          >
+            <ArrowDownCircle size={16} />
+            Rút tiền
+          </button>
+        </div>
       </div>
 
       {/* Tabs */}
@@ -355,6 +366,10 @@ export default function WalletPage() {
 
       {showWithdraw && (
         <WithdrawModal onClose={() => setShowWithdraw(false)} onSuccess={loadWallet} />
+      )}
+
+      {showTopup && (
+        <TopupModal onClose={() => setShowTopup(false)} onSuccess={loadWallet} />
       )}
     </div>
   );
