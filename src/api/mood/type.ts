@@ -16,8 +16,17 @@ export type CouplePersonalityType = {
   description: string;
 };
 
+export type MoodType = {
+  id: number;
+  name: string;
+  iconUrl: string;
+  isActive: boolean;
+  createdAt: string;
+};
 
 
 // response riêng cho mood types
 export type GetCoupleMoodTypesResponse = ApiResponse<CoupleMoodType[]>;
 export type GetCouplePersonalityTypesResponse = ApiResponse<CouplePersonalityType[]>;
+export type GetMoodTypesResponse = ApiResponse<MoodType[]>;
+

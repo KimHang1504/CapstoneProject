@@ -18,6 +18,9 @@ export default function Media({ formData, setFormData }: Props) {
     const coverPreview =
         formData.coverImage ?? formData.existingCoverUrl ?? null
 
+    const businessLicensePreview =
+        formData.businessLicense ?? formData.existingBusinessLicenseUrl ?? null
+
     const interiorPreview = [
         ...(formData.existingInteriorUrls ?? []),
         ...(formData.interiorImage ?? [])
@@ -27,7 +30,72 @@ export default function Media({ formData, setFormData }: Props) {
         ...(formData.existingMenuUrls ?? []),
         ...(formData.fullPageMenuImage ?? [])
     ]
-console.log('render media', { coverPreview, interiorPreview, menuPreview }) 
+    // ===== REMOVE FUNCTIONS =====
+    const removeCover = () => {
+        setFormData({
+            ...formData,
+            coverImage: null,
+            existingCoverUrl: null
+        })
+    }
+
+    const removeInterior = (index: number) => {
+        const existingCount = formData.existingInteriorUrls?.length ?? 0
+
+        if (index < existingCount) {
+            const updated = [...(formData.existingInteriorUrls ?? [])]
+            updated.splice(index, 1)
+
+            setFormData({
+                ...formData,
+                existingInteriorUrls: updated
+            })
+            return
+        }
+
+        const fileIndex = index - existingCount
+        const updated = [...formData.interiorImage]
+        updated.splice(fileIndex, 1)
+
+        setFormData({
+            ...formData,
+            interiorImage: updated
+        })
+    }
+
+    const removeMenu = (index: number) => {
+        const existingCount = formData.existingMenuUrls?.length ?? 0
+
+        if (index < existingCount) {
+            const updated = [...(formData.existingMenuUrls ?? [])]
+            updated.splice(index, 1)
+
+            setFormData({
+                ...formData,
+                existingMenuUrls: updated
+            })
+            return
+        }
+
+        const fileIndex = index - existingCount
+        const updated = [...formData.fullPageMenuImage]
+        updated.splice(fileIndex, 1)
+
+        setFormData({
+            ...formData,
+            fullPageMenuImage: updated
+        })
+    }
+
+    const removeBusinessLicense = () => {
+        setFormData({
+            ...formData,
+            businessLicense: null,
+            existingBusinessLicenseUrl: null
+        })
+    }
+
+    console.log('render media', { coverPreview, interiorPreview, menuPreview })
     return (
         <div className="flex justify-center">
             <div className="w-full max-w-4xl px-6 py-6 md:px-10">
@@ -62,7 +130,7 @@ console.log('render media', { coverPreview, interiorPreview, menuPreview })
                         </label>
 
                         {coverPreview && (
-                            <div className="mt-3 relative h-24 w-40">
+                            <div className="relative mt-3 h-24 w-40">
                                 <Image
                                     src={getPreviewUrl(coverPreview)}
                                     alt="cover-preview"
@@ -71,6 +139,14 @@ console.log('render media', { coverPreview, interiorPreview, menuPreview })
                                     className="h-24 w-40 rounded-3xl object-cover"
                                     unoptimized
                                 />
+
+                                <button
+                                    type="button"
+                                    onClick={removeCover}
+                                    className="absolute cursor-pointer right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white"
+                                >
+                                    ×
+                                </button>
                             </div>
                         )}
                     </div>
@@ -86,7 +162,7 @@ console.log('render media', { coverPreview, interiorPreview, menuPreview })
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
                             </span>
                             <span className="mt-1 text-xs text-gray-400">
-                                Tối đa 5 ảnh · 10MB/ảnh
+                                10MB/ảnh
                             </span>
 
                             <input
@@ -114,6 +190,14 @@ console.log('render media', { coverPreview, interiorPreview, menuPreview })
                                             className="h-16 w-16 rounded-[20px] object-cover"
                                             unoptimized
                                         />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => removeInterior(i)}
+                                            className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/3 translate-x-1/3 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+                                        >
+                                            ×
+                                        </button>
                                     </div>
                                 ))}
                             </div>
@@ -131,7 +215,7 @@ console.log('render media', { coverPreview, interiorPreview, menuPreview })
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
                             </span>
                             <span className="mt-1 text-xs text-gray-400">
-                                Tối đa 5 ảnh · 10MB/ảnh
+                                10MB/ảnh
                             </span>
 
                             <input
@@ -159,8 +243,81 @@ console.log('render media', { coverPreview, interiorPreview, menuPreview })
                                             className="h-16 w-16 rounded-[20px] object-cover"
                                             unoptimized
                                         />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => removeMenu(i)}
+                                            className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/3 translate-x-1/3 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+                                        >
+                                            ×
+                                        </button>
                                     </div>
                                 ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="mb-6">
+                        <p className="text-sm font-semibold text-gray-900">
+                            Giấy phép kinh doanh <span className="text-pink-500">*</span>
+                        </p>
+
+                        <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
+                            <span>
+                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
+                            </span>
+                            <span className="mt-1 text-xs text-gray-400">
+                                JPG / PNG - tối đa 10MB
+                            </span>
+
+                            <input
+                                type="file"
+                                accept="image/*,application/pdf"
+                                className="hidden"
+                                onChange={(e) => {
+                                    const file = e.target.files?.[0] ?? null
+                                    setFormData({ ...formData, businessLicense: file })
+                                }}
+                            />
+                        </label>
+
+                        {businessLicensePreview && (
+                            <div className="relative mt-3 flex items-center gap-3">
+
+                                {/* preview */}
+                                {typeof businessLicensePreview === "string" &&
+                                    businessLicensePreview.endsWith(".pdf") ? (
+                                    <a
+                                        href={businessLicensePreview}
+                                        target="_blank"
+                                        className="text-blue-600 underline text-sm"
+                                    >
+                                        Xem file PDF
+                                    </a>
+                                ) : typeof businessLicensePreview !== "string" &&
+                                    businessLicensePreview.type === "application/pdf" ? (
+                                    <span className="text-sm text-gray-600">
+                                        {businessLicensePreview.name}
+                                    </span>
+                                ) : (
+                                    <Image
+                                        src={getPreviewUrl(businessLicensePreview)}
+                                        alt="license-preview"
+                                        width={120}
+                                        height={80}
+                                        className="rounded-xl object-cover"
+                                        unoptimized
+                                    />
+                                )}
+
+                                {/* remove */}
+                                <button
+                                    type="button"
+                                    onClick={removeBusinessLicense}
+                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white"
+                                >
+                                    ×
+                                </button>
                             </div>
                         )}
                     </div>

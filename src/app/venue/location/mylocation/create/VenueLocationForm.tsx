@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 
 import Info from "@/app/venue/location/mylocation/create/Info";
 import Contact from "@/app/venue/location/mylocation/create/Contact";
@@ -46,6 +46,8 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     existingCoverUrl: initialData?.existingCoverUrl || "",
     existingInteriorUrls: initialData?.existingInteriorUrls || [],
     existingMenuUrls: initialData?.existingMenuUrls || [],
+    businessLicense: null,
+    existingBusinessLicenseUrl: initialData?.existingBusinessLicenseUrl || "",
   }))
 
   const CurrentStep = steps[step - 1]
@@ -97,6 +99,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       data.websiteUrl ||
       data.priceMin > 0 ||
       data.priceMax > 0 ||
+      data.businessLicense ||
       data.coverImage ||
       data.interiorImage.length > 0 ||
       data.fullPageMenuImage.length > 0 ||
@@ -143,6 +146,13 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         menuUrls = uploaded
       }
 
+      // ===== BUSINESS LICENSE =====
+      let businessLicenseUrl = formData.existingBusinessLicenseUrl || ""
+
+      if (formData.businessLicense instanceof File) {
+        businessLicenseUrl = await uploadImage(formData.businessLicense)
+      }
+
       if (!hasAtLeastOneField(formData)) {
         toast.error("Vui lòng nhập ít nhất một thông tin để lưu bản nháp");
         return;
@@ -167,11 +177,13 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         websiteUrl: formData.websiteUrl,
         priceMin: formData.priceMin,
         priceMax: formData.priceMax,
-        isOwnerVerified: true,
+        // isOwnerVerified: true,
+
         coverImage: coverUrl ? [coverUrl] : [],
         interiorImage: interiorUrls,
         fullPageMenuImage: menuUrls,
         venueTags,
+        businessLicenseUrl,
       }
 
       if (mode === 'edit' && locationId) {
@@ -179,15 +191,11 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         toast.success("Cập nhật địa điểm thành công")
         router.push(`/venue/location/mylocation/${locationId}`)
       } else {
-        const response = await registerVenueLocation(payload)
+        await registerVenueLocation(payload)
         toast.success("Tạo địa điểm thành công")
-        
-        // Chuyển đến trang chọn gói subscription
-        if (response?.data?.id) {
-          router.push(`/venue/location/subscriptions?locationId=${response.data.id}`)
-        } else {
-          router.push("/venue/location/mylocation")
-        }
+
+
+        router.push("/venue/location/mylocation")
       }
 
     } catch (e) {
@@ -201,10 +209,10 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">
+    <div className="p-6">
+      {/* <h1 className="text-2xl font-bold text-gray-900 mb-4">
         {mode === 'edit' ? 'Chỉnh sửa địa điểm' : 'Tạo địa điểm mới'}
-      </h1>
+      </h1> */}
 
       <p className="text-blue-900 text-center">
         Bước {step} / {steps.length}

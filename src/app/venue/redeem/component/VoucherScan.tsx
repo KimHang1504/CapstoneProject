@@ -16,8 +16,9 @@ export default function VoucherScan({ venueLocationId }: Props) {
     const [message, setMessage] = useState("");
     const [valid, setValid] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [validatedCode, setValidatedCode] = useState("");
 
-        useEffect(() => {
+    useEffect(() => {
         console.log("🟢 VoucherScan mounted");
 
         return () => {
@@ -25,42 +26,86 @@ export default function VoucherScan({ venueLocationId }: Props) {
         };
     }, []);
 
-    const handleScan = async (text: string) => {
-        const value = text.toUpperCase();
+    const handleScan = async (scannedText: string) => {
+        const normalizedCode = scannedText.trim().toUpperCase();
 
-        setCode(value);
-        setLoading(true);
-        setMessage("");
+        if (!normalizedCode) {
+            setValid(false);
+            setCode("");
+            setValidatedCode("");
+            setMessage("Không đọc được mã voucher");
+            return;
+        }
+
+        if (!venueLocationId) {
+            setValid(false);
+            setValidatedCode("");
+            setMessage("Vui lòng chọn địa điểm");
+            return;
+        }
 
         try {
-            const res = await validateVoucherItem(value, venueLocationId);
+            setLoading(true);
+            setMessage("");
+            setValid(false);
+
+            setCode(normalizedCode);
+
+            const res = await validateVoucherItem({
+                itemCode: normalizedCode,
+                venueLocationId,
+            });
+
             const data = res.data;
 
-            if (data.isValid) {
+            if (data?.isValid) {
                 setValid(true);
-                setMessage("Voucher hợp lệ. Có thể sử dụng.");
+                setValidatedCode(normalizedCode);
+                setMessage(data.validationMessage || "Voucher hợp lệ. Có thể sử dụng.");
             } else {
                 setValid(false);
-                setMessage(data.validationMessage || "Không hợp lệ");
+                setValidatedCode("");
+                setMessage(data?.validationMessage || "Voucher không hợp lệ");
             }
         } catch (err: any) {
             setValid(false);
-            setMessage(err?.response?.data?.message || "Không hợp lệ");
+            setValidatedCode("");
+            setMessage(
+                err?.response?.data?.message || "Voucher không hợp lệ"
+            );
         } finally {
             setLoading(false);
         }
     };
 
     const handleRedeem = async () => {
+        if (!validatedCode) {
+            setMessage("Vui lòng quét và kiểm tra voucher hợp lệ trước");
+            return;
+        }
+
+        if (!venueLocationId) {
+            setMessage("Vui lòng chọn địa điểm");
+            return;
+        }
+
         try {
             setLoading(true);
+            setMessage("");
 
-            await redeemVoucherItem(code);
+            await redeemVoucherItem({
+                itemCode: validatedCode,
+                venueLocationId,
+            });
 
-            setMessage("Redeem thành công!");
+            setMessage("Redeem voucher thành công!");
             setValid(false);
-        } catch {
-            setMessage("Redeem thất bại");
+            setCode("");
+            setValidatedCode("");
+        } catch (err: any) {
+            setMessage(
+                err?.response?.data?.message || "Redeem thất bại"
+            );
         } finally {
             setLoading(false);
         }
@@ -81,9 +126,9 @@ export default function VoucherScan({ venueLocationId }: Props) {
 
             {/* Scanned Code Display */}
             {code && (
-                <div className="p-4 rounded-xl border border-gray-200 bg-gradient-to-br from-gray-50 to-white">
+                <div className="p-4 rounded-xl border border-gray-200 bg-linear-to-br from-gray-50 to-white">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center shrink-0">
                             <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                             </svg>
@@ -110,7 +155,7 @@ export default function VoucherScan({ venueLocationId }: Props) {
             {valid && !loading && (
                 <div className="space-y-3">
                     <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                        <div className="flex-shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
+                        <div className="shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
                             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
@@ -123,7 +168,7 @@ export default function VoucherScan({ venueLocationId }: Props) {
                     <button
                         onClick={handleRedeem}
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 py-3.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 py-3.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -134,9 +179,9 @@ export default function VoucherScan({ venueLocationId }: Props) {
             )}
 
             {/* Error Message */}
-            {message && !valid && !loading && (
+            {message && !valid && !loading && !message.includes("thành công") && (
                 <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-xl">
-                    <div className="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center mt-0.5">
+                    <div className="shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center mt-0.5">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -148,7 +193,7 @@ export default function VoucherScan({ venueLocationId }: Props) {
             {/* Success Message after Redeem */}
             {message && message.includes("thành công") && (
                 <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                    <div className="flex-shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
+                    <div className="shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>

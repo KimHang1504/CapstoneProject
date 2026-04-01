@@ -33,9 +33,11 @@ export type VenueFormData = {
   selectedStyles: number[]
 
   // For edit mode - existing URLs
-  existingCoverUrl?: string
+  existingCoverUrl?: string | null
   existingInteriorUrls?: string[]
   existingMenuUrls?: string[]
+  businessLicense?: File | null
+  existingBusinessLicenseUrl?: string | null
 }
 
 
@@ -216,10 +218,10 @@ export default function Info({ formData, setFormData }: Props) {
                     {mood.name.toLowerCase()}
                     <InfoCircle size={12} className={`transition-opacity ${active ? 'opacity-80' : 'opacity-40'}`} />
                   </button>
-                  
+
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
-                    <div className="relative bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-purple-500/30 backdrop-blur-sm min-w-[200px] max-w-[280px]">
+                    <div className="relative bg-linear-to-br from-purple-600 via-purple-700 to-purple-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-purple-500/30 backdrop-blur-sm min-w-50 max-w-70">
                       <p className="font-semibold mb-1 text-purple-100">{mood.name}</p>
                       <p className="text-purple-50/90 leading-relaxed text-[11px]">{mood.description}</p>
                       {/* Arrow */}
@@ -262,10 +264,10 @@ export default function Info({ formData, setFormData }: Props) {
                     {style.name.toLowerCase()}
                     <InfoCircle size={12} className={`transition-opacity ${active ? 'opacity-80' : 'opacity-40'}`} />
                   </button>
-                  
+
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
-                    <div className="relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-indigo-500/30 backdrop-blur-sm min-w-[200px] max-w-[280px]">
+                    <div className="relative bg-linear-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-indigo-500/30 backdrop-blur-sm min-w-50 max-w-70">
                       <p className="font-semibold mb-1 text-indigo-100">{style.name}</p>
                       <p className="text-indigo-50/90 leading-relaxed text-[11px]">{style.description}</p>
                       {/* Arrow */}

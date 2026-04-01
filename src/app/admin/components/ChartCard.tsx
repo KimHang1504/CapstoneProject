@@ -32,7 +32,7 @@ type Props = {
   yLabel?: string;
 };
 
-const CustomTooltip = ({ active, payload, yLabel }: TooltipProps<number, string> & { yLabel?: string }) => {
+const CustomTooltip = ({ active, payload, yLabel }: any) => {
   if (active && payload && payload.length) {
     const value = payload[0].value as number;
     

@@ -21,6 +21,40 @@ export default function MyLocationPage() {
     DRAFTED: "bg-gray-100 text-gray-600",
     PENDING: "bg-yellow-100 text-yellow-700",
   };
+  function getSubscriptionInfo(loc: MyVenueLocation) {
+    const { durationDays, startDate, endDate, status } = loc as any;
+
+    // ❌ Chưa mua gói
+    if (!durationDays || !startDate || !endDate) {
+      return {
+        type: "NOT_PURCHASED",
+        label: "Chưa mua gói",
+        subLabel: "",
+        className: "bg-gray-100 text-gray-600",
+        cta: "Mua gói",
+      };
+    }
+
+    // 🔴 INACTIVE => luôn là hết hạn (KHÔNG cần check date)
+    if (status === "INACTIVE") {
+      return {
+        type: "EXPIRED",
+        label: "Gói đã hết hạn",
+        subLabel: `Hết hạn ngày ${new Date(endDate).toLocaleDateString("vi-VN")}`,
+        className: "bg-red-100 text-red-700",
+        cta: "Gia hạn ngay",
+      };
+    }
+
+    // ✅ ACTIVE / PENDING / DRAFTED nhưng đã có gói
+    return {
+      type: "ACTIVE",
+      label: `Gói ${durationDays} ngày từ ${new Date(startDate).toLocaleDateString("vi-VN")} - ${new Date(endDate).toLocaleDateString("vi-VN")}`,
+      subLabel: "",
+      className: "bg-blue-50 text-blue-600",
+      cta: "Xem chi tiết",
+    };
+  }
 
 
   useEffect(() => {
@@ -79,6 +113,7 @@ export default function MyLocationPage() {
           )}
 
           {locations.map((loc) => {
+            const sub = getSubscriptionInfo(loc);
             return (
               <div
                 key={loc.id}
@@ -122,7 +157,7 @@ export default function MyLocationPage() {
                       </span>
 
                       {loc.status === "ACTIVE" && "Đang mở"}
-                      {loc.status === "INACTIVE" && "Đang đóng"}
+                      {loc.status === "INACTIVE" && "Hết hạn"}
                       {loc.status === "PENDING" && "Chờ duyệt"}
                       {loc.status === "DRAFTED" && "Bản nháp"}
                     </span>
@@ -135,7 +170,7 @@ export default function MyLocationPage() {
 
                   <div className="mt-1 space-y-1 text-sm text-gray-500">
                     <div className="flex items-start gap-1">
-                      <MapPin size={14} className="mt-[2px] shrink-0" />
+                      <MapPin size={14} className="mt-0.5 shrink-0" />
                       <span className="line-clamp-2">
                         {loc.address}
                       </span>
@@ -145,6 +180,25 @@ export default function MyLocationPage() {
                       <CalendarDays size={13} />
                       {new Date(loc.createdAt).toLocaleDateString("vi-VN")}
                     </div>
+                  </div>
+                  {/* Subscription */}
+                  <div className="mt-2">
+                    {sub.type === "EXPIRED" ? (
+                      <div className="px-3 py-2">
+                        <div className="text-sm font-semibold text-red-600">
+                          {sub.label}
+                        </div>
+                        <div className="text-xs text-red-500">
+                          {sub.subLabel}
+                        </div>
+                      </div>
+                    ) : (
+                      <div
+                        className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${sub.className}`}
+                      >
+                        {sub.label}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -180,7 +234,7 @@ export default function MyLocationPage() {
             { key: 'all', label: 'Tất cả', value: stats.all },
             { key: 'DRAFTED', label: 'Bản nháp', value: stats.DRAFTED },
             { key: 'ACTIVE', label: 'Đang mở', value: stats.ACTIVE },
-            { key: 'INACTIVE', label: 'Đang đóng', value: stats.INACTIVE },
+            { key: 'INACTIVE', label: 'Hết hạn', value: stats.INACTIVE },
             { key: 'PENDING', label: 'Chờ duyệt', value: stats.PENDING },
           ].map(item => (
             <div

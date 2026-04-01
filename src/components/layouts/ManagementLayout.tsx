@@ -2,24 +2,76 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { SidebarConfig } from '@/types/sidebar';
-import { useState, useEffect } from 'react';
+import { SidebarConfig, IconName } from '@/types/sidebar';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Menu,
   X,
   ChevronDown,
   LogOut,
   User,
+  LayoutDashboard,
+  Building2,
+  Users,
+  Megaphone,
+  Sparkles,
+  Trophy,
+  Tag,
+  Flag,
+  Settings,
+  FolderTree,
+  Wallet,
+  CreditCard,
+  Package,
+  ClipboardList,
+  Calendar,
+  MessageSquare,
+  BarChart,
+  BarChart3,
+  FileText,
+  MapPin,
+  TicketPercent,
 } from 'lucide-react';
 import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 import EditProfileModal from '@/components/EditProfileModal';
 import { apiClient } from '@/lib/api-client';
+import Image from 'next/image';
 
 type ManagementLayoutProps = {
   children: React.ReactNode;
   sidebarConfig: SidebarConfig;
   title?: string;
+};
+
+// Icon mapper
+const iconMap: Record<IconName, React.ComponentType<{ className?: string }>> = {
+  LayoutDashboard,
+  Building2,
+  Users,
+  Megaphone,
+  Sparkles,
+  Trophy,
+  Tag,
+  Flag,
+  Settings,
+  FolderTree,
+  Wallet,
+  CreditCard,
+  Package,
+  ClipboardList,
+  Calendar,
+  MessageSquare,
+  BarChart,
+  BarChart3,
+  FileText,
+  MapPin,
+  TicketPercent,
+};
+
+const getIcon = (iconName?: IconName) => {
+  if (!iconName) return null;
+  return iconMap[iconName];
 };
 
 export default function ManagementLayout({
@@ -58,13 +110,13 @@ export default function ManagementLayout({
   const handleLogout = () => {
     // Xóa token từ localStorage và api client
     apiClient.clearAuthToken();
-    
+
     // Xóa cookie
     document.cookie = 'accessToken=; path=/; max-age=0';
-    
+
     // Đóng menu
     setShowProfileMenu(false);
-    
+
     // Redirect về trang auth
     window.location.replace('/auth');
   };
@@ -87,26 +139,43 @@ export default function ManagementLayout({
     return roleMap[role] || role;
   };
 
-  const handleProfileUpdate = (updatedProfile: UserProfile) => {
-    setUserProfile(updatedProfile);
+  const fetchUserProfile = useCallback(async () => {
+    const response = await getMe();
+    setUserProfile(response.data);
+  }, []);
+
+  const handleProfileUpdated = async () => {
+    await fetchUserProfile();
   };
 
+  useEffect(() => {
+    const handleOpenProfileModal = () => {
+      setShowEditModal(true);
+    };
+
+    window.addEventListener("openProfileModal", handleOpenProfileModal);
+
+    return () => {
+      window.removeEventListener("openProfileModal", handleOpenProfileModal);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen flex ">
+    <div className="h-screen flex overflow-hidden">
       {/* Sidebar */}
       <aside
         className={`
-          ${isSidebarOpen ? 'w-64' : 'w-20'} 
+          ${isSidebarOpen ? 'w-56' : 'w-16'} 
           bg-[#8093F1] flex flex-col transition-all duration-300 ease-in-out
-          border-r border-purple-100
+          border-r border-purple-200/50
         `}
       >
         {/* Sidebar Header */}
-        <div className="p-4 border-b border-purple-100 bg-[#8093F1]">
+        <div className="p-2.5 border-b border-white/10 bg-[#8093F1]">
           <div className="flex items-center justify-between">
             {isSidebarOpen && (
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-linear-to-br from-purple-400 to-pink-400 rounded-lg flex items-center justify-center text-white font-bold">
+                <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-white font-bold text-xs">
                   CM
                 </div>
                 <span className="font-semibold text-white text-sm">CoupleMood</span>
@@ -114,39 +183,43 @@ export default function ManagementLayout({
             )}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-2 hover:bg-purple-100 rounded-lg transition-all duration-200 text-white"
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-all duration-200 text-white"
             >
-              {isSidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              {isSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
           </div>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-3 overflow-y-auto">
+        <nav className="flex-1 p-2 overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
 
 
-                    {/* Fallback for tabs without sections */}
+          {/* Fallback for tabs without sections */}
           {sidebarConfig.tabs && (
-            <div className="space-y-1">
+            <div className="space-y-0.5">
               {sidebarConfig.tabs.map((tab) => {
                 const isActive = pathname === tab.href;
-                const Icon = tab.icon;
+                const Icon = getIcon(tab.icon);
 
                 return (
                   <Link
                     key={tab.href}
                     href={tab.href}
                     className={`
-                      flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 mb-4
-                      group relative overflow-hidden
+                      flex items-center gap-2 px-2.5 py-2 rounded-lg transition-all duration-200
+                      group relative
                       ${isActive
-                        ? 'bg-gradient-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
-                        : 'text-white hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
+                        ? 'bg-white text-[#8093F1] shadow-sm font-medium'
+                        : 'text-white/90 hover:bg-white/10 hover:text-white'
                       }
                     `}
+                    title={!isSidebarOpen ? tab.label : undefined}
                   >
-                    {Icon && <Icon className="w-5 h-5" />}
-                    {isSidebarOpen && <span className="font-medium text-sm">{tab.label}</span>}
+                    {Icon && <Icon className="w-4 h-4 shrink-0" />}
+                    {isSidebarOpen && <span className="text-xs truncate">{tab.label}</span>}
+                    {isActive && (
+                      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-white rounded-l"></div>
+                    )}
                   </Link>
                 );
               })}
@@ -155,55 +228,57 @@ export default function ManagementLayout({
 
           {/* Sections */}
           {sidebarConfig.sections?.map((section) => (
-            <div key={section.title} className="mb-4">
+            <div key={section.title} className="mb-3">
               {isSidebarOpen && (
                 <button
                   onClick={() => toggleSection(section.title)}
-                  className="w-full flex items-center justify-between px-3 py-2 font-semibold text-white transition-colors"
+                  className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold text-white/80 hover:text-white transition-colors"
                 >
-                  <div className="flex items-center gap-2">
-                    {section.icon && <section.icon className="w-5 h-5" />}
-                  <span>{section.title}</span>
+                  <div className="flex items-center gap-1.5">
+                    {section.icon && (() => {
+                      const SectionIcon = getIcon(section.icon);
+                      return SectionIcon ? <SectionIcon className="w-4 h-4" /> : null;
+                    })()}
+                    <span>{section.title}</span>
                   </div>
-                  
+
                   <ChevronDown
-                    className={`w-4 h-4 transition-transform duration-200 ${expandedSections.includes(section.title) ? 'rotate-180' : ''
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${expandedSections.includes(section.title) ? 'rotate-180' : ''
                       }`}
                   />
                 </button>
               )}
 
-              <div className={`space-y-1 ${isSidebarOpen && !expandedSections.includes(section.title)
-                  ? 'hidden'
-                  : ''
+              <div className={`space-y-0.5 mt-0.5 ${isSidebarOpen && !expandedSections.includes(section.title)
+                ? 'hidden'
+                : ''
                 }`}>
                 {section.items.map((item) => {
                   const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
-                   const Icon = item.icon;
+                  const Icon = getIcon(item.icon);
 
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
                       className={`
-                        flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
-                        group relative overflow-hidden ml-7
+                        flex items-center gap-2 px-2.5 py-2 rounded-lg transition-all duration-200
+                        group relative ${isSidebarOpen ? 'ml-5' : ''}
                         ${isActive
-                          ? 'bg-linear-to-r from-purple-100 to-pink-100 text-purple-700 shadow-sm'
-                          : 'text-white hover:bg-purple-50 hover:text-purple-600 hover:translate-x-1'
+                          ? 'bg-white text-[#8093F1] shadow-sm font-medium'
+                          : 'text-white/90 hover:bg-white/10 hover:text-white'
                         }
                       `}
                       title={!isSidebarOpen ? item.label : undefined}
                     >
                       {Icon && (
-                        <Icon className={`w-5 h-5 transition-transform duration-200 ${!isActive ? 'group-hover:scale-110' : ''
-                          }`} />
+                        <Icon className="w-4 h-4 shrink-0" />
                       )}
                       {isSidebarOpen && (
-                        <span className="font-medium text-sm">{item.label}</span>
+                        <span className="text-xs truncate">{item.label}</span>
                       )}
                       {isActive && (
-                        <div className="absolute right-0 top-0 bottom-0 w-1 bg-linear-to-b from-purple-400 to-pink-400 rounded-l"></div>
+                        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-white rounded-l"></div>
                       )}
                     </Link>
                   );
@@ -229,7 +304,7 @@ export default function ManagementLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Header */}
         <header className="bg-white border-b border-purple-100">
           <div className="px-8 py-4">
@@ -275,13 +350,15 @@ export default function ManagementLayout({
                       </p>
                     </div>
                     {userProfile?.avatarUrl ? (
-                      <img
-                        src={userProfile.avatarUrl}
+                      <Image
+                        src={userProfile.avatarUrl || "/default-avatar.png"}
                         alt={userProfile.fullName}
-                        className="w-10 h-10 rounded-full object-cover ring-2 ring-purple-200 hover:ring-purple-400 transition-all duration-200"
+                        width={40}
+                        height={40}
+                        className="rounded-full object-cover ring-2 ring-purple-200 hover:ring-purple-400 transition-all duration-200"
                       />
                     ) : (
-                      <div className="w-10 h-10 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all duration-200">
+                      <div className="w-10 h-10 bg-linear-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-white font-semibold cursor-pointer hover:shadow-lg transition-all duration-200">
                         {userProfile ? getInitials(userProfile.fullName) : '?'}
                       </div>
                     )}
@@ -292,13 +369,15 @@ export default function ManagementLayout({
                   {showProfileMenu && (
                     <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-purple-100 overflow-hidden z-50">
                       {/* Profile Header */}
-                      <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
+                      <div className="bg-linear-to-r from-purple-500 to-pink-500 p-4">
                         <div className="flex items-center gap-3">
                           {userProfile?.avatarUrl ? (
-                            <img
-                              src={userProfile.avatarUrl}
-                              alt={userProfile.fullName}
-                              className="w-14 h-14 rounded-full object-cover ring-4 ring-white/30"
+                            <Image
+                              src={userProfile.avatarUrl || "/default-avatar.png"}
+                              alt={userProfile.fullName || "avatar"}
+                              width={56}
+                              height={56}
+                              className="rounded-full object-cover ring-4 ring-white/30"
                             />
                           ) : (
                             <div className="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white font-bold text-lg ring-4 ring-white/30">
@@ -374,8 +453,9 @@ export default function ManagementLayout({
         </header>
 
         {/* Content */}
-        <div className="flex-1">
-          <div className="">{children}</div>
+
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <div>{children}</div>
         </div>
       </main>
 
@@ -385,7 +465,7 @@ export default function ManagementLayout({
           isOpen={showEditModal}
           onClose={() => setShowEditModal(false)}
           userProfile={userProfile}
-          onUpdate={handleProfileUpdate}
+          onUpdate={handleProfileUpdated}
         />
       )}
     </div>

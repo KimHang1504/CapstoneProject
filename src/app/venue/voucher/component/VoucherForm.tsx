@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { CreateVoucherRequest, DiscountType } from "@/api/venue/vouchers/type";
 import SelectLocationModal from "@/app/venue/voucher/component/SelectLocationModal";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 type Props = {
   initialData?: CreateVoucherRequest;
@@ -25,18 +25,21 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
     quantity: 1,
 
-    usageLimitPerMember: 1,
+    usageLimitPerMember: null,
     usageValiDays: 7,
 
     venueLocationIds: [],
+    imageUrl: "",
 
     startDate: "",
     endDate: "",
   };
 
-  const [form, setForm] = useState<CreateVoucherRequest>(
-    initialData ?? defaultForm
-  );
+  const [form, setForm] = useState<CreateVoucherRequest>({
+    ...defaultForm,
+    ...initialData,
+    imageUrl: initialData?.imageUrl ?? "",
+  });
 
   const [selectedLocationIds, setSelectedLocationIds] = useState<number[]>(
     initialData?.venueLocationIds ?? []
@@ -139,6 +142,34 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
             }
           />
         </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">
+            Ảnh voucher
+          </label>
+
+          <input
+            type="text"
+            className="w-full border border-violet-200 rounded-xl px-4 py-3
+            focus:outline-none focus:ring-2 focus:ring-violet-500"
+            placeholder="Nhập URL ảnh"
+            value={form.imageUrl || ""}
+            onChange={(e) =>
+              handleChange("imageUrl", e.target.value)
+            }
+          />
+          {form.imageUrl && (
+            <div className="mt-4">
+              <img
+                src={form.imageUrl}
+                alt="preview"
+                className="w-48 h-32 object-cover rounded-lg border"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = "none";
+                }}
+              />
+            </div>
+          )}
+        </div>
 
 
         {/* DISCOUNT TYPE */}
@@ -219,7 +250,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
           <div>
             <label className="block text-sm font-medium mb-2">
-              Giá đổi (Point)
+              Giá đổi
             </label>
 
             <input
@@ -268,12 +299,14 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
               type="number"
               className="w-full border border-violet-200 rounded-xl px-4 py-3"
               value={form.usageLimitPerMember ?? ""}
-              onChange={(e) =>
+              onChange={(e) => {
+                const value = e.target.value;
+
                 handleChange(
                   "usageLimitPerMember",
-                  Number(e.target.value)
-                )
-              }
+                  value === "" ? null : Number(value)
+                );
+              }}
             />
           </div>
 
@@ -368,8 +401,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
             {loading
               ? "Đang lưu..."
               : isEdit
-              ? "Cập nhật"
-              : "Tiếp tục"}
+                ? "Cập nhật"
+                : "Tiếp tục"}
           </button>
 
         </div>

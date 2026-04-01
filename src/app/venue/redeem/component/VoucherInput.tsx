@@ -15,26 +15,49 @@ export default function VoucherInput({ venueLocationId }: Props) {
     const [message, setMessage] = useState("");
     const [valid, setValid] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [validatedCode, setValidatedCode] = useState("");
 
     const handleValidate = async (voucherCode: string) => {
-        if (!voucherCode) return;
+        const normalizedCode = voucherCode.trim().toUpperCase();
+
+        if (!normalizedCode) {
+            setValid(false);
+            setValidatedCode("");
+            setMessage("Vui lòng nhập mã voucher");
+            return;
+        }
+
+        if (!venueLocationId) {
+            setValid(false);
+            setValidatedCode("");
+            setMessage("Vui lòng chọn địa điểm");
+            return;
+        }
 
         try {
             setLoading(true);
             setMessage("");
+            setValid(false);
 
-            const res = await validateVoucherItem(voucherCode, venueLocationId);
+            const res = await validateVoucherItem({
+                itemCode: normalizedCode,
+                venueLocationId,
+            });
+
             const data = res.data;
 
-            if (data.isValid) {
+            if (data?.isValid) {
                 setValid(true);
-                setMessage("Voucher hợp lệ. Có thể sử dụng.");
+                setValidatedCode(normalizedCode);
+                setMessage(data.validationMessage || "Voucher hợp lệ. Có thể sử dụng.");
             } else {
                 setValid(false);
-                setMessage(data.validationMessage || "Voucher không hợp lệ");
+                setValidatedCode("");
+                setMessage(data?.validationMessage || "Voucher không hợp lệ");
             }
         } catch (err: any) {
             setValid(false);
+            setValidatedCode("");
             setMessage(
                 err?.response?.data?.message || "Voucher không hợp lệ"
             );
@@ -44,14 +67,29 @@ export default function VoucherInput({ venueLocationId }: Props) {
     };
 
     const handleRedeem = async () => {
+        if (!validatedCode) {
+            setMessage("Vui lòng kiểm tra voucher hợp lệ trước");
+            return;
+        }
+
+        if (!venueLocationId) {
+            setMessage("Vui lòng chọn địa điểm");
+            return;
+        }
+
         try {
             setLoading(true);
+            setMessage("");
 
-            await redeemVoucherItem(code);
+            await redeemVoucherItem({
+                itemCode: validatedCode,
+                venueLocationId,
+            });
 
             setMessage("Redeem voucher thành công!");
             setValid(false);
             setCode("");
+            setValidatedCode("");
         } catch (err: any) {
             setMessage(
                 err?.response?.data?.message || "Redeem thất bại"
@@ -62,7 +100,8 @@ export default function VoucherInput({ venueLocationId }: Props) {
     };
 
     useEffect(() => {
-        if (!code) return;
+        // Không đủ 10 ký tự thì không gọi API
+        if (!code || code.length < 10) return;
 
         const delay = setTimeout(() => {
             handleValidate(code);
@@ -110,7 +149,7 @@ export default function VoucherInput({ venueLocationId }: Props) {
             {valid && !loading && (
                 <div className="space-y-3">
                     <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                        <div className="flex-shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
+                        <div className="shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
                             <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
@@ -123,7 +162,7 @@ export default function VoucherInput({ venueLocationId }: Props) {
                     <button
                         onClick={handleRedeem}
                         disabled={loading}
-                        className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 py-3.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                        className="w-full bg-linear-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white px-6 py-3.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -134,9 +173,9 @@ export default function VoucherInput({ venueLocationId }: Props) {
             )}
 
             {/* Error/Info Message */}
-            {message && !valid && !loading && (
+            {message && !valid && !loading && !message.includes("thành công") && (
                 <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-100 rounded-xl">
-                    <div className="flex-shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center mt-0.5">
+                    <div className="shrink-0 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center mt-0.5">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -148,7 +187,7 @@ export default function VoucherInput({ venueLocationId }: Props) {
             {/* Success Message after Redeem */}
             {message && message.includes("thành công") && (
                 <div className="flex items-start gap-3 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
-                    <div className="flex-shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
+                    <div className="shrink-0 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center mt-0.5">
                         <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>

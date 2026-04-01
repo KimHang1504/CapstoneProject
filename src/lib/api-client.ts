@@ -151,7 +151,12 @@ class ApiClient {
       const error = await response.json().catch(() => ({
         message: response.statusText,
       }));
-      throw new Error(error.message || "Upload failed");
+
+      const customError: any = new Error(error.message || "Upload failed");
+      customError.data = error;
+      customError.status = response.status;
+
+      throw customError;
     }
 
     return response.json();
