@@ -46,6 +46,7 @@ export type Voucher = {
 
   title: string;
   description?: string;
+  imageUrl: string | null;
 
   voucherPrice: number;
 
