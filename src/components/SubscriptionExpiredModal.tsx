@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
-import { getPaymentQrInfo, getPaymentStatus } from '@/api/venue/payment/api';
+import { getPaymentQrInfo, getPaymentStatus, cancelPayment } from '@/api/venue/payment/api';
 import { PaymentQrInfo } from '@/api/venue/payment/type';
 
 interface SubscriptionExpiredModalProps {
@@ -19,7 +19,7 @@ interface SubscriptionExpiredModalProps {
   message?: string;
 }
 
-type ModalStep = 'packages' | 'payment-method' | 'wallet-processing' | 'qr-payment';
+type ModalStep = 'packages' | 'payment-method' | 'wallet-confirm' | 'wallet-processing' | 'qr-payment';
 
 export default function SubscriptionExpiredModal({ isOpen, onClose, message }: SubscriptionExpiredModalProps) {
   const [step, setStep] = useState<ModalStep>('packages');
@@ -31,6 +31,7 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
   const [walletProgress, setWalletProgress] = useState(0);
   const [walletStatus, setWalletStatus] = useState<'processing' | 'success' | 'error'>('processing');
   const [walletError, setWalletError] = useState('');
+  const [walletTransactionId, setWalletTransactionId] = useState<number | null>(null);
   
   const [qrPayment, setQrPayment] = useState<PaymentQrInfo | null>(null);
   const [transactionId, setTransactionId] = useState<number | null>(null);
@@ -90,6 +91,24 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
     }
   }, [step, transactionId, onClose]);
 
+  // Cleanup: Cancel pending transactions on unmount
+  useEffect(() => {
+    return () => {
+      // Cancel wallet transaction if still processing
+      if (walletTransactionId && walletStatus !== 'success') {
+        cancelPayment(walletTransactionId).catch(err => 
+          console.error('Cleanup: Cancel wallet payment error:', err)
+        );
+      }
+      // Cancel QR transaction if still pending
+      if (transactionId && step === 'qr-payment') {
+        cancelPayment(transactionId).catch(err => 
+          console.error('Cleanup: Cancel QR payment error:', err)
+        );
+      }
+    };
+  }, [walletTransactionId, walletStatus, transactionId, step]);
+
   const fetchPackages = async () => {
     try {
       setIsLoading(true);
@@ -108,7 +127,94 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
     setStep('payment-method');
   };
 
-  const handlePaymentMethod = async (method: 'WALLET' | 'VIETQR') => {
+  const handlePaymentMethod = (method: 'WALLET' | 'VIETQR') => {
+    if (!selectedPackage) return;
+
+    if (method === 'WALLET') {
+      // Chuyển sang bước confirm cho wallet
+      setStep('wallet-confirm');
+    } else {
+      // VietQR: gọi API ngay
+      handleVietQRPayment();
+    }
+  };
+
+  const parseErrorMessage = (errorMessage: string): string => {
+    // Parse "Insufficient wallet balance. Available: 3,420 VND, Required: 4,000 VND"
+    const balanceMatch = errorMessage.match(/Available:\s*([\d,]+)\s*VND.*Required:\s*([\d,]+)\s*VND/i);
+    if (balanceMatch) {
+      const available = balanceMatch[1];
+      const required = balanceMatch[2];
+      return `Số dư ví không đủ. Bạn có ${available} VND, cần ${required} VND. Vui lòng nạp thêm ${(parseInt(required.replace(/,/g, '')) - parseInt(available.replace(/,/g, ''))).toLocaleString('vi-VN')} VND.`;
+    }
+
+    // Parse other common errors
+    if (errorMessage.includes('Insufficient') || errorMessage.includes('balance')) {
+      return 'Số dư ví không đủ để thanh toán. Vui lòng nạp thêm tiền vào ví.';
+    }
+    
+    if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
+      return 'Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.';
+    }
+
+    if (errorMessage.includes('expired') || errorMessage.includes('hết hạn')) {
+      return 'Phiên giao dịch đã hết hạn. Vui lòng thử lại.';
+    }
+
+    // Return original message if no match
+    return errorMessage;
+  };
+
+  const handleWalletConfirm = async () => {
+    if (!selectedPackage) return;
+
+    setStep('wallet-processing');
+    setWalletProgress(0);
+    setWalletStatus('processing');
+    setProcessingPackageId(selectedPackage.id);
+
+    try {
+      const response = await purchaseVenueOwnerSubscription({
+        packageId: selectedPackage.id,
+        quantity: 1,
+        paymentMethod: 'WALLET'
+      });
+
+      // Check response code và isSuccess
+      if (response.code !== 200 || !response.data.isSuccess) {
+        throw new Error(response.data.message || response.message || 'Không thể tạo thanh toán');
+      }
+
+      const payment = response.data;
+      
+      // Lưu transaction ID để có thể cancel sau này
+      setWalletTransactionId(payment.transactionId);
+
+      // Simulate processing
+      setTimeout(() => {
+        setWalletProgress(100);
+        setWalletStatus('success');
+        setTimeout(() => {
+          toast.success('Thanh toán thành công!');
+          onClose();
+          window.location.reload();
+        }, 1500);
+      }, 3000);
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Không thể tạo thanh toán';
+      const friendlyMessage = parseErrorMessage(errorMessage);
+      
+      setWalletStatus('error');
+      setWalletError(friendlyMessage);
+      
+      // Show toast with friendly message
+      toast.error(friendlyMessage);
+    } finally {
+      setProcessingPackageId(null);
+    }
+  };
+
+  const handleVietQRPayment = async () => {
     if (!selectedPackage) return;
 
     setProcessingPackageId(selectedPackage.id);
@@ -117,52 +223,25 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
       const response = await purchaseVenueOwnerSubscription({
         packageId: selectedPackage.id,
         quantity: 1,
-        paymentMethod: method
+        paymentMethod: 'VIETQR'
       });
 
-      if (response.code !== 200) {
-        throw new Error(response.message || 'Không thể tạo thanh toán');
+      // Check response code và isSuccess
+      if (response.code !== 200 || !response.data.isSuccess) {
+        throw new Error(response.data.message || response.message || 'Không thể tạo thanh toán');
       }
 
       const payment = response.data;
-
-      if (method === 'WALLET') {
-        setStep('wallet-processing');
-        setWalletProgress(0);
-        setWalletStatus('processing');
-        
-        setTimeout(() => {
-          setWalletProgress(100);
-          setWalletStatus('success');
-          setTimeout(() => {
-            toast.success('Thanh toán thành công!');
-            onClose();
-            window.location.reload();
-          }, 1500);
-        }, 5000);
-      } else {
-        setTransactionId(payment.transactionId);
-        const qrRes = await getPaymentQrInfo(payment.transactionId);
-        setQrPayment(qrRes.data);
-        setStep('qr-payment');
-      }
+      setTransactionId(payment.transactionId);
+      const qrRes = await getPaymentQrInfo(payment.transactionId);
+      setQrPayment(qrRes.data);
+      setStep('qr-payment');
     } catch (error: any) {
       const errorMessage = error?.message || 'Không thể tạo thanh toán';
+      const friendlyMessage = parseErrorMessage(errorMessage);
       
-      if (errorMessage.includes('pending') || errorMessage.includes('transaction')) {
-        toast.error('Bạn đang có giao dịch chưa hoàn thành.');
-      } else if (errorMessage.includes('balance') || errorMessage.includes('insufficient')) {
-        toast.error('Số dư ví không đủ');
-      } else {
-        toast.error(errorMessage);
-      }
-      
-      if (method === 'WALLET') {
-        setWalletStatus('error');
-        setWalletError(errorMessage);
-      } else {
-        setStep('packages');
-      }
+      toast.error(friendlyMessage);
+      setStep('payment-method');
     } finally {
       setProcessingPackageId(null);
     }
@@ -172,15 +251,37 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
     if (step === 'payment-method') {
       setStep('packages');
       setSelectedPackage(null);
+    } else if (step === 'wallet-confirm') {
+      setStep('payment-method');
     } else if (step === 'qr-payment') {
+      // Cancel QR transaction if exists
+      if (transactionId) {
+        cancelPayment(transactionId).catch(err => console.error('Cancel QR payment error:', err));
+      }
       setStep('payment-method');
       setQrPayment(null);
       setTransactionId(null);
-    } else if (step === 'wallet-processing' && walletStatus === 'error') {
-      setStep('payment-method');
+    } else if (step === 'wallet-processing') {
+      // Cancel wallet transaction if exists and not success
+      if (walletTransactionId && walletStatus !== 'success') {
+        cancelPayment(walletTransactionId).catch(err => console.error('Cancel wallet payment error:', err));
+      }
+      setStep('wallet-confirm');
       setWalletStatus('processing');
       setWalletError('');
+      setWalletTransactionId(null);
     }
+  };
+
+  const handleClose = () => {
+    // Cancel any pending transactions before closing
+    if (step === 'wallet-processing' && walletTransactionId && walletStatus !== 'success') {
+      cancelPayment(walletTransactionId).catch(err => console.error('Cancel wallet payment error:', err));
+    }
+    if (step === 'qr-payment' && transactionId) {
+      cancelPayment(transactionId).catch(err => console.error('Cancel QR payment error:', err));
+    }
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -189,7 +290,7 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative shadow-xl">
         <button
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors z-10 rounded-lg p-1.5"
         >
           <X size={20} />
@@ -342,6 +443,84 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
           </div>
         )}
 
+        {step === 'wallet-confirm' && selectedPackage && (
+          <div className="p-6">
+            <button 
+              onClick={handleBack} 
+              className="mb-4 text-gray-600 hover:text-gray-900 flex items-center gap-2 font-medium"
+            >
+              <ArrowLeft size={18} />
+              Quay lại
+            </button>
+
+            <div className="max-w-md mx-auto">
+              <div className="text-center mb-6">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+                  <Wallet className="text-purple-600" size={32} />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  Xác nhận thanh toán
+                </h2>
+                <p className="text-gray-600">Vui lòng kiểm tra thông tin trước khi thanh toán</p>
+              </div>
+
+              <div className="bg-gray-50 rounded-xl p-5 mb-6 space-y-4">
+                <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                  <span className="text-gray-600">Gói đăng ký</span>
+                  <span className="font-bold text-gray-900">{selectedPackage.packageName}</span>
+                </div>
+                
+                <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                  <span className="text-gray-600">Thời hạn</span>
+                  <span className="font-semibold text-gray-900">{selectedPackage.durationDays} ngày</span>
+                </div>
+
+                <div className="flex justify-between items-center pb-3 border-b border-gray-200">
+                  <span className="text-gray-600">Phương thức</span>
+                  <div className="flex items-center gap-2">
+                    <Wallet size={16} className="text-purple-600" />
+                    <span className="font-semibold text-gray-900">Ví điện tử</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-gray-900 font-medium">Tổng thanh toán</span>
+                  <span className="text-2xl font-bold text-purple-600">
+                    {selectedPackage.price.toLocaleString('vi-VN')} VND
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div className="flex gap-3">
+                  <AlertCircle className="text-blue-600 flex-shrink-0 mt-0.5" size={20} />
+                  <div className="text-sm text-blue-900">
+                    <p className="font-medium mb-1">Lưu ý:</p>
+                    <p>Số tiền sẽ được trừ trực tiếp từ ví của bạn. Vui lòng đảm bảo số dư đủ để thanh toán.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <button
+                  onClick={handleWalletConfirm}
+                  disabled={processingPackageId !== null}
+                  className="w-full bg-purple-600 text-white py-3.5 rounded-lg font-bold hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {processingPackageId ? 'Đang xử lý...' : 'Xác nhận thanh toán'}
+                </button>
+                
+                <button
+                  onClick={handleBack}
+                  className="w-full bg-gray-100 text-gray-700 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-colors"
+                >
+                  Hủy
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {step === 'wallet-processing' && (
           <div className="p-6">
             <div className="max-w-md mx-auto text-center py-8">
@@ -391,14 +570,39 @@ export default function SubscriptionExpiredModal({ isOpen, onClose, message }: S
 
               {walletStatus === 'error' && (
                 <div className="space-y-4">
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-red-700">{walletError}</p>
+                  <div className="bg-red-50 border-2 border-red-200 rounded-xl p-5">
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <AlertCircle className="text-red-600" size={20} />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-red-900 mb-1">Không thể thanh toán</h3>
+                        <p className="text-sm text-red-700 leading-relaxed">{walletError}</p>
+                      </div>
+                    </div>
+                    
+                    {walletError.includes('Số dư ví không đủ') && (
+                      <div className="mt-4 pt-4 border-t border-red-200">
+                        <p className="text-sm text-red-800 mb-3 font-medium">Bạn có thể:</p>
+                        <div className="space-y-2 text-sm text-red-700">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+                            <span>Nạp thêm tiền vào ví</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+                            <span>Chọn phương thức thanh toán VietQR</span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
+                  
                   <button 
                     onClick={handleBack} 
-                    className="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+                    className="w-full bg-gray-600 text-white py-3.5 rounded-lg font-bold hover:bg-gray-700 transition-colors"
                   >
-                    Thử lại
+                    Thử phương thức khác
                   </button>
                 </div>
               )}
