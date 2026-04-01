@@ -41,7 +41,7 @@ export const venueSidebarConfig: SidebarConfig = {
           href: '/venue/location/mylocation',
         },
         {
-          label: 'Lịch sử giao dịch',
+          label: 'Lịch sử đăng ký',
           href: '/venue/location/subscriptions/transaction',
         },
       ],
@@ -73,7 +73,7 @@ export const venueSidebarConfig: SidebarConfig = {
           href: '/venue/advertisement',
         },
         {
-          label: 'Lịch sử giao dịch',
+          label: 'Lịch sử mua quảng cáo',
           href: '/venue/advertisement/transaction',
         },
       ],
