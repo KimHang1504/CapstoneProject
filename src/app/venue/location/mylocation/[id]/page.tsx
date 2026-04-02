@@ -34,16 +34,8 @@ export default function LocationDetailPage() {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
 
-
-    const moods =
-        location?.locationTags
-            ?.map(tag => tag.coupleMoodType)
-            .filter(Boolean) ?? [];
-
-    const personalities =
-        location?.locationTags
-            ?.map(tag => tag.couplePersonalityType)
-            .filter(Boolean) ?? [];
+    const tags =
+        location?.locationTags?.map(tag => tag.tagName) ?? [];
 
     const nextImage = () => {
         setCurrentImageIndex(prev => (prev + 1) % images.length)
@@ -402,6 +394,7 @@ export default function LocationDetailPage() {
                                 Mở trang redeem →
                             </a>
                         </div>
+                        <p className="text-sm font-bold mb-2">Danh mục</p>
 
                         {location.categories?.length ? (
                             <div className="flex gap-2 flex-wrap">
@@ -417,44 +410,22 @@ export default function LocationDetailPage() {
                         ) : (
                             <span className="text-gray-500">Chưa có danh mục</span>
                         )}
-                        <div>
-                            <p className="text-sm font-bold mb-2">Tâm trạng</p>
-                            <div className="flex flex-wrap gap-2">
-                                {moods.length > 0 ? (
-                                    moods.map(mood => (
-                                        <span
-                                            key={mood!.id}
-                                            className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
-                                        >
-                                            {mood!.name}
-                                        </span>
-                                    ))
-                                ) : (
-                                    <div className="text-sm text-gray-400 flex items-center gap-2">
-                                        <span>Chưa chọn tâm trạng</span>
-                                        <button onClick={handleEdit} className="text-violet-500 hover:underline">
-                                            Cập nhật ngay
-                                        </button>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
 
                         <div>
-                            <p className="text-sm font-bold mb-2">Tính cách</p>
+                            <p className="text-sm font-bold mb-2">Tags</p>
                             <div className="flex flex-wrap gap-2">
-                                {personalities.length > 0 ? (
-                                    personalities.map(personality => (
+                                {tags.length > 0 ? (
+                                    tags.map((tag, index) => (
                                         <span
-                                            key={personality!.id}
+                                            key={`${tag}-${index}`}
                                             className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
                                         >
-                                            {personality!.name}
+                                            {tag}
                                         </span>
                                     ))
                                 ) : (
                                     <div className="text-sm text-gray-400 flex items-center gap-2">
-                                        <span>Chưa chọn tính cách</span>
+                                        <span>Chưa có tag</span>
                                         <button onClick={handleEdit} className="text-violet-500 hover:underline">
                                             Cập nhật ngay
                                         </button>

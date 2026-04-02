@@ -53,6 +53,7 @@ export default function Info({ formData, setFormData }: Props) {
 
   const [moods, setMoods] = useState<CoupleMoodType[]>([]);
   const [styles, setStyles] = useState<CouplePersonalityType[]>([]);
+  
 
   useEffect(() => {
     async function fetchData() {

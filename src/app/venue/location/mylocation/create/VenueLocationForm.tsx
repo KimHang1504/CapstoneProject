@@ -68,26 +68,64 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
   }
 
   function nextStep() {
-    // STEP 1 → check name + description
+    // STEP 1 → check name + description + mood/style
     if (step === 1) {
       if (!formData.name || !formData.description) {
         toast.error("Vui lòng nhập tên và mô tả");
         return;
       }
+
+      const hasMood = formData.selectedMoods.length > 0;
+      const hasStyle = formData.selectedStyles.length > 0;
+
+      if ((hasMood && !hasStyle) || (!hasMood && hasStyle)) {
+        toast.error("Vui lòng chọn đầy đủ cả Tâm trạng và Tính cách");
+        return;
+      }
     }
 
-    // STEP 2 → check address
+    // STEP 2 → check address + format contact
     if (step === 2) {
       if (!formData.address) {
         toast.error("Vui lòng nhập địa chỉ");
         return;
       }
+
+      const errors = validateContact(formData);
+
+      if (errors.phone || errors.email || errors.website) {
+        toast.error("Vui lòng nhập đúng định dạng thông tin liên hệ");
+        return;
+      }
     }
 
     if (step < steps.length) {
-      setStep((s) => s + 1)
+      setStep((s) => s + 1);
     }
   }
+
+  function validateContact(formData: VenueFormData) {
+    const errors = {
+      phone: "",
+      email: "",
+      website: ""
+    };
+
+    if (formData.phoneNumber && !/^(0|\+84)[0-9]{9,10}$/.test(formData.phoneNumber)) {
+      errors.phone = "Số điện thoại không hợp lệ";
+    }
+
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Email không hợp lệ";
+    }
+
+    if (formData.websiteUrl && !/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(formData.websiteUrl)) {
+      errors.website = "Website không hợp lệ";
+    }
+
+    return errors;
+  }
+
   function hasAtLeastOneField(data: VenueFormData) {
     return (
       data.name ||
@@ -155,6 +193,14 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
       if (!hasAtLeastOneField(formData)) {
         toast.error("Vui lòng nhập ít nhất một thông tin để lưu bản nháp");
+        return;
+      }
+      const hasMood = formData.selectedMoods.length > 0;
+      const hasStyle = formData.selectedStyles.length > 0;
+
+      // Nếu có 1 mà thiếu 1 → lỗi
+      if ((hasMood && !hasStyle) || (!hasMood && hasStyle)) {
+        toast.error("Vui lòng chọn đầy đủ cả Tâm trạng và Tính cách");
         return;
       }
 
