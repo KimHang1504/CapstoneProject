@@ -7,12 +7,16 @@ import { useRouter } from 'next/navigation';
 
 import { VenueLocationDetail } from '@/api/venue/location/type';
 import { getVenueLocationDetail } from '@/api/venue/location/api';
+import { getMe } from '@/api/auth/api';
+import { UserProfile } from '@/api/auth/type';
+
 import ReviewSection from '@/app/venue/review/component/ReviewSection';
-import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2 } from 'lucide-react';
+import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
+import { checkVenueOwnerVerification, getLocationSubmitErrors } from '@/app/venue/location/utils/venue-location-submit';
 
 export default function LocationDetailPage() {
     const params = useParams();
@@ -27,7 +31,27 @@ export default function LocationDetailPage() {
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
     const [showOpeningHoursModal, setShowOpeningHoursModal] = useState(false);
     const isOpen = location?.todayOpeningHour?.isClosed === false;
+    const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+    const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
 
+
+    const moods = Array.from(
+        new Map(
+            (location?.locationTags ?? [])
+                .map(tag => tag.coupleMoodType)
+                .filter((mood): mood is NonNullable<typeof mood> => Boolean(mood))
+                .map(mood => [mood.id, mood])
+        ).values()
+    );
+
+    const personalities = Array.from(
+        new Map(
+            (location?.locationTags ?? [])
+                .map(tag => tag.couplePersonalityType)
+                .filter((personality): personality is NonNullable<typeof personality> => Boolean(personality))
+                .map(personality => [personality.id, personality])
+        ).values()
+    );
 
     const nextImage = () => {
         setCurrentImageIndex(prev => (prev + 1) % images.length)
@@ -54,6 +78,20 @@ export default function LocationDetailPage() {
 
         fetchLocation();
     }, [id]);
+
+    useEffect(() => {
+        const fetchUserProfile = async () => {
+            try {
+                const res = await getMe();
+                setUserProfile(res.data);
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+            }
+        };
+
+        fetchUserProfile();
+    }, []);
+
     useEffect(() => {
         if (!location?.address) return;
 
@@ -95,7 +133,9 @@ export default function LocationDetailPage() {
 
     const isPending = location.status === 'PENDING';
     const canSubmitForApproval =
-        location.status === 'DRAFTED' || location.status === 'PENDING';
+        location.status === 'DRAFTED' ||
+        location.status === 'PENDING' ||
+        location.status === 'INACTIVE';
     const allImages = [
         ...(location.coverImage || []),
         ...(location.interiorImage || [])
@@ -112,25 +152,24 @@ export default function LocationDetailPage() {
     const handleSubmitForApproval = () => {
         if (isPending) return;
 
-        const errors = [];
+        const { missingCitizenId } = checkVenueOwnerVerification(userProfile);
 
-        if (!location.name) errors.push("Tên địa điểm");
-        if (!location.description) errors.push("Mô tả");
-        if (!location.address) errors.push("Địa chỉ");
-        if (!location.email) errors.push("Email");
-        if (!location.phoneNumber) errors.push("Số điện thoại");
-        if (!location.categories?.length) errors.push("Danh mục");
-        if (!location.priceMin || !location.priceMax) errors.push("Khoảng giá");
-        if (!location.coverImage?.length) errors.push("Hình ảnh bìa");
-        if (!location.coupleMoodTypes?.length) errors.push("Tâm trạng");
-        if (!location.couplePersonalityTypes?.length) errors.push("Tính cách");
+        if (missingCitizenId) {
+            setOpenMissingCitizenPopup(true);
+            return;
+        }
+
+        const errors = getLocationSubmitErrors(location);
 
         if (errors.length > 0) {
             toast.error(
                 <div className="flex flex-wrap gap-1">
                     <span>Vui lòng cập nhật:</span>
                     {errors.map((err, i) => (
-                        <span key={i} className="bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs">
+                        <span
+                            key={i}
+                            className="bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs"
+                        >
                             {err}
                         </span>
                     ))}
@@ -209,14 +248,19 @@ export default function LocationDetailPage() {
                             <button
                                 onClick={handleSubmitForApproval}
                                 disabled={isPending}
-                                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-200
-        ${isPending
+                                className={`flex items-center gap-2 px-4 py-2 cursor-pointer rounded-lg font-semibold text-sm transition-all duration-200
+                                ${isPending
                                         ? 'bg-amber-100 text-amber-600 cursor-not-allowed'
                                         : 'bg-linear-to-r from-violet-500 to-purple-500 text-white hover:shadow-md hover:scale-[1.02] active:scale-[0.98]'
                                     }`}
                             >
                                 <Send size={18} />
-                                {isPending ? 'Đang chờ duyệt' : 'Gửi duyệt'}
+                                {isPending
+                                    ? 'Đang chờ duyệt'
+                                    : location.status === 'INACTIVE'
+                                        ? 'Gia hạn'
+                                        : 'Gửi duyệt'
+                                }
                             </button>
                         )}
 
@@ -366,6 +410,7 @@ export default function LocationDetailPage() {
                                 Mở trang redeem →
                             </a>
                         </div>
+                        <p className="text-sm font-bold mb-2">Danh mục</p>
 
                         {location.categories?.length ? (
                             <div className="flex gap-2 flex-wrap">
@@ -383,50 +428,57 @@ export default function LocationDetailPage() {
                         )}
                         <div>
                             <p className="text-sm font-bold mb-2">Tâm trạng</p>
-                            {location.coupleMoodTypes?.length ? (
-                                location.coupleMoodTypes.map(mood => (
-
-                                    <span key={mood.id}
-                                        className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
-
-                                    >
-                                        {mood.name}
-                                    </span>
-                                ))
-                            ) : (
-                                <div className="text-sm text-gray-400 flex items-center gap-2">
-                                    <span>Chưa chọn tâm trạng</span>
-                                    <button
-                                        onClick={handleEdit}
-                                        className="text-violet-500 hover:underline"
-                                    >
-                                        Cập nhật ngay
-                                    </button>
-                                </div>
-                            )}
-
-                        </div>
-
-                        <div>
-                            <p className="text-sm font-bold mb-2">Tính cách</p>
-
                             <div className="flex flex-wrap gap-2">
-                                {location.couplePersonalityTypes?.length ? (
-                                    location.couplePersonalityTypes.map(personality => (
-                                        <span
-                                            key={personality.id}
-                                            className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
-                                        >
-                                            {personality.name.toLowerCase()}
-                                        </span>
+                                {moods.length > 0 ? (
+                                    moods.map(mood => (
+                                        <div key={mood.id} className="group relative inline-block">
+                                            <span
+                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+                                            >
+                                                {mood.name}
+                                                <Info size={12} className="opacity-80" />
+                                            </span>
+
+                                            <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                                                {mood.description || 'Chưa có mô tả cho tâm trạng này'}
+                                                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                                            </div>
+                                        </div>
                                     ))
                                 ) : (
                                     <div className="text-sm text-gray-400 flex items-center gap-2">
-                                        <span>Chưa chọn tính cách</span>
-                                        <button
-                                            onClick={handleEdit}
-                                            className="text-violet-500 hover:underline"
-                                        >
+                                        <span>Chưa chọn tâm trạng</span>
+                                        <button onClick={handleEdit} className="text-violet-500 hover:underline">
+                                            Cập nhật ngay
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        <div>
+                            <p className="text-sm font-bold mb-2">Tags</p>
+                            <div className="flex flex-wrap gap-2">
+                                {personalities.length > 0 ? (
+                                    personalities.map(personality => (
+                                        <div key={personality.id} className="group relative inline-block">
+                                            <span
+                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+                                            >
+                                                {personality.name}
+                                                <Info size={12} className="opacity-80" />
+                                            </span>
+
+                                            <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                                                {personality.description || 'Chưa có mô tả cho tính cách này'}
+                                                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-sm text-gray-400 flex items-center gap-2">
+                                        <span>Chưa có tag</span>
+                                        <button onClick={handleEdit} className="text-violet-500 hover:underline">
                                             Cập nhật ngay
                                         </button>
                                     </div>
@@ -507,6 +559,41 @@ export default function LocationDetailPage() {
                     />
                 )}
             </div>
+            {openMissingCitizenPopup && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+                    <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+                        <h2 className="text-lg font-semibold text-gray-900">
+                            Thiếu thông tin CCCD
+                        </h2>
+
+                        <p className="mt-3 text-sm text-gray-600">
+                            Bạn chưa cập nhật CCCD (mặt trước và mặt sau). Vui lòng cập nhật để gửi
+                            địa điểm chờ duyệt.
+                        </p>
+
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setOpenMissingCitizenPopup(false)}
+                                className="rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700"
+                            >
+                                Để sau
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setOpenMissingCitizenPopup(false);
+                                    window.dispatchEvent(new CustomEvent("openProfileModal"));
+                                }}
+                                className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
+                            >
+                                Cập nhật ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

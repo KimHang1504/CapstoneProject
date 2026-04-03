@@ -36,7 +36,7 @@ export default function AdvertisementCard({ ad }: Props) {
           className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
 
         {/* Placement chip top-left */}
         <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-violet-700 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">

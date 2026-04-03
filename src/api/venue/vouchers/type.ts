@@ -20,6 +20,7 @@ export type CreateVoucherRequest = {
   usageValiDays: number;
 
   venueLocationIds: number[];
+   imageUrl: string;
 
   startDate: string;
   endDate: string;
@@ -45,6 +46,7 @@ export type Voucher = {
 
   title: string;
   description?: string;
+  imageUrl: string | null;
 
   voucherPrice: number;
 

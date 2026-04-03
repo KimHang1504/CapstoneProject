@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import VoucherForm from "../component/VoucherForm";
 import { createVoucher } from "@/api/venue/vouchers/api";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 
 export default function CreateVoucherPage() {
 

@@ -37,10 +37,10 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
   const ad = item.advertisement;
 
   return (
-    <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
-      <div className="flex gap-4 p-4">
+    <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4">
         {/* Banner */}
-        <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+        <div className="relative w-full h-40 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
           <Image
             src={ad.bannerUrl?.startsWith('http') ? ad.bannerUrl : FALLBACK}
             alt={ad.title}
@@ -51,11 +51,11 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
 
         {/* Info */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0">
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-2">
+            <div className="min-w-0 flex-1">
               <p className="font-semibold text-gray-900 truncate">{ad.title}</p>
               <div className="flex items-center gap-2 mt-1 flex-wrap">
-                <span className="text-xs px-2 py-0.5 rounded-full bg-violet-100 text-violet-600">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-violet-100 text-violet-600 font-medium">
                   {PLACEMENT_LABEL[item.package.placementType as keyof typeof PLACEMENT_LABEL] ?? item.package.placementType}
                 </span>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${AD_STATUS_STYLE[ad.status] ?? 'bg-gray-100 text-gray-500'}`}>
@@ -66,8 +66,8 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
                 </span>
               </div>
             </div>
-            <div className="text-right shrink-0">
-              <p className={`text-lg font-bold ${
+            <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
+              <p className={`text-xl sm:text-lg font-bold ${
                 item.status === 'REFUNDED' ? 'text-sky-500'
                 : item.status === 'COMPLETED' ? 'text-emerald-600'
                 : 'text-gray-700'
@@ -77,15 +77,15 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-xs text-gray-400">
+          <div className="flex flex-wrap gap-x-3 sm:gap-x-4 gap-y-1 mt-2 text-xs text-gray-400">
             <span className="flex items-center gap-1">
               <CreditCard size={11} />{item.payment.paymentMethod}
             </span>
             <span className="flex items-center gap-1">
-              <Calendar size={11} />{new Date(item.payment.paidAt).toLocaleString('vi-VN')}
+              <Calendar size={11} />{new Date(item.payment.paidAt).toLocaleDateString('vi-VN')}
             </span>
             <span>{item.package.name} · {item.package.durationDays} ngày</span>
-            <span>Đơn #{item.id}</span>
+            <span className="hidden sm:inline">Đơn #{item.id}</span>
           </div>
         </div>
       </div>
@@ -106,14 +106,14 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
           {expanded && (
             <div className="px-4 pb-4 space-y-2">
               {item.venueLocationAds.map(v => (
-                <div key={v.id} className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2 text-xs">
+                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-gray-50 rounded-xl px-3 py-2 text-xs gap-2">
                   <div>
                     <span className="font-medium text-gray-700">{v.venueName}</span>
-                    <span className="text-gray-400 ml-2">
+                    <span className="text-gray-400 block sm:inline sm:ml-2">
                       {new Date(v.startDate).toLocaleDateString('vi-VN')} → {new Date(v.endDate).toLocaleDateString('vi-VN')}
                     </span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-600">{v.status}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-600 w-fit">{v.status}</span>
                 </div>
               ))}
               {ad.targetUrl && (

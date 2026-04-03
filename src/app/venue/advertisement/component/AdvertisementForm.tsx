@@ -5,7 +5,7 @@ import Image from "next/image";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { PlacementType } from "@/api/venue/advertisement/type";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { generateText, generateImage } from "@/utils/ai";
 import { Sparkles, Wand2 } from "lucide-react";
 
@@ -16,10 +16,15 @@ type Props = {
     bannerUrl: string;
     targetUrl: string;
     placementType: PlacementType;
+    moodTypeId?: number | null;
     desiredStartDate?: string | null;
   };
   onSubmit: (data: any) => Promise<void>;
   submitLabel?: string;
+  moodOptions: {
+    id: number;
+    name: string;
+  }[];
 };
 
 const inputClass =
@@ -35,6 +40,7 @@ export default function AdvertisementForm({
   initialData,
   onSubmit,
   submitLabel = "Hoàn thành",
+  moodOptions = [],
 }: Props) {
   const [desiredStartDate, setDesiredStartDate] = useState<Date | null>(
     initialData?.desiredStartDate ? new Date(initialData.desiredStartDate) : null
@@ -46,6 +52,7 @@ export default function AdvertisementForm({
     bannerUrl: initialData?.bannerUrl || "",
     targetUrl: initialData?.targetUrl || "",
     placementType: initialData?.placementType || "HOME_BANNER",
+    moodTypeId: initialData?.moodTypeId ?? "",
   });
 
   const [isGeneratingContent, setIsGeneratingContent] = useState(false);
@@ -54,7 +61,12 @@ export default function AdvertisementForm({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === "moodTypeId" ? (value ? Number(value) : "") : value,
+    }));
   };
 
   const handleGenerateContent = async () => {
@@ -67,9 +79,9 @@ export default function AdvertisementForm({
     try {
       const systemPrompt = "Bạn là chuyên gia viết nội dung quảng cáo hấp dẫn và chuyên nghiệp cho các địa điểm giải trí, nhà hàng, cafe.";
       const userPrompt = `Viết nội dung quảng cáo hấp dẫn cho mục đích: "${form.title}". Nội dung ngắn gọn, thu hút, tối đa 150 từ, phù hợp để hiển thị trên banner hoặc popup quảng cáo.`;
-      
+
       const content = await generateText(userPrompt, systemPrompt);
-      
+
       if (content) {
         setForm({ ...form, content });
         toast.success("Đã tạo nội dung thành công!");
@@ -93,13 +105,13 @@ export default function AdvertisementForm({
     setIsGeneratingImage(true);
     try {
       const imagePrompt = `Professional advertisement banner for: ${form.title}. High quality, attractive, modern design, suitable for restaurant/cafe/entertainment venue promotion.`;
-      
+
       const imageUrl = await generateImage(imagePrompt, {
         size: '1792x1024',
         quality: 'hd',
         style: 'vivid'
       });
-      
+
       if (imageUrl) {
         setForm({ ...form, bannerUrl: imageUrl });
         toast.success("Đã tạo banner thành công!");
@@ -116,10 +128,12 @@ export default function AdvertisementForm({
 
   const handleSubmit = async () => {
     const missingFields: string[] = [];
+
     if (!form.title.trim()) missingFields.push("Mục đích quảng cáo");
     if (!form.content.trim()) missingFields.push("Nội dung");
     if (!form.bannerUrl.trim()) missingFields.push("Banner URL");
     if (!form.targetUrl.trim()) missingFields.push("Link khi click");
+    if (!form.moodTypeId) missingFields.push("Mood type");
     if (!desiredStartDate) missingFields.push("Ngày bắt đầu");
 
     if (missingFields.length > 0) {
@@ -129,6 +143,7 @@ export default function AdvertisementForm({
 
     const payload = {
       ...form,
+      moodTypeId: Number(form.moodTypeId),
       desiredStartDate: desiredStartDate ? desiredStartDate.toISOString() : null,
     };
 
@@ -137,6 +152,15 @@ export default function AdvertisementForm({
       toast.success("Đã lưu quảng cáo thành công!");
     } catch (error: any) {
       toast.error(error?.message || "Đã xảy ra lỗi khi lưu quảng cáo");
+    }
+  };
+
+  const isValidUrl = (value: string) => {
+    try {
+      new URL(value);
+      return true;
+    } catch {
+      return false;
     }
   };
 
@@ -163,7 +187,7 @@ export default function AdvertisementForm({
             type="button"
             onClick={handleGenerateContent}
             disabled={isGeneratingContent || !form.title.trim()}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-lg hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-lg hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
             {isGeneratingContent ? (
               <>
@@ -223,7 +247,7 @@ export default function AdvertisementForm({
             type="button"
             onClick={handleGenerateImage}
             disabled={isGeneratingImage || !form.title.trim()}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-gradient-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
             {isGeneratingImage ? (
               <>
@@ -253,7 +277,7 @@ export default function AdvertisementForm({
           />
         </div>
 
-        {form.bannerUrl && (
+        {isValidUrl(form.bannerUrl) && (
           <div className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm relative">
             <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">
               Preview
@@ -305,6 +329,7 @@ export default function AdvertisementForm({
             </button>
           ))}
         </div>
+
         {/* hidden select to keep form.placementType in sync */}
         <select
           name="placementType"
@@ -316,6 +341,35 @@ export default function AdvertisementForm({
           <option value="HOME_BANNER">Banner đầu trang</option>
           <option value="POPUP">Popup</option>
         </select>
+      </FieldWrapper>
+      <FieldWrapper>
+        <label className={labelClass}>Mood type</label>
+
+        <div className="mt-2 flex flex-wrap gap-2">
+          {(moodOptions ?? []).map((mood) => {
+            const isSelected = Number(form.moodTypeId) === mood.id;
+
+            return (
+              <button
+                key={mood.id}
+                type="button"
+                onClick={() =>
+                  setForm((prev) => ({
+                    ...prev,
+                    moodTypeId: mood.id,
+                  }))
+                }
+                className={`px-4 py-2 rounded-full text-sm font-medium border transition-all
+            ${isSelected
+                    ? "bg-violet-600 text-white border-violet-600 shadow-sm"
+                    : "bg-white text-gray-700 border-violet-200 hover:border-violet-400 hover:text-violet-600"
+                  }`}
+              >
+                {mood.name}
+              </button>
+            );
+          })}
+        </div>
       </FieldWrapper>
 
       {/* Date */}
@@ -342,7 +396,7 @@ export default function AdvertisementForm({
       <div className="pt-2">
         <button
           onClick={handleSubmit}
-          className="w-full py-3.5 bg-gradient-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+          className="w-full py-3.5 bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
         >
           {submitLabel}
         </button>

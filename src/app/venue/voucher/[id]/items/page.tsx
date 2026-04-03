@@ -20,7 +20,7 @@ export default function VoucherItemsPage() {
                 const res = await getVoucherItems({
                     voucherId: Number(id),
                     pageNumber: 1,
-                    pageSize: 20,
+                    pageSize: 999,
                 });
 
                 setItems(res.data.items);

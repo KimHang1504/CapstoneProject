@@ -9,7 +9,7 @@ export default function PaymentFailureContent() {
   const router = useRouter();
   const type = searchParams.get("type");
   const locationId = searchParams.get("locationId");
-  const advertisementId = searchParams.get("advertisementId");
+  const adId = searchParams.get("adId");
 
   const title =
     searchParams.get('title') || 'Thanh toán thất bại';
@@ -22,8 +22,8 @@ export default function PaymentFailureContent() {
       router.push(`/venue/location/mylocation/${locationId}`);
     }
 
-    if (type === "advertisement" && advertisementId) {
-      router.push(`/venue/advertisement/${advertisementId}`);
+    if (type === "advertisement" && adId) {
+      router.push(`/venue/advertisement/myadvertisement/${adId}`);
     }
   };
 
@@ -45,7 +45,7 @@ export default function PaymentFailureContent() {
         <div className="space-y-3">
           <button
             onClick={handleBack}
-            className="w-full bg-white border-2 border-gray-300 text-gray-700 py-4 rounded-full font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
+            className="w-full bg-white border-2 border-gray-300 text-gray-700 py-4 rounded-full cursor-pointer font-semibold hover:bg-gray-50 transition flex items-center justify-center gap-2"
           >
             <Home size={20} />
             Về trang chi tiết

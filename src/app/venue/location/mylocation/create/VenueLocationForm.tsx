@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 
 import Info from "@/app/venue/location/mylocation/create/Info";
 import Contact from "@/app/venue/location/mylocation/create/Contact";
@@ -10,6 +10,7 @@ import Media from "@/app/venue/location/mylocation/create/Media";
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info";
 import { uploadImage } from "@/api/upload";
 import { registerVenueLocation, updateVenueLocation } from "@/api/venue/location/api";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 const steps = [Info, Contact, Media]
 
@@ -40,12 +41,14 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     interiorImage: [],
     fullPageMenuImage: [],
 
-    selectedMoods: initialData?.selectedMoods || [],
-    selectedStyles: initialData?.selectedStyles || [],
+    selectedMoods: Array.from(new Set(initialData?.selectedMoods || [])),
+    selectedStyles: Array.from(new Set(initialData?.selectedStyles || [])),
 
     existingCoverUrl: initialData?.existingCoverUrl || "",
     existingInteriorUrls: initialData?.existingInteriorUrls || [],
     existingMenuUrls: initialData?.existingMenuUrls || [],
+    businessLicense: null,
+    existingBusinessLicenseUrl: initialData?.existingBusinessLicenseUrl || "",
   }))
 
   const CurrentStep = steps[step - 1]
@@ -66,26 +69,64 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
   }
 
   function nextStep() {
-    // STEP 1 → check name + description
+    // STEP 1 → check name + description + mood/style
     if (step === 1) {
       if (!formData.name || !formData.description) {
         toast.error("Vui lòng nhập tên và mô tả");
         return;
       }
+
+      const hasMood = formData.selectedMoods.length > 0;
+      const hasStyle = formData.selectedStyles.length > 0;
+
+      if ((hasMood && !hasStyle) || (!hasMood && hasStyle)) {
+        toast.error("Vui lòng chọn đầy đủ cả Tâm trạng và Tính cách");
+        return;
+      }
     }
 
-    // STEP 2 → check address
+    // STEP 2 → check address + format contact
     if (step === 2) {
       if (!formData.address) {
         toast.error("Vui lòng nhập địa chỉ");
         return;
       }
+
+      const errors = validateContact(formData);
+
+      if (errors.phone || errors.email || errors.website) {
+        toast.error("Vui lòng nhập đúng định dạng thông tin liên hệ");
+        return;
+      }
     }
 
     if (step < steps.length) {
-      setStep((s) => s + 1)
+      setStep((s) => s + 1);
     }
   }
+
+  function validateContact(formData: VenueFormData) {
+    const errors = {
+      phone: "",
+      email: "",
+      website: ""
+    };
+
+    if (formData.phoneNumber && !/^(0|\+84)[0-9]{9,10}$/.test(formData.phoneNumber)) {
+      errors.phone = "Số điện thoại không hợp lệ";
+    }
+
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = "Email không hợp lệ";
+    }
+
+    if (formData.websiteUrl && !/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(formData.websiteUrl)) {
+      errors.website = "Website không hợp lệ";
+    }
+
+    return errors;
+  }
+
   function hasAtLeastOneField(data: VenueFormData) {
     return (
       data.name ||
@@ -97,6 +138,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       data.websiteUrl ||
       data.priceMin > 0 ||
       data.priceMax > 0 ||
+      data.businessLicense ||
       data.coverImage ||
       data.interiorImage.length > 0 ||
       data.fullPageMenuImage.length > 0 ||
@@ -143,16 +185,39 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         menuUrls = uploaded
       }
 
+      // ===== BUSINESS LICENSE =====
+      let businessLicenseUrl = formData.existingBusinessLicenseUrl || ""
+
+      if (formData.businessLicense instanceof File) {
+        businessLicenseUrl = await uploadImage(formData.businessLicense)
+      }
+
       if (!hasAtLeastOneField(formData)) {
         toast.error("Vui lòng nhập ít nhất một thông tin để lưu bản nháp");
         return;
       }
+      const hasMood = formData.selectedMoods.length > 0;
+      const hasStyle = formData.selectedStyles.length > 0;
 
-      const venueTags = formData.selectedMoods.flatMap(moodId =>
-        formData.selectedStyles.map(styleId => ({
-          coupleMoodTypeId: moodId,
-          couplePersonalityTypeId: styleId,
-        }))
+      // Nếu có 1 mà thiếu 1 → lỗi
+      if ((hasMood && !hasStyle) || (!hasMood && hasStyle)) {
+        toast.error("Vui lòng chọn đầy đủ cả Tâm trạng và Tính cách");
+        return;
+      }
+
+      const venueTags = Array.from(
+        new Map(
+          formData.selectedMoods.flatMap(moodId =>
+            formData.selectedStyles.map(styleId => {
+              const tag = {
+                coupleMoodTypeId: moodId,
+                couplePersonalityTypeId: styleId,
+              };
+
+              return [`${tag.coupleMoodTypeId}-${tag.couplePersonalityTypeId}`, tag] as const;
+            })
+          )
+        ).values()
       );
 
       const payload = {
@@ -167,11 +232,13 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         websiteUrl: formData.websiteUrl,
         priceMin: formData.priceMin,
         priceMax: formData.priceMax,
-        isOwnerVerified: true,
+        // isOwnerVerified: true,
+
         coverImage: coverUrl ? [coverUrl] : [],
         interiorImage: interiorUrls,
         fullPageMenuImage: menuUrls,
         venueTags,
+        businessLicenseUrl,
       }
 
       if (mode === 'edit' && locationId) {
@@ -179,15 +246,11 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         toast.success("Cập nhật địa điểm thành công")
         router.push(`/venue/location/mylocation/${locationId}`)
       } else {
-        const response = await registerVenueLocation(payload)
+        await registerVenueLocation(payload)
         toast.success("Tạo địa điểm thành công")
-        
-        // Chuyển đến trang chọn gói subscription
-        if (response?.data?.id) {
-          router.push(`/venue/location/subscriptions?locationId=${response.data.id}`)
-        } else {
-          router.push("/venue/location/mylocation")
-        }
+
+
+        router.push("/venue/location/mylocation")
       }
 
     } catch (e) {
@@ -201,26 +264,62 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">
+    <div className="p-4 max-w-4xl mx-auto">
+      {/* <h1 className="text-2xl font-bold text-gray-900 mb-4">
         {mode === 'edit' ? 'Chỉnh sửa địa điểm' : 'Tạo địa điểm mới'}
-      </h1>
+      </h1> */}
 
-      <p className="text-blue-900 text-center">
-        Bước {step} / {steps.length}
-      </p>
+      {/* Progress Steps */}
+      <div className="mb-6">
+        <div className="flex items-center justify-center gap-2">
+          {steps.map((_, index) => {
+            const stepNum = index + 1
+            const isActive = stepNum === step
+            const isCompleted = stepNum < step
+
+            return (
+              <div key={stepNum} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
+                      isActive
+                        ? "bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg scale-110"
+                        : isCompleted
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200 text-gray-400"
+                    }`}
+                  >
+                    {isCompleted ? <Check className="w-5 h-5" /> : stepNum}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Bước {stepNum}
+                  </p>
+                </div>
+                {stepNum < steps.length && (
+                  <div
+                    className={`w-16 h-1 mx-2 rounded-full transition-all ${
+                      isCompleted ? "bg-green-500" : "bg-gray-200"
+                    }`}
+                  />
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
       <CurrentStep
         formData={formData}
         setFormData={setFormData}
       />
 
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between mt-6 px-4 gap-3">
         <button
           type="button"
           onClick={prevStep}
-          className="rounded-[8.33] border border-[#D3D6FF] bg-white px-6 py-2 text-sm font-medium text-[#4C5A8F] disabled:opacity-50"
+          className="flex items-center gap-2 rounded-lg border-2 border-[#D3D6FF] bg-white px-5 py-2.5 text-sm font-medium text-[#4C5A8F] hover:bg-gray-50 hover:border-purple-300 hover:shadow-md transition-all disabled:opacity-50"
         >
+          <ArrowLeft className="w-4 h-4" />
           Trở về
         </button>
 
@@ -228,17 +327,19 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
           >
+            <Check className="w-4 h-4" />
             {mode === 'edit' ? 'Cập nhật' : 'Hoàn tất'}
           </button>
         ) : (
           <button
             type="button"
             onClick={nextStep}
-            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
           >
             Tiếp tục
+            <ArrowRight className="w-4 h-4" />
           </button>
         )}
       </div>

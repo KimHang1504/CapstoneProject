@@ -11,7 +11,7 @@ import {
 } from "@/api/venue/vouchers/api";
 
 import { CreateVoucherRequest } from "@/api/venue/vouchers/type";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 
 export default function EditVoucherPage() {
 
@@ -45,6 +45,7 @@ export default function EditVoucherPage() {
           discountPercent: data.discountPercent,
 
           quantity: data.quantity,
+          imageUrl: data.imageUrl ?? "",
 
           usageLimitPerMember: data.usageLimitPerMember,
           usageValiDays: data.usageValiDays ?? 7,

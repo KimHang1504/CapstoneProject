@@ -5,7 +5,7 @@ import { useState, useEffect } from "react"
 import VenueLocationForm from "../../create/VenueLocationForm"
 import { getVenueLocationDetail } from "@/api/venue/location/api"
 import { VenueFormData } from "../../create/Info"
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 export default function EditPage() {
   const params = useParams()
@@ -20,11 +20,19 @@ export default function EditPage() {
         setIsLoading(true)
         const response = await getVenueLocationDetail(locationId)
         const data = response.data
-        console.log("LẤY CHI TIẾT ĐỂ CHỈNH SỬA:", data) // Debug log
+        console.log("LẤY CHI TIẾT ĐỂ CHỈNH SỬA:", data)
 
-        // Extract mood and personality IDs
-        const moodIds = data.coupleMoodTypes?.map(m => m.id) || []
-        const styleIds = data.couplePersonalityTypes?.map(p => p.id) || []
+        const moodIds = Array.from(new Set(
+          data.locationTags
+            ?.map(tag => tag.coupleMoodType?.id)
+            .filter((id): id is number => Boolean(id)) || []
+        ));
+
+        const styleIds = Array.from(new Set(
+          data.locationTags
+            ?.map(tag => tag.couplePersonalityType?.id)
+            .filter((id): id is number => Boolean(id)) || []
+        ));
 
         setInitialData({
           name: data.name,

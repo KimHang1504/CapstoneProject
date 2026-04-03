@@ -88,19 +88,25 @@ export const getVoucherItems = (params: GetVoucherItemsParams) => {
 
 //flow redeem voucher
 
+export type VoucherRedeemPayload = {
+  itemCode: string;
+  venueLocationId: number;
+};
+
 // validate voucher item
-export const validateVoucherItem = (itemCode: string, venueLocationId: number) => {
+export const validateVoucherItem = (payload: VoucherRedeemPayload) => {
   return apiClient.post<ApiResponse<ValidateVoucherItemData>>(
     "/api/venue-vouchers/voucher-items/validate",
-    { itemCode, venueLocationId }
+    payload
   );
 };
 
 // redeem voucher item
-export const redeemVoucherItem = (itemCode: string) => {
-  return apiClient.post("/api/venue-vouchers/voucher-items/redeem", {
-    itemCode,
-  });
+export const redeemVoucherItem = (payload: VoucherRedeemPayload) => {
+  return apiClient.post<ApiResponse<null>>(
+    "/api/venue-vouchers/voucher-items/redeem",
+    payload
+  );
 };
 
 export const getVoucherSummary = (voucherId: number) => {

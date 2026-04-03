@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { withdrawWallet } from "@/api/venue/wallet/api";
 import { X, ArrowDownCircle } from "lucide-react";
-import toast from "react-hot-toast";
+import {toast} from "sonner";
 
 type Props = {
   onClose: () => void;
