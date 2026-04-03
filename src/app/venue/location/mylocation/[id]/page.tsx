@@ -410,6 +410,7 @@ export default function LocationDetailPage() {
                                 Mở trang redeem →
                             </a>
                         </div>
+                        <p className="text-sm font-bold mb-2">Danh mục</p>
 
                         {location.categories?.length ? (
                             <div className="flex gap-2 flex-wrap">
@@ -456,7 +457,7 @@ export default function LocationDetailPage() {
                         </div>
 
                         <div>
-                            <p className="text-sm font-bold mb-2">Tính cách</p>
+                            <p className="text-sm font-bold mb-2">Tags</p>
                             <div className="flex flex-wrap gap-2">
                                 {personalities.length > 0 ? (
                                     personalities.map(personality => (
@@ -476,7 +477,7 @@ export default function LocationDetailPage() {
                                     ))
                                 ) : (
                                     <div className="text-sm text-gray-400 flex items-center gap-2">
-                                        <span>Chưa chọn tính cách</span>
+                                        <span>Chưa có tag</span>
                                         <button onClick={handleEdit} className="text-violet-500 hover:underline">
                                             Cập nhật ngay
                                         </button>

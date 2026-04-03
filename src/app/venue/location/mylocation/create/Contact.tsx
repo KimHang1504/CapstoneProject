@@ -17,6 +17,12 @@ type Props = {
 export default function Contact({ formData, setFormData }: Props) {
   const [isMapLoading, setIsMapLoading] = useState(false)
   const [mapError, setMapError] = useState<string | null>(null)
+  const [errors, setErrors] = useState({
+    phone: "",
+    email: "",
+    website: ""
+  });
+
 
   const handleAddressBlur = async () => {
     if (!formData.address) return
@@ -131,50 +137,101 @@ export default function Contact({ formData, setFormData }: Props) {
               <Phone className="w-4 h-4 text-green-500" />
               Số điện thoại hotline
             </label>
-            <div className="relative">
-              <input
-                value={formData.phoneNumber}
-                onChange={(e) =>
-                  setFormData({ ...formData, phoneNumber: e.target.value })
-                }
-                placeholder="03xxxxxxxx"
-                className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-green-100 transition-all"
-              />
-            </div>
-          </div>
+            <input
+              value={formData.phoneNumber}
+              onChange={(e) =>
+                setFormData({ ...formData, phoneNumber: e.target.value })
+              }
+              onBlur={(e) => {
+                const value = e.target.value;
 
-          <div>
-            <label className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-800">
-              <Mail className="w-4 h-4 text-red-500" />
-              Email
-            </label>
-            <div className="relative">
-              <input
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
+                if (value && !/^(0|\+84)[0-9]{9,10}$/.test(value)) {
+                  setErrors(prev => ({
+                    ...prev,
+                    phone: "Số điện thoại không hợp lệ"
+                  }));
+                } else {
+                  setErrors(prev => ({
+                    ...prev,
+                    phone: ""
+                  }));
                 }
-                placeholder="hehe@gmail.com"
-                className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-red-100 transition-all"
-              />
-            </div>
-          </div>
+              }}
+              placeholder="03xxxxxxxx"
+              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            />
 
+            {errors.phone && (
+              <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
+            )}
+          </div>
           <div>
             <label className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-800">
               <Globe className="w-4 h-4 text-blue-500" />
               Liên kết website
             </label>
-            <div className="relative">
-              <input
-                value={formData.websiteUrl}
-                onChange={(e) =>
-                  setFormData({ ...formData, websiteUrl: e.target.value })
+            <input
+              value={formData.websiteUrl}
+              onChange={(e) =>
+                setFormData({ ...formData, websiteUrl: e.target.value })
+              }
+              onBlur={(e) => {
+                const value = e.target.value;
+
+                if (
+                  value &&
+                  !/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(value)
+                ) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    website: "Website không hợp lệ",
+                  }));
+                } else {
+                  setErrors((prev) => ({
+                    ...prev,
+                    website: "",
+                  }));
                 }
-                placeholder="hehe.com"
-                className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-blue-100 transition-all"
-              />
-            </div>
+              }}
+              placeholder="hehe.com"
+              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            />
+
+            {errors.website && (
+              <p className="mt-1 text-xs text-red-500">{errors.website}</p>
+            )}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-800">
+              Email
+            </label>
+            <input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              onBlur={(e) => {
+                const value = e.target.value;
+
+                if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: "Email không hợp lệ",
+                  }));
+                } else {
+                  setErrors((prev) => ({
+                    ...prev,
+                    email: "",
+                  }));
+                }
+              }}
+              placeholder="hehe@gmail.com"
+              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            />
+
+            {errors.email && (
+              <p className="mt-1 text-xs text-red-500">{errors.email}</p>
+            )}
           </div>
         </div>
 
