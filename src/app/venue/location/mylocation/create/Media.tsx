@@ -2,6 +2,7 @@
 
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info"
 import Image from "next/image"
+import { Upload, Image as ImageIcon, FileImage, FileCheck, X } from "lucide-react"
 
 type Props = {
     formData: VenueFormData
@@ -108,13 +109,15 @@ export default function Media({ formData, setFormData }: Props) {
 
                     {/* ================= COVER ================= */}
                     <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">
+                        <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                            <ImageIcon className="w-4 h-4 text-purple-500" />
                             Ảnh bìa <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
-                            <span>
-                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
+                        <label className="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500 hover:border-purple-400 hover:bg-purple-50 transition-all">
+                            <Upload className="w-6 h-6 text-gray-400 mb-1.5 group-hover:text-purple-500 transition-colors" />
+                            <span className="text-gray-600">
+                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2] font-semibold">chọn</span>
                             </span>
                             <span className="mt-1 text-xs text-gray-400">Tối đa 10MB</span>
 
@@ -130,22 +133,22 @@ export default function Media({ formData, setFormData }: Props) {
                         </label>
 
                         {coverPreview && (
-                            <div className="relative mt-2 h-20 w-32">
+                            <div className="relative mt-2 h-20 w-32 group">
                                 <Image
                                     src={getPreviewUrl(coverPreview)}
                                     alt="cover-preview"
                                     width={128}
                                     height={80}
-                                    className="h-20 w-32 rounded-xl object-cover"
+                                    className="h-20 w-32 rounded-xl object-cover border border-gray-200"
                                     unoptimized
                                 />
 
                                 <button
                                     type="button"
                                     onClick={removeCover}
-                                    className="absolute cursor-pointer right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white text-xs"
+                                    className="absolute cursor-pointer right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white text-xs hover:bg-black/80 transition-all"
                                 >
-                                    ×
+                                    <X className="w-3 h-3" />
                                 </button>
                             </div>
                         )}
@@ -153,13 +156,15 @@ export default function Media({ formData, setFormData }: Props) {
 
                     {/* ================= INTERIOR ================= */}
                     <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">
+                        <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                            <FileImage className="w-4 h-4 text-purple-500" />
                             Ảnh nội thất <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
-                            <span>
-                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
+                        <label className="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500 hover:border-purple-400 hover:bg-purple-50 transition-all">
+                            <Upload className="w-6 h-6 text-gray-400 mb-1.5 group-hover:text-purple-500 transition-colors" />
+                            <span className="text-gray-600">
+                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2] font-semibold">chọn</span>
                             </span>
                             <span className="mt-1 text-xs text-gray-400">
                                 10MB/ảnh
@@ -181,22 +186,22 @@ export default function Media({ formData, setFormData }: Props) {
                         {interiorPreview.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-2">
                                 {interiorPreview.map((file, i) => (
-                                    <div key={i} className="relative h-14 w-14">
+                                    <div key={i} className="relative h-14 w-14 group">
                                         <Image
                                             src={getPreviewUrl(file)}
                                             alt={`interior-${i}`}
                                             width={56}
                                             height={56}
-                                            className="h-14 w-14 rounded-lg object-cover"
+                                            className="h-14 w-14 rounded-lg object-cover border border-gray-200"
                                             unoptimized
                                         />
 
                                         <button
                                             type="button"
                                             onClick={() => removeInterior(i)}
-                                            className="absolute right-0 top-0 flex h-4 w-4 -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+                                            className="absolute right-0 top-0 flex h-4 w-4 -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black/80 transition-all"
                                         >
-                                            ×
+                                            <X className="w-2.5 h-2.5" />
                                         </button>
                                     </div>
                                 ))}
@@ -206,13 +211,15 @@ export default function Media({ formData, setFormData }: Props) {
 
                     {/* ================= MENU ================= */}
                     <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">
+                        <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                            <FileImage className="w-4 h-4 text-purple-500" />
                             Ảnh thực đơn <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
-                            <span>
-                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
+                        <label className="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500 hover:border-purple-400 hover:bg-purple-50 transition-all">
+                            <Upload className="w-6 h-6 text-gray-400 mb-1.5 group-hover:text-purple-500 transition-colors" />
+                            <span className="text-gray-600">
+                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2] font-semibold">chọn</span>
                             </span>
                             <span className="mt-1 text-xs text-gray-400">
                                 10MB/ảnh
@@ -234,22 +241,22 @@ export default function Media({ formData, setFormData }: Props) {
                         {menuPreview.length > 0 && (
                             <div className="mt-2 flex flex-wrap gap-2">
                                 {menuPreview.map((file, i) => (
-                                    <div key={i} className="relative h-14 w-14">
+                                    <div key={i} className="relative h-14 w-14 group">
                                         <Image
                                             src={getPreviewUrl(file)}
                                             alt={`menu-${i}`}
                                             width={56}
                                             height={56}
-                                            className="h-14 w-14 rounded-lg object-cover"
+                                            className="h-14 w-14 rounded-lg object-cover border border-gray-200"
                                             unoptimized
                                         />
 
                                         <button
                                             type="button"
                                             onClick={() => removeMenu(i)}
-                                            className="absolute right-0 top-0 flex h-4 w-4 -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+                                            className="absolute right-0 top-0 flex h-4 w-4 -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-black/60 text-xs text-white hover:bg-black/80 transition-all"
                                         >
-                                            ×
+                                            <X className="w-2.5 h-2.5" />
                                         </button>
                                     </div>
                                 ))}
@@ -259,13 +266,15 @@ export default function Media({ formData, setFormData }: Props) {
 
                     {/* ================= BUSINESS LICENSE ================= */}
                     <div>
-                        <p className="text-sm font-semibold text-gray-900 mb-2">
+                        <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
+                            <FileCheck className="w-4 h-4 text-purple-500" />
                             Giấy phép kinh doanh <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
-                            <span>
-                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
+                        <label className="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500 hover:border-purple-400 hover:bg-purple-50 transition-all">
+                            <Upload className="w-6 h-6 text-gray-400 mb-1.5 group-hover:text-purple-500 transition-colors" />
+                            <span className="text-gray-600">
+                                Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2] font-semibold">chọn</span>
                             </span>
                             <span className="mt-1 text-xs text-gray-400">
                                 JPG / PNG - tối đa 10MB
@@ -283,7 +292,7 @@ export default function Media({ formData, setFormData }: Props) {
                         </label>
 
                         {businessLicensePreview && (
-                            <div className="relative mt-2 flex items-center gap-2">
+                            <div className="relative mt-2 flex items-center gap-2 group">
 
                                 {/* preview */}
                                 {typeof businessLicensePreview === "string" &&
@@ -291,13 +300,15 @@ export default function Media({ formData, setFormData }: Props) {
                                     <a
                                         href={businessLicensePreview}
                                         target="_blank"
-                                        className="text-blue-600 underline text-xs"
+                                        className="flex items-center gap-1.5 text-blue-600 hover:text-blue-700 underline text-xs"
                                     >
+                                        <FileCheck className="w-3.5 h-3.5" />
                                         Xem file PDF
                                     </a>
                                 ) : typeof businessLicensePreview !== "string" &&
                                     businessLicensePreview.type === "application/pdf" ? (
-                                    <span className="text-xs text-gray-600">
+                                    <span className="flex items-center gap-1.5 text-xs text-gray-600">
+                                        <FileCheck className="w-3.5 h-3.5" />
                                         {businessLicensePreview.name}
                                     </span>
                                 ) : (
@@ -306,7 +317,7 @@ export default function Media({ formData, setFormData }: Props) {
                                         alt="license-preview"
                                         width={100}
                                         height={60}
-                                        className="rounded-lg object-cover h-16"
+                                        className="rounded-lg object-cover h-16 border border-gray-200"
                                         unoptimized
                                     />
                                 )}
@@ -315,9 +326,9 @@ export default function Media({ formData, setFormData }: Props) {
                                 <button
                                     type="button"
                                     onClick={removeBusinessLicense}
-                                    className="flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white text-xs"
+                                    className="flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white text-xs hover:bg-black/80 transition-all"
                                 >
-                                    ×
+                                    <X className="w-3 h-3" />
                                 </button>
                             </div>
                         )}

@@ -10,6 +10,7 @@ import Media from "@/app/venue/location/mylocation/create/Media";
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info";
 import { uploadImage } from "@/api/upload";
 import { registerVenueLocation, updateVenueLocation } from "@/api/venue/location/api";
+import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 
 const steps = [Info, Contact, Media]
 
@@ -222,21 +223,57 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         {mode === 'edit' ? 'Chỉnh sửa địa điểm' : 'Tạo địa điểm mới'}
       </h1> */}
 
-      <p className="text-blue-900 text-center mb-4">
-        Bước {step} / {steps.length}
-      </p>
+      {/* Progress Steps */}
+      <div className="mb-6">
+        <div className="flex items-center justify-center gap-2">
+          {steps.map((_, index) => {
+            const stepNum = index + 1
+            const isActive = stepNum === step
+            const isCompleted = stepNum < step
+
+            return (
+              <div key={stepNum} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
+                      isActive
+                        ? "bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg scale-110"
+                        : isCompleted
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200 text-gray-400"
+                    }`}
+                  >
+                    {isCompleted ? <Check className="w-5 h-5" /> : stepNum}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Bước {stepNum}
+                  </p>
+                </div>
+                {stepNum < steps.length && (
+                  <div
+                    className={`w-16 h-1 mx-2 rounded-full transition-all ${
+                      isCompleted ? "bg-green-500" : "bg-gray-200"
+                    }`}
+                  />
+                )}
+              </div>
+            )
+          })}
+        </div>
+      </div>
 
       <CurrentStep
         formData={formData}
         setFormData={setFormData}
       />
 
-      <div className="flex justify-between mt-4 px-4">
+      <div className="flex justify-between mt-6 px-4 gap-3">
         <button
           type="button"
           onClick={prevStep}
-          className="rounded-lg border border-[#D3D6FF] bg-white px-5 py-2 text-sm font-medium text-[#4C5A8F] disabled:opacity-50 hover:bg-gray-50"
+          className="flex items-center gap-2 rounded-lg border-2 border-[#D3D6FF] bg-white px-5 py-2.5 text-sm font-medium text-[#4C5A8F] hover:bg-gray-50 hover:border-purple-300 hover:shadow-md transition-all disabled:opacity-50"
         >
+          <ArrowLeft className="w-4 h-4" />
           Trở về
         </button>
 
@@ -244,17 +281,19 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-lg bg-[#9f5ff2] px-6 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
           >
+            <Check className="w-4 h-4" />
             {mode === 'edit' ? 'Cập nhật' : 'Hoàn tất'}
           </button>
         ) : (
           <button
             type="button"
             onClick={nextStep}
-            className="rounded-lg bg-[#9f5ff2] px-6 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
+            className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-purple-500 to-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
           >
             Tiếp tục
+            <ArrowRight className="w-4 h-4" />
           </button>
         )}
       </div>
