@@ -11,7 +11,7 @@ import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 
 import ReviewSection from '@/app/venue/review/component/ReviewSection';
-import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2 } from 'lucide-react';
+import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
@@ -34,8 +34,24 @@ export default function LocationDetailPage() {
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
 
-    const tags =
-        location?.locationTags?.map(tag => tag.tagName) ?? [];
+
+    const moods = Array.from(
+        new Map(
+            (location?.locationTags ?? [])
+                .map(tag => tag.coupleMoodType)
+                .filter((mood): mood is NonNullable<typeof mood> => Boolean(mood))
+                .map(mood => [mood.id, mood])
+        ).values()
+    );
+
+    const personalities = Array.from(
+        new Map(
+            (location?.locationTags ?? [])
+                .map(tag => tag.couplePersonalityType)
+                .filter((personality): personality is NonNullable<typeof personality> => Boolean(personality))
+                .map(personality => [personality.id, personality])
+        ).values()
+    );
 
     const nextImage = () => {
         setCurrentImageIndex(prev => (prev + 1) % images.length)
@@ -410,18 +426,54 @@ export default function LocationDetailPage() {
                         ) : (
                             <span className="text-gray-500">Chưa có danh mục</span>
                         )}
+                        <div>
+                            <p className="text-sm font-bold mb-2">Tâm trạng</p>
+                            <div className="flex flex-wrap gap-2">
+                                {moods.length > 0 ? (
+                                    moods.map(mood => (
+                                        <div key={mood.id} className="group relative inline-block">
+                                            <span
+                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+                                            >
+                                                {mood.name}
+                                                <Info size={12} className="opacity-80" />
+                                            </span>
+
+                                            <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                                                {mood.description || 'Chưa có mô tả cho tâm trạng này'}
+                                                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-sm text-gray-400 flex items-center gap-2">
+                                        <span>Chưa chọn tâm trạng</span>
+                                        <button onClick={handleEdit} className="text-violet-500 hover:underline">
+                                            Cập nhật ngay
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
                         <div>
                             <p className="text-sm font-bold mb-2">Tags</p>
                             <div className="flex flex-wrap gap-2">
-                                {tags.length > 0 ? (
-                                    tags.map((tag, index) => (
-                                        <span
-                                            key={`${tag}-${index}`}
-                                            className="inline-block rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
-                                        >
-                                            {tag}
-                                        </span>
+                                {personalities.length > 0 ? (
+                                    personalities.map(personality => (
+                                        <div key={personality.id} className="group relative inline-block">
+                                            <span
+                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+                                            >
+                                                {personality.name}
+                                                <Info size={12} className="opacity-80" />
+                                            </span>
+
+                                            <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-56 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                                                {personality.description || 'Chưa có mô tả cho tính cách này'}
+                                                <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                                            </div>
+                                        </div>
                                     ))
                                 ) : (
                                     <div className="text-sm text-gray-400 flex items-center gap-2">

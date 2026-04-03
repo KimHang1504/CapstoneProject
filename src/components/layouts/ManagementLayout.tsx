@@ -254,7 +254,7 @@ export default function ManagementLayout({
                 : ''
                 }`}>
                 {section.items.map((item) => {
-                  const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+                  const isActive = pathname === item.href;
                   const Icon = getIcon(item.icon);
 
                   return (
