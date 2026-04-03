@@ -31,6 +31,7 @@ import {
   FileText,
   MapPin,
   TicketPercent,
+  Bot,
 } from 'lucide-react';
 import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
@@ -67,6 +68,7 @@ const iconMap: Record<IconName, React.ComponentType<{ className?: string }>> = {
   FileText,
   MapPin,
   TicketPercent,
+  Bot,
 };
 
 const getIcon = (iconName?: IconName) => {

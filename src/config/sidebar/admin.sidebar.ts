@@ -13,7 +13,7 @@ export const adminSidebarConfig: SidebarConfig = {
       href: '/admin',
       icon: 'LayoutDashboard',
     },
-    
+
     // Quản lý người dùng & nội dung
     {
       label: 'Quản lý Người dùng',
@@ -82,6 +82,11 @@ export const adminSidebarConfig: SidebarConfig = {
       label: 'Quản lý report',
       href: '/admin/report-management',
       icon: 'Flag',
+    },
+    {
+      label: 'AI Moderation',
+      href: '/admin/moderation-management',
+      icon: 'Bot',
     },
     {
       label: 'Cấu hình hệ thống',

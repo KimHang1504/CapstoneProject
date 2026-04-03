@@ -23,7 +23,8 @@ export type IconName =
   | 'BarChart3'
   | 'FileText'
   | 'MapPin'
-  | 'TicketPercent';
+  | 'TicketPercent'
+  | 'Bot';
 
 export type SidebarTab = {
   label: string;
