@@ -10,6 +10,7 @@ import { TestType } from "@/api/admin/testtype/type";
 import { useEffect, useState } from "react";
 import { TestTypeRowForm } from "./types";
 import TestTypeTable from "@/app/admin/testtype-management/components/TestTypeTable";
+import { RefreshCw, Plus, ListChecks } from "lucide-react";
 
 const initialNewRow: TestTypeRowForm = {
   name: "",
@@ -232,24 +233,50 @@ export default function TestTypePage() {
     }
   };
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      await refreshList();
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="mx-auto max-w-7xl">
-        <div className="mb-6 flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50">
+      <div className="w-full mx-auto p-6 space-y-5">
+
+        {/* HEADER */}
+        <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-slate-900">Loại bài test</h1>
-            <p className="mt-1 text-sm text-slate-500">
-              Tổng cộng: {items.length} loại bài test
+            <h1 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
+              <ListChecks className="w-6 h-6 text-slate-600" />
+              Quản lý loại bài test
+            </h1>
+            <p className="text-sm text-slate-500 mt-1.5">
+              {items.length} loại bài test
             </p>
           </div>
 
-          <button
-            onClick={handleCreateRow}
-            disabled={isCreating || editingId !== null}
-            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-400"
-          >
-            Tạo mới
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleRefresh}
+              disabled={loading}
+              className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              <span className="text-sm font-medium">Tải lại</span>
+            </button>
+
+            <button
+              onClick={handleCreateRow}
+              disabled={isCreating || editingId !== null}
+              className="px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow flex items-center gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              <span className="text-sm font-medium">Tạo mới</span>
+            </button>
+          </div>
         </div>
 
         <TestTypeTable
@@ -272,26 +299,56 @@ export default function TestTypePage() {
           onImportFile={handleImportFile}
         />
 
+        {/* MESSAGES */}
         {error && (
-          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-            {error}
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
+            <div className="border-l-4 border-red-400 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                  <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <p className="text-sm text-slate-700 font-medium">{error}</p>
+              </div>
+            </div>
           </div>
         )}
 
         {importErrors.length > 0 && (
-          <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-            <div className="mb-2 font-semibold">Import thất bại:</div>
-            <ul className="list-disc space-y-1 pl-5">
-              {importErrors.map((err, index) => (
-                <li key={index}>{err}</li>
-              ))}
-            </ul>
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
+            <div className="border-l-4 border-red-400 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                  <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-slate-700 mb-2">Import thất bại:</div>
+                  <ul className="list-disc space-y-1 pl-5 text-sm text-slate-600">
+                    {importErrors.map((err, index) => (
+                      <li key={index}>{err}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
         {successMessage && (
-          <div className="mt-4 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-700">
-            {successMessage}
+          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
+            <div className="border-l-4 border-green-400 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <div className="shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                  <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <p className="text-sm text-slate-700 font-medium">{successMessage}</p>
+              </div>
+            </div>
           </div>
         )}
       </div>

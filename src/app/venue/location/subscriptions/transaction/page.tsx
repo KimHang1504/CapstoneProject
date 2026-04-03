@@ -49,18 +49,18 @@ export default function SubscriptionTransactionPage() {
     value === "ALL" ? subs.length : subs.filter((s) => s.status === value).length;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-6 md:p-8">
-      <div className="max-w-5xl mx-auto space-y-6">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-4 sm:p-6 lg:p-8">
+      <div className="w-full space-y-5">
         <div>
           <p className="text-xs font-semibold text-violet-500 uppercase tracking-widest mb-1">Subscription</p>
-          <h1 className="text-3xl font-bold text-gray-900">Lịch sử đăng ký gói</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Lịch sử đăng ký gói</h1>
           <p className="text-sm text-gray-400 mt-1">Toàn bộ gói subscription bạn đã mua</p>
         </div>
 
 
         {/* Filters */}
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex gap-2 flex-wrap">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
+          <div className="flex gap-2 flex-wrap w-full sm:w-auto">
             {[
               { label: "Tất cả",         value: "ALL" },
               { label: "Đang hoạt động", value: "ACTIVE" },
@@ -71,7 +71,7 @@ export default function SubscriptionTransactionPage() {
               <button
                 key={f.value}
                 onClick={() => setStatusFilter(f.value)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
                   statusFilter === f.value
                     ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
                     : "bg-white text-gray-500 border border-violet-100 hover:border-violet-300"
@@ -81,7 +81,7 @@ export default function SubscriptionTransactionPage() {
               </button>
             ))}
           </div>
-          <div className="relative">
+          <div className="relative w-full sm:w-auto">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-violet-400">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
@@ -92,7 +92,7 @@ export default function SubscriptionTransactionPage() {
               placeholder="Tìm theo tên địa điểm..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="border border-violet-200 rounded-full pl-9 pr-4 py-2 w-64 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white shadow-sm"
+              className="border border-violet-200 rounded-full pl-9 pr-4 py-2 w-full sm:w-64 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 bg-white shadow-sm"
             />
           </div>
         </div>
@@ -102,7 +102,7 @@ export default function SubscriptionTransactionPage() {
         {loading ? (
           <div className="space-y-3">
             {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-2xl h-24 animate-pulse border border-violet-100" />
+              <div key={i} className="bg-white rounded-2xl h-32 sm:h-24 animate-pulse border border-violet-100" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
@@ -115,36 +115,67 @@ export default function SubscriptionTransactionPage() {
             {paginatedData.map((sub) => {
               const st = statusConfig[sub.status] ?? statusConfig["CANCELLED"];
               return (
-                <div key={sub.id} className="bg-white rounded-2xl border border-violet-100 shadow-sm p-5 flex items-center gap-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
-                  <div className={`w-1 h-14 rounded-full ${st.dot} shrink-0`} />
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1 flex-wrap">
-                      <p className="font-semibold text-gray-800 truncate">{sub.venueName}</p>
-                      <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${st.badge}`}>
-                        <span className={`w-1.5 h-1.5 rounded-full ${st.dot}`} />
-                        {st.label}
-                      </span>
+                <div key={sub.id} className="bg-white rounded-2xl border border-violet-100 shadow-sm p-4 sm:p-5 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                  <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
+                    {/* Color indicator */}
+                    <div className={`w-1 h-full min-h-[60px] sm:h-14 rounded-full ${st.dot} shrink-0`} />
+                    
+                    {/* Main content */}
+                    <div className="flex-1 min-w-0 w-full">
+                      <div className="flex items-start gap-2 mb-1 flex-wrap">
+                        <p className="font-semibold text-gray-800 truncate">{sub.venueName}</p>
+                        <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${st.badge}`}>
+                          <span className={`w-1.5 h-1.5 rounded-full ${st.dot}`} />
+                          {st.label}
+                        </span>
+                      </div>
+                      <p className="text-xs text-violet-600 font-medium">{sub.package.packageName}</p>
+                      <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{sub.package.description}</p>
+                      
+                      {/* Date info - mobile */}
+                      {sub.startDate && (
+                        <div className="mt-3 pt-3 border-t border-violet-50 sm:hidden">
+                          <div className="grid grid-cols-2 gap-3 text-xs">
+                            <div>
+                              <p className="text-gray-400 mb-0.5">Bắt đầu</p>
+                              <p className="font-medium text-gray-700">{new Date(sub.startDate).toLocaleDateString("vi-VN")}</p>
+                            </div>
+                            <div>
+                              <p className="text-gray-400 mb-0.5">Kết thúc</p>
+                              <p className="font-medium text-gray-700">{sub.endDate ? new Date(sub.endDate).toLocaleDateString("vi-VN") : "—"}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-xs text-violet-600 font-medium">{sub.package.packageName}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{sub.package.description}</p>
-                    {/* <p className="text-xs text-gray-300 mt-1">Đăng ký: {new Date(sub.createdAt).toLocaleDateString("vi-VN")}</p> */}
-                  </div>
-                  <div className="text-right shrink-0 hidden sm:block">
-                    {sub.startDate ? (
-                      <>
-                        <p className="text-xs text-gray-400">Bắt đầu</p>
-                        <p className="text-sm font-medium text-gray-700">{new Date(sub.startDate).toLocaleDateString("vi-VN")}</p>
-                        <p className="text-xs text-gray-400 mt-1">Kết thúc</p>
-                        <p className="text-sm font-medium text-gray-700">{sub.endDate ? new Date(sub.endDate).toLocaleDateString("vi-VN") : "—"}</p>
-                      </>
-                    ) : (
-                      <p className="text-xs text-gray-400 italic">Chưa kích hoạt</p>
-                    )}
-                  </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-xs text-gray-400 mb-0.5">{sub.package.durationDays} ngày</p>
-                    <p className="text-base font-bold text-violet-600">{sub.package.price.toLocaleString()}</p>
-                    <p className="text-[10px] text-gray-400">VND</p>
+                    
+                    {/* Date info - desktop */}
+                    <div className="hidden sm:flex items-center gap-4 shrink-0">
+                      {sub.startDate ? (
+                        <div className="flex items-center gap-3 text-xs bg-violet-50/50 rounded-xl px-4 py-2.5">
+                          <div className="text-center">
+                            <p className="text-gray-400 mb-0.5">Bắt đầu</p>
+                            <p className="font-semibold text-gray-700 whitespace-nowrap">{new Date(sub.startDate).toLocaleDateString("vi-VN")}</p>
+                          </div>
+                          <svg className="w-4 h-4 text-violet-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                          <div className="text-center">
+                            <p className="text-gray-400 mb-0.5">Kết thúc</p>
+                            <p className="font-semibold text-gray-700 whitespace-nowrap">{sub.endDate ? new Date(sub.endDate).toLocaleDateString("vi-VN") : "—"}</p>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-xs text-gray-400 italic bg-gray-50 rounded-xl px-4 py-2.5">Chưa kích hoạt</p>
+                      )}
+                    </div>
+                    
+                    {/* Price */}
+                    <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-0 shrink-0 ml-auto sm:ml-0">
+                      <p className="text-xs text-gray-400 order-2 sm:order-1 mb-0 sm:mb-0.5">{sub.package.durationDays} ngày</p>
+                      <p className="text-lg sm:text-base font-bold text-violet-600 order-1 sm:order-2">{sub.package.price.toLocaleString()}</p>
+                      <p className="text-[10px] text-gray-400 order-3">VND</p>
+                    </div>
                   </div>
                 </div>
               );
@@ -154,15 +185,15 @@ export default function SubscriptionTransactionPage() {
 
         {/* Pagination */}
         {!loading && filtered.length > 0 && totalPages > 1 && (
-          <div className="flex items-center justify-between pt-4 border-t border-violet-100">
-            <p className="text-sm text-gray-500">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 border-t border-violet-100">
+            <p className="text-xs sm:text-sm text-gray-500 order-2 sm:order-1">
               Hiển thị {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} trong tổng số {filtered.length} kết quả
             </p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 order-1 sm:order-2">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                className="px-2 sm:px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -180,7 +211,7 @@ export default function SubscriptionTransactionPage() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`w-9 h-9 rounded-lg text-sm font-medium transition-all ${
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                           currentPage === page
                             ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
                             : "text-gray-700 hover:bg-violet-50 border border-violet-100"
@@ -191,7 +222,7 @@ export default function SubscriptionTransactionPage() {
                     );
                   } else if (page === currentPage - 2 || page === currentPage + 2) {
                     return (
-                      <span key={page} className="px-2 text-gray-400">
+                      <span key={page} className="px-1 sm:px-2 text-gray-400 text-xs sm:text-sm">
                         ...
                       </span>
                     );
@@ -203,7 +234,7 @@ export default function SubscriptionTransactionPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                className="px-2 sm:px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
