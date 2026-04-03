@@ -114,5 +114,5 @@ useEffect(() => {
     };
 }, [onScan]); 
 
-    return <div id="reader" className="w-full max-w-sm" />;
+    return <div id="reader" className="w-full aspect-square max-w-md mx-auto" />;
 }
