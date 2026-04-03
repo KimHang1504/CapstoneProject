@@ -67,18 +67,18 @@ export default function Contact({ formData, setFormData }: Props) {
 
   return (
     <div className="flex justify-center">
-      <div className="w-full max-w-3xl px-6 py-6 md:px-10">
-        <h1 className="mb-8 text-center text-2xl font-bold text-blue-900">
+      <div className="w-full max-w-3xl px-4 py-4">
+        <h1 className="mb-6 text-center text-2xl font-bold text-blue-900">
           Thông tin liên hệ
         </h1>
 
         {/* Địa chỉ */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="mb-1 block text-sm font-medium text-gray-800">
             Địa chỉ của địa điểm<span className="text-pink-500"> *</span>
           </label>
           <input
-            className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
             value={formData.address}
             onChange={(e) =>
               setFormData({ ...formData, address: e.target.value })
@@ -88,16 +88,16 @@ export default function Contact({ formData, setFormData }: Props) {
           />
 
           {mapError && (
-            <p className="mt-2 text-sm text-red-500">{mapError}</p>
+            <p className="mt-1.5 text-sm text-red-500">{mapError}</p>
           )}
 
           {isMapLoading ? (
-            <div className="mt-4 h-96 w-full rounded-xl bg-gray-100 flex items-center justify-center text-sm text-gray-500">
+            <div className="mt-3 h-80 w-full rounded-xl bg-gray-100 flex items-center justify-center text-sm text-gray-500">
               Đang tải bản đồ...
             </div>
           ) : (
             <>
-              <p className="mt-2 text-xs text-gray-500">
+              <p className="mt-1.5 text-xs text-gray-500">
                 💡 Click vào bản đồ để chọn vị trí chính xác
               </p>
               <MapPicker
@@ -109,8 +109,8 @@ export default function Contact({ formData, setFormData }: Props) {
           )}
         </div>
 
-        {/* Hotline + Website */}
-        <div className="mb-4 grid gap-4 md:grid-cols-2">
+        {/* Hotline + Website + Email */}
+        <div className="grid gap-3 md:grid-cols-3">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-800">
               Số điện thoại hotline
@@ -121,7 +121,21 @@ export default function Contact({ formData, setFormData }: Props) {
                 setFormData({ ...formData, phoneNumber: e.target.value })
               }
               placeholder="03xxxxxxxx"
-              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm font-medium text-gray-800">
+              Email
+            </label>
+            <input
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              placeholder="hehe@gmail.com"
+              className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
             />
           </div>
 
@@ -135,20 +149,7 @@ export default function Contact({ formData, setFormData }: Props) {
                 setFormData({ ...formData, websiteUrl: e.target.value })
               }
               placeholder="hehe.com"
-              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-800">
-              Email
-            </label>
-            <input
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              placeholder="hehe@gmail.com"
-              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
             />
           </div>
         </div>

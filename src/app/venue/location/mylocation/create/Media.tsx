@@ -98,21 +98,21 @@ export default function Media({ formData, setFormData }: Props) {
     console.log('render media', { coverPreview, interiorPreview, menuPreview })
     return (
         <div className="flex justify-center">
-            <div className="w-full max-w-4xl px-6 py-6 md:px-10">
+            <div className="w-full max-w-4xl px-4 py-4">
 
-                <h1 className="mb-8 text-center text-2xl font-bold text-blue-900">
+                <h1 className="mb-6 text-center text-2xl font-bold text-blue-900">
                     Tải lên phương tiện
                 </h1>
 
-                <div className="grid gap-8 md:grid-cols-2">
+                <div className="grid gap-4 md:grid-cols-2">
 
                     {/* ================= COVER ================= */}
-                    <div className="mb-6">
-                        <p className="text-sm font-semibold text-gray-900">
+                    <div>
+                        <p className="text-sm font-semibold text-gray-900 mb-2">
                             Ảnh bìa <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
+                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
                             <span>
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
                             </span>
@@ -130,20 +130,20 @@ export default function Media({ formData, setFormData }: Props) {
                         </label>
 
                         {coverPreview && (
-                            <div className="relative mt-3 h-24 w-40">
+                            <div className="relative mt-2 h-20 w-32">
                                 <Image
                                     src={getPreviewUrl(coverPreview)}
                                     alt="cover-preview"
-                                    width={160}
-                                    height={96}
-                                    className="h-24 w-40 rounded-3xl object-cover"
+                                    width={128}
+                                    height={80}
+                                    className="h-20 w-32 rounded-xl object-cover"
                                     unoptimized
                                 />
 
                                 <button
                                     type="button"
                                     onClick={removeCover}
-                                    className="absolute cursor-pointer right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white"
+                                    className="absolute cursor-pointer right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white text-xs"
                                 >
                                     ×
                                 </button>
@@ -152,12 +152,12 @@ export default function Media({ formData, setFormData }: Props) {
                     </div>
 
                     {/* ================= INTERIOR ================= */}
-                    <div className="mb-6">
-                        <p className="text-sm font-semibold text-gray-900">
+                    <div>
+                        <p className="text-sm font-semibold text-gray-900 mb-2">
                             Ảnh nội thất <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
+                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
                             <span>
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
                             </span>
@@ -179,22 +179,22 @@ export default function Media({ formData, setFormData }: Props) {
                         </label>
 
                         {interiorPreview.length > 0 && (
-                            <div className="mt-3 flex flex-wrap gap-3">
+                            <div className="mt-2 flex flex-wrap gap-2">
                                 {interiorPreview.map((file, i) => (
-                                    <div key={i} className="relative h-16 w-16">
+                                    <div key={i} className="relative h-14 w-14">
                                         <Image
                                             src={getPreviewUrl(file)}
                                             alt={`interior-${i}`}
-                                            width={64}
-                                            height={64}
-                                            className="h-16 w-16 rounded-[20px] object-cover"
+                                            width={56}
+                                            height={56}
+                                            className="h-14 w-14 rounded-lg object-cover"
                                             unoptimized
                                         />
 
                                         <button
                                             type="button"
                                             onClick={() => removeInterior(i)}
-                                            className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/3 translate-x-1/3 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+                                            className="absolute right-0 top-0 flex h-4 w-4 -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-black/60 text-xs text-white"
                                         >
                                             ×
                                         </button>
@@ -205,12 +205,12 @@ export default function Media({ formData, setFormData }: Props) {
                     </div>
 
                     {/* ================= MENU ================= */}
-                    <div className="mb-6">
-                        <p className="text-sm font-semibold text-gray-900">
+                    <div>
+                        <p className="text-sm font-semibold text-gray-900 mb-2">
                             Ảnh thực đơn <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
+                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
                             <span>
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
                             </span>
@@ -232,22 +232,22 @@ export default function Media({ formData, setFormData }: Props) {
                         </label>
 
                         {menuPreview.length > 0 && (
-                            <div className="mt-3 flex flex-wrap gap-3">
+                            <div className="mt-2 flex flex-wrap gap-2">
                                 {menuPreview.map((file, i) => (
-                                    <div key={i} className="relative h-16 w-16">
+                                    <div key={i} className="relative h-14 w-14">
                                         <Image
                                             src={getPreviewUrl(file)}
                                             alt={`menu-${i}`}
-                                            width={64}
-                                            height={64}
-                                            className="h-16 w-16 rounded-[20px] object-cover"
+                                            width={56}
+                                            height={56}
+                                            className="h-14 w-14 rounded-lg object-cover"
                                             unoptimized
                                         />
 
                                         <button
                                             type="button"
                                             onClick={() => removeMenu(i)}
-                                            className="absolute right-0 top-0 flex h-5 w-5 -translate-y-1/3 translate-x-1/3 items-center justify-center rounded-full bg-black/60 text-xs text-white"
+                                            className="absolute right-0 top-0 flex h-4 w-4 -translate-y-1/4 translate-x-1/4 items-center justify-center rounded-full bg-black/60 text-xs text-white"
                                         >
                                             ×
                                         </button>
@@ -257,12 +257,13 @@ export default function Media({ formData, setFormData }: Props) {
                         )}
                     </div>
 
-                    <div className="mb-6">
-                        <p className="text-sm font-semibold text-gray-900">
+                    {/* ================= BUSINESS LICENSE ================= */}
+                    <div>
+                        <p className="text-sm font-semibold text-gray-900 mb-2">
                             Giấy phép kinh doanh <span className="text-pink-500">*</span>
                         </p>
 
-                        <label className="mt-2 flex h-32 cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
+                        <label className="flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500">
                             <span>
                                 Kéo thả tệp vào đây hoặc <span className="text-[#9f5ff2]">chọn</span>
                             </span>
@@ -282,7 +283,7 @@ export default function Media({ formData, setFormData }: Props) {
                         </label>
 
                         {businessLicensePreview && (
-                            <div className="relative mt-3 flex items-center gap-3">
+                            <div className="relative mt-2 flex items-center gap-2">
 
                                 {/* preview */}
                                 {typeof businessLicensePreview === "string" &&
@@ -290,22 +291,22 @@ export default function Media({ formData, setFormData }: Props) {
                                     <a
                                         href={businessLicensePreview}
                                         target="_blank"
-                                        className="text-blue-600 underline text-sm"
+                                        className="text-blue-600 underline text-xs"
                                     >
                                         Xem file PDF
                                     </a>
                                 ) : typeof businessLicensePreview !== "string" &&
                                     businessLicensePreview.type === "application/pdf" ? (
-                                    <span className="text-sm text-gray-600">
+                                    <span className="text-xs text-gray-600">
                                         {businessLicensePreview.name}
                                     </span>
                                 ) : (
                                     <Image
                                         src={getPreviewUrl(businessLicensePreview)}
                                         alt="license-preview"
-                                        width={120}
-                                        height={80}
-                                        className="rounded-xl object-cover"
+                                        width={100}
+                                        height={60}
+                                        className="rounded-lg object-cover h-16"
                                         unoptimized
                                     />
                                 )}
@@ -314,7 +315,7 @@ export default function Media({ formData, setFormData }: Props) {
                                 <button
                                     type="button"
                                     onClick={removeBusinessLicense}
-                                    className="flex h-6 w-6 items-center justify-center rounded-full bg-black/60 text-white"
+                                    className="flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white text-xs"
                                 >
                                     ×
                                 </button>

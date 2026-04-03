@@ -87,14 +87,14 @@ export default function Info({ formData, setFormData }: Props) {
   }
 
   return (
-    <div className="flex items-center justify-center ">
-      <div className="w-full max-w-3xl rounded-3xl  px-6 py-6 md:px-10">
-        <h1 className="mb-8 text-center text-2xl font-bold text-blue-900">
+    <div className="flex items-center justify-center">
+      <div className="w-full max-w-3xl px-4 py-4">
+        <h1 className="mb-6 text-center text-2xl font-bold text-blue-900">
           Thông tin địa điểm
         </h1>
 
         {/* Tên địa điểm */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="mb-1 block text-sm font-medium text-gray-800">
             Tên địa điểm<span className="text-pink-500"> *</span>
           </label>
@@ -102,12 +102,12 @@ export default function Info({ formData, setFormData }: Props) {
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Nhập tên chủ địa điểm"
-            className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
           />
         </div>
 
         {/* Mô tả ngắn */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="mb-1 block text-sm font-medium text-gray-800">
             Mô tả ngắn<span className="text-pink-500"> *</span>
           </label>
@@ -116,13 +116,13 @@ export default function Info({ formData, setFormData }: Props) {
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             rows={3}
             placeholder="Mô tả ngắn gọn về địa điểm tối đa 150 kí tự"
-            className="w-full rounded-[8.33] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+            className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
           />
         </div>
 
         {/* CATEGORY */}
-        <div className="mb-6">
-          <label className="mb-2 block text-sm font-medium text-gray-800">
+        <div className="mb-3">
+          <label className="mb-1 block text-sm font-medium text-gray-800">
             Danh mục
           </label>
 
@@ -138,12 +138,12 @@ export default function Info({ formData, setFormData }: Props) {
         </div>
 
         {/* Giá cả */}
-        <div className="mb-6">
-          <label className="mb-2 block text-sm font-medium text-gray-800">
+        <div className="mb-4">
+          <label className="mb-1 block text-sm font-medium text-gray-800">
             Khoảng giá
           </label>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
 
             {/* PRICE MIN */}
             <div className="relative">
@@ -160,7 +160,7 @@ export default function Info({ formData, setFormData }: Props) {
                   })
                 }
                 placeholder="Tối thiểu"
-                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
               />
             </div>
 
@@ -179,22 +179,22 @@ export default function Info({ formData, setFormData }: Props) {
                   })
                 }
                 placeholder="Tối đa"
-                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF]"
               />
             </div>
 
           </div>
 
-          <p className="text-xs text-gray-400 mt-2">
+          <p className="text-xs text-gray-400 mt-1">
             Ví dụ: 50.000đ - 200.000đ
           </p>
         </div>
-        <div className="mb-6">
-          <label className="mb-3 block text-sm font-medium">
+        <div className="mb-4">
+          <label className="mb-2 block text-sm font-medium">
             Thẻ tâm trạng
           </label>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {moods.map(mood => {
               const active = formData.selectedMoods.includes(mood.id);
 
@@ -209,7 +209,7 @@ export default function Info({ formData, setFormData }: Props) {
                         "selectedMoods"
                       )
                     }
-                    className={`rounded-full px-4 py-2 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
             ${active
                         ? "bg-[#9f5ff2] text-white shadow-md hover:shadow-lg hover:scale-105"
                         : "bg-white border border-[#E4D7FF] hover:border-[#9f5ff2] hover:shadow-sm"
@@ -236,11 +236,11 @@ export default function Info({ formData, setFormData }: Props) {
           </div>
         </div>
         <div>
-          <label className="mb-3 block text-sm font-medium">
+          <label className="mb-2 block text-sm font-medium">
             Thẻ tính cách
           </label>
 
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap gap-2">
             {styles.map(style => {
               const active = formData.selectedStyles.includes(style.id);
 
@@ -255,7 +255,7 @@ export default function Info({ formData, setFormData }: Props) {
                         "selectedStyles"
                       )
                     }
-                    className={`rounded-full px-4 py-2 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
             ${active
                         ? "bg-[#7C4DFF] text-white shadow-md hover:shadow-lg hover:scale-105"
                         : "bg-white border border-[#E4D7FF] hover:border-[#7C4DFF] hover:shadow-sm"

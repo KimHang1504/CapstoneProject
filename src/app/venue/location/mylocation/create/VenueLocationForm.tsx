@@ -217,12 +217,12 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
 
   return (
-    <div className="p-6">
+    <div className="p-4 max-w-4xl mx-auto">
       {/* <h1 className="text-2xl font-bold text-gray-900 mb-4">
         {mode === 'edit' ? 'Chỉnh sửa địa điểm' : 'Tạo địa điểm mới'}
       </h1> */}
 
-      <p className="text-blue-900 text-center">
+      <p className="text-blue-900 text-center mb-4">
         Bước {step} / {steps.length}
       </p>
 
@@ -231,11 +231,11 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         setFormData={setFormData}
       />
 
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between mt-4 px-4">
         <button
           type="button"
           onClick={prevStep}
-          className="rounded-[8.33] border border-[#D3D6FF] bg-white px-6 py-2 text-sm font-medium text-[#4C5A8F] disabled:opacity-50"
+          className="rounded-lg border border-[#D3D6FF] bg-white px-5 py-2 text-sm font-medium text-[#4C5A8F] disabled:opacity-50 hover:bg-gray-50"
         >
           Trở về
         </button>
@@ -244,7 +244,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={handleSubmit}
-            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
+            className="rounded-lg bg-[#9f5ff2] px-6 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
           >
             {mode === 'edit' ? 'Cập nhật' : 'Hoàn tất'}
           </button>
@@ -252,7 +252,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={nextStep}
-            className="rounded-[8.33] bg-[#9f5ff2] px-8 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
+            className="rounded-lg bg-[#9f5ff2] px-6 py-2 text-sm font-semibold text-white hover:bg-[#8b53fc]"
           >
             Tiếp tục
           </button>

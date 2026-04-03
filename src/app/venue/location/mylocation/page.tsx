@@ -93,9 +93,6 @@ export default function MyLocationPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-4">
-        Địa điểm của tôi
-      </h1>
       <div className="flex gap-10 p-8 items-start">
 
         <div className="flex-1 min-w-0 space-y-4">
