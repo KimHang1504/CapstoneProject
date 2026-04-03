@@ -40,8 +40,8 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     interiorImage: [],
     fullPageMenuImage: [],
 
-    selectedMoods: initialData?.selectedMoods || [],
-    selectedStyles: initialData?.selectedStyles || [],
+    selectedMoods: Array.from(new Set(initialData?.selectedMoods || [])),
+    selectedStyles: Array.from(new Set(initialData?.selectedStyles || [])),
 
     existingCoverUrl: initialData?.existingCoverUrl || "",
     existingInteriorUrls: initialData?.existingInteriorUrls || [],
@@ -158,11 +158,19 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         return;
       }
 
-      const venueTags = formData.selectedMoods.flatMap(moodId =>
-        formData.selectedStyles.map(styleId => ({
-          coupleMoodTypeId: moodId,
-          couplePersonalityTypeId: styleId,
-        }))
+      const venueTags = Array.from(
+        new Map(
+          formData.selectedMoods.flatMap(moodId =>
+            formData.selectedStyles.map(styleId => {
+              const tag = {
+                coupleMoodTypeId: moodId,
+                couplePersonalityTypeId: styleId,
+              };
+
+              return [`${tag.coupleMoodTypeId}-${tag.couplePersonalityTypeId}`, tag] as const;
+            })
+          )
+        ).values()
       );
 
       const payload = {

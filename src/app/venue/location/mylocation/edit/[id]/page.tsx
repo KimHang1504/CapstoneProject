@@ -22,15 +22,17 @@ export default function EditPage() {
         const data = response.data
         console.log("LẤY CHI TIẾT ĐỂ CHỈNH SỬA:", data)
 
-        const moodIds =
+        const moodIds = Array.from(new Set(
           data.locationTags
             ?.map(tag => tag.coupleMoodType?.id)
-            .filter((id): id is number => Boolean(id)) || [];
+            .filter((id): id is number => Boolean(id)) || []
+        ));
 
-        const styleIds =
+        const styleIds = Array.from(new Set(
           data.locationTags
             ?.map(tag => tag.couplePersonalityType?.id)
-            .filter((id): id is number => Boolean(id)) || [];
+            .filter((id): id is number => Boolean(id)) || []
+        ));
 
         setInitialData({
           name: data.name,
