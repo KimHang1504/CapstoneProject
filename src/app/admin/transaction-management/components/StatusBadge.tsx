@@ -1,6 +1,6 @@
 import { CheckCircle, Clock, XCircle, Ban } from "lucide-react";
 
-export function StatusBadge({ status }: { status: "SUCCESS" | "PENDING" | "CANCELLED" | "EXPIRED" }) {
+export function StatusBadge({ status }: { status: "SUCCESS" | "PENDING" | "CANCELLED" | "EXPIRED"| "FAILED" }) {
   const config = {
     SUCCESS: {
       bg: "bg-gradient-to-r from-emerald-50 to-green-50",
@@ -30,6 +30,13 @@ export function StatusBadge({ status }: { status: "SUCCESS" | "PENDING" | "CANCE
       label: "Hết hạn",
       icon: Ban
     },
+    FAILED: {
+      bg: "bg-gradient-to-r from-red-50 to-rose-50",
+      text: "text-red-700",
+      border: "border-red-200",
+      label: "Thất bại",
+      icon: XCircle
+    }
   };
 
   const style = config[status];

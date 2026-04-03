@@ -657,22 +657,26 @@ export type TransactionType =
   | "MEMBER_SUBSCRIPTION"
   | "MONEY_TO_POINT"
   | "ADS_ORDER"
-  | "VENUE_SUBSCRIPTION";
+  | "VENUE_SUBSCRIPTION"
+  | "VENUE_SETTLEMENT_PAYOUT";
 
 export const TransactionTypeToInt: Record<TransactionType, number> = {
   VENUE_SUBSCRIPTION: 1,
-  MEMBER_SUBSCRIPTION: 2,
-  MONEY_TO_POINT: 3,
-  ADS_ORDER: 4,
-  WALLET_TOPUP: 5,
+  ADS_ORDER: 2,
+  MEMBER_SUBSCRIPTION: 3,
+  WALLET_TOPUP: 4,
+  VENUE_SETTLEMENT_PAYOUT: 5,
+  MONEY_TO_POINT: 6,
+
 };
 
 export const TransactionTypeFromInt: Record<number, TransactionType> = {
-  1: "WALLET_TOPUP",
-  2: "MEMBER_SUBSCRIPTION",
-  3: "MONEY_TO_POINT",
-  4: "ADS_ORDER",
-  5: "VENUE_SUBSCRIPTION",
+  1: "VENUE_SUBSCRIPTION",
+  2: "ADS_ORDER",
+  3: "MEMBER_SUBSCRIPTION",
+  4: "WALLET_TOPUP",
+  5: "VENUE_SETTLEMENT_PAYOUT",
+  6: "MONEY_TO_POINT",
 };
 
 export interface Transaction {
