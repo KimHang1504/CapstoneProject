@@ -50,7 +50,7 @@ export default function CreateAdvertisementPage() {
   return (
     <AdvertisementForm
       onSubmit={handleCreate}
-      submitLabel="Tạo quảng cáo"
+      submitLabel="Tạo mới quảng cáo"
       moodOptions={moodOptions}
     />
   );

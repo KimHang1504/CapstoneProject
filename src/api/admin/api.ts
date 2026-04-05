@@ -36,6 +36,13 @@ export const acceptAndRejectVenue = (body: VenueApprovalRequest) => {
     return apiClient.post(`/api/VenueLocation/approve`, body);
 }
 
+export const updateVenueStatusToInactive = (venueId: number, reason: string | null) => {
+    return apiClient.patch(`/api/Admin/venues/${venueId}/status`, {
+        status: 'INACTIVE',
+        reason: reason
+    });
+}
+
 // Special Event
 export const getAllSpecialEvents = (page: number, pageSize: number) => {
     return apiClient.get<ApiResponse<SpecialEventPagination>>("/api/SpecialEvent", {

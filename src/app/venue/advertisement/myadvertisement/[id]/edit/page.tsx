@@ -65,7 +65,7 @@ export default function EditAdvertisementPage() {
     <AdvertisementForm
       initialData={data}
       onSubmit={handleUpdate}
-      submitLabel="Cập nhật quảng cáo"
+      submitLabel="Chỉnh sửa quảng cáo"
       moodOptions={moodOptions}
     />
   );

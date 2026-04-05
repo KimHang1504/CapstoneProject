@@ -50,7 +50,7 @@ export default function WalletPage() {
       ]);
       setWallet(walletData);
       setWithdraws(withdrawData);
-      
+
       // Load first page of transactions
       const transactionResponse = await getTransactionHistory(1, pageSize);
       setTransactionData(transactionResponse);
@@ -139,11 +139,10 @@ export default function WalletPage() {
               setActiveTab('transactions');
               setCurrentPage(1);
             }}
-            className={`px-4 py-2.5 text-sm font-medium transition relative ${
-              activeTab === 'transactions'
+            className={`px-4 py-2.5 text-sm font-medium transition relative ${activeTab === 'transactions'
                 ? 'text-violet-600'
                 : 'text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Biến động số dư
             {activeTab === 'transactions' && (
@@ -152,11 +151,10 @@ export default function WalletPage() {
           </button>
           <button
             onClick={() => setActiveTab('withdraws')}
-            className={`px-4 py-2.5 text-sm font-medium transition relative ${
-              activeTab === 'withdraws'
+            className={`px-4 py-2.5 text-sm font-medium transition relative ${activeTab === 'withdraws'
                 ? 'text-violet-600'
                 : 'text-gray-500 hover:text-gray-700'
-            }`}
+              }`}
           >
             Lịch sử rút tiền
             {activeTab === 'withdraws' && (
@@ -188,9 +186,8 @@ export default function WalletPage() {
                     const isIncoming = item.direction === 'IN';
                     return (
                       <div key={item.transactionId} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-violet-50/40 transition">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                          isIncoming ? 'bg-emerald-100' : 'bg-rose-100'
-                        }`}>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isIncoming ? 'bg-emerald-100' : 'bg-rose-100'
+                          }`}>
                           {isIncoming ? (
                             <ArrowDownRight size={18} className="text-emerald-600" />
                           ) : (
@@ -209,9 +206,8 @@ export default function WalletPage() {
                           </p>
                         </div>
                         <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
-                          <p className={`font-bold text-base ${
-                            isIncoming ? 'text-emerald-600' : 'text-rose-600'
-                          }`}>
+                          <p className={`font-bold text-base ${isIncoming ? 'text-emerald-600' : 'text-rose-600'
+                            }`}>
                             {isIncoming ? '+' : '-'}{Math.abs(item.balanceChange).toLocaleString("vi-VN")} ₫
                           </p>
                           <p className="text-xs text-gray-400 mt-1">
@@ -227,7 +223,7 @@ export default function WalletPage() {
                 {transactionData.totalPages > 1 && (
                   <div className="px-4 sm:px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <p className="text-xs sm:text-sm text-gray-500">
-                      Trang {transactionData.pageNumber} / {transactionData.totalPages} 
+                      Trang {transactionData.pageNumber} / {transactionData.totalPages}
                       <span className="ml-2 text-gray-400">
                         ({transactionData.totalCount} giao dịch)
                       </span>
@@ -279,13 +275,12 @@ export default function WalletPage() {
                     <div key={item.id} className="px-4 sm:px-5 py-4 hover:bg-violet-50/40 transition">
                       <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                         {/* Icon */}
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
-                          item.status === 'APPROVED' ? 'bg-emerald-100' : 
-                          item.status === 'REJECTED' ? 'bg-rose-100' : 'bg-violet-100'
-                        }`}>
+                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.status === 'APPROVED' ? 'bg-emerald-100' :
+                            item.status === 'REJECTED' ? 'bg-rose-100' : 'bg-violet-100'
+                          }`}>
                           <ArrowDownCircle size={18} className={
-                            item.status === 'APPROVED' ? 'text-emerald-500' : 
-                            item.status === 'REJECTED' ? 'text-rose-500' : 'text-violet-500'
+                            item.status === 'APPROVED' ? 'text-emerald-500' :
+                              item.status === 'REJECTED' ? 'text-rose-500' : 'text-violet-500'
                           } />
                         </div>
 
@@ -332,16 +327,16 @@ export default function WalletPage() {
                           {/* Proof Image */}
                           {item.proofImageUrl && (
                             <div className="mt-2">
-                              <a 
-                                href={item.proofImageUrl} 
-                                target="_blank" 
+                              <a
+                                href={item.proofImageUrl}
+                                target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center gap-1.5 text-xs text-violet-600 hover:text-violet-700 hover:underline"
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                                  <circle cx="9" cy="9" r="2"/>
-                                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                                  <circle cx="9" cy="9" r="2" />
+                                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" />
                                 </svg>
                                 Xem ảnh chứng từ
                               </a>
@@ -363,7 +358,11 @@ export default function WalletPage() {
         )}
 
         {showWithdraw && (
-          <WithdrawModal onClose={() => setShowWithdraw(false)} onSuccess={loadWallet} />
+          <WithdrawModal
+            onClose={() => setShowWithdraw(false)}
+            onSuccess={loadWallet}
+            balance={wallet?.balance ?? 0}
+          />
         )}
 
         {showTopup && (
