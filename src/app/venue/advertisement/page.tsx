@@ -28,6 +28,7 @@ export default function AdvertisementPage() {
       try {
         const res = await getAdvertisements();
         setAds(res.data);
+        console.log(res.data);  
       } catch (error) {
         console.error(error);
       } finally {
@@ -71,7 +72,7 @@ export default function AdvertisementPage() {
         </div>
         <button
           onClick={() => router.push("/venue/advertisement/myadvertisement/create")}
-          className="bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
+          className="bg-linear-to-r  cursor-pointer from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
         >
           <span className="text-lg leading-none">+</span> Tạo mới
         </button>

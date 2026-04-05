@@ -3,14 +3,15 @@
 import { useState } from "react";
 import { withdrawWallet } from "@/api/venue/wallet/api";
 import { X, ArrowDownCircle } from "lucide-react";
-import {toast} from "sonner";
+import { toast } from "sonner";
 
 type Props = {
   onClose: () => void;
   onSuccess: () => void;
+  balance: number;
 };
 
-export default function WithdrawModal({ onClose, onSuccess }: Props) {
+export default function WithdrawModal({ onClose, onSuccess, balance }: Props) {
   const [form, setForm] = useState({
     amount: "",
     bankName: "",
@@ -23,10 +24,32 @@ export default function WithdrawModal({ onClose, onSuccess }: Props) {
     setForm((prev) => ({ ...prev, [field]: value }));
 
   const handleSubmit = async () => {
+    const amount = Number(form.amount);
+    const missingFields: string[] = [];
+
+    if (!amount || amount <= 0) {
+      toast.error("Số tiền không hợp lệ");
+      return;
+    }
+
+    if (amount > balance) {
+      toast.error(`Số dư không đủ. Bạn chỉ có ${balance.toLocaleString("vi-VN")} ₫`);
+      return;
+    }
+    // 3. Check các field bank info (nếu muốn validate ở FE)
+    if (!form.bankName) missingFields.push("Tên ngân hàng");
+    if (!form.accountNumber) missingFields.push("Số tài khoản");
+    if (!form.accountName) missingFields.push("Tên chủ tài khoản");
+
+    // 4. Nếu có field thiếu → báo
+    if (missingFields.length > 0) {
+      toast.error(`Vui lòng điền: ${missingFields.join(", ")}`);
+      return;
+    }
     try {
       setSubmitting(true);
       await withdrawWallet({
-        amount: Number(form.amount),
+        amount,
         bankInfo: {
           bankName: form.bankName,
           accountNumber: form.accountNumber,

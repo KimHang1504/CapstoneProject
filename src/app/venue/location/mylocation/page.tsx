@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, ChevronRight, MapPin, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
-import Image from 'next/image';
+import ImageWithFallback from '@/components/ImageWithFallback';
 
 import { getMyVenueLocations } from '@/api/venue/location/api';
 import { MyVenueLocation } from '@/api/venue/location/type';
@@ -119,16 +119,10 @@ export default function MyLocationPage() {
               >
                 {/* Image */}
                 <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-                  <Image
-                    src={
-                      loc.coverImage?.[0] && loc.coverImage[0] !== 'string' && loc.coverImage[0].startsWith('http')
-                        ? loc.coverImage[0]
-                        : "https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg"
-                    }
+                  <ImageWithFallback
+                    src={loc.coverImage?.[0] && typeof loc.coverImage[0] === 'string' && loc.coverImage[0].startsWith('http') ? loc.coverImage[0] : ''}
                     alt={loc.name}
-                    fill
-                    unoptimized
-                    className="object-cover group-hover:scale-105 transition duration-300"
+                    className="absolute inset-0 object-cover w-full h-full group-hover:scale-105 transition duration-300"
                   />
                 </div>
 

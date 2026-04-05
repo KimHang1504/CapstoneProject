@@ -1,8 +1,8 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { AdvertisementListItem, PLACEMENT_LABEL } from "@/api/venue/advertisement/type";
+import ImageWithFallback from "@/components/ImageWithFallback";
 
 type Props = {
   ad: AdvertisementListItem;
@@ -29,11 +29,12 @@ export default function AdvertisementCard({ ad }: Props) {
     >
       {/* Banner with overlay */}
       <div className="relative w-full h-40 overflow-hidden">
-        <Image
+        <ImageWithFallback
           src={ad.bannerUrl}
           alt={ad.title}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          width={800}
+          height={300}
+          className="object-cover group-hover:scale-105 transition-transform duration-500 w-full h-full"
         />
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />

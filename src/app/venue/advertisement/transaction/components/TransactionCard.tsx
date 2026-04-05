@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { AdsOrderTransaction, PLACEMENT_LABEL } from '@/api/venue/advertisement/type';
+import ImageWithFallback from '@/components/ImageWithFallback';
 import { CreditCard, Calendar, MapPin, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 
 export const STATUS_STYLE: Record<string, string> = {
@@ -30,8 +30,6 @@ const AD_STATUS_STYLE: Record<string, string> = {
   INACTIVE: 'bg-gray-100 text-gray-400',
 };
 
-const FALLBACK = 'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg';
-
 export default function TransactionCard({ item }: { item: AdsOrderTransaction }) {
   const [expanded, setExpanded] = useState(false);
   const ad = item.advertisement;
@@ -41,11 +39,10 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4">
         {/* Banner */}
         <div className="relative w-full h-40 sm:w-24 sm:h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-          <Image
-            src={ad.bannerUrl?.startsWith('http') ? ad.bannerUrl : FALLBACK}
+          <ImageWithFallback
+            src={ad.bannerUrl || ''}
             alt={ad.title}
-            fill
-            className="object-cover"
+            className="absolute inset-0 object-cover w-full h-full"
           />
         </div>
 

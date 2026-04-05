@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { createWalletTopup, getWalletBalance } from "@/api/venue/wallet/api";
 import { WalletTopupResponse } from "@/api/venue/wallet/type";
 import { cancelPayment, getPaymentStatus } from "@/api/venue/payment/api";
@@ -28,6 +28,10 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
 
   const transactionId = topup?.transactionId;
 
+  // ======= NEW: track if already cancelled =======
+  const hasCancelledRef = useRef(false);
+
+  // ======= EXISTING: cancelPendingTransaction =======
   const cancelPendingTransaction = async (reason?: string) => {
     if (!transactionId || paymentStatus !== "PENDING") return;
 
@@ -42,6 +46,7 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
     }
   };
 
+  // ======= EXISTING: cancelPendingTransactionKeepalive =======
   const cancelPendingTransactionKeepalive = () => {
     if (!transactionId || paymentStatus !== "PENDING") return;
 
@@ -51,7 +56,6 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
 
     const endpoint = `${apiBase}/api/Payment/cancel/${transactionId}`;
 
-    // Use keepalive to increase chance the cancel request is delivered on page unload.
     fetch(endpoint, {
       method: "POST",
       headers: {
@@ -60,6 +64,18 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
       },
       keepalive: true,
     }).catch((error) => console.error("Keepalive cancel error:", error));
+  };
+
+  // ======= NEW: safeCancel wraps both cancel methods =======
+  const safeCancel = async (reason?: string) => {
+    if (!transactionId || hasCancelledRef.current) return;
+    hasCancelledRef.current = true;
+
+    if (reason === "user_click_cancel" || reason === "esc_close_modal" || reason === "close_modal") {
+      await cancelPendingTransaction(reason);
+    } else {
+      cancelPendingTransactionKeepalive();
+    }
   };
 
   const canSubmit = useMemo(() => {
@@ -129,20 +145,12 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
   }, [transactionId, paymentStatus, onClose, onSuccess]);
 
   useEffect(() => {
-    if (!transactionId || paymentStatus !== "PENDING") return;
+    if (!topup || paymentStatus !== "PENDING") return;
 
-    const handleBeforeUnload = () => {
-      cancelPendingTransactionKeepalive();
-    };
-
-    const handlePageHide = () => {
-      cancelPendingTransactionKeepalive();
-    };
-
+    const handleBeforeUnload = () => safeCancel("unload");
+    const handlePageHide = () => safeCancel("unload");
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "hidden") {
-        cancelPendingTransactionKeepalive();
-      }
+      if (document.visibilityState === "hidden") safeCancel("unload");
     };
 
     window.addEventListener("beforeunload", handleBeforeUnload);
@@ -154,23 +162,26 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
       window.removeEventListener("pagehide", handlePageHide);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
-  }, [transactionId, paymentStatus]);
+  }, [topup, paymentStatus]); // <- dùng topup thay vì transactionId
 
+  // ======= UPDATED: unmount cancel =======
   useEffect(() => {
     return () => {
-      // Component unmount due to route/navigation: best-effort cancel pending transaction.
-      cancelPendingTransactionKeepalive();
+      safeCancel("unmount");
     };
   }, [transactionId, paymentStatus]);
 
+  // ======= UPDATED: ESC key cancel =======
   useEffect(() => {
     const onEsc = async (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
 
       if (transactionId && paymentStatus === "PENDING") {
-        const confirmed = window.confirm("Bạn đang có giao dịch chờ thanh toán. Bạn có muốn hủy giao dịch trước khi đóng?");
+        const confirmed = window.confirm(
+          "Bạn đang có giao dịch chờ thanh toán. Bạn có muốn hủy giao dịch trước khi đóng?"
+        );
         if (!confirmed) return;
-        await cancelPendingTransaction("esc_close_modal");
+        await safeCancel("esc_close_modal");
       }
 
       onClose();
@@ -190,6 +201,8 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
         return;
       }
 
+      hasCancelledRef.current = false; // Reset flag for new transaction
+
       const response = await createWalletTopup({ amount });
 
       setTopup(response);
@@ -204,16 +217,21 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
   };
 
   const handleCancelByUser = async () => {
-    await cancelPendingTransaction("user_click_cancel");
+    await safeCancel("user_click_cancel");
+    setPaymentStatus("CANCELLED");
     toast.message("Đã hủy giao dịch nạp tiền");
   };
 
+
+
   const handleClose = async () => {
     if (transactionId && paymentStatus === "PENDING") {
-      const confirmed = window.confirm("Bạn đang có giao dịch chờ thanh toán. Bạn có muốn hủy giao dịch trước khi đóng?");
+      const confirmed = window.confirm(
+        "Bạn đang có giao dịch chờ thanh toán. Bạn có muốn hủy giao dịch trước khi đóng?"
+      );
       if (!confirmed) return;
 
-      await cancelPendingTransaction("close_modal");
+      await safeCancel("close_modal");
     }
 
     onClose();
@@ -223,6 +241,7 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
     setTopup(null);
     setPaymentStatus("PENDING");
     setSecondsLeft(0);
+    hasCancelledRef.current = false; // reset flag
   };
 
   const statusBadge = useMemo(() => {
@@ -301,49 +320,57 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${statusBadge.cls}`}>{statusBadge.label}</span>
             </div>
 
-            {topup.qrCodeUrl ? (
-              <div className="border border-gray-200 rounded-2xl p-4">
-                <div className="bg-white rounded-xl overflow-hidden border border-gray-100">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={topup.qrCodeUrl} alt="VietQR" className="w-full h-auto" />
+            {/* Hiển thị QR và thông tin chi tiết chỉ khi giao dịch đang chờ */}
+            {paymentStatus === "PENDING" && topup && (
+              <>
+                {topup.qrCodeUrl ? (
+                  <div className="border border-gray-200 rounded-2xl p-4">
+                    <div className="bg-white rounded-xl overflow-hidden border border-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={topup.qrCodeUrl} alt="VietQR" className="w-full h-auto" />
+                    </div>
+                    <p className="text-xs text-gray-500 mt-2 text-center">
+                      Quét mã để chuyển khoản đúng nội dung
+                    </p>
+                  </div>
+                ) : (
+                  <div className="p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-700 text-sm">
+                    Không lấy được mã QR. Vui lòng tạo lại giao dịch.
+                  </div>
+                )}
+
+                <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 text-sm space-y-2">
+                  <div className="flex justify-between gap-3">
+                    <span className="text-gray-500">Số tiền</span>
+                    <span className="font-semibold text-gray-900">{topup.amount.toLocaleString("vi-VN")} ₫</span>
+                  </div>
+                  <div className="flex justify-between gap-3">
+                    <span className="text-gray-500">Nội dung CK</span>
+                    <span className="font-semibold text-gray-900">{topup.paymentContent}</span>
+                  </div>
+                  {topup.bankInfo && (
+                    <>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-gray-500">Ngân hàng</span>
+                        <span className="font-semibold text-gray-900">{topup.bankInfo.bankName}</span>
+                      </div>
+                      <div className="flex justify-between gap-3">
+                        <span className="text-gray-500">Số tài khoản</span>
+                        <span className="font-semibold text-gray-900">{topup.bankInfo.accountNumber}</span>
+                      </div>
+                    </>
+                  )}
+                  <div className="flex justify-between gap-3">
+                    <span className="text-gray-500">Thời gian còn lại</span>
+                    <span className={`font-semibold ${secondsLeft <= 30 ? "text-rose-600" : "text-gray-900"}`}>
+                      {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, "0")}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-2 text-center">Quét mã để chuyển khoản đúng nội dung</p>
-              </div>
-            ) : (
-              <div className="p-4 rounded-xl bg-rose-50 border border-rose-100 text-rose-700 text-sm">
-                Không lấy được mã QR. Vui lòng tạo lại giao dịch.
-              </div>
+              </>
             )}
 
-            <div className="rounded-xl bg-gray-50 border border-gray-100 p-4 text-sm space-y-2">
-              <div className="flex justify-between gap-3">
-                <span className="text-gray-500">Số tiền</span>
-                <span className="font-semibold text-gray-900">{topup.amount.toLocaleString("vi-VN")} ₫</span>
-              </div>
-              <div className="flex justify-between gap-3">
-                <span className="text-gray-500">Nội dung CK</span>
-                <span className="font-semibold text-gray-900">{topup.paymentContent}</span>
-              </div>
-              {topup.bankInfo && (
-                <>
-                  <div className="flex justify-between gap-3">
-                    <span className="text-gray-500">Ngân hàng</span>
-                    <span className="font-semibold text-gray-900">{topup.bankInfo.bankName}</span>
-                  </div>
-                  <div className="flex justify-between gap-3">
-                    <span className="text-gray-500">Số tài khoản</span>
-                    <span className="font-semibold text-gray-900">{topup.bankInfo.accountNumber}</span>
-                  </div>
-                </>
-              )}
-              <div className="flex justify-between gap-3">
-                <span className="text-gray-500">Thời gian còn lại</span>
-                <span className={`font-semibold ${secondsLeft <= 30 ? "text-rose-600" : "text-gray-900"}`}>
-                  {Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, "0")}
-                </span>
-              </div>
-            </div>
-
+            {/* Thông báo giao dịch hết hạn */}
             {paymentStatus === "EXPIRED" && (
               <div className="p-3 rounded-xl bg-amber-50 border border-amber-100 text-sm text-amber-800 flex items-center gap-2">
                 <AlertTriangle size={16} />
@@ -351,12 +378,20 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
               </div>
             )}
 
-            {statusChecking && paymentStatus === "PENDING" && (
+            {/* Thông báo giao dịch bị hủy */}
+            {paymentStatus === "CANCELLED" && (
+              <div className="p-3 rounded-xl bg-rose-50 border border-rose-100 text-sm text-rose-700 flex items-center gap-2">
+                <AlertTriangle size={16} />
+                Giao dịch đã hủy. Có thể tạo lại mã QR.
+              </div>
+            )}
+
+            {/* {statusChecking && paymentStatus === "PENDING" && (
               <div className="text-xs text-gray-500 flex items-center gap-2 justify-center">
                 <Loader2 size={14} className="animate-spin" />
                 Đang kiểm tra trạng thái thanh toán...
               </div>
-            )}
+            )} */}
 
             <div className="flex gap-3 pt-2">
               {paymentStatus === "PENDING" && (
