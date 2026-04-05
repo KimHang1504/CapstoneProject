@@ -13,6 +13,7 @@ import { ModerationComment } from "@/api/admin/aiModeration/type";
 import { CommentCardModeration } from "./CommentCardModeration";
 import { EmptyStateModeration, SkeletonModeration } from "./SkeletonModeration";
 import { getFlaggedComments, ModerateComment } from "@/api/admin/aiModeration/api";
+import { toast } from "sonner";
 
 const PAGE_SIZE = 10;
 
@@ -44,14 +45,32 @@ export default function CommentModeration() {
     fetchData();
   }, [page]);
 
-  const handleAction = async (id: number, action: 'PUBLISH' | 'CANCEL') => {
-    try {
-      await ModerateComment(id, action);
+  const handleAction = (id: number, action: 'PUBLISH' | 'CANCEL') => {
+    const actionText = action === 'PUBLISH' ? "duyệt" : "hủy";
 
-      setComments(prev => prev.filter(c => c.id !== id));
-    } catch (err) {
-      console.error(err);
-    }
+    toast(`Bạn có chắc muốn ${actionText} comment này không?`, {
+      action: {
+        label: action === 'PUBLISH' ? "Duyệt" : "Hủy comment",
+        onClick: async () => {
+          try {
+            await ModerateComment(id, action);
+
+            setComments(prev => prev.filter(c => c.id !== id));
+
+            toast.success(`Đã ${actionText} comment`);
+          } catch (err) {
+            console.error(err);
+            const errorMessage =
+              err instanceof Error ? err.message : `${actionText} thất bại`;
+            toast.error(errorMessage);
+          }
+        },
+      },
+      cancel: {
+        label: "Đóng",
+        onClick: () => { },
+      },
+    });
   };
 
   const isEmpty = !comments || comments.length === 0;

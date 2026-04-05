@@ -12,6 +12,7 @@ import { ModerationPost } from "@/api/admin/aiModeration/type";
 import { getFlaggedPosts, ModeratePost } from "@/api/admin/aiModeration/api";
 import { EmptyStateModeration, SkeletonModeration } from "./SkeletonModeration";
 import { PostCardModeration } from "./PostCardModeration";
+import { toast } from "sonner";
 
 const PAGE_SIZE = 5;
 
@@ -42,15 +43,33 @@ export default function PostModeration() {
     fetchData();
   }, [page]);
 
-  const handleAction = async (id: number, action: 'PUBLISH' | 'CANCEL') => {
-    try {
-      await ModeratePost(id, action);
+  const handleAction = (id: number, action: 'PUBLISH' | 'CANCEL') => {
+    const actionText = action === 'PUBLISH' ? "duyệt" : "hủy";
 
-      // remove khỏi list (UX mượt)
-      setPosts(prev => prev.filter(p => p.id !== id));
-    } catch (err) {
-      console.error(err);
-    }
+    toast(`Bạn có chắc muốn ${actionText} bài post này không?`, {
+      action: {
+        label: action === 'PUBLISH' ? "Duyệt" : "Hủy",
+        onClick: async () => {
+          try {
+            await ModeratePost(id, action);
+
+            // remove khỏi list (UX mượt)
+            setPosts(prev => prev.filter(p => p.id !== id));
+
+            toast.success(`Đã ${actionText} bài post`);
+          } catch (err) {
+            console.error(err);
+            const errorMessage =
+              err instanceof Error ? err.message : `${actionText} thất bại`;
+            toast.error(errorMessage);
+          }
+        },
+      },
+      cancel: {
+        label: "Đóng",
+        onClick: () => { },
+      },
+    });
   };
 
   return (

@@ -12,6 +12,7 @@ import { ModerationReview } from "@/api/admin/aiModeration/type";
 import { getFlaggedReviews, ModerateReview } from "@/api/admin/aiModeration/api";
 import { EmptyStateModeration, SkeletonModeration } from "./SkeletonModeration";
 import { ReviewCardModeration } from "./ReviewCardModeraion";
+import { toast } from "sonner";
 
 const PAGE_SIZE = 5;
 
@@ -42,15 +43,33 @@ export default function ReviewModeration() {
         fetchData();
     }, [page]);
 
-    const handleAction = async (id: number, action: 'PUBLISH' | 'CANCEL') => {
-        try {
-            await ModerateReview(id, action);
+    const handleAction = (id: number, action: 'PUBLISH' | 'CANCEL') => {
+        const actionText = action === 'PUBLISH' ? "duyệt" : "từ chối";
 
-            // remove khỏi list cho mượt
-            setReviews(prev => prev.filter(r => r.id !== id));
-        } catch (err) {
-            console.error(err);
-        }
+        toast(`Bạn có chắc muốn ${actionText} review này không?`, {
+            action: {
+                label: action === 'PUBLISH' ? "Duyệt" : "Từ chối",
+                onClick: async () => {
+                    try {
+                        await ModerateReview(id, action);
+
+                        // remove khỏi list cho mượt
+                        setReviews(prev => prev.filter(r => r.id !== id));
+
+                        toast.success(`Đã ${actionText} review`);
+                    } catch (err) {
+                        console.error(err);
+                        const errorMessage =
+                            err instanceof Error ? err.message : `${actionText} thất bại`;
+                        toast.error(errorMessage);
+                    }
+                },
+            },
+            cancel: {
+                label: "Đóng",
+                onClick: () => { },
+            },
+        });
     };
 
     return (
