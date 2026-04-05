@@ -53,6 +53,7 @@ export default function MyLocationPage() {
 
             // Fetch stats for all statuses
             await fetchStats();
+            console.log('Fetched venues:', res.data.items);
 
         } catch (error) {
             console.error('Error fetching venues:', error);
@@ -237,6 +238,19 @@ export default function MyLocationPage() {
 
                                                 <p className="text-sm text-slate-700 font-medium italic mt-1 line-clamp-2 min-h-10">
                                                     {loc.address ?? 'Chưa có địa chỉ'}
+                                                </p>
+                                                <p>
+                                                        <span className="text-xs text-slate-500">Trạng thái: </span>
+                                                        <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-medium
+                                                            ${loc.status === "ACTIVE"
+                                                                ? "bg-green-100 text-green-700" 
+                                                                : loc.status === "PENDING"
+                                                                    ? "bg-yellow-100 text-yellow-700" 
+                                                                    : "bg-gray-200 text-gray-700"
+                                                            }`}
+                                                        >
+                                                            {loc.status}
+                                                        </span>
                                                 </p>
                                             </div>
 

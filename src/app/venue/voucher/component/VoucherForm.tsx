@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { CreateVoucherRequest, DiscountType } from "@/api/venue/vouchers/type";
 import SelectLocationModal from "@/app/venue/voucher/component/SelectLocationModal";
+import { uploadImage } from "@/api/upload";
 import { toast } from "sonner";
+import { Upload } from "lucide-react";
 
 type Props = {
   initialData?: CreateVoucherRequest;
@@ -47,6 +49,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
   const [openLocationModal, setOpenLocationModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
 
   const handleChange = <K extends keyof CreateVoucherRequest>(
     key: K,
@@ -56,6 +59,36 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       ...prev,
       [key]: value,
     }));
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Vui lòng chọn file ảnh');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Kích thước file không vượt quá 5MB');
+      return;
+    }
+
+    setIsUploadingImage(true);
+    try {
+      const uploadedUrl = await uploadImage(file);
+      handleChange('imageUrl', uploadedUrl);
+      toast.success('Tải ảnh lên thành công!');
+    } catch (error: any) {
+      console.error('Upload image error:', error);
+      toast.error(error?.message || 'Không thể tải ảnh lên');
+    } finally {
+      setIsUploadingImage(false);
+      e.target.value = '';
+    }
   };
 
   const handleSubmit = async () => {
@@ -143,19 +176,36 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium mb-2">
-            Ảnh voucher
-          </label>
-
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium">
+              Ảnh voucher
+            </label>
+            <button
+              type="button"
+              onClick={() => document.getElementById('voucher-image-input')?.click()}
+              disabled={isUploadingImage}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition"
+            >
+              {isUploadingImage ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Đang tải...
+                </>
+              ) : (
+                <>
+                  <Upload size={14} />
+                  Tải ảnh lên
+                </>
+              )}
+            </button>
+          </div>
           <input
-            type="text"
-            className="w-full border border-violet-200 rounded-xl px-4 py-3
-            focus:outline-none focus:ring-2 focus:ring-violet-500"
-            placeholder="Nhập URL ảnh"
-            value={form.imageUrl || ""}
-            onChange={(e) =>
-              handleChange("imageUrl", e.target.value)
-            }
+            id="voucher-image-input"
+            type="file"
+            accept="image/*"
+            onChange={handleImageUpload}
+            disabled={isUploadingImage}
+            className="hidden"
           />
           {form.imageUrl && (
             <div className="mt-4">
@@ -377,7 +427,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           <button
             type="button"
             onClick={() => setOpenLocationModal(true)}
-            className="border border-violet-200 px-4 py-2 rounded-lg hover:bg-gray-50"
+            className="border border-violet-200 px-4 py-2 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500"
           >
             Chọn địa điểm
           </button>

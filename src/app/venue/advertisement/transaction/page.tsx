@@ -28,6 +28,7 @@ export default function AdTransactionPage() {
     try {
       const res = await getAdsOrderTransactions(s === 'all' ? undefined : s);
       setData(res.data);
+      console.log(res.data);
     } catch (err) {
       console.error(err);
     } finally {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 import { Advertisement, PLACEMENT_LABEL } from '@/api/venue/advertisement/type';
@@ -12,6 +11,7 @@ import Link from 'next/link';
 import { checkVenueOwnerVerification } from '@/app/venue/location/utils/venue-location-submit';
 import MissingCitizenPopup from '@/app/venue/advertisement/component/MissingCitizenPopup';
 import { getMe } from '@/api/auth/api';
+import ImageWithFallback from '@/components/ImageWithFallback';
 
 export default function AdvertisementDetailPage() {
     const params = useParams();
@@ -170,14 +170,13 @@ export default function AdvertisementDetailPage() {
                 )}
 
                 {/* BANNER */}
-                <div className="relative w-full rounded-3xl overflow-hidden shadow-xl group" style={{ height: '420px' }}>
-                    <Image
+                <div className="relative w-full rounded-3xl overflow-hidden shadow-xl group" style={{ height: '420px' }} onClick={() => setIsLightboxOpen(true)}>
+                    <ImageWithFallback
                         src={images[safeIndex]}
                         alt="Advertisement banner"
-                        fill
-                        sizes="(max-width: 1024px) 100vw, 960px"
-                        className="object-cover cursor-zoom-in"
-                        onClick={() => setIsLightboxOpen(true)}
+                        width={1200}
+                        height={420}
+                        className="object-cover cursor-zoom-in w-full h-full"
                     />
                     <div className="absolute inset-0 bg-linear-to-t from-black/65 via-black/10 to-transparent pointer-events-none" />
                     <div className="absolute inset-0 bg-linear-to-rrom-violet-900/25 to-transparent pointer-events-none" />
@@ -259,7 +258,7 @@ export default function AdvertisementDetailPage() {
                             className="relative max-w-[90vw] max-h-[90vh]"
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <Image
+                            <ImageWithFallback
                                 src={images[safeIndex]}
                                 alt="Full advertisement"
                                 width={1200}

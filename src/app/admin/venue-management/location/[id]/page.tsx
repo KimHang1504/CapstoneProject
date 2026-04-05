@@ -15,6 +15,7 @@ export default async function VenueDetailPage({ params }: Props) {
 
     const res = await getPendingVenueDetail(id);
     const venue = res.data;
+    console.log('Venue detail:', venue);
 
     return (
         <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -51,7 +52,9 @@ export default async function VenueDetailPage({ params }: Props) {
                                     ? "bg-green-100 text-green-700"
                                     : venue.status === "PENDING"
                                         ? "bg-yellow-100 text-yellow-700"
-                                        : "bg-gray-200 text-gray-700"
+                                        : venue.status === "INACTIVE"
+                                            ? "bg-red-100 text-red-700"
+                                            : "bg-gray-200 text-gray-700"
                                 }`}
                         >
                             {venue.status}
@@ -160,9 +163,9 @@ export default async function VenueDetailPage({ params }: Props) {
 
             </div>
 
-            {/* APPROVAL - Only show for PENDING status */}
-            {venue.status === 'PENDING' && (
-                <VenueApprovalActions id={id} />
+            {/* APPROVAL - Show for PENDING and ACTIVE status */}
+            {(venue.status === 'PENDING' || venue.status === 'ACTIVE') && (
+                <VenueApprovalActions id={id} status={venue.status} />
             )}
 
         </div>

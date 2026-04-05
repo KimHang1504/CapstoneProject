@@ -7,7 +7,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { PlacementType } from "@/api/venue/advertisement/type";
 import { toast } from "sonner";
 import { generateText, generateImage } from "@/utils/ai";
-import { Sparkles, Wand2 } from "lucide-react";
+import { uploadImage } from "@/api/upload";
+import { Sparkles, Wand2, Upload } from "lucide-react";
 
 type Props = {
   initialData?: {
@@ -57,6 +58,8 @@ export default function AdvertisementForm({
 
   const [isGeneratingContent, setIsGeneratingContent] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
+  const [dateError, setDateError] = useState<string>("");
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -126,18 +129,55 @@ export default function AdvertisementForm({
     }
   };
 
+  const handleBannerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Vui lòng chọn file ảnh');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Kích thước file không vượt quá 5MB');
+      return;
+    }
+
+    setIsUploadingBanner(true);
+    try {
+      const uploadedUrl = await uploadImage(file);
+      setForm({ ...form, bannerUrl: uploadedUrl });
+      toast.success('Tải ảnh lên thành công!');
+    } catch (error: any) {
+      console.error('Upload banner error:', error);
+      toast.error(error?.message || 'Không thể tải ảnh lên');
+    } finally {
+      setIsUploadingBanner(false);
+      // Reset file input
+      e.target.value = '';
+    }
+  };
+
   const handleSubmit = async () => {
     const missingFields: string[] = [];
 
     if (!form.title.trim()) missingFields.push("Mục đích quảng cáo");
     if (!form.content.trim()) missingFields.push("Nội dung");
-    if (!form.bannerUrl.trim()) missingFields.push("Banner URL");
+    if (!form.bannerUrl.trim()) missingFields.push("Banner");
     if (!form.targetUrl.trim()) missingFields.push("Link khi click");
     if (!form.moodTypeId) missingFields.push("Mood type");
     if (!desiredStartDate) missingFields.push("Ngày bắt đầu");
 
     if (missingFields.length > 0) {
       toast.error(`Vui lòng điền: ${missingFields.join(", ")}`);
+      return;
+    }
+
+    // Validate date
+    if (!validateDate(desiredStartDate)) {
+      toast.error(dateError);
       return;
     }
 
@@ -164,9 +204,41 @@ export default function AdvertisementForm({
     }
   };
 
-  return (
-    <div className="bg-white rounded-3xl border border-violet-100 shadow-sm p-8 mx-50 space-y-7">
+  const getMinDate = () => {
+    const now = new Date();
+    const minDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // Add 3 days
+    return minDate;
+  };
 
+  const validateDate = (date: Date | null) => {
+    if (!date) {
+      setDateError("");
+      return true;
+    }
+
+    const now = new Date();
+    const minDate = getMinDate();
+
+    if (date < now) {
+      setDateError("Ngày bắt đầu không được là quá khứ");
+      return false;
+    }
+
+    if (date < minDate) {
+      const daysRemaining = Math.ceil((minDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+      setDateError(`Ngày bắt đầu phải sau ${daysRemaining} ngày để admin có thời gian duyệt`);
+      return false;
+    }
+
+    setDateError("");
+    return true;
+  };
+
+  return (
+    <div className="bg-white p-8 mx-50 space-y-7">
+<h1 className="text-2xl font-bold text-gray-800">
+  {submitLabel === "Tạo mới quảng cáo" ? "Tạo mới quảng cáo" : "Chỉnh sửa quảng cáo"}
+</h1>
       {/* Title */}
       <FieldWrapper>
         <label className={labelClass}>Mục đích quảng cáo</label>
@@ -239,49 +311,61 @@ export default function AdvertisementForm({
         </div>
       </FieldWrapper>
 
-      {/* Banner URL + Preview */}
+      {/* Banner + Preview */}
       <FieldWrapper>
         <div className="flex items-center justify-between">
-          <label className={labelClass}>Banner URL</label>
-          <button
-            type="button"
-            onClick={handleGenerateImage}
-            disabled={isGeneratingImage || !form.title.trim()}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
-          >
-            {isGeneratingImage ? (
-              <>
-                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Đang tạo...
-              </>
-            ) : (
-              <>
-                <Wand2 size={14} />
-                Tạo banner AI
-              </>
-            )}
-          </button>
+          <label className={labelClass}>Banner</label>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => document.getElementById('banner-file-input')?.click()}
+              disabled={isUploadingBanner}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-500 to-cyan-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              {isUploadingBanner ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Đang tải...
+                </>
+              ) : (
+                <>
+                  <Upload size={14} />
+                  Tải ảnh lên
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleGenerateImage}
+              disabled={isGeneratingImage || !form.title.trim()}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              {isGeneratingImage ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Đang tạo...
+                </>
+              ) : (
+                <>
+                  <Wand2 size={14} />
+                  Tạo banner AI
+                </>
+              )}
+            </button>
+          </div>
         </div>
-        <div className="relative mt-2">
-          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-violet-400">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </span>
-          <input
-            name="bannerUrl"
-            value={form.bannerUrl}
-            onChange={handleChange}
-            placeholder="https://..."
-            className={`${inputClass} mt-0 pl-10`}
-          />
-        </div>
+        <input
+          id="banner-file-input"
+          type="file"
+          accept="image/*"
+          onChange={handleBannerUpload}
+          disabled={isUploadingBanner}
+          className="hidden"
+        />
 
-        {isValidUrl(form.bannerUrl) && (
+        {form.bannerUrl && (
           <div className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm relative">
-            <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">
-              Preview
-            </div>
+            <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">Preview</div>
             <Image
               src={form.bannerUrl}
               alt="preview"
@@ -383,13 +467,35 @@ export default function AdvertisementForm({
           </span>
           <DatePicker
             selected={desiredStartDate}
-            onChange={(date: Date | null) => setDesiredStartDate(date)}
+            onChange={(date: Date | null) => {
+              setDesiredStartDate(date);
+              validateDate(date);
+            }}
+            minDate={getMinDate()}
             showTimeSelect
             dateFormat="yyyy-MM-dd HH:mm"
             placeholderText="Chọn ngày bắt đầu..."
-            className="w-full border border-violet-200 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition"
+            className={`w-full border rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition ${
+              dateError
+                ? "border-rose-300 focus:ring-rose-400"
+                : "border-violet-200 focus:ring-violet-400"
+            }`}
           />
         </div>
+        {dateError && (
+          <p className="text-xs text-rose-600 mt-2 flex items-center gap-1.5">
+            <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18.101 12.93a1 1 0 00-1.415-1.414L11 16.586V9.5a1 1 0 10-2 0v7.086L3.314 11.516a1 1 0 00-1.414 1.414l9.9 9.9a1 1 0 001.415 0l9.9-9.9z" clipRule="evenodd" />
+            </svg>
+            {dateError}
+          </p>
+        )}
+        <p className="text-xs text-gray-500 mt-2.5 flex items-start gap-2">
+          <svg className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+          </svg>
+          <span>Quảng cáo cần ít nhất <span className="font-semibold text-gray-700">3 ngày</span> để admin duyệt. Vui lòng lên lịch trước khoảng thời gian này.</span>
+        </p>
       </FieldWrapper>
 
       {/* Submit */}
