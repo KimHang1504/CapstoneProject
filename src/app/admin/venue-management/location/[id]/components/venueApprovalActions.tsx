@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { acceptAndRejectVenue } from "@/api/admin/api";
+import { acceptAndRejectVenue, updateVenueStatusToInactive } from "@/api/admin/api";
 import { VenueApprovalRequest } from "@/api/admin/type";
 import { toast } from "sonner";
 
-export default function VenueApprovalActions({ id }: { id: number }) {
+export default function VenueApprovalActions({ id, status }: { id: number; status: string }) {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
-  const [action, setAction] = useState<"ACTIVE" | "DRAFTED" | null>(null);
+  const [action, setAction] = useState<"ACTIVE" | "DRAFTED" | "INACTIVE" | null>(null);
   const [reason, setReason] = useState("");
 
   const handleSubmit = () => {
@@ -19,27 +19,33 @@ export default function VenueApprovalActions({ id }: { id: number }) {
     const message =
       action === "ACTIVE"
         ? "Bạn có chắc muốn chấp nhận địa điểm này?"
+        : action === "INACTIVE"
+        ? "Bạn có chắc muốn dừng hoạt động của địa điểm này?"
         : "Bạn có chắc muốn từ chối địa điểm này?";
 
     toast(message, {
       action: {
-        label: action === "ACTIVE" ? "Chấp nhận" : "Từ chối",
+        label: action === "ACTIVE" ? "Chấp nhận" : action === "INACTIVE" ? "Dừng hoạt động" : "Từ chối",
         onClick: async () => {
           try {
-            const body: VenueApprovalRequest = {
-              venueId: Number(id),
-              status: action,
-              reason: reason,
+            if (action === "INACTIVE") {
+              await updateVenueStatusToInactive(Number(id), reason);
+            } else {
+              const body: VenueApprovalRequest = {
+                venueId: Number(id),
+                status: action as 'ACTIVE' | 'DRAFTED',
+                reason: reason,
+              };
+              await acceptAndRejectVenue(body);
+            }
+
+            const successMessages: Record<string, string> = {
+              ACTIVE: "Đã chấp nhận địa điểm",
+              DRAFTED: "Đã từ chối địa điểm",
+              INACTIVE: "Đã dừng hoạt động địa điểm",
             };
 
-            await acceptAndRejectVenue(body);
-
-            toast.success(
-              action === "ACTIVE"
-                ? "Đã chấp nhận địa điểm"
-                : "Đã từ chối địa điểm"
-            );
-
+            toast.success(successMessages[action] || "Thao tác thành công");
             router.push("/admin/venue-management");
           } catch (error) {
             console.error(error);
@@ -58,28 +64,46 @@ export default function VenueApprovalActions({ id }: { id: number }) {
   return (
     <>
       <div className="bg-white rounded-xl shadow p-6 flex justify-between items-center">
-        <p>Bạn có chấp nhận đơn đăng kí địa điểm này không?</p>
+        <p>
+          {status === "PENDING"
+            ? "Bạn có chấp nhận đơn đăng kí địa điểm này không?"
+            : "Quản lý hoạt động của địa điểm"}
+        </p>
 
         <div className="flex gap-4">
-          <button
-            onClick={() => {
-              setAction("DRAFTED");
-              setOpen(true);
-            }}
-            className="px-6 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 cursor-pointer"
-          >
-            Từ chối
-          </button>
+          {status === "PENDING" ? (
+            <>
+              <button
+                onClick={() => {
+                  setAction("DRAFTED");
+                  setOpen(true);
+                }}
+                className="px-6 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+              >
+                Từ chối
+              </button>
 
-          <button
-            onClick={() => {
-              setAction("ACTIVE");
-              setOpen(true);
-            }}
-            className="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 cursor-pointer"
-          >
-            Chấp nhận
-          </button>
+              <button
+                onClick={() => {
+                  setAction("ACTIVE");
+                  setOpen(true);
+                }}
+                className="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+              >
+                Chấp nhận
+              </button>
+            </>
+          ) : status === "ACTIVE" ? (
+            <button
+              onClick={() => {
+                setAction("INACTIVE");
+                setOpen(true);
+              }}
+              className="px-6 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 cursor-pointer"
+            >
+              Dừng hoạt động
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -89,6 +113,8 @@ export default function VenueApprovalActions({ id }: { id: number }) {
             <h2 className="text-lg font-semibold">
               {action === "ACTIVE"
                 ? "Lý do chấp nhận"
+                : action === "INACTIVE"
+                ? "Lý do dừng hoạt động"
                 : "Lý do từ chối"}
             </h2>
 

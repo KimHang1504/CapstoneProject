@@ -76,3 +76,22 @@ export const getAdsOrderTransactions = async (
     { params: status ? { status } : undefined }
   );
 };
+
+// Soft delete advertisement
+export const softDeleteAdvertisement = async (
+  id: number
+): Promise<ApiResponse<{ message: string }>> => {
+  return apiClient.delete<ApiResponse<{ message: string }>>(
+    `/api/Advertisement/${id}/soft-delete`
+  );
+};
+
+// Restore advertisement
+export const restoreAdvertisement = async (
+  id: number
+): Promise<ApiResponse<Advertisement>> => {
+  return apiClient.post<ApiResponse<Advertisement>>(
+    `/api/Advertisement/${id}/restore`,
+    {}
+  );
+};
