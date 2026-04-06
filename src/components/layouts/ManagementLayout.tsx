@@ -173,6 +173,18 @@ export default function ManagementLayout({
     await fetchUserProfile();
   };
 
+  const getDashboardUrl = () => {
+    if (!userProfile) return '/';
+    
+    const role = userProfile.role;
+    if (role === 'VENUEOWNER') {
+      return '/venue/dashboard';
+    } else if (role === 'ADMIN') {
+      return '/admin';
+    }
+    return '/';
+  };
+
   useEffect(() => {
     const handleOpenProfileModal = () => {
       setShowEditModal(true);
@@ -199,12 +211,15 @@ export default function ManagementLayout({
         <div className="p-2.5 border-b border-white/10 bg-[#8093F1]">
           <div className="flex items-center justify-between">
             {isSidebarOpen && (
-              <div className="flex items-center gap-2">
+              <Link 
+                href={getDashboardUrl()}
+                className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200"
+              >
                 <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-white font-bold text-xs">
                   CM
                 </div>
                 <span className="font-semibold text-white text-sm">CoupleMood</span>
-              </div>
+              </Link>
             )}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
@@ -241,7 +256,7 @@ export default function ManagementLayout({
                     title={!isSidebarOpen ? tab.label : undefined}
                   >
                     {Icon && <Icon className="w-4 h-4 shrink-0" />}
-                    {isSidebarOpen && <span className="text-xs truncate">{tab.label}</span>}
+                    {isSidebarOpen && <span className="text-md truncate">{tab.label}</span>}
                     {isActive && (
                       <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-white rounded-l"></div>
                     )}
@@ -257,7 +272,7 @@ export default function ManagementLayout({
               {isSidebarOpen && (
                 <button
                   onClick={() => toggleSection(section.title)}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 text-xs font-semibold text-white/80 hover:text-white transition-colors"
+                  className="w-full flex items-center justify-between px-2.5 py-1.5 text-md font-semibold text-white/80 hover:text-white transition-colors"
                 >
                   <div className="flex items-center gap-1.5">
                     {section.icon && (() => {
@@ -300,7 +315,7 @@ export default function ManagementLayout({
                         <Icon className="w-4 h-4 shrink-0" />
                       )}
                       {isSidebarOpen && (
-                        <span className="text-xs truncate">{item.label}</span>
+                        <span className="text-md truncate">{item.label}</span>
                       )}
                       {isActive && (
                         <div className="absolute right-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-white rounded-l"></div>

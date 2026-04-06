@@ -10,7 +10,7 @@ export const adminSidebarConfig: SidebarConfig = {
     // Dashboard
     {
       label: 'Dashboard',
-      href: '/admin',
+      href: '/admin/dashboard-management',
       icon: 'LayoutDashboard',
     },
 
@@ -25,28 +25,28 @@ export const adminSidebarConfig: SidebarConfig = {
       href: '/admin/venue-management',
       icon: 'Building2',
     },
-    {
-      label: 'Quản lý danh mục',
-      href: '/admin/category-management',
-      icon: 'FolderTree',
-    },
+    // {
+    //   label: 'Quản lý danh mục',
+    //   href: '/admin/category-management',
+    //   icon: 'FolderTree',
+    // },
 
     // Nội dung & hoạt động
-    {
-      label: 'Quản lý sự kiện đặc biệt',
-      href: '/admin/special-event-management',
-      icon: 'Sparkles',
-    },
-    {
-      label: 'Quản lý thử thách',
-      href: '/admin/challenge',
-      icon: 'Trophy',
-    },
-    {
-      label: 'Quản lý bài kiểm tra tính cách',
-      href: '/admin/testtype-management',
-      icon: 'ClipboardList',
-    },
+    // {
+    //   label: 'Quản lý sự kiện đặc biệt',
+    //   href: '/admin/special-event-management',
+    //   icon: 'Sparkles',
+    // },
+    // {
+    //   label: 'Quản lý thử thách',
+    //   href: '/admin/challenge',
+    //   icon: 'Trophy',
+    // },
+    // {
+    //   label: 'Quản lý bài kiểm tra tính cách',
+    //   href: '/admin/testtype-management',
+    //   icon: 'ClipboardList',
+    // },
 
     // Marketing & khuyến mãi
     {
@@ -66,11 +66,11 @@ export const adminSidebarConfig: SidebarConfig = {
       href: '/admin/subscription-management',
       icon: 'Package',
     },
-    {
-      label: 'Quản lý giao dịch',
-      href: '/admin/transaction-management',
-      icon: 'CreditCard',
-    },
+    // {
+    //   label: 'Quản lý giao dịch',
+    //   href: '/admin/transaction-management',
+    //   icon: 'CreditCard',
+    // },
     {
       label: 'Quản lý rút tiền',
       href: '/admin/withdraw-request',
@@ -88,10 +88,10 @@ export const adminSidebarConfig: SidebarConfig = {
       href: '/admin/moderation-management',
       icon: 'Bot',
     },
-    {
-      label: 'Cấu hình hệ thống',
-      href: '/admin/config-management',
-      icon: 'Settings',
-    },
+    // {
+    //   label: 'Cấu hình hệ thống',
+    //   href: '/admin/config-management',
+    //   icon: 'Settings',
+    // },
   ],
 };

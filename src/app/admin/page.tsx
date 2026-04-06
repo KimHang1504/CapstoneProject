@@ -1,218 +1,168 @@
 "use client";
 
-import { DashboardRequest, DashboardStats } from "@/api/admin/type";
-import ChartCard from "./components/ChartCard";
-import { useEffect, useState } from "react";
-import { getDashboardStats } from "@/api/admin/api";
-import { CreditCard, DollarSign, MapPin, Users } from "lucide-react";
-import { formatCurrency } from "@/utils/formatCurrency";
-import StatCard from "./components/StatCard";
-import DashboardSkeleton from "./components/DashboardSkeleton";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
 
+type Item = {
+    title: string;
+    desc: string;
+    href: string;
+    image: string;
+    className?: string;
+};
 
-export default function Dashboard() {
-  const [data, setData] = useState<DashboardStats>({} as DashboardStats);
-  const [loading, setLoading] = useState(true);
-  const [year, setYear] = useState(new Date().getFullYear());
-  const [month, setMonth] = useState(new Date().getMonth() + 1);
+export default function AdminHome() {
+    const router = useRouter();
 
+    const items: Item[] = [
+        {
+            title: "Quản lý bài kiểm tra tính cách",
+            desc: "Tạo, chỉnh sửa và theo dõi các bài test dành cho người dùng.",
+            href: "/admin/testtype-management",
+            image: "/testtype.png",
+            className: "col-span-2",
+        },
+        {
+            title: "Quản lý sự kiện đặc biệt",
+            desc: "Tạo chiến dịch, event marketing và ưu đãi theo thời điểm.",
+            href: "/admin/special-event-management",
+            image: "/event.png",
+        },
+        {
+            title: "Quản lý thử thách",
+            desc: "Thiết lập thử thách, theo dõi tiến độ và phần thưởng.",
+            href: "/admin/challenge",
+            image: "/challenge.png",
+            className: "row-span-2 sm:row-span-1 lg:row-span-2",
+        },
+        {
+            title: "Quản lý danh mục",
+            desc: "Quản lý các danh mục nội dung và phân loại hệ thống.",
+            href: "/admin/category-management",
+            image: "/category.png",
+        },
+        {
+            title: "Quản lý giao dịch",
+            desc: "Theo dõi lịch sử giao dịch, thanh toán và doanh thu.",
+            href: "/admin/transaction-management",
+            image: "/transaction.png",
+        },
+    ];
 
-  useEffect(() => {
-    fetchData();
-  }, [year, month]);
+    return (
+        <div className="p-6 min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
 
-  const fetchData = async () => {
-    setLoading(true);
-
-
-
-    try {
-      const request: DashboardRequest =
-        month === 0
-          ? { Year: year }
-          : { Year: year, Month: month };
-
-      const res = await getDashboardStats(request);
-
-      if (res.code === 200) {
-        setData(res.data);
-      }
-
-    } catch (error) {
-      console.error("Error fetching dashboard data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-  const formatChartCurrency = (value: number) => {
-    if (value >= 1_000_000_000) return (value / 1_000_000_000).toFixed(1) + "B";
-    if (value >= 1_000_000) return (value / 1_000_000).toFixed(1) + "M";
-    if (value >= 1_000) return (value / 1_000).toFixed(1) + "k";
-    return value.toString();
-  };
-
-  const formatNumber = (value: number) => value.toString();
-
-  return (
-    <div >
-      {loading ? (
-        <DashboardSkeleton />
-      ) : (
-        <div className="p-6 space-y-6 min-h-screen bg-linear-to-br from-[#e7ebf9] via-[#fae6f5] to-[#d3e9fc]">
-          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              title="Tổng người dùng"
-              value={data.totalUsers}
-              icon={<Users size={20} />}
-              color="#C4B5FD"
-            />
-
-            <StatCard
-              title="Tổng địa điểm"
-              value={data.totalVenueLocations}
-              icon={<MapPin size={20} />}
-              color="#A78BFA"
-            />
-
-            <StatCard
-              title="Tổng doanh thu"
-              value={formatCurrency(data.totalRevenue)}
-              icon={<DollarSign size={20} />}
-              color="#F0ABFC"
-            />
-
-            <StatCard
-              title="Tổng giao dịch"
-              value={data.totalTransactions}
-              icon={<CreditCard size={20} />}
-              color="#F9A8D4"
-            />
-
-          </div>
-
-          <div className="py-3 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-700">
-              Thống kê theo thời gian
-            </h2>
-            {/* LEFT */}
-            <div className="flex items-center gap-4">
-
-
-              {/* divider */}
-              <div className="h-5 w-px bg-gray-200" />
-
-              {/* Month */}
-              <div className="relative">
-                <select
-                  value={month}
-                  onChange={(e) => setMonth(Number(e.target.value))}
-                  className="appearance-none rounded-xl border border-purple-100 bg-white/70 backdrop-blur-md px-4 py-2 pr-10 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-300 transition"
-                >
-                  <option value={0}>Tất cả</option>
-                  {[...Array(12)].map((_, i) => (
-                    <option key={i + 1} value={i + 1}>
-                      Tháng {i + 1}
-                    </option>
-                  ))}
-                </select>
-
-                {/* custom arrow */}
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-purple-400 text-xs">
-                  ▼
-                </span>
-              </div>
-
-              {/* Year */}
-              <div className="relative">
-                <select
-                  value={year}
-                  onChange={(e) => setYear(Number(e.target.value))}
-                  className="appearance-none rounded-xl border border-pink-100 bg-white/70 backdrop-blur-md px-4 py-2 pr-10 text-sm text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-pink-300 transition"
-                >
-                  {Array.from({ length: 5 }).map((_, i) => {
-                    const y = new Date().getFullYear() - i;
-                    return (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    );
-                  })}
-                </select>
-
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-pink-400 text-xs">
-                  ▼
-                </span>
-              </div>
-              <button
-                onClick={() => {
-                  setMonth(new Date().getMonth() + 1);
-                  setYear(new Date().getFullYear());
-                }}
-                className="text-sm font-medium px-4 py-2 rounded-lg border border-purple-200 bg-gray-100 text-purple-600 hover:bg-purple-50 active:scale-95 transition"
-              >
-                Reset
-              </button>
+            {/* HEADER */}
+            <div className="mb-8">
+                <h1 className="text-3xl font-bold text-gray-800">
+                    Trang quản lý hệ thống
+                </h1>
+                <p className="text-gray-500 mt-2">
+                    Điều hướng nhanh đến các chức năng quản lý
+                </p>
             </div>
-          </div>
 
-          <ChartCard
-            title={
-              month === 0
-                ? `Doanh thu năm ${year}`
-                : `Doanh thu tháng ${month}/${year}`
-            }
-            data={data.revenueChart}
-            type="bar"
-            color="#72DDF7"
-            yFormatter={formatChartCurrency}
-            yLabel="VNĐ"
+            {/* GRID */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[200px]">
 
-          />
+                {items.map((item, index) => {
+                    const isChallenge = item.title === "Quản lý thử thách";
 
+                    return (
+                        <div
+                            key={index}
+                            onClick={() => router.push(item.href)}
+                            className={`group relative overflow-hidden rounded-2xl p-5 
+                            bg-white/80 backdrop-blur-md border border-purple-100
+                            hover:border-purple-300
+                            shadow-sm hover:shadow-xl hover:-translate-y-1
+                            transition-all duration-300 cursor-pointer
+                            ${isChallenge ? "" : "grid grid-cols-[1.2fr_1fr] gap-4 items-center"}
+                            ${item.className || ""}`}
+                        >
+                            {/* glow */}
+                            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition duration-500 
+                            bg-linear-to-br from-purple-200/50 via-pink-200/50 to-transparent" />
 
-          <div className="grid gap-5 md:grid-cols-2">
+                            {isChallenge ? (
+                                <div className="relative w-full h-full">
+                                    <Image
+                                        src={item.image}
+                                        alt={item.title}
+                                        fill
+                                        className="object-cover rounded-xl transition-transform duration-700 group-hover:scale-110"
+                                    />
 
-            <ChartCard
-              title="Tăng trưởng người dùng"
-              data={data.userGrowthChart}
-              type="line"
-              color="#8093F1"
-              yLabel="người"
+                                    <div className="absolute inset-0 bg-gradient-to-t from-purple-900/70 via-purple-700/30 to-transparent rounded-xl" />
 
-            />
+                                    <div className="absolute bottom-0 p-5 text-white">
+                                        <h2 className="text-xl font-semibold mb-1">
+                                            {item.title}
+                                        </h2>
+                                        <p className="text-sm text-purple-100">
+                                            {item.desc}
+                                        </p>
+                                    </div>
+                                </div>
+                            ) : (
+                                <>
+                                    {/* TEXT */}
+                                    <div className="z-10">
+                                        <h2 className="text-lg font-semibold text-gray-800 mb-2 
+                                        group-hover:text-purple-600 transition">
+                                            {item.title}
+                                        </h2>
 
-            <ChartCard
-              title="Giao dịch"
-              data={data.transactionChart}
-              type="area"
-              color="#B388EB"
-              yLabel="giao dịch"
-            />
+                                        <p className="text-sm text-gray-500 leading-relaxed">
+                                            {item.desc}
+                                        </p>
 
-          </div>
+                                        <span className="text-sm font-medium text-purple-600 mt-3 inline-block 
+                                        opacity-80 group-hover:opacity-100">
+                                            Xem chi tiết →
+                                        </span>
+                                    </div>
 
+                                    {/* IMAGE */}
+                                    <div className="relative w-full h-full">
+                                        <Image
+                                            src={item.image}
+                                            alt={item.title}
+                                            fill
+                                            className="object-contain p-3 transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    );
+                })}
 
-          <div className="grid gap-5 md:grid-cols-2">
+                {/* CONFIG */}
+                <div
+                    className="col-span-1 sm:col-span-2 relative overflow-hidden rounded-2xl p-6 
+                    bg-linear-to-r from-purple-400 to-pink-400 text-white
+                    flex justify-between items-center
+                    shadow-md hover:shadow-xl hover:-translate-y-1 transition"
+                >
+                    <div>
+                        <h2 className="text-lg font-semibold">
+                            Cấu hình hệ thống
+                        </h2>
+                        <p className="text-sm text-purple-100">
+                            Thiết lập thông số và quyền truy cập
+                        </p>
+                    </div>
 
-            <ChartCard
-              title="Tăng trưởng địa điểm"
-              data={data.venueGrowthChart}
-              type="bar"
-              color="#F7AEF8"
-              yLabel="địa điểm"
-            />
+                    <button
+                        onClick={() => router.push("/admin/config-management")}
+                        className="bg-white cursor-pointer text-purple-600 px-4 py-2 rounded-full hover:bg-purple-100 transition"
+                    >
+                        Setup
+                    </button>
+                </div>
 
-            <ChartCard
-              title="Hoạt động bài viết"
-              data={data.postActivityChart}
-              type="area"
-              color="#FDC5F5"
-              yLabel="bài viết"
-            />
-
-          </div>
+            </div>
         </div>
-      )}
-    </div>
-  );
+    );
 }
