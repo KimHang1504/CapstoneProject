@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import VoucherForm from "../component/VoucherForm";
+import VoucherForm from "../../component/VoucherForm";
 import { createVoucher } from "@/api/venue/vouchers/api";
 import {toast} from "sonner";
 
@@ -19,10 +19,6 @@ export default function CreateVoucherPage() {
 
   return (
     <div className="">
-      <h1 className="text-xl font-semibold mb-4">
-        Tạo Voucher
-      </h1>
-
       <VoucherForm onSubmit={handleCreate} />
     </div>
   );

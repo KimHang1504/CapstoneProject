@@ -83,17 +83,40 @@ export default function ManagementLayout({
 }: ManagementLayoutProps) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [expandedSections, setExpandedSections] = useState<string[]>([]);
+  const [userToggledSections, setUserToggledSections] = useState<Set<string>>(new Set());
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
+  // Helper function to check if a route is active (exact match or parent route)
+  const isRouteActive = (currentPath: string, routePath: string) => {
+    return currentPath === routePath || currentPath.startsWith(routePath + '/');
+  };
+
+  // Compute active sections based on current route
+  const activeSections = sidebarConfig.sections?.reduce<string[]>((acc, section) => {
+    const hasActiveItem = section.items.some(item => isRouteActive(pathname, item.href));
+    if (hasActiveItem) {
+      acc.push(section.title);
+    }
+    return acc;
+  }, []) ?? [];
+
+  // Determine which sections should be expanded
+  const expandedSections = [
+    ...new Set([...activeSections, ...userToggledSections])
+  ];
+
   const toggleSection = (section: string) => {
-    setExpandedSections(prev =>
-      prev.includes(section)
-        ? prev.filter(s => s !== section)
-        : [...prev, section]
-    );
+    setUserToggledSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(section)) {
+        newSet.delete(section);
+      } else {
+        newSet.add(section);
+      }
+      return newSet;
+    });
   };
 
   useEffect(() => {
@@ -200,7 +223,7 @@ export default function ManagementLayout({
           {sidebarConfig.tabs && (
             <div className="space-y-0.5">
               {sidebarConfig.tabs.map((tab) => {
-                const isActive = pathname === tab.href;
+                const isActive = isRouteActive(pathname, tab.href);
                 const Icon = getIcon(tab.icon);
 
                 return (
@@ -256,7 +279,7 @@ export default function ManagementLayout({
                 : ''
                 }`}>
                 {section.items.map((item) => {
-                  const isActive = pathname === item.href;
+                  const isActive = isRouteActive(pathname, item.href);
                   const Icon = getIcon(item.icon);
 
                   return (

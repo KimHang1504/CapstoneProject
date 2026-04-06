@@ -2,7 +2,7 @@
 
 import { VoucherFilterType, VoucherStatus } from "@/api/venue/vouchers/type";
 import { Dispatch, SetStateAction } from "react";
-import { Search } from "lucide-react";
+import { Search, Filter, Sparkles } from "lucide-react";
 
 type Props = {
   filters: VoucherFilterType;
@@ -16,11 +16,15 @@ export default function VoucherFilter({
   onFilter,
 }: Props) {
   return (
-    <div className="flex gap-3">
+    <div className="flex flex-col md:flex-row gap-3">
 
       {/* Search Input */}
-      <div className="flex-1 relative">
-        <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+      <div className="flex-1 relative group">
+        <Search
+          size={18}
+          className="absolute left-3 top-1/2 -translate-y-1/2 
+                     text-purple-300 group-focus-within:text-[#8093F1] transition"
+        />
         <input
           type="text"
           placeholder="Tìm kiếm voucher..."
@@ -28,38 +32,65 @@ export default function VoucherFilter({
           onChange={(e) =>
             setFilters({ ...filters, keyword: e.target.value })
           }
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full pl-10 pr-4 py-2.5 text-sm 
+                     border border-purple-100 rounded-xl 
+                     bg-white/70 backdrop-blur
+                     focus:bg-white focus:outline-none 
+                     focus:ring-2 focus:ring-[#8093F1] focus:border-transparent
+                     transition-all placeholder:text-purple-300"
         />
       </div>
 
       {/* Status Select */}
-      <select
-        value={filters.status}
-        onChange={(e) =>
-          setFilters({
-            ...filters,
-            status: e.target.value as "" | VoucherStatus,
-          })
-        }
-        className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-      >
-        <option value="">Tất cả trạng thái</option>
-        <option value="DRAFTED">Nháp</option>
-        <option value="PENDING">Chờ duyệt</option>
-        <option value="APPROVED">Đã duyệt</option>
-        <option value="REJECTED">Từ chối</option>
-        <option value="ACTIVE">Đang hoạt động</option>
-        <option value="ENDED">Đã kết thúc</option>
-      </select>
+      <div className="relative flex items-center">
+        <Filter
+          size={16}
+          className="absolute left-3 text-purple-300 pointer-events-none"
+        />
+
+        <select
+          value={filters.status}
+          onChange={(e) =>
+            setFilters({
+              ...filters,
+              status: e.target.value as "" | VoucherStatus,
+            })
+          }
+          className="appearance-none pl-9 pr-10 py-2.5 text-sm 
+                     border border-purple-100 rounded-xl 
+                     bg-white/70 backdrop-blur
+                     focus:bg-white focus:outline-none 
+                     focus:ring-2 focus:ring-[#8093F1] focus:border-transparent
+                     transition-all cursor-pointer text-gray-700"
+        >
+          <option value="">Tất cả trạng thái</option>
+          <option value="DRAFTED">Nháp</option>
+          <option value="PENDING">Chờ duyệt</option>
+          <option value="APPROVED">Đã duyệt</option>
+          <option value="REJECTED">Từ chối</option>
+          <option value="ACTIVE">Đang hoạt động</option>
+          <option value="ENDED">Đã kết thúc</option>
+        </select>
+
+        {/* Custom arrow */}
+        <span className="pointer-events-none absolute right-3 text-purple-300 text-xs">
+          ▼
+        </span>
+      </div>
 
       {/* Filter Button */}
       <button
         onClick={onFilter}
-        className="bg-gray-900 hover:bg-gray-800 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+        className="flex items-center justify-center gap-2 px-5 py-2.5 
+                   rounded-xl text-sm font-semibold text-white
+                   bg-linear-to-r from-[#8093F1] to-pink-400
+                   hover:from-[#6f82e8] hover:to-pink-500
+                   active:scale-[0.97]
+                   transition-all shadow-md hover:shadow-lg"
       >
+        <Sparkles size={16} />
         Lọc
       </button>
-
     </div>
   );
 }

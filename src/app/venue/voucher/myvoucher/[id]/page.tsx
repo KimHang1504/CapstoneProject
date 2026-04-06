@@ -5,8 +5,8 @@ import { useParams } from "next/navigation";
 import { getVoucherDetail } from "@/api/venue/vouchers/api";
 import { VoucherDetail } from "@/api/venue/vouchers/type";
 import VoucherActions from "@/app/venue/voucher/component/VoucherActions";
-import Summary from "@/app/venue/voucher/[id]/component/Summary";
-import VoucherTabs from "@/app/venue/voucher/[id]/component/VoucherTabs";
+import Summary from "@/app/venue/voucher/myvoucher/[id]/component/Summary";
+import VoucherTabs from "@/app/venue/voucher/myvoucher/[id]/component/VoucherTabs";
 
 
 export default function VoucherDetailPage() {

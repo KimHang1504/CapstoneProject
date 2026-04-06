@@ -50,7 +50,7 @@ export default function LocationRegisterPage() {
 
         if (method === 'WALLET') {
             // Redirect to wallet confirmation page (will call API there)
-            router.push(`/venue/location/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}`);
+            router.push(`/venue/llocationmylocation/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}`);
         } else {
             // VietQR: Call API and redirect to checkout
             try {

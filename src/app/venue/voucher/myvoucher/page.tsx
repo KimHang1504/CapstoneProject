@@ -38,14 +38,11 @@ export default function VoucherPage() {
     }
   };
 
-  // Auto-fetch when filters change
+  // Fetch vouchers on mount
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      fetchVouchers(1);
-    }, 500); // Debounce 500ms for keyword search
-
-    return () => clearTimeout(timeoutId);
-  }, [filters.keyword, filters.status]);
+    fetchVouchers(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -54,28 +51,33 @@ export default function VoucherPage() {
   };
 
   return (
-    <div className="p-6 max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-6">
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Quản lý Voucher
-        </h1>
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-800">
+            Quản lý Voucher
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">Theo dõi và quản lý tất cả voucher của bạn</p>
+        </div>
 
         <Link
-          href="/venue/voucher/create"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          href="/venue/voucher/myvoucher/create"
+          className="bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white px-5 py-2.5 rounded-xl font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2"
         >
-          Tạo Voucher
+          <span className="text-lg leading-none">+</span> Tạo mới
         </Link>
       </div>
 
       {/* Filter */}
-      <VoucherFilter
-        filters={filters}
-        setFilters={setFilters}
-        onFilter={() => fetchVouchers(1)}
-      />
+      <div className="mb-6">
+        <VoucherFilter
+          filters={filters}
+          setFilters={setFilters}
+          onFilter={() => fetchVouchers(1)}
+        />
+      </div>
 
       {/* List */}
       <ListVoucher
@@ -85,23 +87,23 @@ export default function VoucherPage() {
 
       {/* Pagination */}
       {!loading && totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-2 mt-8">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-2 rounded-lg border border-gray-200 hover:bg-white hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={20} className="text-gray-600" />
           </button>
 
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${
                 currentPage === page
-                  ? "bg-blue-600 text-white"
-                  : "border border-gray-300 hover:bg-gray-50"
+                  ? "bg-violet-600 text-white shadow-md"
+                  : "border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-white"
               }`}
             >
               {page}
@@ -111,9 +113,9 @@ export default function VoucherPage() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="p-2 rounded-lg border border-gray-300 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="p-2 rounded-lg border border-gray-200 hover:bg-white hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
-            <ChevronRight size={20} />
+            <ChevronRight size={20} className="text-gray-600" />
           </button>
         </div>
       )}

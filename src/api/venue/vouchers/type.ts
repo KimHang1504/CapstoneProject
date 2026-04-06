@@ -6,18 +6,18 @@ export type CreateVoucherRequest = {
   title: string;
   description?: string;
 
-  voucherPrice: number;
+  voucherPrice: number | null;
 
   discountType: DiscountType;
 
   discountAmount: number | null;
   discountPercent: number | null;
 
-  quantity: number;
+  quantity: number | null;
 
   usageLimitPerMember: number | null;
 
-  usageValiDays: number;
+  usageValiDays: number | null;
 
   venueLocationIds: number[];
    imageUrl: string;
