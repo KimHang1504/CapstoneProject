@@ -91,7 +91,7 @@ export default function Info({ formData, setFormData }: Props) {
     <div className="flex items-center justify-center">
       <div className="w-full max-w-3xl px-4 py-4">
         <div className="mb-6 text-center">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 mb-3 shadow-lg">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 mb-3 shadow-lg">
             <MapPin className="w-7 h-7 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-blue-900">
@@ -212,7 +212,7 @@ export default function Info({ formData, setFormData }: Props) {
             Thẻ tâm trạng
           </label>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 ">
             {moods.map(mood => {
               const active = formData.selectedMoods.includes(mood.id);
 
@@ -227,9 +227,9 @@ export default function Info({ formData, setFormData }: Props) {
                         "selectedMoods"
                       )
                     }
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
+                    className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
             ${active
-                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-105"
+                        ? "bg-linear-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl hover:scale-105"
                         : "bg-white border border-[#E4D7FF] text-gray-700 hover:border-purple-400 hover:shadow-md hover:scale-102"
                       }`}
                   >
@@ -239,7 +239,7 @@ export default function Info({ formData, setFormData }: Props) {
 
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
-                    <div className="relative bg-gradient-to-br from-purple-600 via-purple-700 to-purple-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-purple-500/30 backdrop-blur-sm min-w-50 max-w-70">
+                    <div className="relative bg-linear-to-br from-purple-600 via-purple-700 to-purple-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-purple-500/30 backdrop-blur-sm min-w-50 max-w-70">
                       <p className="font-semibold mb-1 text-purple-100">{mood.name}</p>
                       <p className="text-purple-50/90 leading-relaxed text-[11px]">{mood.description}</p>
                       {/* Arrow */}
@@ -274,9 +274,9 @@ export default function Info({ formData, setFormData }: Props) {
                         "selectedStyles"
                       )
                     }
-                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
+                    className={`cursor-pointer rounded-full px-3.5 py-1.5 text-xs font-medium flex items-center gap-1.5 transition-all duration-200
             ${active
-                        ? "bg-gradient-to-r from-indigo-500 to-blue-500 text-white shadow-lg hover:shadow-xl hover:scale-105"
+                        ? "bg-linear-to-r from-indigo-500 to-blue-500 text-white shadow-lg hover:shadow-xl hover:scale-105"
                         : "bg-white border border-[#E4D7FF] text-gray-700 hover:border-indigo-400 hover:shadow-md hover:scale-102"
                       }`}
                   >
@@ -286,7 +286,7 @@ export default function Info({ formData, setFormData }: Props) {
 
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
-                    <div className="relative bg-gradient-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-indigo-500/30 backdrop-blur-sm min-w-50 max-w-70">
+                    <div className="relative bg-linear-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-indigo-500/30 backdrop-blur-sm min-w-50 max-w-70">
                       <p className="font-semibold mb-1 text-indigo-100">{style.name}</p>
                       <p className="text-indigo-50/90 leading-relaxed text-[11px]">{style.description}</p>
                       {/* Arrow */}

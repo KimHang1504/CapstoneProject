@@ -9,7 +9,7 @@ import { getMyVenueLocations } from '@/api/venue/location/api';
 import { MyVenueLocation } from '@/api/venue/location/type';
 // import { VENUE_STATUS_CONFIG } from '@/api/venue/location/status';
 
-type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DRAFTED';
+type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'CLOSED' | 'EXPIRED' | 'PENDING' | 'DRAFTED';
 
 export default function MyLocationPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -22,9 +22,10 @@ export default function MyLocationPage() {
     PENDING: "bg-yellow-100 text-yellow-700",
   };
   function getSubscriptionInfo(loc: MyVenueLocation) {
-    const { durationDays, startDate, endDate, status } = loc as any;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { durationDays, startDate, endDate, status, rejectionDetails } = loc as any;
 
-    // ❌ Chưa mua gói
+    //Chưa mua gói
     if (!durationDays || !startDate || !endDate) {
       return {
         type: "NOT_PURCHASED",
@@ -35,8 +36,21 @@ export default function MyLocationPage() {
       };
     }
 
-    // 🔴 INACTIVE => luôn là hết hạn (KHÔNG cần check date)
+    // INACTIVE
     if (status === "INACTIVE") {
+      // Trường hợp bị admin đóng cửa (có rejectionDetails)
+      if (rejectionDetails && rejectionDetails.length > 0) {
+        const rejection = rejectionDetails[0];
+        return {
+          type: "CLOSED",
+          label: "Địa điểm đã đóng cửa",
+          subLabel: `Lý do: ${rejection.reason}`,
+          className: "bg-red-100 text-red-700",
+          cta: "Xem chi tiết",
+        };
+      }
+
+      // Trường hợp hết hạn gói (không có rejectionDetails)
       return {
         type: "EXPIRED",
         label: "Gói đã hết hạn",
@@ -65,10 +79,18 @@ export default function MyLocationPage() {
 
   console.log("My locations", data);
   const stats = useMemo(() => {
+    const inactiveLocations = data.filter(l => l.status === 'INACTIVE');
+    const closedCount = inactiveLocations.filter(l => {
+      const loc = l as any;
+      return loc.rejectionDetails && loc.rejectionDetails.length > 0;
+    }).length;
+    const expiredCount = inactiveLocations.length - closedCount;
+
     return {
       all: data.length,
       ACTIVE: data.filter(l => l.status === 'ACTIVE').length,
-      INACTIVE: data.filter(l => l.status === 'INACTIVE').length,
+      CLOSED: closedCount,
+      EXPIRED: expiredCount,
       PENDING: data.filter(l => l.status === 'PENDING').length,
       DRAFTED: data.filter(l => l.status === 'DRAFTED').length,
     };
@@ -76,8 +98,21 @@ export default function MyLocationPage() {
 
   const locations = useMemo(() => {
     return data.filter(l => {
-      const matchStatus =
-        statusFilter === 'all' || l.status === statusFilter;
+      let matchStatus = false;
+
+      if (statusFilter === 'all') {
+        matchStatus = true;
+      } else if (statusFilter === 'CLOSED') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const loc = l as any;
+        matchStatus = l.status === 'INACTIVE' && loc.rejectionDetails && loc.rejectionDetails.length > 0;
+      } else if (statusFilter === 'EXPIRED') {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const loc = l as any;
+        matchStatus = l.status === 'INACTIVE' && (!loc.rejectionDetails || loc.rejectionDetails.length === 0);
+      } else {
+        matchStatus = l.status === statusFilter;
+      }
 
       const matchKeyword =
         l.name.toLowerCase().includes(keyword.toLowerCase()) ||
@@ -148,7 +183,12 @@ export default function MyLocationPage() {
                       </span>
 
                       {loc.status === "ACTIVE" && "Đang mở"}
-                      {loc.status === "INACTIVE" && "Hết hạn"}
+                      {loc.status === "INACTIVE" && (
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        (loc as any).rejectionDetails && (loc as any).rejectionDetails.length > 0
+                          ? "Đóng cửa"
+                          : "Hết hạn"
+                      )}
                       {loc.status === "PENDING" && "Chờ duyệt"}
                       {loc.status === "DRAFTED" && "Bản nháp"}
                     </span>
@@ -174,7 +214,7 @@ export default function MyLocationPage() {
                   </div>
                   {/* Subscription */}
                   <div className="mt-2">
-                    {sub.type === "EXPIRED" ? (
+                    {sub.type === "EXPIRED" || sub.type === "CLOSED" ? (
                       <div className="px-3 py-2">
                         <div className="text-sm font-semibold text-red-600">
                           {sub.label}
@@ -225,7 +265,8 @@ export default function MyLocationPage() {
             { key: 'all', label: 'Tất cả', value: stats.all },
             { key: 'DRAFTED', label: 'Bản nháp', value: stats.DRAFTED },
             { key: 'ACTIVE', label: 'Đang mở', value: stats.ACTIVE },
-            { key: 'INACTIVE', label: 'Hết hạn', value: stats.INACTIVE },
+            { key: 'CLOSED', label: 'Đóng cửa', value: stats.CLOSED },
+            { key: 'EXPIRED', label: 'Hết hạn', value: stats.EXPIRED },
             { key: 'PENDING', label: 'Chờ duyệt', value: stats.PENDING },
           ].map(item => (
             <div
