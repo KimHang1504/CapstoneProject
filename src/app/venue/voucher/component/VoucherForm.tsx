@@ -5,34 +5,39 @@ import { CreateVoucherRequest, DiscountType } from "@/api/venue/vouchers/type";
 import SelectLocationModal from "@/app/venue/voucher/component/SelectLocationModal";
 import { uploadImage } from "@/api/upload";
 import { toast } from "sonner";
-import { Upload } from "lucide-react";
+import {
+  Upload,
+} from "lucide-react";
 
 type Props = {
   initialData?: CreateVoucherRequest;
   onSubmit: (data: CreateVoucherRequest) => Promise<void>;
 };
 
-export default function VoucherForm({ initialData, onSubmit }: Props) {
+const inputClass =
+  "w-full mt-2 border border-violet-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition placeholder-gray-300";
 
+const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-0.5";
+
+function FieldWrapper({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col gap-0.5">{children}</div>;
+}
+
+export default function VoucherForm({ initialData, onSubmit }: Props) {
   const isEdit = !!initialData;
 
   const defaultForm: CreateVoucherRequest = {
     title: "",
     description: "",
-    voucherPrice: 0,
-
+    voucherPrice: null,
     discountType: "FIXED_AMOUNT",
     discountAmount: null,
     discountPercent: null,
-
-    quantity: 1,
-
+    quantity: null,
     usageLimitPerMember: null,
-    usageValiDays: 7,
-
+    usageValiDays: null,
     venueLocationIds: [],
     imageUrl: "",
-
     startDate: "",
     endDate: "",
   };
@@ -51,6 +56,40 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const [loading, setLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
 
+  // Date validation helpers (Vietnam timezone UTC+7)
+  const getToday = () => {
+    const today = new Date();
+    const vietnamTime = new Date(today.getTime() + (7 - today.getTimezoneOffset() / 60) * 60 * 60 * 1000);
+    vietnamTime.setHours(0, 0, 0, 0);
+    return vietnamTime;
+  };
+
+  const formatDateVN = (dateString: string) => {
+    if (!dateString) return "";
+    const [year, month, day] = dateString.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
+  const getMinStartDate = () => {
+    const today = getToday();
+    today.setDate(today.getDate() + 3);
+    return today.toISOString().split('T')[0];
+  };
+
+  const getMinEndDate = () => {
+    if (!form.startDate) return "";
+    const startDate = new Date(form.startDate + 'T00:00:00');
+    startDate.setDate(startDate.getDate() + 1);
+    return startDate.toISOString().split('T')[0];
+  };
+
+  const getMaxEndDate = () => {
+    if (!form.startDate) return "";
+    const startDate = new Date(form.startDate + 'T00:00:00');
+    startDate.setDate(startDate.getDate() + 30);
+    return startDate.toISOString().split('T')[0];
+  };
+
   const handleChange = <K extends keyof CreateVoucherRequest>(
     key: K,
     value: CreateVoucherRequest[K]
@@ -65,398 +104,366 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Vui lòng chọn file ảnh');
+    if (!file.type.startsWith("image/")) {
+      toast.error("Vui lòng chọn file ảnh");
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Kích thước file không vượt quá 5MB');
+      toast.error("Kích thước file không vượt quá 5MB");
       return;
     }
 
     setIsUploadingImage(true);
     try {
       const uploadedUrl = await uploadImage(file);
-      handleChange('imageUrl', uploadedUrl);
-      toast.success('Tải ảnh lên thành công!');
-    } catch (error: any) {
-      console.error('Upload image error:', error);
-      toast.error(error?.message || 'Không thể tải ảnh lên');
+      handleChange("imageUrl", uploadedUrl);
+      toast.success("Tải ảnh lên thành công!");
+    } catch (error) {
+      console.error("Upload image error:", error);
+      toast.error(error instanceof Error ? error.message : "Không thể tải ảnh lên");
     } finally {
       setIsUploadingImage(false);
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   const handleSubmit = async () => {
+    // Validation
+    if (!form.title.trim()) {
+      toast.error("Vui lòng nhập tên voucher");
+      return;
+    }
+
+    if (!form.description?.trim()) {
+      toast.error("Vui lòng nhập mô tả voucher");
+      return;
+    }
+
+    if (form.discountType === "FIXED_AMOUNT" && !form.discountAmount) {
+      toast.error("Vui lòng nhập số tiền giảm");
+      return;
+    }
+
+    if (form.discountType === "PERCENTAGE" && !form.discountPercent) {
+      toast.error("Vui lòng nhập phần trăm giảm");
+      return;
+    }
+
+    if (!form.voucherPrice) {
+      toast.error("Vui lòng nhập giá đổi");
+      return;
+    }
+
+    if (!form.quantity) {
+      toast.error("Vui lòng nhập số lượng");
+      return;
+    }
+
+    if (form.usageLimitPerMember === null || form.usageLimitPerMember === undefined) {
+      toast.error("Vui lòng nhập giới hạn mỗi người");
+      return;
+    }
+
+    if (!form.usageValiDays) {
+      toast.error("Vui lòng nhập hạn sử dụng");
+      return;
+    }
+
+    if (!form.startDate) {
+      toast.error("Vui lòng chọn ngày bắt đầu");
+      return;
+    }
+
+    const minStartDate = getMinStartDate();
+    if (form.startDate < minStartDate) {
+      toast.error(`Ngày bắt đầu phải từ ${formatDateVN(minStartDate)} trở đi (cần 3 ngày để admin duyệt)`);
+      return;
+    }
+
+    if (!form.endDate) {
+      toast.error("Vui lòng chọn ngày kết thúc");
+      return;
+    }
+
+    const minEndDate = getMinEndDate();
+    const maxEndDate = getMaxEndDate();
+    if (form.endDate < minEndDate) {
+      toast.error(`Ngày kết thúc phải từ ${formatDateVN(minEndDate)} trở đi`);
+      return;
+    }
+
+    if (form.endDate > maxEndDate) {
+      toast.error(`Ngày kết thúc không được quá ${formatDateVN(maxEndDate)}`);
+      return;
+    }
+
+    if (selectedLocationIds.length === 0) {
+      toast.error("Vui lòng chọn ít nhất một địa điểm");
+      return;
+    }
+
+    if (!form.imageUrl) {
+      toast.error("Vui lòng tải lên ảnh voucher");
+      return;
+    }
 
     const payload: CreateVoucherRequest = {
       ...form,
-
       venueLocationIds: selectedLocationIds,
-
       discountAmount:
         form.discountType === "FIXED_AMOUNT"
           ? form.discountAmount
           : null,
-
       discountPercent:
         form.discountType === "PERCENTAGE"
           ? form.discountPercent
           : null,
-
       startDate: new Date(form.startDate).toISOString(),
       endDate: new Date(form.endDate).toISOString(),
     };
 
     try {
-
       setLoading(true);
-
       await onSubmit(payload);
 
       if (!isEdit) {
         setForm(defaultForm);
         setSelectedLocationIds([]);
       }
-
-    } catch (err) {
-
-      console.error(err);
+    } catch {
       toast.error("Submit failed");
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   return (
+    <div className="bg-white p-8 space-y-7 max-w-3xl mx-auto">
 
-    <div className="mx-20">
+      <h1 className="text-2xl font-bold text-gray-800">
+        {isEdit ? "Chỉnh sửa voucher" : "Tạo mới voucher"}
+      </h1>
 
-      <div className="bg-white space-y-7">
+      {/* TITLE */}
+      <FieldWrapper>
+        <label className={labelClass}>Tên voucher</label>
+        <input
+          value={form.title}
+          onChange={(e) => handleChange("title", e.target.value)}
+          placeholder="Nhập tên voucher..."
+          className={inputClass}
+        />
+      </FieldWrapper>
 
-        {/* BASIC INFO */}
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Tên voucher *
-          </label>
+      {/* DESCRIPTION */}
+      <FieldWrapper>
+        <label className={labelClass}>Mô tả</label>
+        <textarea
+          value={form.description}
+          onChange={(e) => handleChange("description", e.target.value)}
+          placeholder="Mô tả ngắn về voucher..."
+          className={`${inputClass} resize-none h-24`}
+        />
+      </FieldWrapper>
 
-          <input
-            className="w-full border border-violet-200 rounded-xl px-4 py-3
-            focus:outline-none focus:ring-2 focus:ring-violet-500"
-            placeholder="Nhập tên voucher"
-            value={form.title}
-            onChange={(e) =>
-              handleChange("title", e.target.value)
-            }
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Mô tả
-          </label>
-
-          <textarea
-            rows={3}
-            className="w-full border border-violet-200 rounded-xl px-4 py-3
-            focus:outline-none focus:ring-2 focus:ring-violet-500"
-            placeholder="Mô tả ngắn về voucher"
-            value={form.description}
-            onChange={(e) =>
-              handleChange("description", e.target.value)
-            }
-          />
-        </div>
-        <div>
-          <div className="flex items-center justify-between mb-2">
-            <label className="block text-sm font-medium">
-              Ảnh voucher
-            </label>
-            <button
-              type="button"
-              onClick={() => document.getElementById('voucher-image-input')?.click()}
-              disabled={isUploadingImage}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white text-xs font-medium rounded-lg transition"
-            >
-              {isUploadingImage ? (
-                <>
-                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Đang tải...
-                </>
-              ) : (
-                <>
-                  <Upload size={14} />
-                  Tải ảnh lên
-                </>
-              )}
-            </button>
-          </div>
-          <input
-            id="voucher-image-input"
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            disabled={isUploadingImage}
-            className="hidden"
-          />
-          {form.imageUrl && (
-            <div className="mt-4">
-              <img
-                src={form.imageUrl}
-                alt="preview"
-                className="w-48 h-32 object-cover rounded-lg border"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = "none";
-                }}
-              />
-            </div>
-          )}
-        </div>
-
-
-        {/* DISCOUNT TYPE */}
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Loại giảm giá *
-          </label>
-
-          <select
-            className="w-full border border-violet-200 rounded-xl px-4 py-3
-            focus:outline-none focus:ring-2 focus:ring-violet-500"
-            value={form.discountType}
-            onChange={(e) =>
-              handleChange(
-                "discountType",
-                e.target.value as DiscountType
-              )
-            }
-          >
-            <option value="FIXED_AMOUNT">
-              Giảm tiền
-            </option>
-
-            <option value="PERCENTAGE">
-              Giảm phần trăm
-            </option>
-
-          </select>
-        </div>
-
-
-        {/* DISCOUNT VALUE */}
-        {form.discountType === "FIXED_AMOUNT" && (
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Số tiền giảm (VND)
-            </label>
-
-            <input
-              type="number"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3
-              focus:outline-none focus:ring-2 focus:ring-violet-500"
-              value={form.discountAmount ?? ""}
-              onChange={(e) =>
-                handleChange(
-                  "discountAmount",
-                  Number(e.target.value)
-                )
-              }
-            />
-          </div>
-        )}
-
-        {form.discountType === "PERCENTAGE" && (
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Phần trăm giảm (%)
-            </label>
-
-            <input
-              type="number"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3
-              focus:outline-none focus:ring-2 focus:ring-violet-500"
-              value={form.discountPercent ?? ""}
-              onChange={(e) =>
-                handleChange(
-                  "discountPercent",
-                  Number(e.target.value)
-                )
-              }
-            />
-          </div>
-        )}
-
-
-        {/* PRICE + QUANTITY */}
-        <div className="grid grid-cols-2 gap-5">
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Giá đổi
-            </label>
-
-            <input
-              type="number"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3"
-              value={form.voucherPrice ?? ""}
-              onChange={(e) =>
-                handleChange(
-                  "voucherPrice",
-                  Number(e.target.value)
-                )
-              }
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Số lượng
-            </label>
-
-            <input
-              type="number"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3"
-              value={form.quantity ?? ""}
-              onChange={(e) =>
-                handleChange(
-                  "quantity",
-                  Number(e.target.value) || 0
-                )
-              }
-            />
-          </div>
-
-        </div>
-
-
-        {/* LIMIT */}
-        <div className="grid grid-cols-2 gap-5">
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Giới hạn mỗi người
-            </label>
-
-            <input
-              type="number"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3"
-              value={form.usageLimitPerMember ?? ""}
-              onChange={(e) => {
-                const value = e.target.value;
-
-                handleChange(
-                  "usageLimitPerMember",
-                  value === "" ? null : Number(value)
-                );
-              }}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Hạn sử dụng (ngày)
-            </label>
-
-            <input
-              type="number"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3"
-              value={form.usageValiDays || ""}
-              onChange={(e) =>
-                handleChange(
-                  "usageValiDays",
-                  Number(e.target.value)
-                )
-              }
-            />
-          </div>
-
-        </div>
-
-
-        {/* DATE */}
-        <div className="grid grid-cols-2 gap-5">
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Ngày bắt đầu
-            </label>
-
-            <input
-              type="date"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3"
-              value={form.startDate}
-              onChange={(e) =>
-                handleChange("startDate", e.target.value)
-              }
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">
-              Ngày kết thúc
-            </label>
-
-            <input
-              type="date"
-              className="w-full border border-violet-200 rounded-xl px-4 py-3"
-              value={form.endDate}
-              onChange={(e) =>
-                handleChange("endDate", e.target.value)
-              }
-            />
-          </div>
-
-        </div>
-
-
-        {/* LOCATION */}
-        <div>
-
-          <label className="block text-sm font-medium mb-2">
-            Địa điểm áp dụng
-          </label>
-
+      {/* IMAGE */}
+      <FieldWrapper>
+        <div className="flex items-center justify-between">
+          <label className={labelClass}>Ảnh voucher</label>
           <button
             type="button"
-            onClick={() => setOpenLocationModal(true)}
-            className="border border-violet-200 px-4 py-2 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            onClick={() => document.getElementById("voucher-image-input")?.click()}
+            disabled={isUploadingImage}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-500 to-cyan-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
-            Chọn địa điểm
+            {isUploadingImage ? (
+              <>
+                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Đang tải...
+              </>
+            ) : (
+              <>
+                <Upload size={14} />
+                Tải ảnh lên
+              </>
+            )}
           </button>
+        </div>
+        <input
+          id="voucher-image-input"
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          disabled={isUploadingImage}
+          className="hidden"
+        />
+        {form.imageUrl && (
+          <div className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={form.imageUrl}
+              alt="preview"
+              className="w-full h-48 object-cover"
+            />
+          </div>
+        )}
+      </FieldWrapper>
 
-          <p className="text-sm text-gray-500 mt-2">
-            {selectedLocationIds.length} địa điểm đã chọn
+      {/* DISCOUNT TYPE */}
+      <FieldWrapper>
+        <label className={labelClass}>Loại giảm giá</label>
+        <select
+          value={form.discountType}
+          onChange={(e) => handleChange("discountType", e.target.value as DiscountType)}
+          className={inputClass}
+        >
+          <option value="FIXED_AMOUNT">Giảm tiền</option>
+          <option value="PERCENTAGE">Giảm phần trăm</option>
+        </select>
+      </FieldWrapper>
+
+      {/* DISCOUNT VALUE */}
+      {form.discountType === "FIXED_AMOUNT" && (
+        <FieldWrapper>
+          <label className={labelClass}>Số tiền giảm (VND)</label>
+          <input
+            type="number"
+            value={form.discountAmount ?? ""}
+            onChange={(e) => handleChange("discountAmount", Number(e.target.value))}
+            className={inputClass}
+          />
+        </FieldWrapper>
+      )}
+
+      {form.discountType === "PERCENTAGE" && (
+        <FieldWrapper>
+          <label className={labelClass}>Phần trăm giảm (%)</label>
+          <input
+            type="number"
+            value={form.discountPercent ?? ""}
+            onChange={(e) => handleChange("discountPercent", Number(e.target.value))}
+            className={inputClass}
+          />
+        </FieldWrapper>
+      )}
+
+      {/* PRICE + QUANTITY */}
+      <div className="grid grid-cols-2 gap-5">
+        <FieldWrapper>
+          <label className={labelClass}>Giá đổi</label>
+          <input
+            type="number"
+            value={form.voucherPrice ?? ""}
+            onChange={(e) => handleChange("voucherPrice", Number(e.target.value))}
+            className={inputClass}
+          />
+        </FieldWrapper>
+
+        <FieldWrapper>
+          <label className={labelClass}>Số lượng</label>
+          <input
+            type="number"
+            value={form.quantity ?? ""}
+            onChange={(e) => handleChange("quantity", Number(e.target.value) || 0)}
+            className={inputClass}
+          />
+        </FieldWrapper>
+      </div>
+
+      {/* LIMIT */}
+      <div className="grid grid-cols-2 gap-5">
+        <FieldWrapper>
+          <label className={labelClass}>Giới hạn mỗi người</label>
+          <input
+            type="number"
+            value={form.usageLimitPerMember ?? ""}
+            onChange={(e) => {
+              const value = e.target.value;
+              handleChange(
+                "usageLimitPerMember",
+                value === "" ? null : Number(value)
+              );
+            }}
+            className={inputClass}
+          />
+        </FieldWrapper>
+
+        <FieldWrapper>
+          <label className={labelClass}>Hạn sử dụng (ngày)</label>
+          <input
+            type="number"
+            value={form.usageValiDays || ""}
+            onChange={(e) => handleChange("usageValiDays", Number(e.target.value))}
+            className={inputClass}
+          />
+        </FieldWrapper>
+      </div>
+
+      {/* DATE */}
+      <div className="grid grid-cols-2 gap-5">
+        <FieldWrapper>
+          <label className={labelClass}>Ngày bắt đầu</label>
+          <input
+            type="date"
+            value={form.startDate}
+            onChange={(e) => handleChange("startDate", e.target.value)}
+            min={getMinStartDate()}
+            className={inputClass}
+          />
+          <p className="text-xs text-gray-500 mt-1">Tối thiểu: {formatDateVN(getMinStartDate())} (cần 3 ngày để admin duyệt)</p>
+        </FieldWrapper>
+
+        <FieldWrapper>
+          <label className={labelClass}>Ngày kết thúc</label>
+          <input
+            type="date"
+            value={form.endDate}
+            onChange={(e) => handleChange("endDate", e.target.value)}
+            min={getMinEndDate()}
+            max={getMaxEndDate()}
+            disabled={!form.startDate}
+            className={`${inputClass} ${!form.startDate ? "opacity-50 cursor-not-allowed" : ""}`}
+          />
+          <p className="text-xs text-gray-500 mt-1">
+            {form.startDate
+              ? `Từ ${formatDateVN(getMinEndDate())} đến ${formatDateVN(getMaxEndDate())}`
+              : "Chọn ngày bắt đầu trước"}
           </p>
+        </FieldWrapper>
+      </div>
 
-        </div>
+      {/* LOCATION */}
+      <FieldWrapper>
+        <label className={labelClass}>Địa điểm áp dụng</label>
+        <button
+          type="button"
+          onClick={() => setOpenLocationModal(true)}
+          className="w-full mt-2 border border-violet-200 rounded-xl px-4 py-3 text-left text-gray-800 bg-white hover:bg-violet-50 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all font-medium"
+        >
+          Chọn địa điểm
+        </button>
 
+        <p className="text-sm text-violet-600 font-medium mt-2">
+          {selectedLocationIds.length > 0 
+            ? `✓ ${selectedLocationIds.length} địa điểm đã chọn`
+            : "Chưa chọn địa điểm"}
+        </p>
+      </FieldWrapper>
 
-        {/* SUBMIT */}
-        <div className="flex justify-end pt-6">
-
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="bg-violet-600 hover:bg-violet-700
-            text-white px-8 py-3 rounded-xl"
-          >
-            {loading
-              ? "Đang lưu..."
-              : isEdit
-                ? "Cập nhật"
-                : "Tiếp tục"}
-          </button>
-
-        </div>
-
+      {/* SUBMIT */}
+      <div className="pt-2">
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="w-full py-3.5 bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+        >
+          {loading
+            ? "Đang lưu..."
+            : isEdit
+              ? "Cập nhật"
+              : "Hoàn thành"}
+        </button>
       </div>
 
       {openLocationModal && (
@@ -466,8 +473,6 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           onClose={() => setOpenLocationModal(false)}
         />
       )}
-
     </div>
-
   );
 }

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { VoucherDetail } from "@/api/venue/vouchers/type";
-import HistoryExchange from "@/app/venue/voucher/[id]/component/HistoryExchange";
-import VoucherItemsPage from "@/app/venue/voucher/[id]/items/page";
+import VoucherItemsPage from "@/app/venue/voucher/myvoucher/[id]/items/page";
+import HistoryExchange from "@/app/venue/voucher/myvoucher/[id]/component/HistoryExchange";
 
 type Props = {
     voucher: VoucherDetail;

@@ -3,6 +3,7 @@
 import { Voucher } from "@/api/venue/vouchers/type";
 import Link from "next/link";
 import { Calendar, Tag, Package} from "lucide-react";
+import { useState } from "react";
 
 type Props = {
   vouchers: Voucher[];
@@ -19,6 +20,11 @@ const STATUS_CONFIG = {
 };
 
 export default function ListVoucher({ vouchers, loading }: Props) {
+  const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
+
+  const handleImageError = (voucherId: number) => {
+    setImageErrors(prev => new Set(prev).add(voucherId));
+  };
 
   if (loading) {
     return (
@@ -50,11 +56,23 @@ export default function ListVoucher({ vouchers, loading }: Props) {
           STATUS_CONFIG[v.status as keyof typeof STATUS_CONFIG] ||
           STATUS_CONFIG.DRAFTED;
 
+        const imageUrl = imageErrors.has(v.id) || !v.imageUrl ? "/voucher_thumbnail.png" : v.imageUrl;
+
         return (
           <div
             key={v.id}
             className="bg-white border border-purple-100 rounded-xl overflow-hidden hover:shadow-lg hover:shadow-pink-100 transition-all duration-200"
           >
+
+            {/* Image */}
+            <div className="relative w-full h-40 bg-gray-200 overflow-hidden">
+              <img
+                src={imageUrl}
+                alt={v.title}
+                className="w-full h-full object-cover"
+                onError={() => handleImageError(v.id)}
+              />
+            </div>
 
             {/* Content */}
             <div className="p-4 space-y-3">
@@ -100,22 +118,28 @@ export default function ListVoucher({ vouchers, loading }: Props) {
                   {new Date(v.startDate).toLocaleDateString("vi-VN")}
                 </span>
               </div>
-              <div className="flex flex-wrap gap-1">
-                {v.locations?.map((l) => (
-                  <span
-                    key={l.venueLocationId}
-                    className="text-[10px] px-2 py-0.5 rounded-full bg-pink-100 text-pink-600"
-                  >
-                    {l.venueLocationName}
-                  </span>
-                ))}
+              <div className="overflow-hidden">
+                <div className="flex gap-1 items-center flex-wrap">
+                  {v.locations && v.locations.length > 0 && (
+                    <>
+                      <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-100 text-pink-600">
+                        {v.locations[0].venueLocationName}
+                      </span>
+                      {v.locations.length > 1 && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-pink-100 text-pink-600 font-semibold">
+                          +{v.locations.length - 1}
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
 
             {/* Action */}
             <Link
-              href={`/venue/voucher/${v.id}`}
+              href={`/venue/voucher/myvoucher/${v.id}`}
               className="block text-center bg-linear-to-r from-purple-100 to-pink-100 hover:from-purple-200 hover:to-pink-200 py-2.5 text-sm font-medium text-purple-700 transition-all border-t border-purple-100"
             >
               Quản lý

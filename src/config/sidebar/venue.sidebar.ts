@@ -39,10 +39,12 @@ export const venueSidebarConfig: SidebarConfig = {
         {
           label: 'Quản lý địa điểm',
           href: '/venue/location/mylocation',
+          icon: 'MapPin',
         },
         {
           label: 'Lịch sử đăng ký',
-          href: '/venue/location/subscriptions/transaction',
+          href: '/venue/location/transaction',
+          icon: 'FileText',
         },
       ],
     },
@@ -52,15 +54,18 @@ export const venueSidebarConfig: SidebarConfig = {
       items: [
         {
           label: 'Voucher của tôi',
-          href: '/venue/voucher',
+          href: '/venue/voucher/myvoucher',
+          icon: 'TicketPercent',
         },
         {
           label: 'Đổi mã giảm giá',
           href: '/venue/redeem',
+          icon: 'Tag',
         },
         {
           label: 'Quyết toán voucher',
           href: '/venue/voucher/settlement',
+          icon: 'CreditCard',
         },
       ],
     },
@@ -70,11 +75,13 @@ export const venueSidebarConfig: SidebarConfig = {
       items: [
         {
           label: 'Quản lý quảng cáo',
-          href: '/venue/advertisement',
+          href: '/venue/advertisement/myadvertisement',
+          icon: 'Megaphone',
         },
         {
           label: 'Lịch sử mua quảng cáo',
           href: '/venue/advertisement/transaction',
+          icon: 'FileText',
         },
       ],
     },

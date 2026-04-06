@@ -59,6 +59,7 @@ export default function EditPage() {
           existingCoverUrl: data.coverImage?.[0] ?? undefined,
           existingInteriorUrls: data.interiorImage ?? [],
           existingMenuUrls: data.fullPageMenuImage ?? [],
+          existingBusinessLicenseUrl: data.businessLicenseUrl ?? undefined,
         })
       } catch (error) {
         console.error('Error loading location:', error)
