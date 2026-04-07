@@ -7,12 +7,22 @@ import {
     Trophy,
     Image as ImageIcon,
     MapPin,
-    Hash
+    Hash,
+    Plus,
+    X
 } from "lucide-react";
 import { updateChallenge } from "@/api/admin/api";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import UpdateStatus from "./UpdateStatus";
+
+const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1";
+
+const inputClass = "w-full mt-2 border border-violet-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition placeholder-gray-300";
+
+function FieldWrapper({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col gap-0.5">{children}</div>;
+}
 
 export default function UpdateChallengeForm({ challenge }: any) {
 
@@ -198,266 +208,278 @@ export default function UpdateChallengeForm({ challenge }: any) {
         form.goalMetric === "UNIQUE_LIST";
 
     return (
-        <div className="max-w-5xl mx-auto p-6 space-y-6">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/40 to-violet-50/30 p-6">
+            <div className="max-w-4xl mx-auto space-y-6">
 
-            {/* HEADER */}
-            <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Cập nhật Challenge
-                    </h1>
-                    <p className="text-gray-500 text-sm">
-                        Chỉnh sửa thông tin và quy tắc challenge
-                    </p>
-                </div>
-
-                <div className="flex items-center gap-3">
+                {/* HEADER */}
+                <div className="flex items-center justify-between">
                     <div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig.className}`}>
-                            {statusConfig.label}
-                        </span>
+                        <h1 className="text-3xl font-bold text-gray-800">
+                            Cập nhật Challenge
+                        </h1>
+                        <p className="text-gray-500 text-sm mt-1">
+                            Chỉnh sửa thông tin và quy tắc challenge
+                        </p>
                     </div>
 
-                    <UpdateStatus
-                        challengeId={challenge.id}
-                        currentStatus={challenge.status}
-                    />
-                </div>
-            </div>
+                    <div className="flex items-center gap-3">
+                        <div>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig.className}`}>
+                                {statusConfig.label}
+                            </span>
+                        </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-
-                {/* BASIC */}
-                <div className="bg-white rounded-2xl shadow p-6 space-y-5">
-                    <h2 className="font-semibold text-lg text-gray-800">
-                        Thông tin cơ bản
-                    </h2>
-
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-gray-600">
-                            Tiêu đề
-                        </label>
-                        <input
-                            name="title"
-                            value={form.title}
-                            onChange={handleChange}
-                            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-violet-400"
-                        />
-                    </div>
-
-                    <div className="space-y-3">
-                        <label className="text-sm font-medium text-gray-600">
-                            Mô tả
-                        </label>
-                        <textarea
-                            name="description"
-                            value={form.description}
-                            onChange={handleChange}
-                            rows={4}
-                            className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-violet-400"
+                        <UpdateStatus
+                            challengeId={challenge.id}
+                            currentStatus={challenge.status}
                         />
                     </div>
                 </div>
 
-                {/* METRIC */}
-                <div className="bg-white rounded-2xl shadow p-6 space-y-5">
-                    <h2 className="font-semibold text-lg flex items-center gap-2 text-gray-800">
-                        <Target size={18} />
-                        Mục tiêu
-                    </h2>
+                <form onSubmit={handleSubmit} className="space-y-6">
 
-                    <div className="grid grid-cols-2 gap-4">
+                    {/* BASIC INFO */}
+                    <div className="bg-white rounded-2xl shadow p-8 space-y-7">
+                        <h2 className="text-lg font-semibold text-gray-800">Thông tin cơ bản</h2>
 
-                        <div>
-                            <label className="text-sm text-gray-600">
-                                Trigger Event
-                            </label>
-                            <select
-                                name="triggerEvent"
-                                value={form.triggerEvent}
+                        <FieldWrapper>
+                            <label className={labelClass}>Tiêu đề Challenge</label>
+                            <input
+                                name="title"
+                                value={form.title}
                                 onChange={handleChange}
-                                className="w-full border rounded-lg p-3"
-                            >
-                                <option value="POST">POST</option>
-                                <option value="REVIEW">REVIEW</option>
-                                <option value="CHECKIN">CHECKIN</option>
-                            </select>
-                        </div>
+                                placeholder="VD: Summer Challenge..."
+                                className={inputClass}
+                                required
+                            />
+                        </FieldWrapper>
 
-                        <div>
-                            <label className="text-sm text-gray-600">
-                                Goal Metric
-                            </label>
-                            <select
-                                name="goalMetric"
-                                value={form.goalMetric}
+                        <FieldWrapper>
+                            <label className={labelClass}>Mô tả Challenge</label>
+                            <textarea
+                                name="description"
+                                value={form.description}
                                 onChange={handleChange}
-                                className="w-full border rounded-lg p-3"
-                            >
-                                <option value="">Chọn goal metric</option>
-
-                                {goalMetricOptions[form.triggerEvent]?.map((metric) => (
-                                    <option key={metric} value={metric}>
-                                        {metric}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
+                                placeholder="Mô tả chi tiết..."
+                                rows={4}
+                                className={`${inputClass} resize-none`}
+                            />
+                        </FieldWrapper>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-
-                        <div>
-                            <label className="text-sm text-gray-600">
-                                Mục tiêu
-                            </label>
-                            <input
-                                type="number"
-                                name="targetGoal"
-                                value={form.targetGoal}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg p-3"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="text-sm text-gray-600">
-                                Điểm thưởng
-                            </label>
-                            <input
-                                type="number"
-                                name="rewardPoints"
-                                value={form.rewardPoints}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg p-3"
-                            />
-                        </div>
-
-                    </div>
-                </div>
-
-                {/* DATE + STATUS */}
-                <div className="bg-white rounded-2xl shadow p-6 space-y-5">
-
-                    <h2 className="font-semibold text-lg flex items-center gap-2 text-gray-800">
-                        <Calendar size={18} />
-                        Thời gian & trạng thái
-                    </h2>
-
-                    <div className="grid grid-cols-3 gap-4">
-
-                        <div>
-                            <label className="text-sm text-gray-600">
-                                Start Date
-                            </label>
-                            <input
-                                type="datetime-local"
-                                name="startDate"
-                                value={form.startDate}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg p-3"
-                            />
-                        </div>
-
-                        <div>
-                            <label className="text-sm text-gray-600">
-                                End Date
-                            </label>
-                            <input
-                                type="datetime-local"
-                                name="endDate"
-                                value={form.endDate}
-                                onChange={handleChange}
-                                className="w-full border rounded-lg p-3"
-                            />
-                        </div>
-
-                    </div>
-                </div>
-
-                {/* RULE */}
-                {showRuleData && (
-                    <div className="bg-white rounded-2xl shadow p-6 space-y-5">
-
-                        <h2 className="font-semibold text-lg text-gray-800">
-                            Quy tắc
+                    {/* METRIC SECTION */}
+                    <div className="bg-white rounded-2xl shadow p-8 space-y-7">
+                        <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Target size={20} />
+                            Mục tiêu Challenge
                         </h2>
 
-                        {showHasImage && (
-                            <label className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg">
-                                <input
-                                    type="checkbox"
-                                    checked={ruleData.has_image}
-                                    onChange={(e) =>
-                                        setRuleData({
-                                            ...ruleData,
-                                            has_image: e.target.checked
-                                        })
-                                    }
-                                />
-                                Bắt buộc có hình ảnh
-                            </label>
-                        )}
-
-                        {showHashTag && (
-                            <div className="space-y-3 flex flex-col">
-                                <label className="text-sm text-gray-600">
-                                    Hashtags
-                                </label>
-
-                                {ruleData.hash_tags.map((tag, i) => (
-                                    <input
-                                        key={i}
-                                        value={tag}
-                                        onChange={(e) => {
-                                            const newTags = [...ruleData.hash_tags];
-                                            newTags[i] = e.target.value;
-                                            setRuleData({ ...ruleData, hash_tags: newTags });
-                                        }}
-                                        className="w-full border rounded-lg p-3"
-                                    />
-                                ))}
-
-                                <button
-                                    type="button"
-                                    onClick={() =>
-                                        setRuleData({
-                                            ...ruleData,
-                                            hash_tags: [...ruleData.hash_tags, ""]
-                                        })
-                                    }
-                                    className="text-sm text-violet-600 hover:bg-violet-100 border rounded-lg px-2 py-1 w-fit cursor-pointer"
+                        <div className="grid grid-cols-2 gap-6">
+                            <FieldWrapper>
+                                <label className={labelClass}>Loại sự kiện</label>
+                                <select
+                                    name="triggerEvent"
+                                    value={form.triggerEvent}
+                                    onChange={handleChange}
+                                    className={inputClass}
+                                    required
                                 >
-                                    + Thêm hashtag
-                                </button>
-                            </div>
-                        )}
+                                    <option value="POST">BÀI ĐĂNG</option>
+                                    <option value="REVIEW">ĐÁNH GIÁ</option>
+                                    <option value="CHECKIN">CHECK-IN</option>
+                                </select>
+                            </FieldWrapper>
 
+                            <FieldWrapper>
+                                <label className={labelClass}>Chỉ số mục tiêu</label>
+                                <select
+                                    name="goalMetric"
+                                    value={form.goalMetric}
+                                    onChange={handleChange}
+                                    className={inputClass}
+                                    required
+                                >
+                                    <option value="">Chọn chỉ số mục tiêu</option>
+                                    {goalMetricOptions[form.triggerEvent]?.map((metric) => (
+                                        <option key={metric} value={metric}>
+                                            {metric}
+                                        </option>
+                                    ))}
+                                </select>
+                            </FieldWrapper>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-6">
+                            <FieldWrapper>
+                                <label className={labelClass}>Mục tiêu</label>
+                                <input
+                                    type="number"
+                                    name="targetGoal"
+                                    value={form.targetGoal}
+                                    onChange={handleChange}
+                                    placeholder="VD: 10"
+                                    className={inputClass}
+                                    required
+                                />
+                            </FieldWrapper>
+
+                            <FieldWrapper>
+                                <label className={labelClass}>Điểm thưởng</label>
+                                <input
+                                    type="number"
+                                    name="rewardPoints"
+                                    value={form.rewardPoints}
+                                    onChange={handleChange}
+                                    placeholder="VD: 50"
+                                    className={inputClass}
+                                    required
+                                />
+                            </FieldWrapper>
+                        </div>
                     </div>
-                )}
 
-                {/* ACTION */}
-                <div className="flex justify-end gap-3">
+                    {/* TIME SECTION */}
+                    <div className="bg-white rounded-2xl shadow p-8 space-y-7">
+                        <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+                            <Calendar size={20} />
+                            Thời gian Challenge
+                        </h2>
 
-                    <button
-                        type="button"
-                        onClick={() => router.back()}
-                        className="px-5 py-3 rounded-lg border text-gray-600 hover:bg-gray-50"
-                    >
-                        Huỷ
-                    </button>
+                        <div className="grid grid-cols-2 gap-6">
+                            <FieldWrapper>
+                                <label className={labelClass}>Ngày bắt đầu</label>
+                                <input
+                                    type="datetime-local"
+                                    name="startDate"
+                                    value={form.startDate}
+                                    onChange={handleChange}
+                                    className={inputClass}
+                                    required
+                                />
+                            </FieldWrapper>
 
-                    <button
-                        type="submit"
-                        className="px-6 py-3 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 shadow-md"
-                    >
-                        Cập nhật
-                    </button>
+                            <FieldWrapper>
+                                <label className={labelClass}>Ngày kết thúc</label>
+                                <input
+                                    type="datetime-local"
+                                    name="endDate"
+                                    value={form.endDate}
+                                    onChange={handleChange}
+                                    className={inputClass}
+                                    required
+                                />
+                            </FieldWrapper>
+                        </div>
+                    </div>
 
-                </div>
+                    {/* RULES SECTION */}
+                    {showRuleData && (
+                        <div className="bg-white rounded-2xl shadow p-8 space-y-7">
+                            <h2 className="text-lg font-semibold text-gray-800">Quy tắc Challenge</h2>
 
-            </form>
+                            {showHasImage && (
+                                <label className="flex items-center gap-3 p-4 rounded-xl border border-violet-200 bg-violet-50/50 cursor-pointer hover:bg-violet-50 transition">
+                                    <input
+                                        type="checkbox"
+                                        checked={ruleData.has_image}
+                                        onChange={(e) =>
+                                            setRuleData({
+                                                ...ruleData,
+                                                has_image: e.target.checked
+                                            })
+                                        }
+                                        className="w-4 h-4 text-violet-600 border-gray-300 rounded"
+                                    />
+                                    <div>
+                                        <p className="font-medium text-gray-800">Bắt buộc có hình ảnh</p>
+                                        <p className="text-xs text-gray-500">Người dùng phải đính kèm hình ảnh khi tham gia</p>
+                                    </div>
+                                </label>
+                            )}
+
+                            {showHashTag && (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                            <Hash size={18} />
+                                            Hashtag bắt buộc
+                                        </label>
+                                        <p className="text-xs text-gray-500 mt-1">Người dùng phải sử dụng những hashtag này</p>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        {ruleData.hash_tags.map((tag, index) => (
+                                            <div key={index} className="flex gap-2">
+                                                <input
+                                                    placeholder="VD: #summer2024"
+                                                    value={tag}
+                                                    onChange={(e) => {
+                                                        const newTags = [...ruleData.hash_tags];
+                                                        newTags[index] = e.target.value;
+                                                        setRuleData({
+                                                            ...ruleData,
+                                                            hash_tags: newTags
+                                                        });
+                                                    }}
+                                                    className={inputClass}
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        const newTags = ruleData.hash_tags.filter((_, i) => i !== index);
+                                                        setRuleData({
+                                                            ...ruleData,
+                                                            hash_tags: newTags
+                                                        });
+                                                    }}
+                                                    className="px-3 py-3 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition"
+                                                >
+                                                    <X size={18} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setRuleData({
+                                                ...ruleData,
+                                                hash_tags: [...ruleData.hash_tags, ""]
+                                            })
+                                        }
+                                        className="flex items-center gap-2 px-4 py-2 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium text-sm"
+                                    >
+                                        <Plus size={16} />
+                                        Thêm hashtag
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* ACTION */}
+                    <div className="flex justify-end gap-3">
+                        <button
+                            type="button"
+                            onClick={() => router.back()}
+                            className="px-6 py-3 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
+                        >
+                            Hủy
+                        </button>
+
+                        <button
+                            type="submit"
+                            className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-medium"
+                        >
+                            <Trophy size={18} />
+                            Cập nhật
+                        </button>
+                    </div>
+
+                </form>
+            </div>
         </div>
     );
 }

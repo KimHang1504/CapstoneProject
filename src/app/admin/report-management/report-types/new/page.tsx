@@ -4,6 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createReportType } from "@/api/admin/api";
 import { toast } from "sonner";
+import { FileText, Plus } from "lucide-react";
+
+const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1";
+
+const inputClass = "w-full mt-2 border border-violet-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition placeholder-gray-300";
+
+function FieldWrapper({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col gap-0.5">{children}</div>;
+}
 
 export default function CreateReportTypePage() {
     const router = useRouter();
@@ -42,76 +51,65 @@ export default function CreateReportTypePage() {
     };
 
     return (
-        <div className="max-w-xl mx-auto p-6">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/40 to-violet-50/30 p-6">
+            <div className="max-w-2xl mx-auto space-y-6">
 
-            <div className="mb-6 flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Tạo loại báo cáo
-                    </h1>
-                    <p className="text-gray-500 text-sm mt-1">
-                        Thêm loại báo cáo mới cho hệ thống
-                    </p>
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h1 className="text-3xl font-bold text-gray-800">
+                            Tạo loại báo cáo
+                        </h1>
+                        <p className="text-gray-500 text-sm mt-1">
+                            Thêm loại báo cáo mới cho hệ thống
+                        </p>
+                    </div>
                 </div>
 
-                <button
-                    onClick={() => router.back()}
-                    className="px-4 py-2 rounded-lg border hover:bg-gray-100 cursor-pointer"
-                >
-                    ← Trở lại
-                </button>
-            </div>
+                {/* FORM */}
+                <div className="bg-white rounded-2xl shadow p-8 space-y-7">
 
-            {/* FORM */}
-            <div className="max-w-2xl bg-white rounded-2xl shadow p-6 space-y-6">
+                    <FieldWrapper>
+                        <label className={labelClass}>Tên loại báo cáo</label>
+                        <input
+                            value={typeName}
+                            onChange={(e) => setTypeName(e.target.value)}
+                            placeholder="VD: SPAM, ABUSE, OFFENSIVE..."
+                            className={inputClass}
+                            required
+                        />
+                    </FieldWrapper>
 
-                {/* TYPE NAME */}
-                <div>
-                    <label className="block text-sm font-medium mb-2">
-                        Tên loại <span className="text-red-500">*</span>
-                    </label>
+                    <FieldWrapper>
+                        <label className={labelClass}>Mô tả</label>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Mô tả chi tiết về loại báo cáo này..."
+                            rows={4}
+                            className={`${inputClass} resize-none`}
+                        />
+                    </FieldWrapper>
 
-                    <input
-                        value={typeName}
-                        onChange={(e) => setTypeName(e.target.value)}
-                        placeholder="VD: SPAM, ABUSE..."
-                        className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#B388EB]"
-                    />
+                    {/* ACTION */}
+                    <div className="flex justify-end gap-3 pt-4">
+                        <button
+                            onClick={() => router.back()}
+                            className="px-6 py-3 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
+                        >
+                            Hủy
+                        </button>
+
+                        <button
+                            onClick={handleSubmit}
+                            disabled={loading}
+                            className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 transition font-medium"
+                        >
+                            <FileText size={18} />
+                            {loading ? "Đang tạo..." : "Tạo loại báo cáo"}
+                        </button>
+                    </div>
+
                 </div>
-
-                {/* DESCRIPTION */}
-                <div>
-                    <label className="block text-sm font-medium mb-2">
-                        Mô tả
-                    </label>
-
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Mô tả loại báo cáo..."
-                        rows={4}
-                        className="w-full border px-4 py-2 rounded-lg focus:ring-2 focus:ring-[#B388EB]"
-                    />
-                </div>
-
-                {/* ACTION */}
-                <div className="flex justify-end gap-3">
-                    <button
-                        onClick={() => router.back()}
-                        className="px-4 py-2 border rounded-lg hover:bg-gray-100 cursor-pointer"
-                    >
-                        Hủy
-                    </button>
-
-                    <button
-                        onClick={handleSubmit}
-                        disabled={loading}
-                        className="px-5 py-2 bg-[#B388EB] text-white rounded-lg hover:opacity-90 disabled:opacity-50 cursor-pointer"
-                    >
-                        {loading ? "Đang tạo..." : "Tạo mới"}
-                    </button>
-                </div>
-
             </div>
         </div>
     );

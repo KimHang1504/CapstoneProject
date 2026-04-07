@@ -83,7 +83,7 @@ export default function SpecialEventListPage() {
     };
 
     return (
-        <div className="flex gap-10 px-8 py-4 items-start">
+        <div className="flex gap-10 px-8 py-8 items-start">
             <div className="flex-1 min-w-0 space-y-4">
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl font-bold text-gray-900 mb-4">Quản lí sự kiện đặc biệt</h2>

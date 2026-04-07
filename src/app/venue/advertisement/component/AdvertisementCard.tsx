@@ -3,18 +3,19 @@
 import { useRouter } from "next/navigation";
 import { AdvertisementListItem, PLACEMENT_LABEL } from "@/api/venue/advertisement/type";
 import ImageWithFallback from "@/components/ImageWithFallback";
+import { formatDateVN } from "@/app/venue/advertisement/utils/formatDateVN";
 
 type Props = {
   ad: AdvertisementListItem;
 };
 
 const statusConfig: Record<string, { label: string; dot: string; badge: string }> = {
-  ACTIVE:   { label: "Hoạt động", dot: "bg-emerald-400", badge: "bg-emerald-50 text-emerald-600 border-emerald-200" },
-  PENDING:  { label: "Chờ duyệt", dot: "bg-amber-400",  badge: "bg-amber-50 text-amber-600 border-amber-200" },
-  DRAFT:    { label: "Nháp",      dot: "bg-gray-400",   badge: "bg-gray-50 text-gray-500 border-gray-200" },
-  REJECTED: { label: "Từ chối",   dot: "bg-red-400",    badge: "bg-red-50 text-red-500 border-red-200" },
-  INACTIVE: { label: "Tạm dừng",  dot: "bg-slate-400",  badge: "bg-slate-50 text-slate-500 border-slate-200" },
-  APPROVED: { label: "Đã duyệt",  dot: "bg-violet-400", badge: "bg-violet-50 text-violet-600 border-violet-200" },
+  ACTIVE: { label: "Hoạt động", dot: "bg-emerald-400", badge: "bg-emerald-50 text-emerald-600 border-emerald-200" },
+  PENDING: { label: "Chờ duyệt", dot: "bg-amber-400", badge: "bg-amber-50 text-amber-600 border-amber-200" },
+  DRAFT: { label: "Nháp", dot: "bg-gray-400", badge: "bg-gray-50 text-gray-500 border-gray-200" },
+  REJECTED: { label: "Từ chối", dot: "bg-red-400", badge: "bg-red-50 text-red-500 border-red-200" },
+  INACTIVE: { label: "Tạm dừng", dot: "bg-slate-400", badge: "bg-slate-50 text-slate-500 border-slate-200" },
+  APPROVED: { label: "Đã duyệt", dot: "bg-violet-400", badge: "bg-violet-50 text-violet-600 border-violet-200" },
 };
 
 export default function AdvertisementCard({ ad }: Props) {
@@ -73,7 +74,7 @@ export default function AdvertisementCard({ ad }: Props) {
             <svg className="w-3.5 h-3.5 text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span>{new Date(ad.desiredStartDate).toLocaleDateString("vi-VN")}</span>
+            <span>{formatDateVN(ad.desiredStartDate)}</span>
           </div>
         ) : (
           <span className="text-xs text-gray-300 italic">Chưa đặt ngày</span>
@@ -84,8 +85,8 @@ export default function AdvertisementCard({ ad }: Props) {
       <div className="px-4 py-3 mt-auto">
         <div className="flex items-center justify-between">
           <span className="text-[11px] text-gray-400">
-            Cập nhật {new Date(ad.updatedAt).toLocaleDateString("vi-VN")}
-          </span>
+              Cập nhật {formatDateVN(ad.updatedAt)}
+        </span>
           <span className="flex items-center gap-1 text-xs font-semibold text-violet-600 group-hover:text-purple-700 transition-colors">
             Quản lý
             <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -11,7 +11,7 @@ export default function TestTypeRow({
   onImportFile,
 }: TestTypeRowProps) {
   return (
-    <tr className="border-b border-slate-100 hover:bg-slate-50 transition-colors duration-150">
+    <tr className="border-b border-slate-100 hover:bg-violet-50/30 transition-colors duration-150">
       <td className="px-4 py-4">
         <span className="text-sm font-semibold text-slate-700">#{item.id}</span>
       </td>
@@ -29,7 +29,7 @@ export default function TestTypeRow({
       <td className="px-4 py-4">
         <Link
           href={`/admin/testtype-management/${item.id}`}
-          className="text-sm font-semibold text-slate-800 hover:text-slate-600 transition-colors duration-150 hover:underline underline-offset-2"
+          className="text-sm font-semibold text-slate-800 hover:text-violet-600 transition-colors duration-150 hover:underline underline-offset-2"
         >
           {item.name}
         </Link>
@@ -66,7 +66,7 @@ export default function TestTypeRow({
           <button
             onClick={() => onStartEdit(item)}
             disabled={isCreating || editingId !== null}
-            className="group inline-flex items-center gap-1.5 px-3 py-2 bg-slate-400 text-white text-sm font-medium rounded-lg hover:bg-slate-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow"
+            className="group inline-flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-violet-500 to-purple-500 text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
             <Edit2 className="w-3.5 h-3.5" />
             <span>Sửa</span>
@@ -86,10 +86,10 @@ export default function TestTypeRow({
             />
 
             <span
-              className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 shadow-sm ${
+              className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 shadow-md ${
                 importingId === item.id
-                  ? "bg-slate-300 text-white cursor-not-allowed"
-                  : "bg-slate-500 text-white hover:bg-slate-600 hover:shadow"
+                  ? "bg-slate-400 text-white cursor-not-allowed"
+                  : "bg-linear-to-r from-violet-500 to-purple-500 text-white hover:shadow-lg"
               }`}
             >
               {importingId === item.id ? (
