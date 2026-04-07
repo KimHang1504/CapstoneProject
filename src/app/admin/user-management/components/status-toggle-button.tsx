@@ -67,34 +67,34 @@ export default function StatusToggleButton({
             disabled={loading}
             title={user.isActive ? 'Click để khóa tài khoản' : 'Click để kích hoạt tài khoản'}
             className={`
-        relative w-23 h-9 rounded-full border-2 transition-all duration-300
+        relative w-23 h-9 rounded-full border-2 transition-all duration-300 shadow-sm
         disabled:opacity-60 disabled:cursor-not-allowed
         ${user.isActive
-                    ? 'border-green-500 bg-green-50 hover:bg-green-100'
-                    : 'border-purple-400 bg-white hover:bg-purple-50'}
+                    ? 'border-pink-300 bg-pink-50 hover:bg-pink-100 hover:border-pink-400'
+                    : 'border-purple-300 bg-purple-50 hover:bg-purple-100 hover:border-purple-400'}
       `}
         >
             <span
                 className={`
           absolute top-1/2 -translate-y-1/2 flex items-center justify-center
- w-6.5 h-6.5 rounded-full text-white shadow-sm
+ w-6.5 h-6.5 rounded-full text-white shadow-md
            transition-all duration-300
           ${user.isActive
-                        ? 'left-15 bg-green-500'
-                        : 'left-1 bg-purple-500'}
+                        ? 'left-15 bg-gradient-to-r from-pink-400 to-pink-300'
+                        : 'left-1 bg-gradient-to-r from-purple-400 to-purple-300'}
         `}
             >
                 <User
                     size={14}
                     strokeWidth={2.5}
-                    className={user.isActive ? 'text-green-600' : 'text-purple-600'}
+                    className={user.isActive ? 'text-pink-100' : 'text-purple-100'}
                 />      </span>
 
             <span
                 className={`
-          absolute inset-0 flex items-center text-[11px] font-semibold transition-all duration-300
+          absolute inset-0 flex items-center text-[11px] font-bold transition-all duration-300
           ${user.isActive
-                        ? 'justify-start pl-3 text-green-700'
+                        ? 'justify-start pl-3 text-pink-600'
                         : 'justify-end pr-3 text-purple-600'}
         `}
             >

@@ -215,10 +215,13 @@ export default function ManagementLayout({
                 href={getDashboardUrl()}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200"
               >
-                <div className="w-7 h-7 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center text-white font-bold text-xs">
-                  CM
-                </div>
-                <span className="font-semibold text-white text-sm">CoupleMood</span>
+                <Image
+                  src="/logo.png"
+                  alt="CoupleMood"
+                  width={32}
+                  height={32}
+                />
+                <span className="font-semibold text-white text-md">CoupleMood</span>
               </Link>
             )}
             <button

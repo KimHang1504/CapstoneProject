@@ -243,14 +243,14 @@ export default function TestTypePage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <div className="w-full mx-auto p-6 space-y-5">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/40 to-violet-50/30">
+      <div className="w-full mx-auto px-6 py-4 space-y-5">
 
         {/* HEADER */}
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
-              <ListChecks className="w-6 h-6 text-slate-600" />
+              <ListChecks className="w-6 h-6 text-violet-600" />
               Quản lý loại bài test
             </h1>
             <p className="text-sm text-slate-500 mt-1.5">
@@ -262,7 +262,7 @@ export default function TestTypePage() {
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+              className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="text-sm font-medium">Tải lại</span>
@@ -271,7 +271,7 @@ export default function TestTypePage() {
             <button
               onClick={handleCreateRow}
               disabled={isCreating || editingId !== null}
-              className="px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow flex items-center gap-2"
+              className="px-4 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">Tạo mới</span>
@@ -302,7 +302,7 @@ export default function TestTypePage() {
         {/* MESSAGES */}
         {error && (
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
-            <div className="border-l-4 border-red-400 px-5 py-4">
+            <div className="border-l-4 border-red-500 px-5 py-4">
               <div className="flex items-start gap-3">
                 <div className="shrink-0 w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
                   <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -317,7 +317,7 @@ export default function TestTypePage() {
 
         {importErrors.length > 0 && (
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
-            <div className="border-l-4 border-red-400 px-5 py-4">
+            <div className="border-l-4 border-red-500 px-5 py-4">
               <div className="flex items-start gap-3">
                 <div className="shrink-0 w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
                   <svg className="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -339,7 +339,7 @@ export default function TestTypePage() {
 
         {successMessage && (
           <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
-            <div className="border-l-4 border-green-400 px-5 py-4">
+            <div className="border-l-4 border-green-500 px-5 py-4">
               <div className="flex items-start gap-3">
                 <div className="shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
                   <svg className="w-3 h-3 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

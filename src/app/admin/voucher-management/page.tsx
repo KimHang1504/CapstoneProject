@@ -38,19 +38,19 @@ export default function VoucherPage() {
   return (
     <div className="px-8 py-4 min-h-screen space-y-6">
       {/* Header */}
-      <div className="flex gap-5 items-center">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
-          Quản lí voucher
-        </h2>
+<div className="flex items-center justify-between w-full">
+  <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+    Quản lí voucher
+  </h2>
 
-        <Link
-          href="/admin/voucher-management/voucher/all"
-          className="inline-flex items-center gap-2 text-sm bg-gradient-to-r from-violet-500 to-pink-500 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition"
-        >
-          <Plus size={18} />
-          Xem tất cả voucher
-        </Link>
-      </div>
+  <Link
+    href="/admin/voucher-management/voucher/all"
+    className="inline-flex items-center gap-2 text-sm bg-gradient-to-r from-violet-500 to-pink-500 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition"
+  >
+    <Plus size={18} />
+    Xem tất cả voucher
+  </Link>
+</div>
 
       <div className="space-y-4">
         {loading ? (
@@ -133,7 +133,7 @@ function VoucherCard({ voucher }: { voucher: any }) {
       <div className="flex items-center gap-2 mt-2 text-sm">
         <span className="flex items-center gap-2 text-gray-500">
           <CalendarDays className="w-4 h-4 text-purple-400" />
-          Từ ngày 
+          Từ ngày
         </span>
 
         <span className="font-medium text-gray-700">

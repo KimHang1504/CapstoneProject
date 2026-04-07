@@ -41,7 +41,7 @@ export default function VoucherPage() {
       <BackButton />
 
       {/* Header */}
-      <div className="flex gap-5 items-center">
+      {/* <div className="flex gap-5 jusstify-between w-full">
         <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
           Quản lí voucher
         </h2>
@@ -53,7 +53,7 @@ export default function VoucherPage() {
           <Plus size={18} />
           Xem tất cả voucher
         </Link>
-      </div>
+      </div> */}
 
       <div className="space-y-4">
         {loading ? (

@@ -82,7 +82,7 @@ export default function EditVoucherPage() {
 
       toast.success("Voucher updated");
 
-      router.push(`/venue/voucher/${id}`);
+      router.push(`/venue/voucher/myvoucher/${id}`);
 
     } catch (err) {
 

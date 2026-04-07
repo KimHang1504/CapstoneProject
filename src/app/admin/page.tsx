@@ -50,7 +50,7 @@ export default function AdminHome() {
     ];
 
     return (
-        <div className="p-6 min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50">
+        <div className="p-6 min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-rose-50">
 
             {/* HEADER */}
             <div className="mb-8">
@@ -93,7 +93,7 @@ export default function AdminHome() {
                                         className="object-cover rounded-xl transition-transform duration-700 group-hover:scale-110"
                                     />
 
-                                    <div className="absolute inset-0 bg-gradient-to-t from-purple-900/70 via-purple-700/30 to-transparent rounded-xl" />
+                                    <div className="absolute inset-0 bg-linear-to-t from-purple-900/70 via-purple-700/30 to-transparent rounded-xl" />
 
                                     <div className="absolute bottom-0 p-5 text-white">
                                         <h2 className="text-xl font-semibold mb-1">
