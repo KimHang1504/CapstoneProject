@@ -38,14 +38,14 @@ export default function TestTypeTable({
           <table className="w-full">
             <thead className="bg-slate-50 border-b border-slate-200">
               <tr>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Code</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Tên</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Mô tả</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Số câu hỏi</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Phiên bản</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Trạng thái</th>
-                <th className="px-4 py-3.5 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">Hành động</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-violet-600 uppercase tracking-wider">ID</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-violet-600 uppercase tracking-wider">Code</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-violet-600 uppercase tracking-wider">Tên</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-violet-600 uppercase tracking-wider">Mô tả</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-violet-600 uppercase tracking-wider">Số câu hỏi</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-violet-600 uppercase tracking-wider">Phiên bản</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-violet-600 uppercase tracking-wider">Trạng thái</th>
+                <th className="px-4 py-3.5 text-center text-xs font-semibold text-violet-600 uppercase tracking-wider">Hành động</th>
               </tr>
             </thead>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronRight, Search, ChevronLeft, ChevronsLeft, ChevronsRight, MapPin, RefreshCw, X } from 'lucide-react';
+import { ChevronRight, Search, ChevronLeft, ChevronsLeft, ChevronsRight, MapPin, RefreshCw, X, Star, Phone, Mail, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -101,7 +101,7 @@ export default function MyLocationPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/40 to-violet-50/30">
             <div className="max-w-7xl mx-auto p-6">
                 <div className="flex gap-6 items-start">
                     {/* MAIN CONTENT */}
@@ -110,7 +110,7 @@ export default function MyLocationPage() {
                         <div className="flex justify-between items-start">
                             <div>
                                 <h1 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
-                                    <MapPin className="w-6 h-6 text-blue-600" />
+                                    <MapPin className="w-6 h-6 text-violet-600" />
                                     Quản lý địa điểm
                                 </h1>
                                 <p className="text-sm text-slate-500 mt-1.5">
@@ -121,7 +121,7 @@ export default function MyLocationPage() {
                             <button
                                 onClick={fetchData}
                                 disabled={loading}
-                                className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                                className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
                             >
                                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                                 <span className="text-sm font-medium">Tải lại</span>
@@ -139,7 +139,7 @@ export default function MyLocationPage() {
                                         value={searchInput}
                                         onChange={(e) => setSearchInput(e.target.value)}
                                         onKeyDown={handleKeyPress}
-                                        className="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
+                                        className="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
                                     />
                                     {searchInput && (
                                         <button
@@ -157,7 +157,7 @@ export default function MyLocationPage() {
 
                                 <button
                                     onClick={handleSearch}
-                                    className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md"
+                                    className="px-6 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md"
                                 >
                                     <span className="text-sm font-medium">Tìm kiếm</span>
                                 </button>
@@ -213,55 +213,111 @@ export default function MyLocationPage() {
                                     return (
                                         <div
                                             key={loc.id}
-                                            className="relative flex gap-4 bg-white rounded-xl p-4 border border-slate-200 hover:shadow-md hover:border-blue-200 transition-all duration-200 shadow-sm"
+                                            className="relative bg-white rounded-xl border border-slate-200 hover:shadow-md hover:border-violet-200 transition-all duration-200 shadow-sm overflow-hidden"
                                         >
-                                            {/* IMAGE */}
-                                            <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-100">
-                                                <Image
-                                                    src={imageUrl}
-                                                    alt={loc.name}
-                                                    fill
-                                                    className="object-cover"
-                                                />
-                                            </div>
+                                            <div className="flex gap-4 p-4">
+                                                {/* IMAGE */}
+                                                <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                                                    <Image
+                                                        src={imageUrl}
+                                                        alt={loc.name}
+                                                        fill
+                                                        className="object-cover"
+                                                    />
+                                                </div>
 
-                                            <div className="flex-1 pr-10">
-                                                <Link href={`/admin/venue-management/location/${loc.id}`}>
-                                                    <h3 className="font-semibold text-lg text-slate-800 hover:text-blue-600 transition-colors">
-                                                        {loc.name}
-                                                    </h3>
-                                                </Link>
-
-                                                <p className="text-sm text-slate-600 mt-1 line-clamp-2 min-h-10">
-                                                    {loc.description ?? 'Không có mô tả'}
-                                                </p>
-
-                                                <p className="text-sm text-slate-700 font-medium italic mt-1 line-clamp-2 min-h-10">
-                                                    {loc.address ?? 'Chưa có địa chỉ'}
-                                                </p>
-                                                <p>
-                                                        <span className="text-xs text-slate-500">Trạng thái: </span>
-                                                        <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-medium
+                                                <div className="flex-1 min-w-0">
+                                                    {/* Title and Status */}
+                                                    <div className="flex items-start justify-between gap-2 mb-1">
+                                                        <Link href={`/admin/venue-management/location/${loc.id}`}>
+                                                            <h3 className="font-semibold text-lg text-slate-800 hover:text-violet-600 transition-colors line-clamp-1">
+                                                                {loc.name}
+                                                            </h3>
+                                                        </Link>
+                                                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap shrink-0
                                                             ${loc.status === "ACTIVE"
                                                                 ? "bg-green-100 text-green-700" 
                                                                 : loc.status === "PENDING"
-                                                                    ? "bg-yellow-100 text-yellow-700" 
-                                                                    : "bg-gray-200 text-gray-700"
+                                                                    ? "bg-yellow-100 text-yellow-700"
+                                                                    : loc.status === "DRAFTED"
+                                                                        ? "bg-slate-100 text-slate-700"
+                                                                        : "bg-red-100 text-red-700"
                                                             }`}
                                                         >
                                                             {loc.status}
                                                         </span>
-                                                </p>
-                                            </div>
+                                                    </div>
 
-                                            <Link
-                                                href={`/admin/venue-management/location/${loc.id}`}
-                                                className="absolute bottom-4 right-4"
-                                            >
-                                                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors">
-                                                    <ChevronRight className="w-4 h-4" />
+                                                    {/* Description */}
+                                                    <p className="text-sm text-slate-600 line-clamp-1">
+                                                        {loc.description ?? 'Không có mô tả'}
+                                                    </p>
+
+                                                    {/* Address */}
+                                                    <p className="text-sm text-slate-700 font-medium mt-1 line-clamp-1">
+                                                        {loc.address ?? 'Chưa có địa chỉ'}
+                                                    </p>
+
+                                                    {/* Secondary Info Row */}
+                                                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
+                                                        {/* Category */}
+                                                        {loc.category && (
+                                                            <span className="inline-block px-2 py-1 bg-purple-50 text-purple-700 rounded-full font-medium">
+                                                                {loc.category}
+                                                            </span>
+                                                        )}
+
+                                                        {/* Rating */}
+                                                        {loc.averageRating !== undefined && loc.averageRating > 0 && (
+                                                            <div className="flex items-center gap-1 text-yellow-600">
+                                                                <Star className="w-3.5 h-3.5 fill-yellow-400" />
+                                                                <span className="font-medium">{loc.averageRating.toFixed(1)}</span>
+                                                                {loc.reviewCount && <span className="text-slate-500">({loc.reviewCount})</span>}
+                                                            </div>
+                                                        )}
+
+                                                        {/* Verification Status */}
+                                                        {loc.isOwnerVerified && (
+                                                            <div className="flex items-center gap-1 text-green-600">
+                                                                <CheckCircle className="w-3.5 h-3.5" />
+                                                                <span className="font-medium">Đã xác thực</span>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Contact Info */}
+                                                        {(loc.phoneNumber || loc.email) && (
+                                                            <div className="flex items-center gap-1.5">
+                                                                {loc.phoneNumber && (
+                                                                    <div className="flex items-center gap-1 text-slate-600 hover:text-violet-600">
+                                                                        <Phone className="w-3.5 h-3.5" />
+                                                                        <span className="text-xs">{loc.phoneNumber}</span>
+                                                                    </div>
+                                                                )}
+                                                                {loc.email && (
+                                                                    <div className="flex items-center gap-1 text-slate-600 hover:text-violet-600">
+                                                                        <Mail className="w-3.5 h-3.5" />
+                                                                        <span className="text-xs truncate">{loc.email}</span>
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        )}
+
+                                                        {/* Price Range */}
+                                                        {loc.priceMin && loc.priceMax && (
+                                                            <span className="text-slate-700 font-medium">
+                                                                {loc.priceMin.toLocaleString('vi-VN')} - {loc.priceMax.toLocaleString('vi-VN')} đ
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                 </div>
-                                            </Link>
+
+                                                <Link
+                                                    href={`/admin/venue-management/location/${loc.id}`}
+                                                    className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200 transition-colors shrink-0"
+                                                >
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </Link>
+                                            </div>
                                         </div>
                                     );
                                 })}
@@ -334,7 +390,7 @@ export default function MyLocationPage() {
                                                         onClick={() => setPage(pageNum)}
                                                         className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                                                             page === pageNum
-                                                                ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                                                                ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-md"
                                                                 : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
                                                         }`}
                                                     >
@@ -377,7 +433,7 @@ export default function MyLocationPage() {
                                     placeholder="Lọc nhanh..."
                                     value={clientSearch}
                                     onChange={(e) => setClientSearch(e.target.value)}
-                                    className="w-full pl-10 pr-8 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
+                                    className="w-full pl-10 pr-8 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
                                 />
                                 {clientSearch && (
                                     <button
@@ -392,6 +448,7 @@ export default function MyLocationPage() {
 
                         {/* STATUS FILTERS */}
                         {[
+                            // Icons for status filters
                             { key: 'all', label: 'Tất cả', value: stats.all },
                             { key: 'DRAFTED', label: 'Nháp', value: stats.DRAFTED },
                             { key: 'PENDING', label: 'Chờ duyệt', value: stats.PENDING },
@@ -401,17 +458,19 @@ export default function MyLocationPage() {
                             <div
                                 key={item.key}
                                 onClick={() => handleStatusChange(item.key as StatusFilter)}
-                                className={`cursor-pointer rounded-xl p-4 transition-all duration-200 border ${
+                                className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border group ${
                                     statusFilter === item.key
-                                        ? 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 shadow-md'
-                                        : 'bg-white border-slate-200 hover:bg-slate-50 hover:border-slate-300 shadow-sm'
+                                        ? 'bg-linear-to-br from-violet-50 to-purple-50 border-violet-300 shadow-lg scale-105'
+                                        : 'bg-white border-slate-200 hover:bg-purple-50/30 hover:border-violet-200 shadow-sm hover:shadow-md'
                                 }`}
                             >
-                                <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                                <p className={`text-xs font-semibold uppercase tracking-widest transition-colors duration-300 ${
+                                    statusFilter === item.key ? 'text-violet-600' : 'text-slate-500'
+                                }`}>
                                     {item.label}
                                 </p>
-                                <p className={`text-2xl font-bold mt-1 ${
-                                    statusFilter === item.key ? 'text-blue-600' : 'text-slate-800'
+                                <p className={`text-3xl font-bold mt-2 transition-colors duration-300 ${
+                                    statusFilter === item.key ? 'text-violet-600' : 'text-slate-800 group-hover:text-violet-600'
                                 }`}>
                                     {item.value.toString().padStart(2, '0')}
                                 </p>

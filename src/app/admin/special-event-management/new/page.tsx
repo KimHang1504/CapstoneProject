@@ -7,6 +7,15 @@ import BackButton from "@/components/BackButton";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Calendar, Upload, Image as ImageIcon } from "lucide-react";
+
+const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1";
+
+const inputClass = "w-full mt-2 border border-violet-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition placeholder-gray-300";
+
+function FieldWrapper({ children }: { children: React.ReactNode }) {
+  return <div className="flex flex-col gap-0.5">{children}</div>;
+}
 
 export default function CreateEventPage() {
   const router = useRouter();
@@ -88,123 +97,153 @@ export default function CreateEventPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <BackButton />
-      <h1 className="text-2xl font-semibold mb-6">Tạo sự kiện</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/40 to-violet-50/30 p-6">
+      <div className="max-w-2xl mx-auto space-y-6">
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Tên sự kiện
-          </label>
-          <input
-            type="text"
-            name="eventName"
-            value={form.eventName}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-2"
-            required
-          />
+          <h1 className="text-3xl font-bold text-gray-800">
+            Tạo sự kiện đặc biệt
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            Thêm sự kiện của bạn vào hệ thống
+          </p>
         </div>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Mô tả sự kiện
-          </label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-2"
-            rows={4}
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
 
-        <div>
-          <label className="block text-sm font-medium mb-2">
-            Ảnh banner quảng cáo
-          </label>
+          {/* BASIC INFO */}
+          <div className="bg-white rounded-2xl shadow p-8 space-y-7">
+            <h2 className="text-lg font-semibold text-gray-800">Thông tin sự kiện</h2>
 
-          <label className="flex flex-col items-center justify-center w-full h-60 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-gray-50 transition">
-            {bannerPreview ? (
-              <img
-                src={bannerPreview}
-                className="w-full h-full object-cover"
+            <FieldWrapper>
+              <label className={labelClass}>Tên sự kiện</label>
+              <input
+                type="text"
+                name="eventName"
+                value={form.eventName}
+                onChange={handleChange}
+                placeholder="VD: Tết Nguyên Đán, Lễ Phục Sinh..."
+                className={inputClass}
+                required
               />
-            ) : (
-              <div className="flex flex-col items-center justify-center text-gray-500 text-sm">
-                <svg
-                  className="w-8 h-8 mb-2"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M12 16V4m0 0l-4 4m4-4l4 4M4 20h16" />
-                </svg>
+            </FieldWrapper>
 
-                <p>Nhấn vào để upload ảnh</p>
+            <FieldWrapper>
+              <label className={labelClass}>Mô tả sự kiện</label>
+              <textarea
+                name="description"
+                value={form.description}
+                onChange={handleChange}
+                placeholder="Mô tả chi tiết về sự kiện này..."
+                rows={4}
+                className={`${inputClass} resize-none`}
+              />
+            </FieldWrapper>
+
+            <label className="flex items-center gap-3 p-4 rounded-xl border border-violet-200 bg-violet-50/50 cursor-pointer hover:bg-violet-50 transition">
+              <input
+                type="checkbox"
+                name="isYearly"
+                checked={form.isYearly}
+                onChange={handleChange}
+                className="w-4 h-4 text-violet-600 border-gray-300 rounded"
+              />
+              <div>
+                <p className="font-medium text-gray-800">Sự kiện diễn ra hàng năm</p>
+                <p className="text-xs text-gray-500">Được lặp lại vào cùng khoảng thời gian hàng năm</p>
               </div>
-            )}
+            </label>
+          </div>
 
-            <input
-              type="file"
-              name="bannerUrl"
-              onChange={handleChange}
-              className="hidden"
-            />
-          </label>
-        </div>
+          {/* BANNER SECTION */}
+          <div className="bg-white rounded-2xl shadow p-8 space-y-7">
+            <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <ImageIcon size={20} />
+              Banner sự kiện
+            </h2>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Ngày bắt đầu
-          </label>
-          <input
-            type="date"
-            name="startDate"
-            value={form.startDate}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-2"
-            required
-          />
-        </div>
+            <div>
+              <label className={labelClass}>Ảnh banner</label>
+              <label className="flex flex-col items-center justify-center w-full h-60 border-2 border-dashed border-violet-200 rounded-xl cursor-pointer hover:border-violet-400 hover:bg-violet-50/30 transition mt-2">
+                {bannerPreview ? (
+                  <img
+                    src={bannerPreview}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center text-gray-500 text-sm">
+                    <Upload size={32} className="mb-3 text-violet-400" />
+                    <p className="font-medium">Nhấp để upload ảnh banner</p>
+                    <p className="text-xs text-gray-400 mt-1">Hoặc kéo thả tệp vào đây</p>
+                  </div>
+                )}
 
-        <div>
-          <label className="block text-sm font-medium mb-1">
-            Ngày kết thúc
-          </label>
-          <input
-            type="date"
-            name="endDate"
-            value={form.endDate}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-2"
-            required
-          />
-        </div>
+                <input
+                  type="file"
+                  name="bannerUrl"
+                  onChange={handleChange}
+                  className="hidden"
+                  accept="image/*"
+                />
+              </label>
+            </div>
+          </div>
 
-        <div className="flex items-center gap-2">
-          <input
-            type="checkbox"
-            name="isYearly"
-            checked={form.isYearly}
-            onChange={handleChange}
-            className="h-4 w-4 text-violet-600 border-gray-300 rounded"
-          />
-          <label className="text-sm font-medium">
-            Sự kiện diễn ra hàng năm
-          </label>
-        </div>
+          {/* TIME SECTION */}
+          <div className="bg-white rounded-2xl shadow p-8 space-y-7">
+            <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
+              <Calendar size={20} />
+              Thời gian sự kiện
+            </h2>
 
-        <button
-          type="submit"
-          className="w-full bg-violet-600 text-white hover:bg-violet-700 py-2 rounded-lg"
-        >
-          Tạo sự kiện
-        </button>
-      </form>
+            <div className="grid grid-cols-2 gap-6">
+              <FieldWrapper>
+                <label className={labelClass}>Ngày bắt đầu</label>
+                <input
+                  type="date"
+                  name="startDate"
+                  value={form.startDate}
+                  onChange={handleChange}
+                  className={inputClass}
+                  required
+                />
+              </FieldWrapper>
+
+              <FieldWrapper>
+                <label className={labelClass}>Ngày kết thúc</label>
+                <input
+                  type="date"
+                  name="endDate"
+                  value={form.endDate}
+                  onChange={handleChange}
+                  className={inputClass}
+                  required
+                />
+              </FieldWrapper>
+            </div>
+          </div>
+
+          {/* ACTION */}
+          <div className="flex justify-end gap-3">
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="px-6 py-3 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
+            >
+              Hủy
+            </button>
+
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-medium"
+            >
+              <Calendar size={18} />
+              Tạo sự kiện
+            </button>
+          </div>
+
+        </form>
+      </div>
     </div>
   );
 }

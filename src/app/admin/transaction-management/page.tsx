@@ -93,14 +93,14 @@ export default function TransactionPage() {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50">
             <div className="max-w-7xl mx-auto p-6 space-y-5">
 
                 {/* HEADER */}
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
-                            <Receipt className="w-6 h-6 text-blue-600" />
+                            <Receipt className="w-6 h-6 text-purple-600" />
                             Quản lý giao dịch
                         </h1>
                         <p className="text-sm text-slate-500 mt-1.5">
@@ -119,18 +119,18 @@ export default function TransactionPage() {
                 </div>
 
                 {/* FILTER */}
-                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                <div className="">
                     <div className="flex gap-3 flex-wrap items-center">
                         
                         {/* SEARCH */}
                         <div className="relative flex-1 min-w-[250px]">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
                             <input
                                 type="text"
                                 placeholder="Tìm theo tên hoặc email..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
+                                className="w-full pl-10 pr-4 py-2.5 border border-purple-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
                             />
                             {searchQuery && (
                                 <button
@@ -146,7 +146,7 @@ export default function TransactionPage() {
                         <div className="relative" ref={statusDropdownRef}>
                             <button
                                 onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-                                className="min-w-[150px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                                className="min-w-[150px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700">
                                     {status === "" ? "Tất cả trạng thái" : status}
@@ -171,7 +171,7 @@ export default function TransactionPage() {
                                                 setStatusDropdownOpen(false);
                                             }}
                                             className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors ${
-                                                status === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                status === option.value ? 'bg-purple-50 text-purple-700' : 'text-slate-700'
                                             }`}
                                         >
                                             {option.label}
@@ -185,7 +185,7 @@ export default function TransactionPage() {
                         <div className="relative" ref={typeDropdownRef}>
                             <button
                                 onClick={() => setTypeDropdownOpen(!typeDropdownOpen)}
-                                className="min-w-[180px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                                className="min-w-[180px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700 truncate">
                                     {type === "" ? "Tất cả loại" : type}
@@ -211,7 +211,7 @@ export default function TransactionPage() {
                                                 setTypeDropdownOpen(false);
                                             }}
                                             className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors ${
-                                                type === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                type === option.value ? 'bg-purple-50 text-purple-700' : 'text-slate-700'
                                             }`}
                                         >
                                             {option.label}
@@ -248,13 +248,13 @@ export default function TransactionPage() {
 
                             <thead className="bg-gradient-to-r from-slate-50 to-blue-50/50 border-b border-slate-200">
                                 <tr>
-                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
-                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">User</th>
-                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Số tiền</th>
-                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Loại</th>
-                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Phương thức</th>
-                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Trạng thái</th>
-                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Thời gian</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">ID</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">User</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Số tiền</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Loại</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Phương thức</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Trạng thái</th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Thời gian</th>
                                 </tr>
                             </thead>
 
@@ -329,7 +329,7 @@ export default function TransactionPage() {
 
                 {/* PAGINATION */}
                 {totalPages > 1 && (
-                    <div className="bg-white rounded-xl border border-slate-200 px-5 py-4 shadow-sm">
+                    <div className="">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-slate-600">
@@ -376,7 +376,7 @@ export default function TransactionPage() {
                                                 onClick={() => setPage(pageNum)}
                                                 className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                                                     page === pageNum
-                                                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                                                        ? "bg-purple-600 text-white shadow-md"
                                                         : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
                                                 }`}
                                             >

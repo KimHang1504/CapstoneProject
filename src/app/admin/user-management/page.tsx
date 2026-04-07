@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Search, ChevronLeft, ChevronRight, Eye, Loader, Users as UsersIcon, RefreshCw, X, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Eye, Users as UsersIcon, RefreshCw, X, ChevronsLeft, ChevronsRight } from 'lucide-react';
 import { getListUsers } from '@/api/admin/user/api';
 import { Users } from '@/api/admin/user/type';
 import { toast } from 'sonner';
@@ -95,42 +95,44 @@ export default function UserManagementPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/40 to-violet-50/30">
             <div className="max-w-7xl mx-auto p-6 space-y-5">
                 {/* HEADER */}
                 <div className="flex justify-between items-start">
                     <div>
                         <h1 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
-                            <UsersIcon className="w-6 h-6 text-blue-600" />
+                            <UsersIcon className="w-8 h-8 text-violet-600" />
                             Quản lý người dùng
                         </h1>
-                        <p className="text-sm text-slate-500 mt-1.5">
+                        
+                        {/*
+                         <p className="text-sm mt-2">
                             {users.length} người dùng
-                        </p>
+                        </p> */}
                     </div>
 
                     <button
                         onClick={() => fetchUsers(page)}
                         disabled={loading}
-                        className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                        className="group px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2 font-semibold"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
-                        <span className="text-sm font-medium">Tải lại</span>
+                        <span className="text-sm">Tải lại</span>
                     </button>
                 </div>
 
                 {/* SEARCH */}
-                <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                <div className="">
                     <div className="flex gap-3">
                         <div className="flex-1 relative">
-                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
                             <input
                                 type="text"
                                 placeholder="Tìm theo tên, email hoặc số điện thoại..."
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={handleKeyPress}
-                                className="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
+                                className="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 placeholder-slate-400"
                             />
                             {inputValue && (
                                 <button
@@ -139,7 +141,7 @@ export default function UserManagementPage() {
                                         setSearchTerm("");
                                         setPage(1);
                                     }}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
@@ -148,48 +150,52 @@ export default function UserManagementPage() {
 
                         <button
                             onClick={handleSearch}
-                            className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md"
+                            className="px-6 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md font-semibold flex items-center gap-2"
                         >
-                            <span className="text-sm font-medium">Tìm kiếm</span>
+                            <Search size={16} />
+                            <span className="text-sm">Tìm kiếm</span>
                         </button>
                     </div>
                 </div>
 
                 {/* TABLE */}
-                <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                <div className="bg-white rounded-2xl border border-slate-200 shadow-sm">
                     {loading ? (
                         <div className="flex justify-center items-center py-20">
-                            <Loader className="animate-spin text-blue-600" size={32} />
+                            <div className="text-center">
+                                <div className="inline-block h-10 w-10 animate-spin rounded-full border-3 border-slate-200 border-r-violet-400 mb-3"></div>
+                                <p className="text-violet-600 font-medium">Đang tải dữ liệu...</p>
+                            </div>
                         </div>
                     ) : filteredUsers.length === 0 ? (
                         <div className="py-16 text-center">
                             <div className="flex flex-col items-center justify-center text-slate-400">
                                 <UsersIcon className="w-16 h-16 mb-3 text-slate-300" strokeWidth={1.5} />
-                                <p className="text-sm font-medium text-slate-600">Không có người dùng nào</p>
+                                <p className="text-sm font-medium text-slate-500">Không có người dùng nào</p>
                                 <p className="text-xs text-slate-400 mt-1">Các người dùng sẽ hiển thị ở đây</p>
                             </div>
                         </div>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full">
-                                <thead className="bg-gradient-to-r from-slate-50 to-blue-50/50 border-b border-slate-200">
-                                    <tr>
-                                        <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                            Họ tên
-                                        </th>
-                                        <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                            Email
-                                        </th>
-                                        <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                            Số điện thoại
-                                        </th>
-                                        <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                            Vai trò
-                                        </th>
-                                        <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                                            Trạng thái
-                                        </th>
-                                        <th className="px-4 py-3.5 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">
+<thead className="bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th className="px-4 py-3.5 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">
+                                        Họ tên
+                                    </th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">
+                                        Email
+                                    </th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">
+                                        Số điện thoại
+                                    </th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">
+                                        Vai trò
+                                    </th>
+                                    <th className="px-4 py-3.5 text-left text-xs font-bold text-violet-600 uppercase tracking-wider">
+                                        Trạng thái
+                                    </th>
+                                    <th className="px-4 py-3.5 text-center text-xs font-bold text-violet-600 uppercase tracking-wider">
                                             Hành động
                                         </th>
                                     </tr>
@@ -199,7 +205,7 @@ export default function UserManagementPage() {
                                     {filteredUsers.map((user) => (
                                         <tr
                                             key={user.id}
-                                            className="border-b border-slate-100 hover:bg-blue-50/30 transition-colors duration-150"
+                                            className="border-b border-slate-100 hover:bg-violet-50/30 transition-colors duration-150"
                                         >
                                             <td className="px-4 py-4">
                                                 <span className="text-sm font-semibold text-slate-700">
@@ -240,10 +246,10 @@ export default function UserManagementPage() {
                                                 <div className="flex justify-center">
                                                     <button
                                                         onClick={() => openDetailModal(user)}
-                                                        className="p-2 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors duration-200"
+                                                        className="p-2 hover:bg-violet-100/40 text-violet-600 rounded-lg transition-all duration-200 hover:shadow-md"
                                                         title="Xem chi tiết"
                                                     >
-                                                        <Eye className="w-4 h-4" />
+                                                        <Eye className="w-5 h-5" />
                                                     </button>
                                                 </div>
                                             </td>
@@ -257,11 +263,11 @@ export default function UserManagementPage() {
 
                 {/* PAGINATION */}
                 {!loading && totalPages > 1 && (
-                    <div className="bg-white rounded-xl border border-slate-200 px-5 py-4 shadow-sm">
+                    <div className="">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
-                                <span className="text-sm text-slate-600">
-                                    Trang <span className="font-semibold text-slate-800">{page}</span> / <span className="font-semibold text-slate-800">{totalPages}</span>
+                                <span className="text-sm text-violet-600 font-medium">
+                                    Trang <span className="font-bold text-violet-700">{page}</span> / <span className="font-bold text-violet-700">{totalPages}</span>
                                 </span>
                             </div>
 
@@ -269,18 +275,18 @@ export default function UserManagementPage() {
                                 <button
                                     onClick={() => setPage(1)}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang đầu"
                                 >
-                                    <ChevronsLeft className="w-4 h-4 text-slate-600" />
+                                    <ChevronsLeft className="w-4 h-4 text-violet-600" />
                                 </button>
                                 <button
                                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang trước"
                                 >
-                                    <ChevronLeft className="w-4 h-4 text-slate-600" />
+                                    <ChevronLeft className="w-4 h-4 text-violet-600" />
                                 </button>
                                 
                                 <div className="flex items-center gap-1">
@@ -300,10 +306,10 @@ export default function UserManagementPage() {
                                             <button
                                                 key={pageNum}
                                                 onClick={() => setPage(pageNum)}
-                                                className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                                                className={`min-w-9 px-3 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                                                     page === pageNum
-                                                        ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
-                                                        : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
+                                                        ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg"
+                                                        : "border border-slate-200 text-violet-600 hover:bg-violet-50 hover:border-violet-200 hover:shadow-md"
                                                 }`}
                                             >
                                                 {pageNum}
@@ -315,18 +321,18 @@ export default function UserManagementPage() {
                                 <button
                                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang sau"
                                 >
-                                    <ChevronRight className="w-4 h-4 text-slate-600" />
+                                    <ChevronRight className="w-4 h-4 text-violet-600" />
                                 </button>
                                 <button
                                     onClick={() => setPage(totalPages)}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang cuối"
                                 >
-                                    <ChevronsRight className="w-4 h-4 text-slate-600" />
+                                    <ChevronsRight className="w-4 h-4 text-violet-600" />
                                 </button>
                             </div>
                         </div>

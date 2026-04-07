@@ -192,7 +192,7 @@ export default function WithdrawPage() {
         <div className="flex justify-between items-start">
           <div>
             <h1 className="text-2xl font-semibold text-slate-800 flex items-center gap-2">
-              <Wallet className="w-6 h-6 text-blue-600" />
+              <Wallet className="w-6 h-6 text-purple-600" />
               Quản lý rút tiền
             </h1>
             <p className="text-sm text-slate-500 mt-1.5">
@@ -210,7 +210,7 @@ export default function WithdrawPage() {
           </button>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+        <div className="">
           <div className="flex items-center gap-3">
             <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
               <Clock className="w-4 h-4" />
@@ -220,7 +220,7 @@ export default function WithdrawPage() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="min-w-[180px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                className="min-w-[180px] px-4 py-2.5 border border-purple-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
               >
                 <span className="text-slate-700">
                   {status === "" ? "Tất cả" : 
@@ -280,19 +280,19 @@ export default function WithdrawPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
 
             <thead className="bg-gradient-to-r from-slate-50 to-blue-50/50 border-b border-slate-200">
               <tr>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">ID</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Wallet</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Số tiền</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Thông tin ngân hàng</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Trạng thái</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Thời gian</th>
-                <th className="px-4 py-3.5 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">Hành động</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">ID</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Wallet</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Số tiền</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Thông tin ngân hàng</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Trạng thái</th>
+                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Thời gian</th>
+                <th className="px-4 py-3.5 text-center text-xs font-semibold text-purple-600 uppercase tracking-wider">Hành động</th>
               </tr>
             </thead>
 
@@ -381,7 +381,7 @@ export default function WithdrawPage() {
                             <button
                               onClick={() => handleApprove(item.id)}
                               disabled={actionLoading === item.id}
-                              className="group px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-emerald-500 to-green-600 text-white rounded-lg hover:from-emerald-600 hover:to-green-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
+                              className="group px-3 py-1.5 text-xs font-medium bg-emerald-400 text-white rounded-lg hover:from-emerald-600 hover:to-green-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
                             >
                               <CheckCircle className="w-3.5 h-3.5" />
                               {actionLoading === item.id ? "..." : "Duyệt"}
@@ -389,7 +389,7 @@ export default function WithdrawPage() {
                             <button
                               onClick={() => openRejectModal(item.id)}
                               disabled={actionLoading === item.id}
-                              className="group px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-lg hover:from-rose-600 hover:to-red-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
+                              className="group px-3 py-1.5 text-xs font-medium bg-rose-400 text-white rounded-lg hover:from-rose-600 hover:to-red-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
                             >
                               <XCircle className="w-3.5 h-3.5" />
                               Từ chối
@@ -400,7 +400,7 @@ export default function WithdrawPage() {
                           <button
                             onClick={() => openCompleteModal(item.id)}
                             disabled={actionLoading === item.id}
-                            className="group px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
+                            className="group px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple -700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
                           >
                             <Check className="w-3.5 h-3.5" />
                             {actionLoading === item.id ? "..." : "Hoàn thành"}
@@ -441,7 +441,7 @@ export default function WithdrawPage() {
         </div>
 
         {totalPages > 1 && (
-          <div className="bg-white rounded-xl border border-slate-200 px-5 py-4 shadow-sm">
+          <div className="">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-slate-600">
@@ -488,7 +488,7 @@ export default function WithdrawPage() {
                         onClick={() => setPageNumber(pageNum)}
                         className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                           pageNumber === pageNum
-                            ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md"
+                            ? "bg-purple-600 text-white shadow-md"
                             : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
                         }`}
                       >
