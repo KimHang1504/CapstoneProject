@@ -30,7 +30,11 @@ export function middleware(request: NextRequest) {
             }
 
             if (role === 'STAFF') {
-                return NextResponse.redirect(new URL('/staff/', request.url));
+                const locationId = getUserFromToken(token).assignedVenueLocationId;
+
+                return NextResponse.redirect(
+                    new URL(`/staff/redeem?locationId=${locationId}`, request.url)
+                );
             }
         } catch {
             return NextResponse.redirect(new URL('/auth', request.url));
@@ -51,7 +55,7 @@ export function middleware(request: NextRequest) {
             }
 
             if (pathname.startsWith('/staff') && role !== 'STAFF') {
-                return NextResponse.redirect(new URL('/unauthorized', request.url));   
+                return NextResponse.redirect(new URL('/unauthorized', request.url));
             }
         } catch {
             return NextResponse.redirect(new URL('/auth', request.url));

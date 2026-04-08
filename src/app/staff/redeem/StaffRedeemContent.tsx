@@ -74,7 +74,7 @@ export default function StaffRedeemContent() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white p-4 md:p-6">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-pink-50 to-white p-15">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
           {/* LEFT COLUMN - LOCATION INFO */}
