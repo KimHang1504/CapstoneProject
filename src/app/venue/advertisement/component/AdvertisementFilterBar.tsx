@@ -1,6 +1,10 @@
+"use client";
+
+import { useRef } from "react";
+
 type Props = {
-  search: string;
-  setSearch: (v: string) => void;
+  searchKeyword: string; // state filter thực sự
+  setSearchKeyword: (v: string) => void;
   status: string;
   setStatus: (v: string) => void;
   sort: string;
@@ -8,13 +12,24 @@ type Props = {
 };
 
 export default function AdvertisementFilterBar({
-  search,
-  setSearch,
+  searchKeyword,
+  setSearchKeyword,
   status,
   setStatus,
   sort,
   setSort,
 }: Props) {
+  const searchRef = useRef(searchKeyword);
+
+  const handleSearch = () => {
+    setSearchKeyword(searchRef.current);
+  };
+
+  const handleReset = () => {
+    searchRef.current = "";
+    setSearchKeyword("");
+  };
+
   const selectClass =
     "border border-violet-200 bg-white rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-400 shadow-sm";
 
@@ -35,19 +50,31 @@ export default function AdvertisementFilterBar({
         </select>
       </div>
 
-      <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-violet-400">
-          <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
-          </svg>
-        </span>
-        <input
-          type="text"
-          placeholder="Tìm kiếm quảng cáo..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="border border-violet-200 rounded-full pl-9 pr-4 py-2 w-72 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 shadow-sm"
-        />
+
+
+      <div className="flex gap-2">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Tìm kiếm quảng cáo..."
+            defaultValue={searchKeyword}
+            onChange={(e) => (searchRef.current = e.target.value)}
+            className="border border-violet-200 rounded-full pl-9 pr-4 py-2 w-72 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 shadow-sm"
+            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          />
+        </div>
+        <button
+          onClick={handleSearch}
+          className="px-3 py-1 bg-[#8093F1] text-white rounded-xl text-sm"
+        >
+          Tìm
+        </button>
+        <button
+          onClick={handleReset}
+          className="px-3 py-1 border border-[#8093F1] text-[#8093F1] rounded-xl text-sm"
+        >
+          Xóa
+        </button>
       </div>
     </div>
   );

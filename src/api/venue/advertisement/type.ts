@@ -69,6 +69,7 @@ export interface Advertisement {
     updatedAt: string;
     venueLocationAds: VenueLocationAd[];
     adsOrders: AdsOrder[];
+    isDeleted: boolean;
 }
 
 export interface AdvertisementListItem {

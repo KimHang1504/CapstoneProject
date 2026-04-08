@@ -303,7 +303,7 @@ export default function VenueDashboardPage() {
                     ACTIVE: 'bg-emerald-100 text-emerald-600',
                   };
                   return (
-                    <Link key={ad.id} href={`/venue/advertisement/${ad.id}`}>
+                    <Link key={ad.id} href={`/venue/advertisement/myadvertisement/${ad.id}`}>
                       <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-violet-50 transition cursor-pointer border border-gray-100">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-100">
                           <Image
@@ -326,7 +326,7 @@ export default function VenueDashboardPage() {
                 })}
               </div>
               {data.recentAdvertisements.length > 0 && (
-                <Link href="/venue/advertisement" className="mt-2 text-center">
+                <Link href="/venue/advertisement/myadvertisement" className="mt-2 text-center">
                   <button className="w-full text-xs text-violet-600 hover:text-violet-700 font-medium py-2 hover:bg-violet-50 rounded-lg transition">
                     Xem tất cả →
                   </button>

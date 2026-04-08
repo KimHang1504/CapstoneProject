@@ -15,20 +15,23 @@ const placements = [
 ];
 
 export default function AdvertisementPage() {
+  console.log("AdvertisementPage render");
   const router = useRouter();
   const [ads, setAds] = useState<AdvertisementListItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [status, setStatus] = useState("ALL");
   const [sort, setSort] = useState("newest");
   const [activePlacement, setActivePlacement] = useState("ALL");
+
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   useEffect(() => {
     const fetchAds = async () => {
       try {
         const res = await getAdvertisements();
         setAds(res.data);
-        console.log(res.data);  
+        console.log(res.data);
       } catch (error) {
         console.error(error);
       } finally {
@@ -42,22 +45,18 @@ export default function AdvertisementPage() {
   const active = ads.filter((ad) => ad.status === "ACTIVE").length;
   const pending = ads.filter((ad) => ad.status === "PENDING").length;
   const draft = ads.filter((ad) => ad.status === "DRAFT").length;
-  
 
   const filteredAds = useMemo(() => {
-    const result = ads
+    return ads
       .filter((ad) => status === "ALL" || ad.status === status)
-      .filter((ad) => ad.title.toLowerCase().includes(search.toLowerCase()))
-      .filter((ad) => activePlacement === "ALL" || ad.placementType === activePlacement);
-
-    result.sort((a, b) => {
-      const dateA = new Date(a.createdAt).getTime();
-      const dateB = new Date(b.createdAt).getTime();
-      return sort === "newest" ? dateB - dateA : dateA - dateB;
-    });
-
-    return result;
-  }, [ads, search, status, activePlacement, sort]);
+      .filter((ad) => ad.title.toLowerCase().includes(searchKeyword.toLowerCase()))
+      .filter((ad) => activePlacement === "ALL" || ad.placementType === activePlacement)
+      .sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        return sort === "newest" ? dateB - dateA : dateA - dateB;
+      });
+  }, [ads, searchKeyword, status, activePlacement, sort]);
 
   const countByPlacement = (placement: string) =>
     placement === "ALL" ? ads.length : ads.filter((ad) => ad.placementType === placement).length;
@@ -83,8 +82,8 @@ export default function AdvertisementPage() {
 
       {/* Filter */}
       <AdvertisementFilterBar
-        search={search}
-        setSearch={setSearch}
+        searchKeyword={searchKeyword}
+        setSearchKeyword={setSearchKeyword}
         status={status}
         setStatus={setStatus}
         sort={sort}
@@ -99,14 +98,14 @@ export default function AdvertisementPage() {
               key={p.value}
               onClick={() => setActivePlacement(p.value)}
               className={`relative px-4 py-2 text-sm font-medium transition-colors duration-200 ${activePlacement === p.value
-                  ? "text-purple-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-purple-600"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "text-purple-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-purple-600"
+                : "text-gray-500 hover:text-gray-700"
                 }`}
             >
               {p.label} ({countByPlacement(p.value)})
             </button>
           ))}
-        </div> 
+        </div>
       </div>
 
       {/* Grid */}
