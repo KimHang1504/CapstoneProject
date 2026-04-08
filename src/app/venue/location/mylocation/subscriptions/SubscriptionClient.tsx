@@ -12,7 +12,8 @@ export default function LocationRegisterPage() {
     const searchParams = useSearchParams();
     const router = useRouter();
     const locationId = searchParams.get('locationId');
-
+    console.log("locationId:", locationId);
+    console.log("Number(locationId):", Number(locationId));
     const [packages, setPackages] = useState<SubscriptionPackage[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [processingPackageId, setProcessingPackageId] = useState<number | null>(null);
@@ -50,7 +51,7 @@ export default function LocationRegisterPage() {
 
         if (method === 'WALLET') {
             // Redirect to wallet confirmation page (will call API there)
-            router.push(`/venue/llocationmylocation/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}`);
+            router.push(`/venue/location/mylocation/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}`);
         } else {
             // VietQR: Call API and redirect to checkout
             try {
@@ -64,7 +65,7 @@ export default function LocationRegisterPage() {
                 console.log('Payment submission response:', response);
                 const payment = response.data;
 
-                router.push(`/venue/location/subscriptions/checkout?transactionId=${payment.transactionId}&locationId=${locationId}`);
+                router.push(`/venue/location/mylocation/subscriptions/checkout?transactionId=${payment.transactionId}&locationId=${locationId}`);
             } catch (error: any) {
                 const errorMessage = error?.response?.data?.message || error?.message || 'Không thể tạo thanh toán';
 

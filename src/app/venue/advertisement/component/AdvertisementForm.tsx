@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { generateText, generateImage } from "@/utils/ai";
 import { uploadImage } from "@/api/upload";
 import { Sparkles, Wand2, Upload } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type Props = {
   initialData?: {
@@ -60,6 +61,7 @@ export default function AdvertisementForm({
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [dateError, setDateError] = useState<string>("");
+  const router = useRouter()
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -195,14 +197,6 @@ export default function AdvertisementForm({
     }
   };
 
-  const isValidUrl = (value: string) => {
-    try {
-      new URL(value);
-      return true;
-    } catch {
-      return false;
-    }
-  };
 
   const getMinDate = () => {
     const now = new Date();
@@ -236,9 +230,9 @@ export default function AdvertisementForm({
 
   return (
     <div className="bg-white p-8 mx-50 space-y-7">
-<h1 className="text-2xl font-bold text-gray-800">
-  {submitLabel === "Tạo mới quảng cáo" ? "Tạo mới quảng cáo" : "Chỉnh sửa quảng cáo"}
-</h1>
+      <h1 className="text-2xl font-bold text-gray-800">
+        {submitLabel === "Tạo mới quảng cáo" ? "Tạo mới quảng cáo" : "Chỉnh sửa quảng cáo"}
+      </h1>
       {/* Title */}
       <FieldWrapper>
         <label className={labelClass}>Mục đích quảng cáo</label>
@@ -475,11 +469,10 @@ export default function AdvertisementForm({
             showTimeSelect
             dateFormat="yyyy-MM-dd HH:mm"
             placeholderText="Chọn ngày bắt đầu..."
-            className={`w-full border rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition ${
-              dateError
+            className={`w-full border rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition ${dateError
                 ? "border-rose-300 focus:ring-rose-400"
                 : "border-violet-200 focus:ring-violet-400"
-            }`}
+              }`}
           />
         </div>
         {dateError && (
@@ -494,7 +487,7 @@ export default function AdvertisementForm({
           <svg className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
-          <span>Quảng cáo cần ít nhất <span className="font-semibold text-gray-700">3 ngày</span> để admin duyệt. Vui lòng lên lịch trước khoảng thời gian này.</span>
+          <span>Quảng cáo cần ít nhất <span className="font-semibold text-gray-700">72h</span> để admin duyệt. Vui lòng lên lịch trước khoảng thời gian này.</span>
         </p>
       </FieldWrapper>
 

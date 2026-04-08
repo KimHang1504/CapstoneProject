@@ -71,8 +71,13 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
   function nextStep() {
     // STEP 1 → check name + description + mood/style
     if (step === 1) {
-      if (!formData.name || !formData.description) {
-        toast.error("Vui lòng nhập tên và mô tả");
+      if (!formData.name) {
+        toast.error("Vui lòng nhập tên");
+        return;
+      }
+
+      if (!formData.description) {
+        toast.error("Vui lòng nhập mô tả");
         return;
       }
 
@@ -281,13 +286,12 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
               <div key={stepNum} className="flex items-center">
                 <div className="flex flex-col items-center">
                   <div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${
-                      isActive
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${isActive
                         ? "bg-linear-to-br from-purple-500 to-indigo-600 text-white shadow-lg scale-110"
                         : isCompleted
-                        ? "bg-green-500 text-white"
-                        : "bg-gray-200 text-gray-400"
-                    }`}
+                          ? "bg-green-500 text-white"
+                          : "bg-gray-200 text-gray-400"
+                      }`}
                   >
                     {isCompleted ? <Check className="w-5 h-5" /> : stepNum}
                   </div>
@@ -297,9 +301,8 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
                 </div>
                 {stepNum < steps.length && (
                   <div
-                    className={`w-16 h-1 mx-2 rounded-full transition-all ${
-                      isCompleted ? "bg-green-500" : "bg-gray-200"
-                    }`}
+                    className={`w-16 h-1 mx-2 rounded-full transition-all ${isCompleted ? "bg-green-500" : "bg-gray-200"
+                      }`}
                   />
                 )}
               </div>

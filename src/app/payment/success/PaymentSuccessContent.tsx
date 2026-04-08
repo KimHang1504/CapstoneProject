@@ -10,7 +10,7 @@ export default function PaymentSuccessPage() {
 
   const handleBackToLocations = () => {
     if (type === "advertisement") {
-      router.push("/venue/advertisement/");
+      router.push("/venue/advertisement/myadvertisement");
     }
 
     if (type === "location") {

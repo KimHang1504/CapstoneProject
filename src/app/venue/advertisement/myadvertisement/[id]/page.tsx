@@ -1,17 +1,18 @@
 'use client';
 
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 import { Advertisement, PLACEMENT_LABEL } from '@/api/venue/advertisement/type';
-import { getAdvertisementById } from '@/api/venue/advertisement/api';
+import { getAdvertisementById, softDeleteAdvertisement, restoreAdvertisement } from '@/api/venue/advertisement/api';
 
-import { Send, Pencil, Clock, CheckCircle2, XCircle, FileEdit, MapPin, X } from 'lucide-react';
+import { Send, Pencil, Clock, CheckCircle2, XCircle, FileEdit, MapPin, X, Pause, Play } from 'lucide-react';
 import Link from 'next/link';
 import { checkVenueOwnerVerification } from '@/app/venue/location/utils/venue-location-submit';
 import MissingCitizenPopup from '@/app/venue/advertisement/component/MissingCitizenPopup';
 import { getMe } from '@/api/auth/api';
 import ImageWithFallback from '@/components/ImageWithFallback';
+import { toast } from 'sonner';
 
 export default function AdvertisementDetailPage() {
     const params = useParams();
@@ -25,6 +26,15 @@ export default function AdvertisementDetailPage() {
     const [showFullContent, setShowFullContent] = useState(false);
     const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
     const [userProfile, setUserProfile] = useState<any>(null);
+
+    const contentRef = useRef<HTMLParagraphElement>(null);
+    const [isOverflowing, setIsOverflowing] = useState(false);
+
+    useEffect(() => {
+        if (contentRef.current && ad?.content) {
+            setIsOverflowing(contentRef.current.scrollHeight > contentRef.current.clientHeight);
+        }
+    }, [ad?.content]);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -70,6 +80,8 @@ export default function AdvertisementDetailPage() {
         );
     }
 
+
+
     const images = ad.bannerUrl
         ? ad.bannerUrl.split(',').map(url => url.trim()).filter(Boolean)
         : ['/placeholder.jpg'];
@@ -80,6 +92,10 @@ export default function AdvertisementDetailPage() {
 
     const isDraft = ad.status === "DRAFT";
     const canEdit = ad.status === "DRAFT" || ad.status === "REJECTED";
+    const isDeleted = ad.isDeleted;
+    const hasActiveVenue = ad.venueLocationAds?.some(v => v.status === "ACTIVE");
+
+    const MIN_HOURS_AHEAD = 72;
 
     const handleSubmit = () => {
         const { missingCitizenId } = checkVenueOwnerVerification(userProfile);
@@ -89,8 +105,59 @@ export default function AdvertisementDetailPage() {
             return;
         }
 
+        if (ad.desiredStartDate) {
+            const startDate = new Date(ad.desiredStartDate);
+            const now = new Date();
+
+            const minDate = new Date(now.getTime() + MIN_HOURS_AHEAD * 60 * 60 * 1000);
+
+            if (startDate < now) {
+                toast.error("Ngày bắt đầu không được là quá khứ");
+                return;
+            }
+
+            if (startDate < minDate) {
+                const hoursRemaining = Math.ceil(
+                    (minDate.getTime() - now.getTime()) / (60 * 60 * 1000)
+                );
+
+                toast.error(
+                    `Quảng cáo cần ít nhất ${hoursRemaining} giờ để admin duyệt. Vui lòng chọn lại thời gian.`
+                );
+                return;
+            }
+        } else {
+            toast.error('Vui lòng chọn ngày bắt đầu quảng cáo.');
+            return;
+        }
+
         router.push(`/venue/advertisement/package?adId=${ad.id}`);
-    }; const handleEdit = () => router.push(`/venue/advertisement/myadvertisement/${ad.id}/edit`);
+    };
+    const handleEdit = () => router.push(`/venue/advertisement/myadvertisement/${ad.id}/edit`);
+
+    const handlePause = async () => {
+        try {
+            await softDeleteAdvertisement(ad.id);
+            toast.success("Đã tạm dừng quảng cáo");
+            setAd(prev => prev ? { ...prev, isDeleted: true } : prev);
+        } catch (err) {
+            console.error(err);
+            toast.error("Tạm dừng thất bại");
+        }
+    };
+
+    const handleResume = async () => {
+        try {
+            await restoreAdvertisement(ad.id);
+            toast.success("Đã chạy lại quảng cáo");
+            setAd(prev => prev ? { ...prev, isDeleted: false } : prev);
+        } catch (err) {
+            console.error(err);
+            toast.error("Khôi phục thất bại");
+        }
+    };
+
+
 
     return (
         <div className="min-h-screen p-8">
@@ -150,6 +217,30 @@ export default function AdvertisementDetailPage() {
                                 Chỉnh sửa
                             </button>
                         )}
+                        {/* Pause / Resume */}
+                        {hasActiveVenue && (
+                            isDeleted ? (
+                                <button
+                                    onClick={handleResume}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+                bg-emerald-100 text-emerald-700 border border-emerald-200
+                hover:bg-emerald-200 transition-all duration-200"
+                                >
+                                    <Play size={18} />
+                                    Chạy tiếp
+                                </button>
+                            ) : (
+                                <button
+                                    onClick={handlePause}
+                                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+                bg-amber-100 text-amber-700 border border-amber-200
+                hover:bg-amber-200 transition-all duration-200"
+                                >
+                                    <Pause size={18} />
+                                    Tạm dừng
+                                </button>
+                            )
+                        )}
                     </div>
                 </div>
 
@@ -208,15 +299,21 @@ export default function AdvertisementDetailPage() {
                     <div className="absolute bottom-0 left-0 right-0 p-7 flex items-end justify-between gap-4">
                         <div className="flex-1 min-w-0">
                             <p className="text-white/50 text-[10px] uppercase tracking-widest mb-1.5">Nội dung</p>
-                            <p className={`text-white text-sm leading-relaxed drop-shadow ${!showFullContent ? "line-clamp-2" : ""}`}>
+                            <p
+                                ref={contentRef}
+                                className={`text-white text-sm leading-relaxed drop-shadow ${!showFullContent ? "line-clamp-2" : ""}`}
+                            >
                                 {ad.content}
                             </p>
-                            <button
-                                onClick={() => setShowFullContent(prev => !prev)}
-                                className="text-xs text-white/70 underline mt-1"
-                            >
-                                {showFullContent ? "Thu gọn" : "Đọc thêm"}
-                            </button>                        </div>
+                            {isOverflowing && (
+                                <button
+                                    onClick={(e) => { e.stopPropagation(); setShowFullContent(prev => !prev); }}
+                                    className="text-xs text-white/70 underline mt-1"
+                                >
+                                    {showFullContent ? "Thu gọn" : "Đọc thêm"}
+                                </button>
+                            )}
+                        </div>
                         <a
                             href={ad.targetUrl}
                             target="_blank"

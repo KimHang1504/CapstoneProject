@@ -1,3 +1,4 @@
+// 'use client';
 import SettlementListSection from "@/app/venue/voucher/settlement/components/SettlementListSection";
 import SettlementSummary from "@/app/venue/voucher/settlement/components/SettlementSummary";
 
