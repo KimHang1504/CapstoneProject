@@ -14,7 +14,7 @@ export default function CreateVoucherPage() {
     const voucherId = res.data.id;
 
     toast.success("Voucher created");
-    router.push(`/venue/voucher/${voucherId}`);
+    router.push(`/venue/voucher/myvoucher/${voucherId}`);
   };
 
   return (
