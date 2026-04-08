@@ -38,12 +38,14 @@ function StatCard({
   );
 }
 
-const CustomTooltip = ({ active, payload }: any) => {
+const CustomTooltip = ({ active, payload, unit = '' }: any) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-gray-200">
-        <p className="font-medium text-gray-900 text-sm">{payload[0].name}</p>
-        <p className="text-xs text-gray-600">{payload[0].value}</p>
+        {/* <p className="font-medium text-gray-900 text-sm">{payload[0].name}</p> */}
+        <p className="text-xs text-gray-600">
+          {payload[0].value} {unit}
+        </p>
       </div>
     );
   }
@@ -116,6 +118,8 @@ export default function VenueDashboardPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  console.log("Dashboard render", { data, loading });
+
   if (loading) {
     return (
       <div className="p-6 grid grid-cols-2 md:grid-cols-4 gap-3 animate-pulse">
@@ -138,15 +142,15 @@ export default function VenueDashboardPage() {
   // Chart data
   const voucherData = [
     { name: 'Tổng', value: data.totalVouchers },
-    { name: 'Active', value: data.activeVouchers },
+    { name: 'Đang hoạt động', value: data.activeVouchers },
     { name: 'Đã đổi', value: data.totalVoucherExchanged },
     { name: 'Đã dùng', value: data.totalVoucherUsed },
   ];
 
   const engagementData = [
-    { name: 'Reviews', value: data.totalReviews },
-    { name: 'Check-ins', value: data.totalCheckIns },
-    { name: 'Favorites', value: data.totalFavorites },
+    { name: 'Đánh giá', value: data.totalReviews },
+    { name: 'Ghé thăm', value: data.totalCheckIns },
+    { name: 'Yêu thích', value: data.totalFavorites },
   ];
 
   return (
@@ -177,10 +181,10 @@ export default function VenueDashboardPage() {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        
+
         {/* Left Column - Charts */}
         <div className="lg:col-span-2 space-y-4">
-          
+
           {/* Status Overview - Simple Stats */}
           <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
             <SectionTitle icon={BarChart2}>Trạng thái tổng quan</SectionTitle>
@@ -191,11 +195,11 @@ export default function VenueDashboardPage() {
                 <div className="space-y-2.5">
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-gray-700">Active</span>
+                      <span className="text-gray-700">Đang hoạt động</span>
                       <span className="font-semibold text-emerald-600">{data.activeVenues}</span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                         style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.activeVenues / data.totalVenues) * 100) : 0}%` }}
                       />
@@ -203,11 +207,11 @@ export default function VenueDashboardPage() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-gray-700">Inactive</span>
+                      <span className="text-gray-700">Ngưng hoạt động</span>
                       <span className="font-semibold text-gray-600">{data.inactiveVenues}</span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="h-full bg-gray-400 rounded-full transition-all duration-500"
                         style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.inactiveVenues / data.totalVenues) * 100) : 0}%` }}
                       />
@@ -227,11 +231,11 @@ export default function VenueDashboardPage() {
                 <div className="space-y-2.5">
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-gray-700">Active</span>
+                      <span className="text-gray-700">Đang hoạt động</span>
                       <span className="font-semibold text-emerald-600">{data.activeAdvertisements}</span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="h-full bg-emerald-500 rounded-full transition-all duration-500"
                         style={{ width: `${data.totalAdvertisements > 0 ? Math.min(100, (data.activeAdvertisements / data.totalAdvertisements) * 100) : 0}%` }}
                       />
@@ -239,11 +243,11 @@ export default function VenueDashboardPage() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-gray-700">Pending</span>
+                      <span className="text-gray-700">Đang chờ duyệt</span>
                       <span className="font-semibold text-yellow-600">{data.pendingAdvertisements}</span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="h-full bg-yellow-500 rounded-full transition-all duration-500"
                         style={{ width: `${data.totalAdvertisements > 0 ? Math.min(100, (data.pendingAdvertisements / data.totalAdvertisements) * 100) : 0}%` }}
                       />
@@ -251,11 +255,11 @@ export default function VenueDashboardPage() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-gray-700">Rejected</span>
+                      <span className="text-gray-700">Bị từ chối</span>
                       <span className="font-semibold text-red-600">{data.rejectedAdvertisements}</span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="h-full bg-red-500 rounded-full transition-all duration-500"
                         style={{ width: `${data.totalAdvertisements > 0 ? Math.min(100, (data.rejectedAdvertisements / data.totalAdvertisements) * 100) : 0}%` }}
                       />
@@ -271,7 +275,7 @@ export default function VenueDashboardPage() {
 
           {/* Engagement + Recent Ads */}
           <div className="grid grid-cols-2 gap-4">
-            
+
             {/* Engagement Bar */}
             <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-[240px] flex flex-col">
               <SectionTitle icon={TrendingUp}>Tương tác</SectionTitle>
@@ -279,8 +283,11 @@ export default function VenueDashboardPage() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={engagementData}>
                     <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                    <YAxis tick={{ fontSize: 10 }} />
-                    <Tooltip content={<CustomTooltip />} />
+                    <YAxis
+                      tick={{ fontSize: 10 }}
+                      label={{ value: 'Lượt', angle: -90, position: 'insideLeft', fontSize: 10 }}
+                    />
+                    <Tooltip content={<CustomTooltip unit="lượt" />} />
                     <Bar dataKey="value" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -342,7 +349,10 @@ export default function VenueDashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={voucherData}>
                   <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
+                  <YAxis
+                    tick={{ fontSize: 10 }}
+                    label={{ value: 'Mã', angle: -90, position: 'insideLeft', fontSize: 10 }}
+                  />
                   <Tooltip content={<CustomTooltip />} />
                   <Bar dataKey="value" fill="#ec4899" radius={[4, 4, 0, 0]} />
                 </BarChart>
@@ -363,7 +373,7 @@ export default function VenueDashboardPage() {
 
         {/* Right Column - Venues List */}
         <div className="space-y-4">
-          
+
           {/* Top Venue - Larger */}
           {data.topPerformingVenue && (
             <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden h-[300px] flex flex-col">
@@ -386,11 +396,11 @@ export default function VenueDashboardPage() {
                 </div>
                 <div className="p-4 grid grid-cols-3 gap-3 text-center border-t border-gray-100">
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">Check-in</p>
+                    <p className="text-xs text-gray-400 mb-1">Ghé thăm</p>
                     <p className="font-bold text-lg text-gray-900">{data.topPerformingVenue.checkInCount}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">Reviews</p>
+                    <p className="text-xs text-gray-400 mb-1">Đánh giá</p>
                     <p className="font-bold text-lg text-gray-900">{data.topPerformingVenue.reviewCount}</p>
                   </div>
                   <div>
