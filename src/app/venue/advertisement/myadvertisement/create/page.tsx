@@ -42,7 +42,7 @@ export default function CreateAdvertisementPage() {
   const handleCreate = async (data: any) => {
     await createAdvertisement(data);
     toast.success("Tạo quảng cáo thành công!");
-    router.push("/venue/advertisement");
+    router.push("/venue/advertisement/myadvertisement");
   };
 
   if (loadingMoods) return <p>Loading...</p>;
