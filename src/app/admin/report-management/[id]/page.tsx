@@ -10,6 +10,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import EvidenceSnapshotView from "./components/EvidenceSnapshotView";
+import { CheckCircle, Clock, XCircle } from "lucide-react";
 
 export default function ReportDetailPage() {
   const params = useParams();
@@ -223,16 +224,18 @@ function InfoCard({ label, value }: any) {
 function StatusBadge({ status }: { status: string }) {
   const style =
     status === "PENDING"
-      ? "bg-yellow-100 text-yellow-700 border-yellow-200"
+      ? "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border-amber-200"
       : status === "REJECTED"
-        ? "bg-red-100 text-red-600 border-red-200"
-        : "bg-green-100 text-green-600 border-green-200";
+        ? "bg-gradient-to-r from-red-50 to-rose-50 text-red-700 border-red-200"
+        : "bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 border-emerald-200";
 
   return (
     <span
       className={`px-4 py-1.5 rounded-full text-sm font-medium border ${style}`}
     >
-      {status}
+      {status === "PENDING" && <div className="flex gap-2 justify-center items-center"><Clock className="w-3.5 h-3.5" /> Chờ xử lý </div>}
+      {status === "REJECTED" && <div className="flex gap-2 justify-center items-center"><XCircle className="w-3.5 h-3.5" /> Từ chối</div>}
+      {status === "APPROVED" && <div className="flex gap-2 justify-center items-center"><CheckCircle className="w-3.5 h-3.5" /> Đã duyệt</div>}
     </span>
   );
 }
