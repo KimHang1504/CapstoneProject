@@ -13,6 +13,34 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
   const [action, setAction] = useState<"ACTIVE" | "DRAFTED" | "INACTIVE" | null>(null);
   const [reason, setReason] = useState("");
 
+  const handleSubmitApproval = () => {
+    toast("Bạn có chắc chắn muốn chấp nhận địa điểm này?", {
+      action: {
+        label: "Chấp nhận",
+        onClick: async () => {
+          try {
+            const body: VenueApprovalRequest = {
+              venueId: Number(id),
+              status: "ACTIVE",
+              reason: null,
+            };
+            await acceptAndRejectVenue(body);
+            toast.success("Đã chấp nhận địa điểm");
+            router.push("/admin/venue-management");
+          } catch (error) {
+            console.error(error);
+            const errorMessage = error instanceof Error ? error.message : "Thao tác thất bại";
+            toast.error(errorMessage);
+          }
+        },
+      },
+      cancel: {
+        label: "Hủy",
+        onClick: () => { },
+      },
+    });
+  };
+
   const handleSubmit = () => {
     if (!action) return;
 
@@ -20,8 +48,8 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
       action === "ACTIVE"
         ? "Bạn có chắc muốn chấp nhận địa điểm này?"
         : action === "INACTIVE"
-        ? "Bạn có chắc muốn dừng hoạt động của địa điểm này?"
-        : "Bạn có chắc muốn từ chối địa điểm này?";
+          ? "Bạn có chắc muốn dừng hoạt động của địa điểm này?"
+          : "Bạn có chắc muốn từ chối địa điểm này?";
 
     toast(message, {
       action: {
@@ -30,17 +58,15 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
           try {
             if (action === "INACTIVE") {
               await updateVenueStatusToInactive(Number(id), reason);
-            } else {
+            } else if (action === "DRAFTED") {
               const body: VenueApprovalRequest = {
                 venueId: Number(id),
-                status: action as 'ACTIVE' | 'DRAFTED',
+                status: action as 'DRAFTED',
                 reason: reason,
               };
               await acceptAndRejectVenue(body);
             }
-
             const successMessages: Record<string, string> = {
-              ACTIVE: "Đã chấp nhận địa điểm",
               DRAFTED: "Đã từ chối địa điểm",
               INACTIVE: "Đã dừng hoạt động địa điểm",
             };
@@ -85,8 +111,7 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
 
               <button
                 onClick={() => {
-                  setAction("ACTIVE");
-                  setOpen(true);
+                  handleSubmitApproval();
                 }}
                 className="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 cursor-pointer"
               >
@@ -114,8 +139,8 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
               {action === "ACTIVE"
                 ? "Lý do chấp nhận"
                 : action === "INACTIVE"
-                ? "Lý do dừng hoạt động"
-                : "Lý do từ chối"}
+                  ? "Lý do dừng hoạt động"
+                  : "Lý do từ chối"}
             </h2>
 
             <textarea
