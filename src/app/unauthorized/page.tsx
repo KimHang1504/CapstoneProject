@@ -54,7 +54,7 @@ export default function UnauthorizedPage() {
             transition-all shadow-md"
                     >
                         <ArrowLeft size={18} />
-                        Đăng nhập lại
+                        Quay trở lại
                     </Link>
 
                 </div>

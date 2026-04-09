@@ -346,8 +346,15 @@ export interface Advertisement {
   bannerUrl: string;
   placementType: string;
   status: string;
+  rejectionHistory: AdvertisementRejectionHistory[];
   desiredStartDate: string;
   venueLocationCount: number;
+}
+
+export interface AdvertisementRejectionHistory {
+  rejectedBy: string;
+  reason: string;
+  rejectedAt: string;
 }
 
 export interface AdvertisementAcceptRequest {
