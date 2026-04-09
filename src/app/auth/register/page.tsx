@@ -5,7 +5,7 @@ import { useState } from "react";
 import MascotPanel from "../components/mascot_panel";
 import { register } from "@/api/auth/api";
 import { useRouter } from "next/navigation";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
     const [errors, setErrors] = useState<any>({});
@@ -67,13 +67,11 @@ export default function RegisterPage() {
                     address: ""
                 });
                 nav.push("/auth");
-            } else {
-                toast.error(res.message || "Đăng ký thất bại. Vui lòng thử lại.");
             }
-
         } catch (error) {
-            console.error("Error occurred while registering:", error);
-            toast.error("Đăng ký thất bại. Vui lòng kiểm tra lại thông tin và thử lại.");
+            console.error(error);
+            const errorMessage = error instanceof Error ? error.message : "Đăng ký thất bại. Vui lòng thử lại.";
+            toast.error(errorMessage);
         }
     };
 
