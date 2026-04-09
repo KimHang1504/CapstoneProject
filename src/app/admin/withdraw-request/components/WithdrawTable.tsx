@@ -50,6 +50,7 @@ export default function WithdrawPage() {
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     fetchData();
@@ -665,9 +666,13 @@ export default function WithdrawPage() {
             </button>
             <img
               src={previewImageUrl}
-              alt="Minh chứng chuyển khoản"
-              className="max-w-full max-h-[90vh] rounded-xl shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              alt="preview"
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoom((z) => (z === 1 ? 2 : 1));
+              }}
+              className="max-w-full max-h-full object-contain transition-transform duration-200 cursor-zoom-in"
+              style={{ transform: `scale(${zoom})` }}
             />
             <a
               href={previewImageUrl}
