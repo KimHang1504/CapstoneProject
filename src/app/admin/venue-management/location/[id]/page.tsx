@@ -57,7 +57,9 @@ export default async function VenueDetailPage({ params }: Props) {
                                             : "bg-gray-200 text-gray-700"
                                 }`}
                         >
-                            {venue.status}
+                            {venue.status === "ACTIVE" && "Hoạt động"}
+                            {venue.status === "PENDING" && "Đang chờ duyệt"}
+                            {venue.status === "INACTIVE" && "Không hoạt động"}
                         </span>
                     </p>
 

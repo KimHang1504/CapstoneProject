@@ -241,7 +241,9 @@ export default function MyLocationPage() {
                                                                             : "bg-red-100 text-red-700"
                                                                 }`}
                                                             >
-                                                                {loc.status}
+                                                                {loc.status === "ACTIVE" && "Hoạt động"}
+                                                                {loc.status === "PENDING" && "Đang chờ duyệt"}
+                                                                {loc.status === "INACTIVE" && "Không hoạt động"}
                                                             </span>
                                                         </div>
 
