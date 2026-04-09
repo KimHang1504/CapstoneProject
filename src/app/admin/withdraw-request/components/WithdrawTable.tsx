@@ -288,7 +288,6 @@ export default function WithdrawPage() {
             <thead className="bg-gradient-to-r from-slate-50 to-blue-50/50 border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">ID</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Wallet</th>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Số tiền</th>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Thông tin ngân hàng</th>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Trạng thái</th>
@@ -320,13 +319,6 @@ export default function WithdrawPage() {
                   >
                     <td className="px-4 py-4">
                       <span className="text-sm font-semibold text-slate-700">#{item.id}</span>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-1.5">
-                        <Wallet className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="text-sm text-slate-600">#{item.walletId}</span>
-                      </div>
                     </td>
 
                     <td className="px-4 py-4">
