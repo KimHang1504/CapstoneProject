@@ -194,7 +194,7 @@ export default function ReportDetailPage() {
             onClick={handleReject}
             className="cursor-pointer px-5 py-2 rounded-lg border text-red-500 border-red-200 hover:bg-red-50 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
-            {actionLoading ? <Spinner /> : "Reject"}
+            {actionLoading ? <Spinner /> : "Từ chối"}
           </button>
 
           <button
@@ -202,7 +202,7 @@ export default function ReportDetailPage() {
             onClick={handleApprove}
             className="cursor-pointer px-5 py-2 rounded-lg bg-[#B388EB] text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shadow-md"
           >
-            {actionLoading ? <Spinner /> : "Approve"}
+            {actionLoading ? <Spinner /> : "Phê duyệt"}
           </button>
         </div>
       </div>

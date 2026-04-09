@@ -23,8 +23,8 @@ export default async function VoucherDetailPage({ params }: Props) {
         switch (status) {
             case "ACTIVE":
                 return "bg-[#72DDF7]/20 text-[#72DDF7]";
-            case "DRAFTED":
-                return "bg-[#B388EB]/20 text-[#B388EB]";
+            case "REJECTED":
+                return "bg-red-200/20 text-[#F87171]";
             case "ENDED":
                 return "bg-gray-200 text-gray-600";
             default:
@@ -58,7 +58,10 @@ export default async function VoucherDetailPage({ params }: Props) {
                             voucher.status
                         )}`}
                     >
-                        {voucher.status}
+                        {voucher.status === "ACTIVE" && "Hoạt động"}
+                        {voucher.status === "ENDED" && "Kết thúc"}
+                        {voucher.status === "REJECTED" && "Từ chối"}
+                        {voucher.status === "DISABLED" && "Vô hiệu hóa"}
                     </span>
                 </div>
 

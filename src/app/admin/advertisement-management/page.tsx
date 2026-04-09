@@ -174,7 +174,7 @@ export default function AdvertisementList() {
                         : "bg-red-100 text-red-500 border-red-200"
                     }`}
                 >
-                  {ad.status}
+                  {ad.status === "PENDING" && "Đang chờ duyệt"}
                 </span>
 
                 <div className="absolute bottom-0 left-0 right-0 px-4 py-3">

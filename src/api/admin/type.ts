@@ -383,6 +383,7 @@ export type VoucherStatus =
   | "APPROVED"
   | "REJECTED"
   | "ACTIVE"
+  | "DISABLED"
   | "ENDED";
 
 export interface Voucher {
