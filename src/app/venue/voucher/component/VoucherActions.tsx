@@ -10,6 +10,7 @@ import {
 import { VoucherDetail } from "@/api/venue/vouchers/type";
 
 import { Send, Pencil, RotateCcw, Play, Square } from "lucide-react";
+import { toast } from "sonner";
 
 type Props = {
   voucher: VoucherDetail;
@@ -18,7 +19,25 @@ type Props = {
 
 export default function VoucherActions({ voucher, onChanged }: Props) {
 
+  const isValidStartDate = (startDate: string) => {
+    const today = new Date();
+    const vnToday = new Date(today.getTime() + (7 - today.getTimezoneOffset() / 60) * 60 * 60 * 1000);
+    vnToday.setHours(0, 0, 0, 0);
+
+    const minStart = new Date(vnToday);
+    minStart.setDate(minStart.getDate() + 3);
+
+    const start = new Date(startDate);
+
+    return start >= minStart;
+  };
+
   const handleSubmit = async () => {
+    if (!isValidStartDate(voucher.startDate)) {
+      toast.error("Ngày bắt đầu không còn hợp lệ. Vui lòng chỉnh sửa lại.");
+      return;
+    }
+
     await submitVoucher(voucher.id);
     onChanged();
   };
