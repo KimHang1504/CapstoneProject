@@ -49,7 +49,7 @@ export default function VoucherDetailPage() {
 
                     <span
                         className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border
-                ${voucher.status === "ACTIVE"
+${voucher.status === "ACTIVE"
                                 ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                 : voucher.status === "APPROVED"
                                     ? "bg-blue-50 text-blue-700 border-blue-200"
@@ -57,14 +57,19 @@ export default function VoucherDetailPage() {
                                         ? "bg-amber-50 text-amber-700 border-amber-200"
                                         : voucher.status === "DRAFTED"
                                             ? "bg-gray-100 text-gray-600 border-gray-200"
-                                            : "bg-rose-50 text-rose-600 border-rose-200"
-                            }`}
+                                            : voucher.status === "ENDED"
+                                                ? "bg-slate-100 text-slate-600 border-slate-200"
+                                                : "bg-rose-50 text-rose-600 border-rose-200"
+                            }
+                            `}
                     >
                         {voucher.status === "ACTIVE" && "Đang chạy"}
                         {voucher.status === "APPROVED" && "Đã duyệt"}
                         {voucher.status === "PENDING" && "Chờ duyệt"}
                         {voucher.status === "DRAFTED" && "Bản nháp"}
                         {voucher.status === "REJECTED" && "Từ chối"}
+                        {voucher.status === "ENDED" && "Đã kết thúc"}
+
                     </span>
 
                 </div>

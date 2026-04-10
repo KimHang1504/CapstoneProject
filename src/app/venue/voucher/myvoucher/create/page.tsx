@@ -13,7 +13,7 @@ export default function CreateVoucherPage() {
     const res = await createVoucher(data);
     const voucherId = res.data.id;
 
-    toast.success("Voucher created");
+    toast.success("Voucher tạo thành công");
     router.push(`/venue/voucher/myvoucher/${voucherId}`);
   };
 
