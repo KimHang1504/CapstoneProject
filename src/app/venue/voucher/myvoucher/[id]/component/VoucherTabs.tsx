@@ -4,6 +4,7 @@ import { useState } from "react";
 import { VoucherDetail } from "@/api/venue/vouchers/type";
 import VoucherItemsPage from "@/app/venue/voucher/myvoucher/[id]/items/page";
 import HistoryExchange from "@/app/venue/voucher/myvoucher/[id]/component/HistoryExchange";
+import Image from "next/image";
 
 type Props = {
     voucher: VoucherDetail;
@@ -59,9 +60,9 @@ export default function VoucherTabs({ voucher }: Props) {
 
                     {/* HEADER */}
                     <div>
-                        <h2 className="text-2xl font-semibold">
+                        {/* <h2 className="text-2xl font-semibold">
                             {voucher.title}
-                        </h2>
+                        </h2> */}
 
                         <p className="text-gray-500 mt-1">
                             Mã voucher:{" "}
@@ -70,6 +71,11 @@ export default function VoucherTabs({ voucher }: Props) {
                             </span>
                         </p>
                     </div>
+                    <Image src={voucher.imageUrl || "/placeholder.png"}
+                        alt="Voucher Image" width={400} height={200}
+                        className="w-full h-68 object-cover rounded-lg">
+
+                    </Image>
 
                     {/* HIGHLIGHT CARD */}
                     <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-5 space-y-4">
@@ -83,7 +89,7 @@ export default function VoucherTabs({ voucher }: Props) {
 
                         {/* Date */}
                         <p className="text-sm text-yellow-700">
-                                Thời gian:{" "}
+                            Thời gian:{" "}
                             {new Date(voucher.startDate).toLocaleDateString("vi-VN")}
                             {" → "}
                             {new Date(voucher.endDate).toLocaleDateString("vi-VN")}

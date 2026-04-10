@@ -41,7 +41,7 @@ export default function VoucherItemsPage() {
         return (
             <div className="p-6">
                 <div className="p-6 text-center text-gray-500">
-                    Hãy gửi duyệt để phát hành voucher nào!
+                    Chưa có item nào được tạo cho voucher này.
                 </div>
             </div>
         );
