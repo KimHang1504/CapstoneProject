@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { getAllPendingVenues } from '@/api/admin/api';
 import { Venue } from '@/api/admin/type';
 
-type StatusFilter = 'all' | 'DRAFTED' | 'PENDING' | 'ACTIVE' | 'REJECTED';
+type StatusFilter = 'all' | 'PENDING' | 'ACTIVE' | 'INACTIVE';
 
 export default function MyLocationPage() {
 
@@ -26,10 +26,9 @@ export default function MyLocationPage() {
     // Stats from API
     const [stats, setStats] = useState({
         all: 0,
-        DRAFTED: 0,
         PENDING: 0,
         ACTIVE: 0,
-        REJECTED: 0,
+        INACTIVE: 0,
     });
 
     useEffect(() => {
@@ -64,20 +63,18 @@ export default function MyLocationPage() {
 
     const fetchStats = async () => {
         try {
-            const [allRes, draftedRes, pendingRes, activeRes, rejectedRes] = await Promise.all([
+            const [allRes, pendingRes, activeRes, inactiveRes] = await Promise.all([
                 getAllPendingVenues(1, 1, undefined, undefined),
-                getAllPendingVenues(1, 1, 'DRAFTED', undefined),
                 getAllPendingVenues(1, 1, 'PENDING', undefined),
                 getAllPendingVenues(1, 1, 'ACTIVE', undefined),
-                getAllPendingVenues(1, 1, 'REJECTED', undefined),
+                getAllPendingVenues(1, 1, 'INACTIVE', undefined),
             ]);
 
             setStats({
                 all: allRes.data.totalCount,
-                DRAFTED: draftedRes.data.totalCount,
                 PENDING: pendingRes.data.totalCount,
                 ACTIVE: activeRes.data.totalCount,
-                REJECTED: rejectedRes.data.totalCount,
+                INACTIVE: inactiveRes.data.totalCount,
             });
         } catch (error) {
             console.error('Error fetching stats:', error);
@@ -194,133 +191,135 @@ export default function MyLocationPage() {
                                         );
                                     })
                                     .map(loc => {
-                                    // Validate and get image URL
-                                    let imageUrl = 'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg';
-                                    
-                                    if (loc.coverImage?.[0]) {
-                                        const url = loc.coverImage[0].trim();
-                                        // Check if it's a valid URL
-                                        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
-                                            try {
-                                                new URL(url);
-                                                imageUrl = url;
-                                            } catch {
-                                                // Invalid URL, use default
+                                        // Validate and get image URL
+                                        let imageUrl = 'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg';
+
+                                        if (loc.coverImage?.[0]) {
+                                            const url = loc.coverImage[0].trim();
+                                            // Check if it's a valid URL
+                                            if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+                                                try {
+                                                    new URL(url);
+                                                    imageUrl = url;
+                                                } catch {
+                                                    // Invalid URL, use default
+                                                }
                                             }
                                         }
-                                    }
 
-                                    return (
-                                        <div
-                                            key={loc.id}
-                                            className="relative bg-white rounded-xl border border-slate-200 hover:shadow-md hover:border-violet-200 transition-all duration-200 shadow-sm overflow-hidden"
-                                        >
-                                            <div className="flex gap-4 p-4">
-                                                {/* IMAGE */}
-                                                <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-100">
-                                                    <Image
-                                                        src={imageUrl}
-                                                        alt={loc.name}
-                                                        fill
-                                                        className="object-cover"
-                                                    />
-                                                </div>
+                                        return (
+                                            <div
+                                                key={loc.id}
+                                                className="relative bg-white rounded-xl border border-slate-200 hover:shadow-md hover:border-violet-200 transition-all duration-200 shadow-sm overflow-hidden"
+                                            >
+                                                <div className="flex gap-4 p-4">
+                                                    {/* IMAGE */}
+                                                    <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                                                        <Image
+                                                            src={imageUrl}
+                                                            alt={loc.name}
+                                                            fill
+                                                            className="object-cover"
+                                                        />
+                                                    </div>
 
-                                                <div className="flex-1 min-w-0">
-                                                    {/* Title and Status */}
-                                                    <div className="flex items-start justify-between gap-2 mb-1">
-                                                        <Link href={`/admin/venue-management/location/${loc.id}`}>
-                                                            <h3 className="font-semibold text-lg text-slate-800 hover:text-violet-600 transition-colors line-clamp-1">
-                                                                {loc.name}
-                                                            </h3>
-                                                        </Link>
-                                                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap shrink-0
+                                                    <div className="flex-1 min-w-0">
+                                                        {/* Title and Status */}
+                                                        <div className="flex items-start justify-between gap-2 mb-1">
+                                                            <Link href={`/admin/venue-management/location/${loc.id}`}>
+                                                                <h3 className="font-semibold text-lg text-slate-800 hover:text-violet-600 transition-colors line-clamp-1">
+                                                                    {loc.name}
+                                                                </h3>
+                                                            </Link>
+                                                            <span className={`px-2.5 py-1 rounded-full text-xs font-medium whitespace-nowrap shrink-0
                                                             ${loc.status === "ACTIVE"
-                                                                ? "bg-green-100 text-green-700" 
-                                                                : loc.status === "PENDING"
-                                                                    ? "bg-yellow-100 text-yellow-700"
-                                                                    : loc.status === "DRAFTED"
-                                                                        ? "bg-slate-100 text-slate-700"
-                                                                        : "bg-red-100 text-red-700"
-                                                            }`}
-                                                        >
-                                                            {loc.status}
-                                                        </span>
+                                                                    ? "bg-green-100 text-green-700"
+                                                                    : loc.status === "PENDING"
+                                                                        ? "bg-yellow-100 text-yellow-700"
+                                                                        : loc.status === "DRAFTED"
+                                                                            ? "bg-slate-100 text-slate-700"
+                                                                            : "bg-red-100 text-red-700"
+                                                                }`}
+                                                            >
+                                                                {loc.status === "ACTIVE" && "Hoạt động"}
+                                                                {loc.status === "PENDING" && "Đang chờ duyệt"}
+                                                                {loc.status === "INACTIVE" && "Không hoạt động"}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Description */}
+                                                        <p className="text-sm text-slate-600 line-clamp-1">
+                                                            {loc.description ?? 'Không có mô tả'}
+                                                        </p>
+
+                                                        {/* Address */}
+                                                        <p className="text-sm text-slate-700 font-medium mt-1 line-clamp-1">
+                                                            {loc.address ?? 'Chưa có địa chỉ'}
+                                                        </p>
+
+                                                        {/* Secondary Info Row */}
+                                                        <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
+                                                            {/* Category */}
+                                                            {loc.category && (
+                                                                <span className="inline-block px-2 py-1 bg-purple-50 text-purple-700 rounded-full font-medium">
+                                                                    {loc.category}
+                                                                </span>
+                                                            )}
+
+                                                            {/* Rating */}
+                                                            {loc.averageRating !== undefined && loc.averageRating > 0 && (
+                                                                <div className="flex items-center gap-1 text-yellow-600">
+                                                                    <Star className="w-3.5 h-3.5 fill-yellow-400" />
+                                                                    <span className="font-medium">{loc.averageRating.toFixed(1)}</span>
+                                                                    {loc.reviewCount && <span className="text-slate-500">({loc.reviewCount})</span>}
+                                                                </div>
+                                                            )}
+
+                                                            {/* Verification Status */}
+                                                            {loc.isOwnerVerified && (
+                                                                <div className="flex items-center gap-1 text-green-600">
+                                                                    <CheckCircle className="w-3.5 h-3.5" />
+                                                                    <span className="font-medium">Đã xác thực</span>
+                                                                </div>
+                                                            )}
+
+                                                            {/* Contact Info */}
+                                                            {(loc.phoneNumber || loc.email) && (
+                                                                <div className="flex items-center gap-1.5">
+                                                                    {loc.phoneNumber && (
+                                                                        <div className="flex items-center gap-1 text-slate-600 hover:text-violet-600">
+                                                                            <Phone className="w-3.5 h-3.5" />
+                                                                            <span className="text-xs">{loc.phoneNumber}</span>
+                                                                        </div>
+                                                                    )}
+                                                                    {loc.email && (
+                                                                        <div className="flex items-center gap-1 text-slate-600 hover:text-violet-600">
+                                                                            <Mail className="w-3.5 h-3.5" />
+                                                                            <span className="text-xs truncate">{loc.email}</span>
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            )}
+
+                                                            {/* Price Range */}
+                                                            {loc.priceMin && loc.priceMax && (
+                                                                <span className="text-slate-700 font-medium">
+                                                                    {loc.priceMin.toLocaleString('vi-VN')} - {loc.priceMax.toLocaleString('vi-VN')} đ
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
 
-                                                    {/* Description */}
-                                                    <p className="text-sm text-slate-600 line-clamp-1">
-                                                        {loc.description ?? 'Không có mô tả'}
-                                                    </p>
-
-                                                    {/* Address */}
-                                                    <p className="text-sm text-slate-700 font-medium mt-1 line-clamp-1">
-                                                        {loc.address ?? 'Chưa có địa chỉ'}
-                                                    </p>
-
-                                                    {/* Secondary Info Row */}
-                                                    <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
-                                                        {/* Category */}
-                                                        {loc.category && (
-                                                            <span className="inline-block px-2 py-1 bg-purple-50 text-purple-700 rounded-full font-medium">
-                                                                {loc.category}
-                                                            </span>
-                                                        )}
-
-                                                        {/* Rating */}
-                                                        {loc.averageRating !== undefined && loc.averageRating > 0 && (
-                                                            <div className="flex items-center gap-1 text-yellow-600">
-                                                                <Star className="w-3.5 h-3.5 fill-yellow-400" />
-                                                                <span className="font-medium">{loc.averageRating.toFixed(1)}</span>
-                                                                {loc.reviewCount && <span className="text-slate-500">({loc.reviewCount})</span>}
-                                                            </div>
-                                                        )}
-
-                                                        {/* Verification Status */}
-                                                        {loc.isOwnerVerified && (
-                                                            <div className="flex items-center gap-1 text-green-600">
-                                                                <CheckCircle className="w-3.5 h-3.5" />
-                                                                <span className="font-medium">Đã xác thực</span>
-                                                            </div>
-                                                        )}
-
-                                                        {/* Contact Info */}
-                                                        {(loc.phoneNumber || loc.email) && (
-                                                            <div className="flex items-center gap-1.5">
-                                                                {loc.phoneNumber && (
-                                                                    <div className="flex items-center gap-1 text-slate-600 hover:text-violet-600">
-                                                                        <Phone className="w-3.5 h-3.5" />
-                                                                        <span className="text-xs">{loc.phoneNumber}</span>
-                                                                    </div>
-                                                                )}
-                                                                {loc.email && (
-                                                                    <div className="flex items-center gap-1 text-slate-600 hover:text-violet-600">
-                                                                        <Mail className="w-3.5 h-3.5" />
-                                                                        <span className="text-xs truncate">{loc.email}</span>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        )}
-
-                                                        {/* Price Range */}
-                                                        {loc.priceMin && loc.priceMax && (
-                                                            <span className="text-slate-700 font-medium">
-                                                                {loc.priceMin.toLocaleString('vi-VN')} - {loc.priceMax.toLocaleString('vi-VN')} đ
-                                                            </span>
-                                                        )}
-                                                    </div>
+                                                    <Link
+                                                        href={`/admin/venue-management/location/${loc.id}`}
+                                                        className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200 transition-colors shrink-0"
+                                                    >
+                                                        <ChevronRight className="w-4 h-4" />
+                                                    </Link>
                                                 </div>
-
-                                                <Link
-                                                    href={`/admin/venue-management/location/${loc.id}`}
-                                                    className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200 transition-colors shrink-0"
-                                                >
-                                                    <ChevronRight className="w-4 h-4" />
-                                                </Link>
                                             </div>
-                                        </div>
-                                    );
-                                })}
+                                        );
+                                    })}
 
                             {!loading && data.filter(loc => {
                                 if (!clientSearch) return true;
@@ -331,16 +330,16 @@ export default function MyLocationPage() {
                                     loc.description?.toLowerCase().includes(query)
                                 );
                             }).length === 0 && (
-                                <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-slate-50 text-center">
-                                    <MapPin className="w-16 h-16 text-slate-300 mb-3" strokeWidth={1.5} />
-                                    <p className="text-slate-600 font-medium">
-                                        Không có địa điểm nào
-                                    </p>
-                                    <p className="text-sm text-slate-400 mt-1">
-                                        Các địa điểm sẽ hiển thị ở đây
-                                    </p>
-                                </div>
-                            )}
+                                    <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-slate-50 text-center">
+                                        <MapPin className="w-16 h-16 text-slate-300 mb-3" strokeWidth={1.5} />
+                                        <p className="text-slate-600 font-medium">
+                                            Không có địa điểm nào
+                                        </p>
+                                        <p className="text-sm text-slate-400 mt-1">
+                                            Các địa điểm sẽ hiển thị ở đây
+                                        </p>
+                                    </div>
+                                )}
                         </div>
 
                         {/* PAGINATION */}
@@ -370,7 +369,7 @@ export default function MyLocationPage() {
                                         >
                                             <ChevronLeft className="w-4 h-4 text-slate-600" />
                                         </button>
-                                        
+
                                         <div className="flex items-center gap-1">
                                             {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                                                 let pageNum;
@@ -383,16 +382,15 @@ export default function MyLocationPage() {
                                                 } else {
                                                     pageNum = page - 2 + i;
                                                 }
-                                                
+
                                                 return (
                                                     <button
                                                         key={pageNum}
                                                         onClick={() => setPage(pageNum)}
-                                                        className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                                                            page === pageNum
-                                                                ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-md"
-                                                                : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
-                                                        }`}
+                                                        className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${page === pageNum
+                                                            ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-md"
+                                                            : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
+                                                            }`}
                                                     >
                                                         {pageNum}
                                                     </button>
@@ -424,54 +422,27 @@ export default function MyLocationPage() {
 
                     {/* SIDEBAR FILTERS */}
                     <div className="w-[280px] space-y-3 sticky top-6 self-start">
-                        {/* CLIENT-SIDE SEARCH */}
-                        <div className="bg-white rounded-xl border border-slate-200 p-3 shadow-sm">
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <input
-                                    type="text"
-                                    placeholder="Lọc nhanh..."
-                                    value={clientSearch}
-                                    onChange={(e) => setClientSearch(e.target.value)}
-                                    className="w-full pl-10 pr-8 py-2 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
-                                />
-                                {clientSearch && (
-                                    <button
-                                        onClick={() => setClientSearch("")}
-                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
-                                )}
-                            </div>
-                        </div>
 
-                        {/* STATUS FILTERS */}
                         {[
-                            // Icons for status filters
                             { key: 'all', label: 'Tất cả', value: stats.all },
-                            { key: 'DRAFTED', label: 'Nháp', value: stats.DRAFTED },
                             { key: 'PENDING', label: 'Chờ duyệt', value: stats.PENDING },
                             { key: 'ACTIVE', label: 'Đã duyệt', value: stats.ACTIVE },
-                            { key: 'REJECTED', label: 'Từ chối', value: stats.REJECTED },
+                            { key: 'INACTIVE', label: 'Không hoạt động', value: stats.INACTIVE },
                         ].map(item => (
                             <div
                                 key={item.key}
                                 onClick={() => handleStatusChange(item.key as StatusFilter)}
-                                className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border group ${
-                                    statusFilter === item.key
-                                        ? 'bg-linear-to-br from-violet-50 to-purple-50 border-violet-300 shadow-lg scale-105'
-                                        : 'bg-white border-slate-200 hover:bg-purple-50/30 hover:border-violet-200 shadow-sm hover:shadow-md'
-                                }`}
+                                className={`cursor-pointer rounded-xl p-4 transition-all duration-300 border group ${statusFilter === item.key
+                                    ? 'bg-linear-to-br from-violet-50 to-purple-50 border-violet-300 shadow-lg scale-105'
+                                    : 'bg-white border-slate-200 hover:bg-purple-50/30 hover:border-violet-200 shadow-sm hover:shadow-md'
+                                    }`}
                             >
-                                <p className={`text-xs font-semibold uppercase tracking-widest transition-colors duration-300 ${
-                                    statusFilter === item.key ? 'text-violet-600' : 'text-slate-500'
-                                }`}>
+                                <p className={`text-xs font-semibold uppercase tracking-widest transition-colors duration-300 ${statusFilter === item.key ? 'text-violet-600' : 'text-slate-500'
+                                    }`}>
                                     {item.label}
                                 </p>
-                                <p className={`text-3xl font-bold mt-2 transition-colors duration-300 ${
-                                    statusFilter === item.key ? 'text-violet-600' : 'text-slate-800 group-hover:text-violet-600'
-                                }`}>
+                                <p className={`text-3xl font-bold mt-2 transition-colors duration-300 ${statusFilter === item.key ? 'text-violet-600' : 'text-slate-800 group-hover:text-violet-600'
+                                    }`}>
                                     {item.value.toString().padStart(2, '0')}
                                 </p>
                             </div>

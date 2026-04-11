@@ -50,6 +50,7 @@ export default function WithdrawPage() {
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     fetchData();
@@ -287,7 +288,6 @@ export default function WithdrawPage() {
             <thead className="bg-gradient-to-r from-slate-50 to-blue-50/50 border-b border-slate-200">
               <tr>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">ID</th>
-                <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Wallet</th>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Số tiền</th>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Thông tin ngân hàng</th>
                 <th className="px-4 py-3.5 text-left text-xs font-semibold text-purple-600 uppercase tracking-wider">Trạng thái</th>
@@ -319,13 +319,6 @@ export default function WithdrawPage() {
                   >
                     <td className="px-4 py-4">
                       <span className="text-sm font-semibold text-slate-700">#{item.id}</span>
-                    </td>
-
-                    <td className="px-4 py-4">
-                      <div className="flex items-center gap-1.5">
-                        <Wallet className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="text-sm text-slate-600">#{item.walletId}</span>
-                      </div>
                     </td>
 
                     <td className="px-4 py-4">
@@ -665,9 +658,13 @@ export default function WithdrawPage() {
             </button>
             <img
               src={previewImageUrl}
-              alt="Minh chứng chuyển khoản"
-              className="max-w-full max-h-[90vh] rounded-xl shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
+              alt="preview"
+              onClick={(e) => {
+                e.stopPropagation();
+                setZoom((z) => (z === 1 ? 2 : 1));
+              }}
+              className="max-w-full max-h-full object-contain transition-transform duration-200 cursor-zoom-in"
+              style={{ transform: `scale(${zoom})` }}
             />
             <a
               href={previewImageUrl}

@@ -1,7 +1,7 @@
 "use client";
 
 import { acceptPendingAdvertisements, getPendingAdvertisements, rejectPendingAdvertisements } from "@/api/admin/api";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest } from "@/api/admin/type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectionHistory, AdvertisementRejectRequest } from "@/api/admin/type";
 import { useEffect, useState } from "react";
 import ImagePreview from "../venue-management/location/[id]/components/ImagePreview";
 import { toast } from "sonner";
@@ -13,6 +13,9 @@ export default function AdvertisementList() {
   const [loading, setLoading] = useState<boolean>(true);
   const [reason, setReason] = useState<string>("");
   const [open, setOpen] = useState<boolean>(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [selectedHistory, setSelectedHistory] = useState<AdvertisementRejectionHistory[]>([]);
 
   const fetchAdvertisements = async () => {
     try {
@@ -62,40 +65,42 @@ export default function AdvertisementList() {
     });
   };
 
+
   const handleReject = (id: number) => {
-    toast("Bạn có chắc chắn muốn từ chối yêu cầu quảng cáo này?", {
-      action: {
-        label: "Từ chối",
-        onClick: async () => {
-          const body: AdvertisementRejectRequest = {
-            advertisementId: id,
-            reason: reason,
-          };
+    setSelectedId(id);
+    setOpen(true);
+  };
 
-          try {
-            const res = await rejectPendingAdvertisements(body);
+  const confirmReject = async () => {
+    if (!selectedId) return;
 
-            if (res.code === 200) {
-              toast.success("Đã từ chối yêu cầu quảng cáo");
-              fetchAdvertisements();
-            } else {
-              toast.error(res.message || "Không thể từ chối yêu cầu");
-            }
-          } catch (error) {
-            console.error("Error rejecting advertisement:", error);
-            const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra";
-            toast.error(errorMessage);
-          } finally {
-            setOpen(false);
-            setReason("");
-          }
-        },
-      },
-      cancel: {
-        label: "Hủy",
-        onClick: () => { },
-      },
-    });
+    if (!reason.trim()) {
+      toast.error("Vui lòng nhập lý do từ chối");
+      return;
+    }
+
+    const body: AdvertisementRejectRequest = {
+      advertisementId: selectedId,
+      reason: reason,
+    };
+
+    try {
+      const res = await rejectPendingAdvertisements(body);
+
+      if (res.code === 200) {
+        toast.success("Đã từ chối yêu cầu quảng cáo");
+        fetchAdvertisements();
+      } else {
+        toast.error(res.message || "Không thể từ chối");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Có lỗi xảy ra");
+    } finally {
+      setOpen(false);
+      setReason("");
+      setSelectedId(null);
+    }
   };
 
 
@@ -110,24 +115,6 @@ export default function AdvertisementList() {
         <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
           Quản lý quảng cáo
         </h2>
-
-        <div className="relative w-full md:w-80">
-          <input
-            type="text"
-            placeholder="Tìm kiếm quảng cáo..."
-            className="w-full pl-10 pr-4 py-2 rounded-xl border border-violet-200 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-300"
-          />
-          <svg
-            className="absolute left-3 top-2.5 w-5 h-5 text-pink-400"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            viewBox="0 0 24 24"
-          >
-            <path d="M21 21l-4.35-4.35" />
-            <circle cx="11" cy="11" r="8" />
-          </svg>
-        </div>
       </div>
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -192,7 +179,7 @@ export default function AdvertisementList() {
                         : "bg-red-100 text-red-500 border-red-200"
                     }`}
                 >
-                  {ad.status}
+                  {ad.status === "PENDING" && "Đang chờ duyệt"}
                 </span>
 
                 <div className="absolute bottom-0 left-0 right-0 px-4 py-3">
@@ -251,9 +238,144 @@ export default function AdvertisementList() {
                   Chấp nhận
                 </button>
               </div>
+              <div className="flex justify-center items-center pb-4">
+                {ad.rejectionHistory?.length > 0 && (
+                  <button
+                    onClick={() => {
+                      setSelectedHistory(ad.rejectionHistory);
+                      setHistoryOpen(true);
+                    }}
+                    className="mt-2 text-xs text-gray-500 hover:text-pink-500 underline"
+                  >
+                    Xem lịch sử từ chối ({ad.rejectionHistory.length})
+                  </button>
+                )}
+              </div>
             </div>
           ))}
 
+        </div>
+      )}
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 space-y-4 animate-in fade-in zoom-in-95">
+
+            {/* TITLE */}
+            <h3 className="text-lg font-semibold text-gray-800">
+              Nhập lý do từ chối
+            </h3>
+
+            {/* INPUT */}
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Nhập lý do từ chối quảng cáo..."
+              className="w-full border rounded-xl p-3 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+              rows={4}
+            />
+
+            {/* ACTIONS */}
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  setReason("");
+                  setSelectedId(null);
+                }}
+                className="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50"
+              >
+                Hủy
+              </button>
+
+              <button
+                onClick={confirmReject}
+                className="px-4 py-2 text-sm rounded-lg bg-blue-500 text-white hover:opacity-90"
+              >
+                Xác nhận từ chối
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Lịch sử từ chối */}
+      {historyOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg p-6 space-y-5 animate-in fade-in zoom-in-95">
+
+            {/* TITLE */}
+            <h3 className="text-lg font-semibold text-gray-800">
+              Lịch sử từ chối
+            </h3>
+
+            {/* EMPTY */}
+            {selectedHistory.length === 0 ? (
+              <p className="text-sm text-gray-400 italic">
+                Chưa có lịch sử từ chối
+              </p>
+            ) : (
+
+              <div className="space-y-4 max-h-[400px] overflow-auto pr-2">
+
+                {selectedHistory
+                  .slice()
+                  .sort(
+                    (a, b) =>
+                      new Date(b.rejectedAt).getTime() -
+                      new Date(a.rejectedAt).getTime()
+                  )
+                  .map((item, index) => (
+
+                    <div key={index} className="flex gap-3">
+
+                      {/* TIMELINE DOT */}
+                      <div className="flex flex-col items-center">
+                        <div className="w-2.5 h-2.5 bg-pink-400 rounded-full mt-1" />
+                        {index !== selectedHistory.length - 1 && (
+                          <div className="w-px flex-1 bg-gray-200" />
+                        )}
+                      </div>
+
+                      {/* CONTENT */}
+                      <div className="flex-1 bg-gray-50 rounded-lg p-3">
+
+                        <div className="flex justify-between items-center text-xs text-gray-500">
+                          <span>{item.rejectedBy}</span>
+                          <span>
+                            {new Date(item.rejectedAt).toLocaleString("vi-VN")}
+                          </span>
+                        </div>
+
+                        <p className="text-sm text-gray-700 mt-1">
+                          {item.reason || "Không có lý do"}
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  ))}
+
+              </div>
+            )}
+
+            {/* ACTION */}
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  setHistoryOpen(false);
+                  setSelectedHistory([]);
+                }}
+                className="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50"
+              >
+                Đóng
+              </button>
+            </div>
+
+          </div>
         </div>
       )}
     </div>

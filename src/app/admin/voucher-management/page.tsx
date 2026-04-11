@@ -110,7 +110,10 @@ function VoucherCard({ voucher }: { voucher: any }) {
             voucher.status
           )}`}
         >
-          {voucher.status}
+          {voucher.status === "ACTIVE" && "Hoạt động"}
+          {voucher.status === "ENDED" && "Kết thúc"}
+          {voucher.status === "REJECTED" && "Từ chối"}
+          {voucher.status === "DISABLED" && "Vô hiệu hóa"}
         </span>
       </div>
 

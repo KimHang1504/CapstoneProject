@@ -95,7 +95,7 @@ export default function SubscriptionTable() {
       },
       cancel: {
         label: "Hủy",
-        onClick: () => {},
+        onClick: () => { },
       },
     });
   };
@@ -150,252 +150,250 @@ export default function SubscriptionTable() {
             </p>
           </div>
 
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <button
               onClick={() => setCreateModalOpen(true)}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm flex items-center gap-2 font-medium"
             >
               <Plus className="w-4 h-4" />
               Tạo gói mới
-            </button>
+            </button> */}
 
-            <button
-              onClick={fetchData}
-              disabled={loading}
-              className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm flex items-center gap-2"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              Tải lại
-            </button>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
-          <div className="flex items-center gap-3">
-            <label className="text-sm font-medium text-gray-700">
-              Loại gói:
-            </label>
-
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="min-w-[200px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
-              >
-                <span className="text-gray-700">
-                  {typeFilter === "" ? "Tất cả" : getTypeLabel(typeFilter)}
-                </span>
-                <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-              </button>
-
-              {dropdownOpen && (
-                <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
-                  {[
-                    { value: "", label: "Tất cả", icon: Package },
-                    { value: "MEMBER", label: "Thành viên", icon: Users },
-                    { value: "VENUE", label: "Địa điểm", icon: Building2 },
-                    { value: "VENUEOWNER", label: "Chủ địa điểm", icon: UserCircle },
-                  ].map((option) => {
-                    const Icon = option.icon;
-                    return (
-                      <button
-                        key={option.value}
-                        onClick={() => {
-                          setTypeFilter(option.value as PackageType | "");
-                          setDropdownOpen(false);
-                        }}
-                        className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 ${
-                          typeFilter === option.value ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                        {option.label}
-                        {typeFilter === option.value && <Check className="w-4 h-4 ml-auto text-blue-600" />}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-
-            {typeFilter && (
-              <button
-                onClick={() => setTypeFilter("")}
-                className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
-              >
-                <X className="w-4 h-4" />
-                Xóa lọc
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">ID</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Tên gói</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Loại</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Giá</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Thời hạn</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Trạng thái</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Ngày tạo</th>
-                  <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Thao tác</th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-gray-200">
-                {loading ? (
-                  Array.from({ length: 6 }).map((_, i) => (
-                    <SkeletonRow key={i} />
-                  ))
-                ) : data.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="px-4 py-16 text-center">
-                      <div className="flex flex-col items-center justify-center text-gray-400">
-                        <Package className="w-12 h-12 mb-3 text-gray-300" />
-                        <p className="text-sm font-medium text-gray-600">Không có gói subscription nào</p>
-                        <p className="text-xs text-gray-500 mt-1">Các gói subscription sẽ hiển thị ở đây</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : (
-                  data.map((pkg) => {
-                    const TypeIcon = getTypeIcon(pkg.type);
-                    return (
-                      <tr
-                        key={pkg.id}
-                        className="hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="text-sm font-semibold text-gray-700">#{pkg.id}</span>
-                        </td>
-
-                        <td className="px-4 py-3">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{pkg.packageName}</div>
-                            {pkg.description && (
-                              <div className="text-xs text-gray-500 mt-0.5 line-clamp-1">{pkg.description}</div>
-                            )}
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
-                            <TypeIcon className="w-3.5 h-3.5" />
-                            {getTypeLabel(pkg.type)}
-                          </span>
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-1">
-                            <DollarSign className="w-3.5 h-3.5 text-green-600" />
-                            <span className="text-sm font-semibold text-green-600">
-                              {pkg.price.toLocaleString('vi-VN')} ₫
-                            </span>
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5 text-gray-400" />
-                            <span className="text-sm text-gray-700">{pkg.durationDays} ngày</span>
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <button
-                            onClick={() => handleToggleActive(pkg)}
-                            disabled={actionLoading === pkg.id}
-                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors disabled:opacity-50 ${
-                              pkg.isActive
-                                ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
-                                : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
-                            }`}
-                          >
-                            {pkg.isActive ? <CheckCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                            {pkg.isActive ? "Hoạt động" : "Vô hiệu"}
-                          </button>
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex items-center gap-1 text-sm text-gray-600">
-                            <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                            {new Date(pkg.createdAt).toLocaleDateString("vi-VN")}
-                          </div>
-                        </td>
-
-                        <td className="px-4 py-3 whitespace-nowrap">
-                          <div className="flex justify-center items-center gap-2">
-                            <button
-                              onClick={() => openEditModal(pkg)}
-                              disabled={actionLoading === pkg.id}
-                              className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center gap-1"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                              Sửa
-                            </button>
-                            <button
-                              onClick={() => openDeleteModal(pkg)}
-                              disabled={actionLoading === pkg.id}
-                              className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-1"
-                            >
-                              <Trash2 className="w-3.5 h-3.5" />
-                              Xóa
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+          <button
+            onClick={fetchData}
+            disabled={loading}
+            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Tải lại
+          </button>
         </div>
       </div>
 
-      {createModalOpen && (
-        <CreatePackageModal
-          onClose={() => setCreateModalOpen(false)}
-          onSuccess={() => {
-            setCreateModalOpen(false);
-            fetchData();
-          }}
-        />
-      )}
+      <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <label className="text-sm font-medium text-gray-700">
+            Loại gói:
+          </label>
 
-      {editModalOpen && selectedPackage && (
-        <EditPackageModal
-          package={selectedPackage}
-          onClose={() => {
-            setEditModalOpen(false);
-            setSelectedPackage(null);
-          }}
-          onSuccess={() => {
-            setEditModalOpen(false);
-            setSelectedPackage(null);
-            fetchData();
-          }}
-        />
-      )}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setDropdownOpen(!dropdownOpen)}
+              className="min-w-[200px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
+            >
+              <span className="text-gray-700">
+                {typeFilter === "" ? "Tất cả" : getTypeLabel(typeFilter)}
+              </span>
+              <ChevronDown className={`w-4 h-4 text-gray-500 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-      {deleteModalOpen && selectedPackage && (
-        <DeletePackageModal
-          package={selectedPackage}
-          onClose={() => {
-            setDeleteModalOpen(false);
-            setSelectedPackage(null);
-          }}
-          onSuccess={() => {
-            setDeleteModalOpen(false);
-            setSelectedPackage(null);
-            fetchData();
-          }}
-        />
-      )}
+            {dropdownOpen && (
+              <div className="absolute top-full left-0 mt-1 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-10 overflow-hidden">
+                {[
+                  { value: "", label: "Tất cả", icon: Package },
+                  { value: "MEMBER", label: "Thành viên", icon: Users },
+                  { value: "VENUE", label: "Địa điểm", icon: Building2 },
+                  { value: "VENUEOWNER", label: "Chủ địa điểm", icon: UserCircle },
+                ].map((option) => {
+                  const Icon = option.icon;
+                  return (
+                    <button
+                      key={option.value}
+                      onClick={() => {
+                        setTypeFilter(option.value as PackageType | "");
+                        setDropdownOpen(false);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 ${typeFilter === option.value ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                        }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      {option.label}
+                      {typeFilter === option.value && <Check className="w-4 h-4 ml-auto text-blue-600" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {typeFilter && (
+            <button
+              onClick={() => setTypeFilter("")}
+              className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+            >
+              <X className="w-4 h-4" />
+              Xóa lọc
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">ID</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Tên gói</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Loại</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Giá</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Thời hạn</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Trạng thái</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Ngày tạo</th>
+                <th className="px-4 py-3 text-center text-xs font-semibold text-gray-700 uppercase whitespace-nowrap">Thao tác</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-200">
+              {loading ? (
+                Array.from({ length: 6 }).map((_, i) => (
+                  <SkeletonRow key={i} />
+                ))
+              ) : data.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-4 py-16 text-center">
+                    <div className="flex flex-col items-center justify-center text-gray-400">
+                      <Package className="w-12 h-12 mb-3 text-gray-300" />
+                      <p className="text-sm font-medium text-gray-600">Không có gói subscription nào</p>
+                      <p className="text-xs text-gray-500 mt-1">Các gói subscription sẽ hiển thị ở đây</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                data.map((pkg) => {
+                  const TypeIcon = getTypeIcon(pkg.type);
+                  return (
+                    <tr
+                      key={pkg.id}
+                      className="hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="text-sm font-semibold text-gray-700">#{pkg.id}</span>
+                      </td>
+
+                      <td className="px-4 py-3">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{pkg.packageName}</div>
+                          {pkg.description && (
+                            <div className="text-xs text-gray-500 mt-0.5 line-clamp-1">{pkg.description}</div>
+                          )}
+                        </div>
+                      </td>
+
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-200">
+                          <TypeIcon className="w-3.5 h-3.5" />
+                          {getTypeLabel(pkg.type)}
+                        </span>
+                      </td>
+
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <DollarSign className="w-3.5 h-3.5 text-green-600" />
+                          <span className="text-sm font-semibold text-green-600">
+                            {pkg.price.toLocaleString('vi-VN')} ₫
+                          </span>
+                        </div>
+                      </td>
+
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1">
+                          <Clock className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="text-sm text-gray-700">{pkg.durationDays} ngày</span>
+                        </div>
+                      </td>
+
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <button
+                          onClick={() => handleToggleActive(pkg)}
+                          disabled={actionLoading === pkg.id}
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors disabled:opacity-50 ${pkg.isActive
+                              ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                              : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                            }`}
+                        >
+                          {pkg.isActive ? <CheckCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
+                          {pkg.isActive ? "Hoạt động" : "Vô hiệu"}
+                        </button>
+                      </td>
+
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex items-center gap-1 text-sm text-gray-600">
+                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                          {new Date(pkg.createdAt).toLocaleDateString("vi-VN")}
+                        </div>
+                      </td>
+
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="flex justify-center items-center gap-2">
+                          <button
+                            onClick={() => openEditModal(pkg)}
+                            disabled={actionLoading === pkg.id}
+                            className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center gap-1"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                            Sửa
+                          </button>
+                          <button
+                            onClick={() => openDeleteModal(pkg)}
+                            disabled={actionLoading === pkg.id}
+                            className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Xóa
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
+
+    //       {createModalOpen && (
+    //         <CreatePackageModal
+    //           onClose={() => setCreateModalOpen(false)}
+    //           onSuccess={() => {
+    //             setCreateModalOpen(false);
+    //             fetchData();
+    //           }}
+    //         />
+    //       )}
+
+    //       {editModalOpen && selectedPackage && (
+    //         <EditPackageModal
+    //           package={selectedPackage}
+    //           onClose={() => {
+    //             setEditModalOpen(false);
+    //             setSelectedPackage(null);
+    //           }}
+    //           onSuccess={() => {
+    //             setEditModalOpen(false);
+    //             setSelectedPackage(null);
+    //             fetchData();
+    //           }}
+    //         />
+    //       )}
+
+    //       {deleteModalOpen && selectedPackage && (
+    //         <DeletePackageModal
+    //           package={selectedPackage}
+    //           onClose={() => {
+    //             setDeleteModalOpen(false);
+    //             setSelectedPackage(null);
+    //           }}
+    //           onSuccess={() => {
+    //             setDeleteModalOpen(false);
+    //             setSelectedPackage(null);
+    //             fetchData();
+    //           }}
+    //         />
+    //       )}
+    //     </div>
   );
 }
 
