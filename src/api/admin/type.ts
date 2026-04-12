@@ -1,3 +1,5 @@
+import { VenueLocationDetail } from "../venue/location/type";
+
 //Dashboard
 export interface ChartItem {
   label: string;
@@ -111,10 +113,76 @@ export interface VenueDetail {
   id: number;
   name: string;
   websiteUrl: string | null;
+  address: string;
   status: "ACTIVE" | "INACTIVE" | "PENDING" | string;
   businessLicenseUrl: string;
   venueOwner: VenueOwner;
+  venue: VenueInfomation | null;
 }
+
+export interface VenueInfomation {
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+
+  email: string;
+  phoneNumber: string;
+  websiteUrl?: string;
+
+  priceMin: number;
+  priceMax: number | null;
+
+  latitude: number;
+  longitude: number;
+
+  averageRating: number;
+  avarageCost: number;
+  reviewCount: number;
+  favoriteCount?: number | null;
+
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | "DRAFTED";
+
+  category: string[] | null;
+  categories?: { id: number; name: string }[];
+
+  coverImage?: string[];
+  interiorImage?: string[];
+  fullPageMenuImage?: string[];
+
+  isOwnerVerified?: boolean;
+
+  rejectionDetails?: {
+    reason: string;
+    rejectedAt: string;
+    rejectedBy: string;
+  }[] | null;
+
+  createdAt: string;
+  updatedAt: string;
+
+  coupleMoodTypes?: {
+    id: number;
+    name: string;
+    description: string;
+  }[];
+
+  couplePersonalityTypes?: {
+    id: number;
+    name: string;
+    description: string;
+  }[];
+
+  openingHours?: {
+    day: number;
+    openTime: string;
+    closeTime: string;
+    enabled: boolean;
+  }[];
+
+  todayDayName?: string | null;
+  todayOpeningHour?: any;
+};
 
 // LocationDetail 
 
