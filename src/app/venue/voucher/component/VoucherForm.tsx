@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import {
   Upload,
 } from "lucide-react";
+import Tiptap from "@/components/Tiptap";
 
 type Props = {
   initialData?: CreateVoucherRequest;
@@ -140,28 +141,97 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       return;
     }
 
-    if (form.discountType === "FIXED_AMOUNT" && !form.discountAmount) {
-      toast.error("Vui lòng nhập số tiền giảm");
-      return;
+    if (form.discountType === "FIXED_AMOUNT") {
+      if (
+        form.discountAmount === null ||
+        form.discountAmount === undefined
+      ) {
+        toast.error("Vui lòng nhập số tiền giảm");
+        return;
+      }
+
+      if (form.discountAmount <= 0) {
+        toast.error("Số tiền giảm phải lớn hơn 0");
+        return;
+      }
+
+      if (form.discountAmount > 100_000_000) {
+        toast.error("Số tiền giảm không được vượt quá 100,000,000 VND");
+        return;
+      }
     }
 
-    if (form.discountType === "PERCENTAGE" && !form.discountPercent) {
-      toast.error("Vui lòng nhập phần trăm giảm");
-      return;
+    if (form.discountType === "PERCENTAGE") {
+      if (
+        form.discountPercent === null ||
+        form.discountPercent === undefined ||
+        form.discountPercent <= 0
+      ) {
+        toast.error("Vui lòng nhập phần trăm giảm");
+        return;
+      }
+
+      if (form.discountPercent > 100) {
+        toast.error("Phần trăm giảm không được vượt quá 100%");
+        return;
+      }
     }
 
-    if (!form.voucherPrice) {
+    if (form.voucherPrice === null || form.voucherPrice === undefined) {
       toast.error("Vui lòng nhập giá đổi");
       return;
     }
 
-    if (!form.quantity) {
+    if (form.voucherPrice < 0) {
+      toast.error("Giá đổi không được âm");
+      return;
+    }
+
+    if (form.voucherPrice > 100_000_000) {
+      toast.error("Giá đổi không được vượt quá 100,000,000 điểm");
+      return;
+    }
+
+    if (
+      form.quantity === null ||
+      form.quantity === undefined ||
+      Number.isNaN(form.quantity)
+    ) {
       toast.error("Vui lòng nhập số lượng");
       return;
     }
 
-    if (form.usageLimitPerMember === null || form.usageLimitPerMember === undefined) {
+    if (form.quantity <= 0) {
+      toast.error("Số lượng phải lớn hơn 0");
+      return;
+    }
+
+    if (form.quantity > 100_000) {
+      toast.error("Số lượng không được vượt quá 100,000");
+      return;
+    }
+
+    if (
+      form.usageLimitPerMember === null ||
+      form.usageLimitPerMember === undefined ||
+      Number.isNaN(form.usageLimitPerMember)
+    ) {
       toast.error("Vui lòng nhập giới hạn mỗi người");
+      return;
+    }
+
+    if (form.usageLimitPerMember <= 0) {
+      toast.error("Giới hạn mỗi người phải lớn hơn 0");
+      return;
+    }
+
+    if (form.quantity && form.usageLimitPerMember > form.quantity) {
+      toast.error("Giới hạn mỗi người không được vượt quá số lượng");
+      return;
+    }
+
+    if (form.quantity && form.usageLimitPerMember > form.quantity) {
+      toast.error("Giới hạn mỗi người không được vượt quá số lượng");
       return;
     }
 
@@ -205,6 +275,25 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
     if (!form.imageUrl) {
       toast.error("Vui lòng tải lên ảnh voucher");
+      return;
+    }
+
+    if (
+      form.usageValiDays === null ||
+      form.usageValiDays === undefined ||
+      Number.isNaN(form.usageValiDays)
+    ) {
+      toast.error("Vui lòng nhập hạn sử dụng");
+      return;
+    }
+
+    if (form.usageValiDays <= 0) {
+      toast.error("Hạn sử dụng phải lớn hơn 0");
+      return;
+    }
+
+    if (form.usageValiDays > 365) {
+      toast.error("Hạn sử dụng không được vượt quá 365 ngày");
       return;
     }
 
@@ -259,11 +348,16 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       {/* DESCRIPTION */}
       <FieldWrapper>
         <label className={labelClass}>Mô tả</label>
+        {/* <Tiptap
+          value={form.description || ""}
+          onChange={(val) => handleChange("description", val)}
+        /> */}
         <textarea
           value={form.description}
           onChange={(e) => handleChange("description", e.target.value)}
-          placeholder="Mô tả ngắn về voucher..."
-          className={`${inputClass} resize-none h-24`}
+          placeholder="Nhập mô tả voucher..."
+          className={inputClass}
+          rows={4}
         />
       </FieldWrapper>
 
@@ -445,7 +539,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         </button>
 
         <p className="text-sm text-violet-600 font-medium mt-2">
-          {selectedLocationIds.length > 0 
+          {selectedLocationIds.length > 0
             ? `✓ ${selectedLocationIds.length} địa điểm đã chọn`
             : "Chưa chọn địa điểm"}
         </p>
