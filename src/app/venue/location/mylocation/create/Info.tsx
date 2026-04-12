@@ -20,7 +20,7 @@ export type VenueFormData = {
   websiteUrl?: string
 
   priceMin: number
-  priceMax: number
+  priceMax: number | null
 
   latitude: number
   longitude: number
@@ -53,7 +53,36 @@ export default function Info({ formData, setFormData }: Props) {
 
   const [moods, setMoods] = useState<CoupleMoodType[]>([]);
   const [styles, setStyles] = useState<CouplePersonalityType[]>([]);
-  
+
+
+  const [errors, setErrors] = useState({
+    priceMin: "",
+    priceMax: "",
+  });
+
+  function validatePrice(min: number, max: number | null) {
+    const newErrors = {
+      priceMin: "",
+      priceMax: "",
+    };
+
+    if (min < 0) {
+      newErrors.priceMin = "Không được âm";
+    }
+
+    if (max !== null) {
+      if (max <= 0) {
+        newErrors.priceMax = "Phải > 0";
+      }
+
+      if (min > max) {
+        newErrors.priceMin = "Min > Max";
+        newErrors.priceMax = "Max < Min";
+      }
+    }
+
+    setErrors(newErrors);
+  }
 
   useEffect(() => {
     async function fetchData() {
@@ -167,15 +196,25 @@ export default function Info({ formData, setFormData }: Props) {
               </span>
               <input
                 type="number"
-                value={formData.priceMin || ""}
-                onChange={(e) =>
-                  setFormData({
+                min={0}
+                max={formData.priceMax ?? 100000000}
+                value={formData.priceMin ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value === "" ? 0 : Number(e.target.value);
+
+                  const newData = {
                     ...formData,
-                    priceMin: Number(e.target.value),
-                  })
-                }
-                placeholder="Tối thiểu"
-                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-purple-100 transition-all"
+                    priceMin: value,
+                  };
+
+                  setFormData(newData);
+                  validatePrice(value, newData.priceMax);
+                }}
+                className={`w-full pl-7 rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
+    ${errors.priceMin
+                    ? "border-red-500 focus:ring-red-200"
+                    : "border-[#E4D7FF] focus:ring-purple-100"
+                  }`}
               />
             </div>
 
@@ -186,15 +225,25 @@ export default function Info({ formData, setFormData }: Props) {
               </span>
               <input
                 type="number"
-                value={formData.priceMax || ""}
-                onChange={(e) =>
-                  setFormData({
+                min={formData.priceMin || 0}
+                max={100000000}
+                value={formData.priceMax ?? ""}
+                onChange={(e) => {
+                  const value = e.target.value === "" ? null : Number(e.target.value);
+
+                  const newData = {
                     ...formData,
-                    priceMax: Number(e.target.value),
-                  })
-                }
-                placeholder="Tối đa"
-                className="w-full pl-7 rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-purple-100 transition-all"
+                    priceMax: value,
+                  };
+
+                  setFormData(newData);
+                  validatePrice(newData.priceMin, value);
+                }}
+                className={`w-full pl-7 rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
+    ${errors.priceMax
+                    ? "border-red-500 focus:ring-red-200"
+                    : "border-[#E4D7FF] focus:ring-purple-100"
+                  }`}
               />
             </div>
 

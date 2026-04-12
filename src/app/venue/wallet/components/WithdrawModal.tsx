@@ -33,7 +33,7 @@ export default function WithdrawModal({ onClose, onSuccess, balance }: Props) {
     }
 
     if (amount > balance) {
-      toast.error(`Số dư không đủ. Bạn chỉ có ${balance.toLocaleString("vi-VN")} ₫`);
+      toast.error(`Số dư không đủ. Bạn chỉ có ${balance.toLocaleString("vi-VN")} VND`);
       return;
     }
     // 3. Check các field bank info (nếu muốn validate ở FE)

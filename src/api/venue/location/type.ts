@@ -18,6 +18,11 @@ export type VenueTag = {
   couplePersonalityTypeId: number;
 };
 
+type RejectionDetail = {
+  reason: string;
+  rejectedAt: string;
+  rejectedBy: string;
+};
 
 export type MyVenueLocation = {
   id: number;
@@ -41,6 +46,7 @@ export type MyVenueLocation = {
   averageRating: number;
   avarageCost: number;
   reviewCount: number;
+  rejectionDetails?: RejectionDetail[] | null;
 
   status: 'ACTIVE' | 'INACTIVE' | 'PENDING' | 'DRAFTED';
 
@@ -79,8 +85,8 @@ export type VenueLocationBase = {
   phoneNumber: string;
   websiteUrl?: string;
 
-  priceMin: number;
-  priceMax: number;
+  priceMin: number
+  priceMax: number | null;
 
   latitude: number;
   longitude: number;
@@ -176,7 +182,7 @@ export type VenueLocationDetail = VenueLocationBase & {
 
   isOwnerVerified?: boolean;
   businessLicenseUrl?: string | null;
-  rejectionDetails?: string | null;
+  rejectionDetails?: RejectionDetail[] | null;
   durationDays?: number | null;
   startDate?: string | null;
   endDate?: string | null;

@@ -9,6 +9,16 @@ import { getMyVenueLocations } from '@/api/venue/location/api';
 import { MyVenueLocation } from '@/api/venue/location/type';
 
 type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'CLOSED' | 'EXPIRED' | 'PENDING' | 'DRAFTED';
+type DisplayStatus =
+  | 'ACTIVE'
+  | 'INACTIVE'
+  | 'PENDING'
+  | 'DRAFTED'
+  | 'REJECTED'
+  | 'CLOSED'
+  | 'EXPIRED';
+
+
 
 export default function MyLocationPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -18,15 +28,32 @@ export default function MyLocationPage() {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const statusMap = {
+  const statusMap: Record<DisplayStatus, string> = {
     ACTIVE: "bg-green-100 text-green-700",
     INACTIVE: "bg-red-100 text-red-700",
-    DRAFTED: "bg-gray-100 text-gray-600",
     PENDING: "bg-yellow-100 text-yellow-700",
+    DRAFTED: "bg-gray-100 text-gray-600",
+    REJECTED: "bg-red-100 text-red-700",
+    CLOSED: "bg-red-100 text-red-700",
+    EXPIRED: "bg-red-100 text-red-700",
   };
 
+
+
   function getSubscriptionInfo(loc: MyVenueLocation) {
-    const { durationDays, startDate, endDate, status, rejectionDetails } = loc as any;
+    const { durationDays, startDate, endDate, status, rejectionDetails } = loc;
+
+    // 👉 NEW: REJECTED (draft nhưng bị từ chối)
+    if (status === "DRAFTED" && rejectionDetails && rejectionDetails.length > 0) {
+      const rejection = rejectionDetails[0];
+      return {
+        type: "REJECTED",
+        label: "Bị từ chối",
+        subLabel: `Lý do: ${rejection.reason}`,
+        className: "bg-red-100 text-red-700",
+        cta: "Xem chi tiết",
+      };
+    }
 
     if (!durationDays || !startDate || !endDate) {
       return {
@@ -76,7 +103,7 @@ export default function MyLocationPage() {
   const stats = useMemo(() => {
     const inactiveLocations = data.filter(l => l.status === 'INACTIVE');
     const closedCount = inactiveLocations.filter(l => {
-      const loc = l as any;
+      const loc = l;
       return loc.rejectionDetails && loc.rejectionDetails.length > 0;
     }).length;
     const expiredCount = inactiveLocations.length - closedCount;
@@ -98,10 +125,10 @@ export default function MyLocationPage() {
       if (statusFilter === 'all') {
         matchStatus = true;
       } else if (statusFilter === 'CLOSED') {
-        const loc = l as any;
-        matchStatus = l.status === 'INACTIVE' && loc.rejectionDetails && loc.rejectionDetails.length > 0;
+        const loc = l;
+        matchStatus = l.status === 'INACTIVE' && (loc.rejectionDetails?.length ?? 0) > 0;
       } else if (statusFilter === 'EXPIRED') {
-        const loc = l as any;
+        const loc = l;
         matchStatus = l.status === 'INACTIVE' && (!loc.rejectionDetails || loc.rejectionDetails.length === 0);
       } else {
         matchStatus = l.status === statusFilter;
@@ -128,6 +155,19 @@ export default function MyLocationPage() {
     setSearchKeyword('');
   };
 
+  function getDisplayStatus(loc: MyVenueLocation): DisplayStatus {
+    const hasRejection = !!loc.rejectionDetails?.length;
+
+    if (loc.status === 'DRAFTED' && hasRejection) return 'REJECTED';
+
+    if (loc.status === 'INACTIVE') {
+      if (hasRejection) return 'CLOSED';
+      return 'EXPIRED';
+    }
+
+    return loc.status;
+  }
+
   if (loading) {
     return <div className="p-8 text-gray-500">Đang tải dữ liệu...</div>;
   }
@@ -150,6 +190,7 @@ export default function MyLocationPage() {
 
           {locations.map((loc) => {
             const sub = getSubscriptionInfo(loc);
+            const displayStatus = getDisplayStatus(loc);
             return (
               <div
                 key={loc.id}
@@ -172,18 +213,20 @@ export default function MyLocationPage() {
                       </h3>
                     </Link>
 
-                    <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full font-medium uppercase tracking-wide ${statusMap[loc.status]}`}>
+                    <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full font-medium uppercase tracking-wide ${statusMap[displayStatus]}`}>
                       <span className="relative flex h-2 w-2">
-                        {loc.status === "ACTIVE" && (
+                        {displayStatus === "ACTIVE" && (
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
                         )}
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
                       </span>
 
-                      {loc.status === "ACTIVE" && "Đang mở"}
-                      {loc.status === "INACTIVE" && ((loc as any).rejectionDetails && (loc as any).rejectionDetails.length > 0 ? "Đóng cửa" : "Hết hạn")}
-                      {loc.status === "PENDING" && "Chờ duyệt"}
-                      {loc.status === "DRAFTED" && "Bản nháp"}
+                      {displayStatus === "ACTIVE" && "Đang mở"}
+                      {displayStatus === "PENDING" && "Chờ duyệt"}
+                      {displayStatus === "DRAFTED" && "Bản nháp"}
+                      {displayStatus === "REJECTED" && "Bị từ chối"}
+                      {displayStatus === "CLOSED" && "Đóng cửa"}
+                      {displayStatus === "EXPIRED" && "Hết hạn"}
                     </span>
                   </div>
 
@@ -201,7 +244,7 @@ export default function MyLocationPage() {
                   </div>
 
                   <div className="mt-2">
-                    {sub.type === "EXPIRED" || sub.type === "CLOSED" ? (
+                    {sub.type === "EXPIRED" || sub.type === "CLOSED" || sub.type === "REJECTED" ? (
                       <div className="px-3 py-2">
                         <div className="text-sm font-semibold text-red-600">{sub.label}</div>
                         <div className="text-xs text-red-500">{sub.subLabel}</div>
