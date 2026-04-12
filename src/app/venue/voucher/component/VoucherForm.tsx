@@ -348,9 +348,16 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       {/* DESCRIPTION */}
       <FieldWrapper>
         <label className={labelClass}>Mô tả</label>
-        <Tiptap
+        {/* <Tiptap
           value={form.description || ""}
           onChange={(val) => handleChange("description", val)}
+        /> */}
+        <textarea
+          value={form.description}
+          onChange={(e) => handleChange("description", e.target.value)}
+          placeholder="Nhập mô tả voucher..."
+          className={inputClass}
+          rows={4}
         />
       </FieldWrapper>
 
