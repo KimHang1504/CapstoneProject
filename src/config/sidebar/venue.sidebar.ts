@@ -25,7 +25,7 @@ export const venueSidebarConfig: SidebarConfig = {
       icon: 'BarChart3',
     },
     {
-      label: 'Wallet',
+      label: 'Ví của tôi',
       href: '/venue/wallet',
       icon: 'Wallet',
     },

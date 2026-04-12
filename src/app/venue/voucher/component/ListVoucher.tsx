@@ -42,7 +42,7 @@ export default function ListVoucher({ vouchers, loading }: Props) {
 
   if (!vouchers.length) {
     return (
-      <div className="bg-white rounded-xl border border-purple-100 p-12 text-center">
+      <div className="p-12 text-center">
         <p className="text-gray-500">Không có voucher nào</p>
       </div>
     );

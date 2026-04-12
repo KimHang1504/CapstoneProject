@@ -284,40 +284,40 @@ export default function LocationDetailPage() {
                 </div>
 
 
-{location.rejectionDetails?.length ? (
-  <div className="mt-4 relative overflow-hidden rounded-xl border border-red-200 bg-red-50">
-    
-    {/* Accent bar */}
-    <div className="absolute left-0 top-0 h-full w-1.5 bg-red-500" />
+                {location.rejectionDetails?.length ? (
+                    <div className="mt-4 relative overflow-hidden rounded-xl border border-red-200 bg-red-50">
 
-    <div className="p-4 pl-5">
-      <div className="flex items-start gap-3">
-        
-        {/* Icon */}
-        <div className="mt-0.5 text-red-500">
-          <XCircle size={18} />
-        </div>
+                        {/* Accent bar */}
+                        <div className="absolute left-0 top-0 h-full w-1.5 bg-red-500" />
 
-        {/* Content */}
-        <div className="flex-1">
-          <p className="text-sm font-semibold text-red-700">
-            {location.status === 'DRAFTED'
-              ? 'Bị từ chối duyệt'
-              : 'Địa điểm bị đóng'}
-          </p>
+                        <div className="p-4 pl-5">
+                            <div className="flex items-start gap-3">
 
-          <p className="text-sm text-red-600 mt-1">
-            {location.rejectionDetails[0].reason}
-          </p>
+                                {/* Icon */}
+                                <div className="mt-0.5 text-red-500">
+                                    <XCircle size={18} />
+                                </div>
 
-          <p className="text-xs text-red-400 mt-1">
-            {new Date(location.rejectionDetails[0].rejectedAt).toLocaleDateString('vi-VN')}
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-) : null}
+                                {/* Content */}
+                                <div className="flex-1">
+                                    <p className="text-sm font-semibold text-red-700">
+                                        {location.status === 'DRAFTED'
+                                            ? 'Bị từ chối duyệt'
+                                            : 'Địa điểm bị đóng'}
+                                    </p>
+
+                                    <p className="text-sm text-red-600 mt-1">
+                                        {location.rejectionDetails[0].reason}
+                                    </p>
+
+                                    <p className="text-xs text-red-400 mt-1">
+                                        {new Date(location.rejectionDetails[0].rejectedAt).toLocaleDateString('vi-VN')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
 
                 <div className="bg-white rounded-2xl">
                     <div className="relative w-full h-95 overflow-hidden rounded-xl">
