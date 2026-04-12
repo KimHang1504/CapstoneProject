@@ -4,9 +4,11 @@ import { useState } from "react";
 import { CreateVoucherRequest, DiscountType } from "@/api/venue/vouchers/type";
 import SelectLocationModal from "@/app/venue/voucher/component/SelectLocationModal";
 import { uploadImage } from "@/api/upload";
+import { generateImage } from "@/utils/ai";
 import { toast } from "sonner";
 import {
   Upload,
+  Wand2,
 } from "lucide-react";
 import Tiptap from "@/components/Tiptap";
 
@@ -56,6 +58,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const [openLocationModal, setOpenLocationModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
   // Date validation helpers (Vietnam timezone UTC+7)
   const getToday = () => {
@@ -126,6 +129,57 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     } finally {
       setIsUploadingImage(false);
       e.target.value = "";
+    }
+  };
+
+  const handleGenerateImage = async () => {
+    if (!form.title.trim()) {
+      toast.error("Vui lòng nhập tên voucher trước");
+      return;
+    }
+
+    setIsGeneratingImage(true);
+    try {
+      const imagePrompt = `Professional voucher design for: ${form.title}. ${form.description ? `Description: ${form.description}.` : ""} High quality, modern style, attractive for restaurant/cafe/entertainment promotion.`;
+
+      const imageUrl = await generateImage(imagePrompt, {
+        size: "1024x1024",
+        quality: "hd",
+        style: "vivid",
+      });
+
+      if (imageUrl) {
+        const proxyResponse = await fetch("/api/ai-image/download", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url: imageUrl }),
+        });
+
+        if (!proxyResponse.ok) {
+          throw new Error("Không thể tải ảnh AI để upload");
+        }
+
+        const imageBlob = await proxyResponse.blob();
+        const extension = imageBlob.type.split("/")[1] || "png";
+        const aiImageFile = new File(
+          [imageBlob],
+          `voucher-ai-${Date.now()}.${extension}`,
+          { type: imageBlob.type || "image/png" }
+        );
+
+        const uploadedUrl = await uploadImage(aiImageFile);
+        handleChange("imageUrl", uploadedUrl);
+        toast.success("Đã tạo và tải ảnh voucher lên thành công!");
+      } else {
+        toast.error("Không thể tạo ảnh voucher, vui lòng thử lại");
+      }
+    } catch (error) {
+      console.error("Generate voucher image error:", error);
+      toast.error("Có lỗi xảy ra khi tạo ảnh voucher");
+    } finally {
+      setIsGeneratingImage(false);
     }
   };
 
@@ -365,24 +419,44 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       <FieldWrapper>
         <div className="flex items-center justify-between">
           <label className={labelClass}>Ảnh voucher</label>
-          <button
-            type="button"
-            onClick={() => document.getElementById("voucher-image-input")?.click()}
-            disabled={isUploadingImage}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-500 to-cyan-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
-          >
-            {isUploadingImage ? (
-              <>
-                <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                Đang tải...
-              </>
-            ) : (
-              <>
-                <Upload size={14} />
-                Tải ảnh lên
-              </>
-            )}
-          </button>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => document.getElementById("voucher-image-input")?.click()}
+              disabled={isUploadingImage}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-500 to-cyan-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              {isUploadingImage ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Đang tải...
+                </>
+              ) : (
+                <>
+                  <Upload size={14} />
+                  Tải ảnh lên
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleGenerateImage}
+              disabled={isGeneratingImage || !form.title.trim()}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              {isGeneratingImage ? (
+                <>
+                  <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  Đang tạo...
+                </>
+              ) : (
+                <>
+                  <Wand2 size={14} />
+                  Tạo ảnh AI
+                </>
+              )}
+            </button>
+          </div>
         </div>
         <input
           id="voucher-image-input"
