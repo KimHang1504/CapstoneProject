@@ -34,8 +34,8 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     email: initialData?.email || "",
     phoneNumber: initialData?.phoneNumber || "",
     websiteUrl: initialData?.websiteUrl || "",
-    priceMin: initialData?.priceMin || 0,
-    priceMax: initialData?.priceMax || 0,
+    priceMin: initialData?.priceMin ?? 0,
+    priceMax: initialData?.priceMax ?? null,
 
     coverImage: null,
     interiorImage: [],
@@ -86,6 +86,24 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
       if ((hasMood && !hasStyle) || (!hasMood && hasStyle)) {
         toast.error("Vui lòng chọn đầy đủ cả Tâm trạng và Tính cách");
+        return;
+      }
+      // VALIDATE PRICE
+      if (formData.priceMin < 0) {
+        toast.error("Giá tối thiểu phải ≥ 0");
+        return;
+      }
+
+      if (formData.priceMax != null && formData.priceMax <= 0) {
+        toast.error("Giá tối đa phải > 0");
+        return;
+      }
+
+      if (
+        formData.priceMax != null &&
+        formData.priceMin > formData.priceMax
+      ) {
+        toast.error("Giá tối thiểu phải < giá tối đa");
         return;
       }
     }
@@ -142,7 +160,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       data.phoneNumber ||
       data.websiteUrl ||
       data.priceMin > 0 ||
-      data.priceMax > 0 ||
+      data.priceMax != null ||
       data.businessLicense ||
       data.coverImage ||
       data.interiorImage.length > 0 ||
@@ -197,10 +215,10 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         businessLicenseUrl = await uploadImage(formData.businessLicense)
       }
 
-      if (!hasAtLeastOneField(formData)) {
-        toast.error("Vui lòng nhập ít nhất một thông tin để lưu bản nháp");
-        return;
-      }
+      // if (!hasAtLeastOneField(formData)) {
+      //   toast.error("Vui lòng nhập ít nhất một thông tin để lưu bản nháp");
+      //   return;
+      // }
       const hasMood = formData.selectedMoods.length > 0;
       const hasStyle = formData.selectedStyles.length > 0;
 
@@ -236,7 +254,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         phoneNumber: formData.phoneNumber,
         websiteUrl: formData.websiteUrl,
         priceMin: formData.priceMin,
-        priceMax: formData.priceMax,
+        priceMax: formData.priceMax ?? null,
         // isOwnerVerified: true,
 
         coverImage: coverUrl ? [coverUrl] : [],
@@ -287,10 +305,10 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${isActive
-                        ? "bg-linear-to-br from-purple-500 to-indigo-600 text-white shadow-lg scale-110"
-                        : isCompleted
-                          ? "bg-green-500 text-white"
-                          : "bg-gray-200 text-gray-400"
+                      ? "bg-linear-to-br from-purple-500 to-indigo-600 text-white shadow-lg scale-110"
+                      : isCompleted
+                        ? "bg-green-500 text-white"
+                        : "bg-gray-200 text-gray-400"
                       }`}
                   >
                     {isCompleted ? <Check className="w-5 h-5" /> : stepNum}

@@ -11,12 +11,13 @@ import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 
 import ReviewSection from '@/app/venue/review/component/ReviewSection';
-import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
+import {XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
 import { toast } from 'sonner';
 import { checkVenueOwnerVerification, getLocationSubmitErrors } from '@/app/venue/location/utils/venue-location-submit';
+import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 
 export default function LocationDetailPage() {
     const params = useParams();
@@ -33,6 +34,8 @@ export default function LocationDetailPage() {
     const isOpen = location?.todayOpeningHour?.isClosed === false;
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
+
+
 
 
     const moods = Array.from(
@@ -126,6 +129,8 @@ export default function LocationDetailPage() {
         );
     }
 
+    const isPriceEmpty = location.priceMax === null;
+
     const baseUrl =
         process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
 
@@ -203,6 +208,8 @@ export default function LocationDetailPage() {
         fetchLocation();
     };
 
+    const statusUI = getLocationStatusUI(location);
+
     return (
         <div className="min-h-screen p-8">
             <div className="max-w-5xl mx-auto space-y-6">
@@ -211,33 +218,10 @@ export default function LocationDetailPage() {
                         <p className=" text-gray-900 text-3xl font-bold">{location.name}</p>
                         <div className="flex items-center gap-3">
                             <span
-                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border
-                                    ${location.status === 'ACTIVE'
-                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                        : location.status === 'PENDING'
-                                            ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                            : location.status === 'DRAFTED'
-                                                ? 'bg-gray-100 text-gray-600 border-gray-200'
-                                                : location.status === 'INACTIVE'
-                                                    ? 'bg-slate-100 text-slate-500 border-slate-200'
-                                                    : 'bg-rose-50 text-rose-600 border-rose-200'
-                                    }`}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${statusUI.color}`}
                             >
-                                {location.status === 'ACTIVE' && <CheckCircle2 size={16} />}
-                                {location.status === 'PENDING' && <Clock size={16} />}
-                                {location.status === 'DRAFTED' && <FileEdit size={16} />}
-                                {location.status === 'INACTIVE' && <PauseCircle size={16} />}
-                                {!['ACTIVE', 'PENDING', 'DRAFTED', 'INACTIVE'].includes(location.status) && <XCircle size={16} />}
-
-                                {location.status === 'ACTIVE'
-                                    ? 'Đang hoạt động'
-                                    : location.status === 'PENDING'
-                                        ? 'Chờ duyệt'
-                                        : location.status === 'DRAFTED'
-                                            ? 'Bản nháp'
-                                            : location.status === 'INACTIVE'
-                                                ? 'Tạm ngưng'
-                                                : 'Không hoạt động'}
+                                {/* <statusUI.icon size={16} /> */}
+                                {statusUI.label}
                             </span>
                         </div>
                     </div>
@@ -276,6 +260,43 @@ export default function LocationDetailPage() {
                         </button>
                     </div>
                 </div>
+
+
+                {location.rejectionDetails?.length ? (
+                    <div className="mt-4 relative overflow-hidden rounded-xl border border-red-200 bg-red-50">
+
+                        {/* Accent bar */}
+                        <div className="absolute left-0 top-0 h-full w-1.5 bg-red-500" />
+
+                        <div className="p-4 pl-5">
+                            <div className="flex items-start gap-3">
+
+                                {/* Icon */}
+                                <div className="mt-0.5 text-red-500">
+                                    <XCircle size={18} />
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1">
+                                    <p className="text-sm font-semibold text-red-700">
+                                        {location.status === 'DRAFTED'
+                                            ? 'Bị từ chối duyệt'
+                                            : 'Địa điểm bị đóng'}
+                                    </p>
+
+                                    <p className="text-sm text-red-600 mt-1">
+                                        {location.rejectionDetails[0].reason}
+                                    </p>
+
+                                    <p className="text-xs text-red-400 mt-1">
+                                        {new Date(location.rejectionDetails[0].rejectedAt).toLocaleDateString('vi-VN')}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : null}
+
                 <div className="bg-white rounded-2xl">
                     <div className="relative w-full h-95 overflow-hidden rounded-xl">
 
@@ -332,9 +353,18 @@ export default function LocationDetailPage() {
                 <div className="grid grid-cols-3 gap-6 py-3">
                     <div className="bg-white rounded-2xl space-y-4 col-span-2">
                         <div className="bg-white rounded-2xl">
-                            <p className="text-2xl text-gray-900 font-bold">
-                                {location.priceMin.toLocaleString('vi-VN')} - {location.priceMax.toLocaleString('vi-VN')} VND
-                            </p>
+                            <FieldDisplay
+                                value={isPriceEmpty ? null : location.priceMax}
+                                label="khoảng giá"
+                                onEdit={handleEdit}
+                            >
+                                <p className="text-2xl text-gray-900 font-bold">
+                                    {location.priceMin.toLocaleString('vi-VN')}
+                                    {" - "}
+                                    {location.priceMax?.toLocaleString('vi-VN')}
+                                    {" VND"}
+                                </p>
+                            </FieldDisplay>
                         </div>
                         {(location.status === 'ACTIVE' || location.status === 'INACTIVE') && (
                             <div className="items-center gap-3">
@@ -410,7 +440,7 @@ export default function LocationDetailPage() {
                                 Mở trang redeem →
                             </a>
                         </div> */}
-                        <p className="text-sm font-bold mb-2">Danh mục</p>
+                        {/* <p className="text-sm font-bold mb-2">Danh mục</p> */}
 
                         {location.categories?.length ? (
                             <div className="flex gap-2 flex-wrap">
@@ -433,7 +463,7 @@ export default function LocationDetailPage() {
                                     moods.map(mood => (
                                         <div key={mood.id} className="group relative inline-block">
                                             <span
-                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#95cfff] px-4 py-1 text-sm font-medium text-white"
                                             >
                                                 {mood.name}
                                                 <Info size={12} className="opacity-80" />
@@ -457,13 +487,13 @@ export default function LocationDetailPage() {
                         </div>
 
                         <div>
-                            <p className="text-sm font-bold mb-2">Tags</p>
+                            <p className="text-sm font-bold mb-2">Tính cách</p>
                             <div className="flex flex-wrap gap-2">
                                 {personalities.length > 0 ? (
                                     personalities.map(personality => (
                                         <div key={personality.id} className="group relative inline-block">
                                             <span
-                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#A7D7FF] px-4 py-1 text-sm font-medium text-white"
+                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#c493f7] px-4 py-1 text-sm font-medium text-white"
                                             >
                                                 {personality.name}
                                                 <Info size={12} className="opacity-80" />
@@ -557,7 +587,7 @@ export default function LocationDetailPage() {
                             </div>
 
                             {/* Actions */}
-                            <div className="flex items-center gap-3 text-xs">
+                            {/* <div className="flex items-center gap-3 text-xs">
                                 <a
                                     href={redeemLink}
                                     target="_blank"
@@ -566,7 +596,7 @@ export default function LocationDetailPage() {
                                     Mở thử link →
                                 </a>
 
-                                {/* <button
+                                <button
                                     onClick={() => {
                                         navigator.clipboard.writeText(redeemLink);
                                         toast.success("Link đã sẵn sàng để gửi qua Zalo / Messenger");
@@ -574,8 +604,8 @@ export default function LocationDetailPage() {
                                     className="text-gray-500 hover:text-gray-700"
                                 >
                                     Copy để gửi
-                                </button> */}
-                            </div>
+                                </button>
+                            </div> */}
                         </div>
                     </div>
                 </div>

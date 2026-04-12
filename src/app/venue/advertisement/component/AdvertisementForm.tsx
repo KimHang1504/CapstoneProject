@@ -421,7 +421,7 @@ export default function AdvertisementForm({
         </select>
       </FieldWrapper>
       <FieldWrapper>
-        <label className={labelClass}>Mood type</label>
+        <label className={labelClass}>Tâm trạng</label>
 
         <div className="mt-2 flex flex-wrap gap-2">
           {(moodOptions ?? []).map((mood) => {

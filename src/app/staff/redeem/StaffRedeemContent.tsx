@@ -198,7 +198,7 @@ export default function StaffRedeemContent() {
                         <p className="text-sm font-semibold text-gray-800 mb-1">Khoảng giá</p>
                         <p className="text-sm font-medium text-pink-600">
                           {location.priceMin.toLocaleString("vi-VN")} -{" "}
-                          {location.priceMax.toLocaleString("vi-VN")} ₫
+                          {location.priceMax?.toLocaleString("vi-VN")} ₫
                         </p>
                       </div>
                     )}
