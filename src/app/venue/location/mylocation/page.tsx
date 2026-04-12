@@ -7,18 +7,11 @@ import ImageWithFallback from '@/components/ImageWithFallback';
 
 import { getMyVenueLocations } from '@/api/venue/location/api';
 import { MyVenueLocation } from '@/api/venue/location/type';
+import { resolveLocationStatus } from '@/app/venue/location/resolver';
+import { locationStatusMeta } from "@/app/venue/location/locationStatusMeta";
+
 
 type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'CLOSED' | 'EXPIRED' | 'PENDING' | 'DRAFTED';
-type DisplayStatus =
-  | 'ACTIVE'
-  | 'INACTIVE'
-  | 'PENDING'
-  | 'DRAFTED'
-  | 'REJECTED'
-  | 'CLOSED'
-  | 'EXPIRED';
-
-
 
 export default function MyLocationPage() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
@@ -27,16 +20,6 @@ export default function MyLocationPage() {
   const [loading, setLoading] = useState(true);
 
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const statusMap: Record<DisplayStatus, string> = {
-    ACTIVE: "bg-green-100 text-green-700",
-    INACTIVE: "bg-red-100 text-red-700",
-    PENDING: "bg-yellow-100 text-yellow-700",
-    DRAFTED: "bg-gray-100 text-gray-600",
-    REJECTED: "bg-red-100 text-red-700",
-    CLOSED: "bg-red-100 text-red-700",
-    EXPIRED: "bg-red-100 text-red-700",
-  };
 
 
 
@@ -155,18 +138,6 @@ export default function MyLocationPage() {
     setSearchKeyword('');
   };
 
-  function getDisplayStatus(loc: MyVenueLocation): DisplayStatus {
-    const hasRejection = !!loc.rejectionDetails?.length;
-
-    if (loc.status === 'DRAFTED' && hasRejection) return 'REJECTED';
-
-    if (loc.status === 'INACTIVE') {
-      if (hasRejection) return 'CLOSED';
-      return 'EXPIRED';
-    }
-
-    return loc.status;
-  }
 
   if (loading) {
     return <div className="p-8 text-gray-500">Đang tải dữ liệu...</div>;
@@ -190,7 +161,8 @@ export default function MyLocationPage() {
 
           {locations.map((loc) => {
             const sub = getSubscriptionInfo(loc);
-            const displayStatus = getDisplayStatus(loc);
+            const displayStatus = resolveLocationStatus(loc);
+            const meta = locationStatusMeta[displayStatus];
             return (
               <div
                 key={loc.id}
@@ -213,7 +185,7 @@ export default function MyLocationPage() {
                       </h3>
                     </Link>
 
-                    <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full font-medium uppercase tracking-wide ${statusMap[displayStatus]}`}>
+                    <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full font-medium uppercase tracking-wide ${meta.color}`}>
                       <span className="relative flex h-2 w-2">
                         {displayStatus === "ACTIVE" && (
                           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
@@ -221,12 +193,7 @@ export default function MyLocationPage() {
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
                       </span>
 
-                      {displayStatus === "ACTIVE" && "Đang mở"}
-                      {displayStatus === "PENDING" && "Chờ duyệt"}
-                      {displayStatus === "DRAFTED" && "Bản nháp"}
-                      {displayStatus === "REJECTED" && "Bị từ chối"}
-                      {displayStatus === "CLOSED" && "Đóng cửa"}
-                      {displayStatus === "EXPIRED" && "Hết hạn"}
+                      {meta.label}
                     </span>
                   </div>
 

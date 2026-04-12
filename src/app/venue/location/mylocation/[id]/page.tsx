@@ -11,12 +11,13 @@ import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 
 import ReviewSection from '@/app/venue/review/component/ReviewSection';
-import { CheckCircle2, Clock, FileEdit, PauseCircle, XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
+import {XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
 import { toast } from 'sonner';
 import { checkVenueOwnerVerification, getLocationSubmitErrors } from '@/app/venue/location/utils/venue-location-submit';
+import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 
 export default function LocationDetailPage() {
     const params = useParams();
@@ -207,7 +208,7 @@ export default function LocationDetailPage() {
         fetchLocation();
     };
 
-    const rejection = location.rejectionDetails?.[0];
+    const statusUI = getLocationStatusUI(location);
 
     return (
         <div className="min-h-screen p-8">
@@ -217,33 +218,10 @@ export default function LocationDetailPage() {
                         <p className=" text-gray-900 text-3xl font-bold">{location.name}</p>
                         <div className="flex items-center gap-3">
                             <span
-                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border
-                                    ${location.status === 'ACTIVE'
-                                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                                        : location.status === 'PENDING'
-                                            ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                            : location.status === 'DRAFTED'
-                                                ? 'bg-gray-100 text-gray-600 border-gray-200'
-                                                : location.status === 'INACTIVE'
-                                                    ? 'bg-slate-100 text-slate-500 border-slate-200'
-                                                    : 'bg-rose-50 text-rose-600 border-rose-200'
-                                    }`}
+                                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${statusUI.color}`}
                             >
-                                {location.status === 'ACTIVE' && <CheckCircle2 size={16} />}
-                                {location.status === 'PENDING' && <Clock size={16} />}
-                                {location.status === 'DRAFTED' && <FileEdit size={16} />}
-                                {location.status === 'INACTIVE' && <PauseCircle size={16} />}
-                                {!['ACTIVE', 'PENDING', 'DRAFTED', 'INACTIVE'].includes(location.status) && <XCircle size={16} />}
-
-                                {location.status === 'ACTIVE'
-                                    ? 'Đang hoạt động'
-                                    : location.status === 'PENDING'
-                                        ? 'Chờ duyệt'
-                                        : location.status === 'DRAFTED'
-                                            ? 'Bản nháp'
-                                            : location.status === 'INACTIVE'
-                                                ? 'Tạm ngưng'
-                                                : 'Không hoạt động'}
+                                {/* <statusUI.icon size={16} /> */}
+                                {statusUI.label}
                             </span>
                         </div>
                     </div>
