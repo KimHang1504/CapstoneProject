@@ -20,12 +20,12 @@ export default function LoginPage() {
     const [forgotPasswordModalOpen, setForgotPasswordModalOpen] = useState(false);
     const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
     const [isSendingEmail, setIsSendingEmail] = useState(false);
-    
+
     const [otpModalOpen, setOtpModalOpen] = useState(false);
     const [otpCode, setOtpCode] = useState("");
     const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
     const [otpVerified, setOtpVerified] = useState(false);
-    
+
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isResettingPassword, setIsResettingPassword] = useState(false);
@@ -33,7 +33,7 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         // Validate input
         if (!email || !password) {
             toast.error("Vui lòng nhập đầy đủ email và mật khẩu.");
@@ -42,14 +42,14 @@ export default function LoginPage() {
 
         const payload = { email, password, rememberMe };
         toast.loading("Đang đăng nhập...", { id: "login-loading" });
-        
+
         try {
             const res = await login(payload);
             const token = res.data.accessToken;
 
             const user = getUserFromToken(token);
             const role = user.role;
-            
+
             if (role === "MEMBER") {
                 toast.dismiss("login-loading");
                 toast.error("Tài khoản MEMBER không được phép đăng nhập vào hệ thống quản lý.");
@@ -68,16 +68,17 @@ export default function LoginPage() {
             } else if (role === "VENUEOWNER") {
                 nav.push("/venue/dashboard");
             } else if (role === "STAFF") {
-                nav.push(`/staff/redeem?locationId=${user.assignedVenueLocationId}`);
+                nav.push("/venue/redeem");
             }
+            
         } catch (error: any) {
             toast.dismiss("login-loading");
             console.error("Error occurred while logging in:", error);
-            
+
             // Handle specific error cases
             const status = error.response?.status;
             const message = error.response?.data?.message || error.message;
-            
+
             if (status === 401 || message?.toLowerCase().includes("invalid email or password")) {
                 toast.error("Email hoặc mật khẩu không chính xác.");
             } else if (status === 403) {
@@ -108,7 +109,7 @@ export default function LoginPage() {
 
             const user = getUserFromToken(token);
             const role = user.role;
-            
+
             if (role === "MEMBER") {
                 toast.dismiss("google-login-loading");
                 toast.error("Tài khoản MEMBER không được phép đăng nhập bằng Google vào hệ thống quản lý.");
@@ -132,11 +133,11 @@ export default function LoginPage() {
         } catch (error: any) {
             toast.dismiss("google-login-loading");
             console.error("Error occurred while logging in with Google:", error);
-            
+
             // Handle specific error cases
             const status = error.response?.status;
             const message = error.response?.data?.message || error.message;
-            
+
             if (status === 401) {
                 toast.error("Xác thực Google thất bại. Vui lòng thử lại.");
             } else if (status === 403) {
@@ -157,14 +158,14 @@ export default function LoginPage() {
 
     const handleForgotPassword = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         if (!forgotPasswordEmail) {
             toast.error("Vui lòng nhập email.");
             return;
         }
 
         setIsSendingEmail(true);
-        
+
         try {
             await forgotPassword({ email: forgotPasswordEmail });
             toast.success("Mã OTP đã được gửi đến email của bạn!");
@@ -174,7 +175,7 @@ export default function LoginPage() {
         } catch (error: any) {
             console.error("Forgot password error:", error);
             const message = error.response?.data?.message || error.message;
-            
+
             if (error.response?.status === 404) {
                 toast.error("Email không tồn tại trong hệ thống.");
             } else if (message) {
@@ -189,25 +190,25 @@ export default function LoginPage() {
 
     const handleVerifyOtp = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         if (!otpCode) {
             toast.error("Vui lòng nhập mã OTP.");
             return;
         }
 
         setIsVerifyingOtp(true);
-        
+
         try {
-            await verifyOtp({ 
-                email: forgotPasswordEmail, 
-                otpCode: otpCode 
+            await verifyOtp({
+                email: forgotPasswordEmail,
+                otpCode: otpCode
             });
             toast.success("Xác thực OTP thành công! Vui lòng đặt lại mật khẩu.");
             setOtpVerified(true);
         } catch (error: any) {
             console.error("Verify OTP error:", error);
             const message = error.response?.data?.message || error.message;
-            
+
             if (error.response?.status === 400) {
                 toast.error("Mã OTP không chính xác hoặc đã hết hạn.");
             } else if (message) {
@@ -222,7 +223,7 @@ export default function LoginPage() {
 
     const handleResetPassword = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+
         if (!newPassword || !confirmPassword) {
             toast.error("Vui lòng nhập đầy đủ thông tin.");
             return;
@@ -239,10 +240,10 @@ export default function LoginPage() {
         }
 
         setIsResettingPassword(true);
-        
+
         try {
-            await resetPassword({ 
-                email: forgotPasswordEmail, 
+            await resetPassword({
+                email: forgotPasswordEmail,
                 otpCode: otpCode,
                 newPassword: newPassword,
                 confirmPassword: confirmPassword
@@ -257,7 +258,7 @@ export default function LoginPage() {
         } catch (error: any) {
             console.error("Reset password error:", error);
             const message = error.response?.data?.message || error.message;
-            
+
             if (error.response?.status === 400) {
                 toast.error("Yêu cầu không hợp lệ. Vui lòng thử lại.");
             } else if (message) {
@@ -272,7 +273,7 @@ export default function LoginPage() {
 
     const handleResendOtp = async () => {
         setIsSendingEmail(true);
-        
+
         try {
             await forgotPassword({ email: forgotPasswordEmail });
             toast.success("Mã OTP mới đã được gửi đến email của bạn!");
@@ -382,7 +383,7 @@ export default function LoginPage() {
 
             {/* Forgot Password Modal */}
             {forgotPasswordModalOpen && (
-                <div 
+                <div
                     className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
                     onClick={(e) => {
                         if (e.target === e.currentTarget && !isSendingEmail) {
@@ -469,7 +470,7 @@ export default function LoginPage() {
 
             {/* Verify OTP Modal */}
             {otpModalOpen && (
-                <div 
+                <div
                     className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
                     onClick={(e) => {
                         if (e.target === e.currentTarget && !isVerifyingOtp && !isResettingPassword) {
