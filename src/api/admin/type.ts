@@ -65,6 +65,7 @@ export interface Venue {
   fullPageMenuImage?: string[];
 
   category?: string | null;
+  categories?: { id: number; name: string }[] | null;
 
   isOwnerVerified?: boolean;
   businessLicenseUrl?: string | null;
