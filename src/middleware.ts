@@ -30,11 +30,7 @@ export function middleware(request: NextRequest) {
             }
 
             if (role === 'STAFF') {
-                const locationId = getUserFromToken(token).assignedVenueLocationId;
-
-                return NextResponse.redirect(
-                    new URL(`/staff/redeem?locationId=${locationId}`, request.url)
-                );
+                return NextResponse.redirect(new URL('/venue/redeem', request.url));
             }
         } catch {
             return NextResponse.redirect(new URL('/auth', request.url));
@@ -50,8 +46,14 @@ export function middleware(request: NextRequest) {
                 return NextResponse.redirect(new URL('/unauthorized', request.url));
             }
 
-            if (pathname.startsWith('/venue') && role !== 'VENUEOWNER') {
-                return NextResponse.redirect(new URL('/unauthorized', request.url));
+            if (pathname.startsWith('/venue')) {
+                if (role !== 'VENUEOWNER') {
+                    if (pathname.startsWith('/venue/redeem') && role === 'STAFF') {
+                        // allow
+                    } else {
+                        return NextResponse.redirect(new URL('/unauthorized', request.url));
+                    }
+                }
             }
 
             if (pathname.startsWith('/staff') && role !== 'STAFF') {

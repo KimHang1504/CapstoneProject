@@ -13,8 +13,9 @@ import {
 } from 'recharts';
 import { getVenueOwnerDashboardOverview } from '@/api/venue/dashboard/api';
 import { VenueOwnerDashboardOverview, VenuePerformance, RecentAdvertisement } from '@/api/venue/dashboard/type';
+import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 
-const CHART_COLORS = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#f43f5e'];
+// const CHART_COLORS = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#f43f5e'];
 const ITEMS_PER_PAGE = 5;
 
 function StatCard({
@@ -71,12 +72,7 @@ function safeImg(src: string | null | undefined) {
 }
 
 function VenueRow({ v }: { v: VenuePerformance }) {
-  const statusColor: Record<string, string> = {
-    ACTIVE: 'bg-emerald-100 text-emerald-600',
-    INACTIVE: 'bg-gray-100 text-gray-500',
-    PENDING: 'bg-yellow-100 text-yellow-600',
-    DRAFTED: 'bg-blue-100 text-blue-500',
-  };
+  const statusUI = getLocationStatusUI(v);
   return (
     <Link href={`/venue/location/mylocation/${v.venueId}`}>
       <div className="flex items-center gap-3 p-2.5 rounded-lg hover:bg-violet-50 transition cursor-pointer">
@@ -96,8 +92,8 @@ function VenueRow({ v }: { v: VenuePerformance }) {
           <Star size={11} fill="currentColor" />
           {v.averageRating.toFixed(1)}
         </div>
-        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[v.status] ?? 'bg-gray-100 text-gray-500'}`}>
-          {v.status}
+        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${statusUI.color}`}>
+          {statusUI.label}
         </span>
         <div className="text-[10px] text-gray-500 shrink-0 text-right">
           <div>{v.checkInCount} check-in</div>
@@ -153,8 +149,32 @@ export default function VenueDashboardPage() {
     { name: 'Yêu thích', value: data.totalFavorites },
   ];
 
+  const statusUI: Record<string, { label: string; color: string }> = {
+    DRAFT: {
+      label: 'Nháp',
+      color: 'bg-gray-100 text-gray-600',
+    },
+    PENDING: {
+      label: 'Chờ duyệt',
+      color: 'bg-yellow-100 text-yellow-600',
+    },
+    APPROVED: {
+      label: 'Đã duyệt',
+      color: 'bg-green-100 text-green-600',
+    },
+    REJECTED: {
+      label: 'Bị từ chối',
+      color: 'bg-red-100 text-red-600',
+    },
+    ACTIVE: {
+      label: 'Đang hoạt động',
+      color: 'bg-emerald-100 text-emerald-600',
+    },
+  };
+
+
   return (
-    <div className="p-4 space-y-4 max-w-[1400px] mx-auto">
+    <div className="p-4 space-y-4 max-w-350 mx-auto">
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -162,7 +182,7 @@ export default function VenueDashboardPage() {
           <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
           <p className="text-xs text-gray-400">Tổng quan hoạt động của bạn</p>
         </div>
-        <div className="flex items-center gap-2 bg-gradient-to-r from-purple-50 to-violet-50 px-3 py-1.5 rounded-lg border border-purple-200">
+        <div className="flex items-center gap-2 bg-linear-to-r from-purple-50 to-violet-50 px-3 py-1.5 rounded-lg border border-purple-200">
           <Sparkles size={14} className="text-purple-600" />
           <span className="text-xs font-medium text-purple-700">AI Insights</span>
         </div>
@@ -218,7 +238,7 @@ export default function VenueDashboardPage() {
                     </div>
                   </div>
                   {/* Spacer để cân bằng với cột bên phải */}
-                  <div className="h-[30px]"></div>
+                  <div className="h-7.5"></div>
                 </div>
                 <div className="mt-2.5 pt-2.5 border-t border-gray-100">
                   <p className="text-[11px] text-gray-400">Tổng: <span className="font-bold text-gray-900">{data.totalVenues}</span></p>
@@ -277,7 +297,7 @@ export default function VenueDashboardPage() {
           <div className="grid grid-cols-2 gap-4">
 
             {/* Engagement Bar */}
-            <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-[240px] flex flex-col">
+            <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-60 flex flex-col">
               <SectionTitle icon={TrendingUp}>Tương tác</SectionTitle>
               <div className="flex-1">
                 <ResponsiveContainer width="100%" height="100%">
@@ -295,21 +315,19 @@ export default function VenueDashboardPage() {
             </div>
 
             {/* Recent Ads */}
-            <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-[240px] flex flex-col">
+            <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-60 flex flex-col">
               <SectionTitle icon={Megaphone}>Quảng cáo gần đây</SectionTitle>
               <div className="flex-1 overflow-y-auto space-y-2">
                 {data.recentAdvertisements.length === 0 && (
                   <p className="text-center text-gray-400 py-6 text-xs">Chưa có quảng cáo nào.</p>
                 )}
                 {data.recentAdvertisements.slice(0, 3).map((ad: RecentAdvertisement) => {
-                  const statusColor: Record<string, string> = {
-                    DRAFT: 'bg-gray-100 text-gray-600',
-                    PENDING: 'bg-yellow-100 text-yellow-600',
-                    APPROVED: 'bg-green-100 text-green-600',
-                    REJECTED: 'bg-red-100 text-red-600',
-                    ACTIVE: 'bg-emerald-100 text-emerald-600',
+                  const ui = statusUI[ad.status] ?? {
+                    label: ad.status,
+                    color: 'bg-gray-100 text-gray-500',
                   };
                   return (
+
                     <Link key={ad.id} href={`/venue/advertisement/myadvertisement/${ad.id}`}>
                       <div className="flex items-center gap-2 p-2 rounded-lg hover:bg-violet-50 transition cursor-pointer border border-gray-100">
                         <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-100">
@@ -324,8 +342,10 @@ export default function VenueDashboardPage() {
                           <p className="font-medium text-xs text-gray-900 truncate">{ad.title}</p>
                           <p className="text-[10px] text-gray-400">{ad.venueCount} địa điểm</p>
                         </div>
-                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${statusColor[ad.status] ?? 'bg-gray-100 text-gray-500'}`}>
-                          {ad.status}
+                        <span
+                          className={`text-[10px] px-2 py-0.5 rounded-full font-medium shrink-0 ${ui.color}`}
+                        >
+                          {ui.label}
                         </span>
                       </div>
                     </Link>
@@ -343,7 +363,7 @@ export default function VenueDashboardPage() {
           </div>
 
           {/* Voucher Chart */}
-          <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-[240px] flex flex-col">
+          <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-60 flex flex-col">
             <SectionTitle icon={Ticket}>Voucher</SectionTitle>
             <div className="flex-1">
               <ResponsiveContainer width="100%" height="100%">
@@ -376,7 +396,7 @@ export default function VenueDashboardPage() {
 
           {/* Top Venue - Larger */}
           {data.topPerformingVenue && (
-            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden h-[300px] flex flex-col">
+            <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden h-75 flex flex-col">
               <div className="p-3 pb-2">
                 <SectionTitle icon={Star}>Địa điểm nổi bật</SectionTitle>
               </div>
@@ -388,7 +408,7 @@ export default function VenueDashboardPage() {
                     fill
                     className="object-cover group-hover:scale-105 transition"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
                   <div className="absolute bottom-3 left-3 right-3 text-white">
                     <p className="font-bold text-base leading-tight mb-1">{data.topPerformingVenue.venueName}</p>
                     <p className="text-xs opacity-90">{data.topPerformingVenue.category ?? '—'}</p>
@@ -413,7 +433,7 @@ export default function VenueDashboardPage() {
           )}
 
           {/* Venues List with Pagination */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-[438px] flex flex-col">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-109.5 flex flex-col">
             <div className="p-3 border-b border-gray-100">
               <SectionTitle icon={BarChart2}>Địa điểm ({data.venues.length})</SectionTitle>
             </div>
