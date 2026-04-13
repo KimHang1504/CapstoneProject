@@ -1,3 +1,5 @@
+//không dùng nữa, để dành cho việc tạo voucher sau này, khi cần tạo voucher sẽ lấy lại code này và chỉnh sửa lại cho phù hợp
+
 "use client";
 
 import StarterKit from "@tiptap/starter-kit";
