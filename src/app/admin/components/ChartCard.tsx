@@ -86,6 +86,7 @@ export default function ChartCard({
           <YAxis
             tickFormatter={yFormatter}
             width={60}
+            allowDecimals={false}
           />
 
           <Tooltip content={<CustomTooltip yLabel={yLabel} />} />
@@ -119,6 +120,7 @@ export default function ChartCard({
           <YAxis
             tickFormatter={yFormatter}
             width={60}
+            allowDecimals={false}
           />
 
           <Tooltip content={<CustomTooltip yLabel={yLabel} />} />
@@ -146,6 +148,7 @@ export default function ChartCard({
         <YAxis
           tickFormatter={yFormatter}
           width={60}
+          allowDecimals={false}
         />
 
         <Tooltip content={<CustomTooltip yLabel={yLabel} />} />
