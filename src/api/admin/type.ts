@@ -490,7 +490,7 @@ export interface Voucher {
 
   createdAt: string;
   updatedAt: string;
-
+  imageUrl?: string | null;
   locations: VoucherLocation[];
 }
 
