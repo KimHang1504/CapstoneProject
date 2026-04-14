@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementDetail, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
 
 //Dashboard
 export const getDashboardStats = (request: DashboardRequest) => {
@@ -13,7 +13,7 @@ export const getDashboardStats = (request: DashboardRequest) => {
 
 //Venue management
 export const getAllPendingVenues = (
-    page: number, 
+    page: number,
     pageSize: number,
     status?: string,
     search?: string
@@ -120,12 +120,20 @@ export const getPendingAdvertisements = () => {
     return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/pending");
 }
 
+export const getAdvertisementDetail = (id: number) => {
+    return apiClient.get<ApiResponse<AdvertisementDetail>>(`/api/Advertisement/${id}`);
+}
+
 export const acceptPendingAdvertisements = (body: AdvertisementAcceptRequest) => {
     return apiClient.post<ApiResponse<void>>("/api/Advertisement/approve", body);
 }
 
 export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) => {
     return apiClient.post<ApiResponse<void>>("/api/Advertisement/reject", body);
+}
+
+export const getAllAdvertisements = () => {
+    return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/all");
 }
 
 //Voucher management

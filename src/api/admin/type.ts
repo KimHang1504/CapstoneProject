@@ -1,3 +1,4 @@
+import { PlacementType } from "../venue/advertisement/type";
 import { VenueLocationDetail } from "../venue/location/type";
 
 //Dashboard
@@ -409,6 +410,17 @@ export interface Recommendations {
 }
 
 //Advertisement
+export type AdStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "COMPLETED"
+  | "REFUNDED"
+  | "DRAFT"
+  | "ACTIVE"
+  | "INACTIVE"
+  | "REJECTED"
+  ;
+
 export interface Advertisement {
   id: number;
   title: string;
@@ -418,6 +430,57 @@ export interface Advertisement {
   rejectionHistory: AdvertisementRejectionHistory[];
   desiredStartDate: string;
   venueLocationCount: number;
+}
+
+export interface VenueLocationAd {
+  id: number;
+  venueId: number;
+  venueName: string;
+  priorityScore: number;
+  startDate: string; // ISO date
+  endDate: string;   // ISO date
+  status: AdStatus;
+}
+
+export interface RefundInfo {
+  [key: string]: any;
+}
+
+export interface AdsOrder {
+  id: number;
+  packageName: string;
+  pricePaid: number;
+  status: AdStatus;
+  createdAt: string; // ISO date
+  hasRefund: boolean;
+  refundInfo: RefundInfo | null;
+}
+
+export interface AdvertisementDetail {
+  id: number;
+  isDeleted: boolean;
+  venueOwnerId: number;
+
+  title: string;
+  content: string;
+  bannerUrl: string;
+  targetUrl: string;
+
+  placementType: PlacementType;
+
+  moodTypeId: number;
+  moodTypeName: string;
+
+  status: AdStatus;
+
+  rejectionHistory: AdvertisementRejectionHistory[];
+
+  desiredStartDate: string;
+  createdAt: string;
+  updatedAt: string;
+
+  venueLocationAds: VenueLocationAd[];
+  adsOrders: AdsOrder[];
 }
 
 export interface AdvertisementRejectionHistory {
