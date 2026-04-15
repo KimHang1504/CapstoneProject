@@ -77,7 +77,7 @@ export default function VoucherApprovalActions({ voucherId }: Props) {
             <button
                 onClick={() => setOpen(true)}
                 disabled={loading}
-                className="px-4 py-2 rounded-lg border border-red-400 text-red-600 hover:bg-red-50"
+                className="px-4 py-2 rounded-lg border border-red-400 text-red-600 hover:bg-red-50 cursor-pointer"
             >
                 Từ chối
             </button>
@@ -85,7 +85,7 @@ export default function VoucherApprovalActions({ voucherId }: Props) {
             <button
                 onClick={handleApprove}
                 disabled={loading}
-                className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600"
+                className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600 cursor-pointer"
             >
                 Đồng ý
             </button>
@@ -107,14 +107,14 @@ export default function VoucherApprovalActions({ voucherId }: Props) {
                         <div className="flex justify-end gap-3">
                             <button
                                 onClick={() => setOpen(false)}
-                                className="px-4 py-2 border rounded-lg"
+                                className="px-4 py-2 border rounded-lg cursor-pointer"
                             >
                                 Hủy
                             </button>
 
                             <button
                                 onClick={() => handleReject()}
-                                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer"
                             >
                                 Xác nhận
                             </button>

@@ -89,14 +89,14 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow p-6 flex justify-between items-center">
-        <p>
+      <div className="bg-white rounded-xl shadow p-6 flex flex-col gap-4">
+        <p className="text-gray-700 font-medium">
           {status === "PENDING"
             ? "Bạn có chấp nhận đơn đăng kí địa điểm này không?"
             : "Quản lý hoạt động của địa điểm"}
         </p>
 
-        <div className="flex gap-4">
+         <div className="flex gap-4 justify-start">
           {status === "PENDING" ? (
             <>
               <button

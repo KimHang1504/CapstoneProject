@@ -5,44 +5,80 @@ import VoucherScan from "@/app/venue/redeem/component/VoucherScan";
 import { useState, useEffect, useRef } from "react";
 import { getMyVenueLocations } from "@/api/venue/location/api";
 import { MyVenueLocation } from "@/api/venue/location/type";
+import { getUserFromToken } from "@/utils/jwt";
 
 export default function RedeemVoucherPage() {
     const [mode, setMode] = useState<"input" | "scan">("input");
     const [locations, setLocations] = useState<MyVenueLocation[]>([]);
     const [selectedLocationId, setSelectedLocationId] = useState<number | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
     const dropdownRef = useRef<HTMLDivElement>(null);
 
+    const token =
+        typeof window !== "undefined"
+            ? document.cookie
+                .split("; ")
+                .find((c) => c.startsWith("accessToken="))
+                ?.split("=")[1]
+            : null;
+
+    const user = token ? getUserFromToken(token) : null;
+    const role = user?.role;
+
+    const isStaff = role === "STAFF";
+    const isVenueOwner = role === "VENUEOWNER";
+
     useEffect(() => {
+        if (!isVenueOwner) return;
+
         getMyVenueLocations()
             .then((res) => {
                 const active = res.filter((l) => l.status === "ACTIVE");
                 setLocations(active);
-                if (active.length > 0) setSelectedLocationId(active[0].id);
+
+                if (active.length > 0) {
+                    setSelectedLocationId(active[0].id);
+                }
             })
             .catch(console.error);
-    }, []);
+    }, [isVenueOwner]);
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
                 setIsDropdownOpen(false);
             }
         };
 
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        return () =>
+            document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const selectedLocation = locations.find((loc) => loc.id === selectedLocationId);
-    console.log("Location ID:", selectedLocationId);
+
+    const staffLocationId = isStaff
+        ? user?.assignedVenueLocationId ?? null
+        : null;
+
+    const activeLocationId = isStaff ? staffLocationId : selectedLocationId;
+
+    const selectedLocation = locations.find(
+        (loc) => loc.id === activeLocationId
+    );
+
+    console.log("Selected Location:", user?.assignedVenueLocationId);
+
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
             <div className="w-full space-y-6">
                 {/* Header */}
                 <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                       
+
                         <div>
                             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Sử dụng Voucher</h1>
                             <p className="text-xs sm:text-sm text-gray-500 mt-0.5">Quét hoặc nhập mã để xác nhận</p>
@@ -51,18 +87,17 @@ export default function RedeemVoucherPage() {
                 </div>
 
                 {/* Main Content Grid */}
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6">
+                <div className="flex gap-5">
                     {/* Left: Voucher Input/Scan */}
-                    <div className="xl:col-span-2">
+                    <div className="flex-1">
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden h-full">
                             <div className="flex border-b border-gray-100">
                                 <button
                                     onClick={() => setMode("input")}
-                                    className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${
-                                        mode === "input"
-                                            ? "text-emerald-600 bg-emerald-50 border-b-2 border-emerald-600"
-                                            : "text-gray-600 hover:bg-gray-50"
-                                    }`}
+                                    className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${mode === "input"
+                                        ? "text-emerald-600 bg-emerald-50 border-b-2 border-emerald-600"
+                                        : "text-gray-600 hover:bg-gray-50"
+                                        }`}
                                 >
                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -72,11 +107,10 @@ export default function RedeemVoucherPage() {
 
                                 <button
                                     onClick={() => setMode("scan")}
-                                    className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${
-                                        mode === "scan"
-                                            ? "text-emerald-600 bg-emerald-50 border-b-2 border-emerald-600"
-                                            : "text-gray-600 hover:bg-gray-50"
-                                    }`}
+                                    className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${mode === "scan"
+                                        ? "text-emerald-600 bg-emerald-50 border-b-2 border-emerald-600"
+                                        : "text-gray-600 hover:bg-gray-50"
+                                        }`}
                                 >
                                     <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
@@ -86,27 +120,31 @@ export default function RedeemVoucherPage() {
                             </div>
 
                             <div className="p-4 sm:p-6 lg:p-8">
-                                {selectedLocationId && mode === "input" && (
-                                    <VoucherInput venueLocationId={selectedLocationId} />
+                                {activeLocationId && mode === "input" && (
+                                    <VoucherInput venueLocationId={activeLocationId} />
                                 )}
-                                {selectedLocationId && mode === "scan" && (
-                                    <VoucherScan venueLocationId={selectedLocationId} />
+
+                                {activeLocationId && mode === "scan" && (
+                                    <VoucherScan venueLocationId={activeLocationId} />
                                 )}
-                                {!selectedLocationId && (
+                                {!activeLocationId && (
                                     <div className="text-center py-12">
                                         <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                             </svg>
                                         </div>
-                                        <p className="text-sm text-gray-500">Vui lòng chọn địa điểm để tiếp tục</p>
+                                        <p className="text-sm text-gray-500">
+                                            Vui lòng chọn địa điểm để tiếp tục
+                                        </p>
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
 
-                    {/* Right: Location Selector */}
+                    {/* Right: Location Selector */} 
+                    {!isStaff && (
                     <div className="xl:col-span-1">
                         <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100 xl:sticky xl:top-6">
                             <div className="flex items-center gap-2 mb-4">
@@ -118,8 +156,9 @@ export default function RedeemVoucherPage() {
                                 </div>
                                 <h2 className="text-base font-semibold text-gray-900">Địa điểm</h2>
                             </div>
-                            
+
                             {/* Custom Dropdown */}
+                           
                             <div className="relative" ref={dropdownRef}>
                                 <button
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -132,9 +171,8 @@ export default function RedeemVoucherPage() {
                                         </span>
                                     </div>
                                     <svg
-                                        className={`w-5 h-5 text-gray-400 transition-transform shrink-0 ${
-                                            isDropdownOpen ? "rotate-180" : ""
-                                        }`}
+                                        className={`w-5 h-5 text-gray-400 transition-transform shrink-0 ${isDropdownOpen ? "rotate-180" : ""
+                                            }`}
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -154,18 +192,16 @@ export default function RedeemVoucherPage() {
                                                         setSelectedLocationId(loc.id);
                                                         setIsDropdownOpen(false);
                                                     }}
-                                                    className={`w-full px-4 py-3 text-left text-sm transition-colors flex items-center gap-3 ${
-                                                        selectedLocationId === loc.id
-                                                            ? "bg-emerald-50 text-emerald-900"
-                                                            : "text-gray-700 hover:bg-gray-50"
-                                                    } ${index !== 0 ? "border-t border-gray-100" : ""}`}
+                                                    className={`w-full px-4 py-3 text-left text-sm transition-colors flex items-center gap-3 ${selectedLocationId === loc.id
+                                                        ? "bg-emerald-50 text-emerald-900"
+                                                        : "text-gray-700 hover:bg-gray-50"
+                                                        } ${index !== 0 ? "border-t border-gray-100" : ""}`}
                                                 >
                                                     <div
-                                                        className={`w-2 h-2 rounded-full shrink-0 ${
-                                                            selectedLocationId === loc.id
-                                                                ? "bg-emerald-500"
-                                                                : "bg-gray-300"
-                                                        }`}
+                                                        className={`w-2 h-2 rounded-full shrink-0 ${selectedLocationId === loc.id
+                                                            ? "bg-emerald-500"
+                                                            : "bg-gray-300"
+                                                            }`}
                                                     ></div>
                                                     <span className="flex-1 font-medium truncate">{loc.name}</span>
                                                     {selectedLocationId === loc.id && (
@@ -199,7 +235,9 @@ export default function RedeemVoucherPage() {
                                 </div>
                             )}
                         </div>
+                        
                     </div>
+                    )}
                 </div>
             </div>
         </div>

@@ -1,3 +1,6 @@
+import { PlacementType } from "../venue/advertisement/type";
+import { VenueLocationDetail } from "../venue/location/type";
+
 //Dashboard
 export interface ChartItem {
   label: string;
@@ -63,6 +66,7 @@ export interface Venue {
   fullPageMenuImage?: string[];
 
   category?: string | null;
+  categories?: { id: number; name: string }[] | null;
 
   isOwnerVerified?: boolean;
   businessLicenseUrl?: string | null;
@@ -111,10 +115,76 @@ export interface VenueDetail {
   id: number;
   name: string;
   websiteUrl: string | null;
+  address: string;
   status: "ACTIVE" | "INACTIVE" | "PENDING" | string;
   businessLicenseUrl: string;
   venueOwner: VenueOwner;
+  venue: VenueInfomation | null;
 }
+
+export interface VenueInfomation {
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+
+  email: string;
+  phoneNumber: string;
+  websiteUrl?: string;
+
+  priceMin: number;
+  priceMax: number | null;
+
+  latitude: number;
+  longitude: number;
+
+  averageRating: number;
+  avarageCost: number;
+  reviewCount: number;
+  favoriteCount?: number | null;
+
+  status: "ACTIVE" | "INACTIVE" | "PENDING" | "DRAFTED";
+
+  category: string[] | null;
+  categories?: { id: number; name: string }[];
+
+  coverImage?: string[];
+  interiorImage?: string[];
+  fullPageMenuImage?: string[];
+
+  isOwnerVerified?: boolean;
+
+  rejectionDetails?: {
+    reason: string;
+    rejectedAt: string;
+    rejectedBy: string;
+  }[] | null;
+
+  createdAt: string;
+  updatedAt: string;
+
+  coupleMoodTypes?: {
+    id: number;
+    name: string;
+    description: string;
+  }[];
+
+  couplePersonalityTypes?: {
+    id: number;
+    name: string;
+    description: string;
+  }[];
+
+  openingHours?: {
+    day: number;
+    openTime: string;
+    closeTime: string;
+    enabled: boolean;
+  }[];
+
+  todayDayName?: string | null;
+  todayOpeningHour?: any;
+};
 
 // LocationDetail 
 
@@ -340,6 +410,17 @@ export interface Recommendations {
 }
 
 //Advertisement
+export type AdStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "COMPLETED"
+  | "REFUNDED"
+  | "DRAFT"
+  | "ACTIVE"
+  | "INACTIVE"
+  | "REJECTED"
+  ;
+
 export interface Advertisement {
   id: number;
   title: string;
@@ -349,6 +430,57 @@ export interface Advertisement {
   rejectionHistory: AdvertisementRejectionHistory[];
   desiredStartDate: string;
   venueLocationCount: number;
+}
+
+export interface VenueLocationAd {
+  id: number;
+  venueId: number;
+  venueName: string;
+  priorityScore: number;
+  startDate: string; // ISO date
+  endDate: string;   // ISO date
+  status: AdStatus;
+}
+
+export interface RefundInfo {
+  [key: string]: any;
+}
+
+export interface AdsOrder {
+  id: number;
+  packageName: string;
+  pricePaid: number;
+  status: AdStatus;
+  createdAt: string; // ISO date
+  hasRefund: boolean;
+  refundInfo: RefundInfo | null;
+}
+
+export interface AdvertisementDetail {
+  id: number;
+  isDeleted: boolean;
+  venueOwnerId: number;
+
+  title: string;
+  content: string;
+  bannerUrl: string;
+  targetUrl: string;
+
+  placementType: PlacementType;
+
+  moodTypeId: number;
+  moodTypeName: string;
+
+  status: AdStatus;
+
+  rejectionHistory: AdvertisementRejectionHistory[];
+
+  desiredStartDate: string;
+  createdAt: string;
+  updatedAt: string;
+
+  venueLocationAds: VenueLocationAd[];
+  adsOrders: AdsOrder[];
 }
 
 export interface AdvertisementRejectionHistory {
@@ -422,7 +554,7 @@ export interface Voucher {
 
   createdAt: string;
   updatedAt: string;
-
+  imageUrl?: string | null;
   locations: VoucherLocation[];
 }
 

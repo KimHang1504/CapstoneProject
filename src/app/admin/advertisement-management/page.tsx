@@ -5,7 +5,9 @@ import { Advertisement, AdvertisementAcceptRequest, AdvertisementRejectionHistor
 import { useEffect, useState } from "react";
 import ImagePreview from "../venue-management/location/[id]/components/ImagePreview";
 import { toast } from "sonner";
-import { MapPin, Megaphone, CalendarDays } from "lucide-react";
+import { MapPin, Megaphone, CalendarDays, Plus } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 
 export default function AdvertisementList() {
@@ -16,6 +18,7 @@ export default function AdvertisementList() {
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [selectedHistory, setSelectedHistory] = useState<AdvertisementRejectionHistory[]>([]);
+  const router = useRouter();
 
   const fetchAdvertisements = async () => {
     try {
@@ -115,6 +118,12 @@ export default function AdvertisementList() {
         <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
           Quản lý quảng cáo
         </h2>
+        <Link
+          href="/admin/advertisement-management/all"
+          className="inline-flex items-center gap-2 text-sm bg-linear-to-r from-violet-500 to-pink-500 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition"
+        >
+          Xem tất cả quảng cáo
+        </Link>
       </div>
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -238,6 +247,14 @@ export default function AdvertisementList() {
                   Chấp nhận
                 </button>
               </div>
+              <div className="px-4 pb-4">
+                <button
+                  onClick={() => router.push(`/admin/advertisement-management/${ad.id}`)}
+                  className="cursor-pointer w-full mt-2 border border-violet-400 text-violet-600 hover:bg-violet-50 py-2 rounded-lg text-sm font-medium transition"
+                >
+                  Xem chi tiết
+                </button>
+              </div>
               <div className="flex justify-center items-center pb-4">
                 {ad.rejectionHistory?.length > 0 && (
                   <button
@@ -318,7 +335,7 @@ export default function AdvertisementList() {
               </p>
             ) : (
 
-              <div className="space-y-4 max-h-[400px] overflow-auto pr-2">
+              <div className="space-y-4 max-h-100 overflow-auto pr-2">
 
                 {selectedHistory
                   .slice()

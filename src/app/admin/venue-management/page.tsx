@@ -260,10 +260,18 @@ export default function MyLocationPage() {
                                                         {/* Secondary Info Row */}
                                                         <div className="flex flex-wrap items-center gap-3 mt-2 text-xs">
                                                             {/* Category */}
-                                                            {loc.category && (
-                                                                <span className="inline-block px-2 py-1 bg-purple-50 text-purple-700 rounded-full font-medium">
-                                                                    {loc.category}
-                                                                </span>
+                                                            {loc.categories && (
+                                                                loc.categories.length > 0 ? (
+                                                                    loc.categories.map(cat => (
+                                                                        <span key={cat.id} className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">
+                                                                            {cat.name}
+                                                                        </span>
+                                                                    ))
+                                                                ) : (
+                                                                    <span className="px-2 py-0.5 bg-slate-50 text-slate-500 rounded-full">
+                                                                        Không có danh mục
+                                                                    </span>
+                                                                )
                                                             )}
 
                                                             {/* Rating */}
