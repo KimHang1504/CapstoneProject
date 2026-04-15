@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { acceptAndRejectVenue, updateVenueStatusToInactive } from "@/api/admin/api";
+import {
+  acceptAndRejectVenue,
+  refreshVenueLocationSearchIndexes,
+  updateVenueStatusToInactive,
+} from "@/api/admin/api";
 import { VenueApprovalRequest } from "@/api/admin/type";
 import { toast } from "sonner";
 
@@ -25,6 +29,9 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
               reason: null,
             };
             await acceptAndRejectVenue(body);
+            void refreshVenueLocationSearchIndexes().catch((refreshError) => {
+              console.error("Background venue search refresh failed:", refreshError);
+            });
             toast.success("Đã chấp nhận địa điểm");
             router.push("/admin/venue-management");
           } catch (error) {
@@ -58,6 +65,9 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
           try {
             if (action === "INACTIVE") {
               await updateVenueStatusToInactive(Number(id), reason);
+              void refreshVenueLocationSearchIndexes().catch((refreshError) => {
+                console.error("Background venue search refresh failed:", refreshError);
+              });
             } else if (action === "DRAFTED") {
               const body: VenueApprovalRequest = {
                 venueId: Number(id),
