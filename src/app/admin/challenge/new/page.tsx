@@ -24,7 +24,7 @@ const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking
 const inputClass = "w-full mt-2 border border-violet-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition placeholder-gray-300";
 
 function FieldWrapper({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col gap-0.5">{children}</div>;
+    return <div className="flex flex-col gap-0.5">{children}</div>;
 }
 
 export default function CreateChallengePage() {
@@ -74,7 +74,7 @@ export default function CreateChallengePage() {
                 ...form,
                 triggerEvent: value,
                 goalMetric: defaultMetric // auto set
-            }); 
+            });
 
             setRuleData({
                 has_image: false,
@@ -114,61 +114,64 @@ export default function CreateChallengePage() {
     };
 
     const handleSubmit = async (e: any) => {
+        try {
 
-        e.preventDefault();
+            e.preventDefault();
 
-        const rulePayload: any = {};
+            const rulePayload: any = {};
 
-        // chỉ thêm has_image khi field đang hiển thị
-        if (showHasImage && ruleData.has_image) {
-            rulePayload.has_image = true;
-        }
+            // chỉ thêm has_image khi field đang hiển thị
+            if (showHasImage && ruleData.has_image) {
+                rulePayload.has_image = true;
+            }
 
-        // chỉ thêm venue_id khi field đang hiển thị
-        if (showVenueId && ruleData.venue_id.length > 0) {
-            rulePayload.venue_id = ruleData.venue_id;
-        }
+            // chỉ thêm venue_id khi field đang hiển thị
+            if (showVenueId && ruleData.venue_id.length > 0) {
+                rulePayload.venue_id = ruleData.venue_id;
+            }
 
-        // chỉ thêm hashtag khi field đang hiển thị
-        if (showHashTag) {
-            rulePayload.hash_tags = ruleData.hash_tags
-                .filter(tag => tag.trim() !== "")
-                .map(tag => "#" + tag.replace("#", ""));
-        }
+            // chỉ thêm hashtag khi field đang hiển thị
+            if (showHashTag) {
+                rulePayload.hash_tags = ruleData.hash_tags
+                    .filter(tag => tag.trim() !== "")
+                    .map(tag => "#" + tag.replace("#", ""));
+            }
 
-        const payload: ChallengeRequest = {
-            title: form.title,
-            description: form.description,
-            triggerEvent: form.triggerEvent,
-            goalMetric: form.goalMetric,
-            targetGoal: Number(form.targetGoal),
-            rewardPoints: Number(form.rewardPoints),
-            startDate: toISO(form.startDate),
-            endDate: toISO(form.endDate),
-            ruleData: Object.keys(rulePayload).length > 0 ? rulePayload : null
+            if (new Date(form.startDate) > new Date(form.endDate)) {
+                toast.error("Ngày bắt đầu phải trước ngày kết thúc");
+                return;
+            }
+
+            if (Number(form.targetGoal) <= 0 || Number(form.rewardPoints) <= 0) {
+                toast.error("Mục tiêu và điểm thưởng phải lớn hơn 0");
+                return;
+            }
+
+            const payload: ChallengeRequest = {
+                title: form.title,
+                description: form.description,
+                triggerEvent: form.triggerEvent,
+                goalMetric: form.goalMetric,
+                targetGoal: Number(form.targetGoal),
+                rewardPoints: Number(form.rewardPoints),
+                startDate: toISO(form.startDate),
+                endDate: toISO(form.endDate),
+                ruleData: Object.keys(rulePayload).length > 0 ? rulePayload : null
+            };
+
+            console.log(payload);
+            await createChallenge(payload);
+            toast.success("Tạo challenge thành công");
+            router.push("/admin/challenge");
+        } catch (error) {
+            console.error(error);
+            const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra khi tạo challenge";
+            toast.error(errorMessage);
+        } finally {
+
+
         };
-
-        console.log(payload);
-        await createChallenge(payload);
-        toast.success("Tạo challenge thành công");
-        setForm({
-            title: "",
-            description: "",
-            triggerEvent: "",
-            goalMetric: "",
-            targetGoal: "",
-            rewardPoints: "",
-            startDate: "",
-            endDate: ""
-        });
-        setRuleData({
-            has_image: false,
-            venue_id: [],
-            hash_tags: []
-        });
-        setSelectedLocations([]);
-        router.push("/admin/challenge");
-    };
+    }
 
     const showRuleData = form.triggerEvent !== "CHECKIN";
 

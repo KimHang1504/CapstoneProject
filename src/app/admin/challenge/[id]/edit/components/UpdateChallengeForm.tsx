@@ -15,18 +15,33 @@ import { updateChallenge } from "@/api/admin/api";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import UpdateStatus from "./UpdateStatus";
+import LocationSelectModal from "../../../new/components/LocationSelectModal";
+import { Location } from "@/api/admin/type";
+import Image from "next/image";
 
 const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1";
 
 const inputClass = "w-full mt-2 border border-violet-200 rounded-xl px-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition placeholder-gray-300";
 
 function FieldWrapper({ children }: { children: React.ReactNode }) {
-  return <div className="flex flex-col gap-0.5">{children}</div>;
+    return <div className="flex flex-col gap-0.5">{children}</div>;
 }
 
 export default function UpdateChallengeForm({ challenge }: any) {
 
     const router = useRouter();
+    const [openLocationModal, setOpenLocationModal] = useState(false);
+    const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
+
+    const toVNDateTimeLocal = (dateStr: string) => {
+        if (!dateStr) return "";
+
+        const date = new Date(dateStr);
+
+        const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
+
+        return vnTime.toISOString().slice(0, 16);
+    };
 
     const goalMetricOptions: Record<string, string[]> = {
         POST: ["COUNT"],
@@ -78,8 +93,8 @@ export default function UpdateChallengeForm({ challenge }: any) {
             goalMetric: challenge.goalMetric || "",
             targetGoal: challenge.targetGoal?.toString() || "",
             rewardPoints: challenge.rewardPoints?.toString() || "",
-            startDate: challenge.startDate?.slice(0, 16) || "",
-            endDate: challenge.endDate?.slice(0, 16) || "",
+            startDate: toVNDateTimeLocal(challenge.startDate),
+            endDate: toVNDateTimeLocal(challenge.endDate),
             status: challenge.status || "INACTIVE"
         });
 
@@ -91,6 +106,14 @@ export default function UpdateChallengeForm({ challenge }: any) {
                     t.replace("#", "")
                 )
             });
+        } else {
+            if (challenge.triggerEvent !== "CHECKIN") {
+                setRuleData({
+                    has_image: false,
+                    venue_id: [],
+                    hash_tags: []
+                });
+            }
         }
 
     }, [challenge]);
@@ -153,7 +176,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
         const rulePayload: any = {};
 
         if (showHasImage && ruleData.has_image) {
-            rulePayload.has_image = true;
+            rulePayload.has_image = ruleData.has_image ?? false;
         }
 
         if (showVenueId && ruleData.venue_id.length > 0) {
@@ -166,6 +189,22 @@ export default function UpdateChallengeForm({ challenge }: any) {
                 .map(t => "#" + t.replace("#", ""));
         }
 
+
+        if (form.triggerEvent === "REVIEW" && form.goalMetric === "UNIQUE_LIST" && rulePayload.venue_id?.length === 0) {
+            toast.error("Vui lòng chọn ít nhất một địa điểm áp dụng cho challenge này");
+            return;
+        }
+
+        if (new Date(form.startDate) > new Date(form.endDate)) {
+            toast.error("Ngày bắt đầu phải trước ngày kết thúc");
+            return;
+        }
+
+        if (Number(form.targetGoal) <= 0 || Number(form.rewardPoints) <= 0) {
+            toast.error("Mục tiêu và điểm thưởng phải lớn hơn 0");
+            return;
+        }
+
         const payload = {
             title: form.title,
             description: form.description,
@@ -176,7 +215,10 @@ export default function UpdateChallengeForm({ challenge }: any) {
             startDate: toISO(form.startDate),
             endDate: toISO(form.endDate),
             status: 'INACTIVE',
-            ruleData: Object.keys(rulePayload).length ? rulePayload : null
+            ruleData:
+                form.triggerEvent === "CHECKIN"
+                    ? null
+                    : rulePayload
         };
 
         try {
@@ -397,6 +439,77 @@ export default function UpdateChallengeForm({ challenge }: any) {
                                 </label>
                             )}
 
+                            {showVenueId && (
+                                <div className="space-y-4">
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-semibold text-gray-700">
+                                            <MapPin size={18} />
+                                            Địa điểm áp dụng
+                                        </label>
+                                        <p className="text-xs text-gray-500 mt-1">Chọn các địa điểm nơi challenge này áp dụng</p>
+                                    </div>
+
+                                    {selectedLocations.length > 0 && (
+                                        <div className="bg-violet-50 border border-violet-200 rounded-xl p-4 space-y-3">
+                                            {selectedLocations.map((location) => {
+                                                const image =
+                                                    location.coverImage?.[0] ??
+                                                    "https://placehold.co/100";
+
+                                                return (
+                                                    <div
+                                                        key={location.id}
+                                                        className="flex items-center gap-3 bg-white p-3 rounded-lg border border-violet-100 hover:border-violet-300 transition"
+                                                    >
+                                                        <div className="relative w-12 h-12 rounded-lg overflow-hidden shrink-0">
+                                                            <Image
+                                                                src={image}
+                                                                alt={location.name}
+                                                                fill
+                                                                className="object-cover"
+                                                            />
+                                                        </div>
+
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="font-medium text-sm text-gray-800 truncate">
+                                                                {location.name}
+                                                            </p>
+                                                            <p className="text-xs text-gray-500 flex items-center gap-1 truncate">
+                                                                <MapPin size={12} />
+                                                                {location.address}
+                                                            </p>
+                                                        </div>
+
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setRuleData({
+                                                                    ...ruleData,
+                                                                    venue_id: ruleData.venue_id.filter(v => v !== location.id)
+                                                                })
+                                                                setSelectedLocations(selectedLocations.filter(v => v.id !== location.id))
+                                                            }}
+                                                            className="text-red-500 hover:text-red-700 shrink-0"
+                                                        >
+                                                            <X size={18} />
+                                                        </button>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setOpenLocationModal(true)}
+                                        className="flex items-center gap-2 px-4 py-2 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium text-sm"
+                                    >
+                                        <Plus size={16} />
+                                        Thêm địa điểm
+                                    </button>
+                                </div>
+                            )}
+
                             {showHashTag && (
                                 <div className="space-y-4">
                                     <div>
@@ -479,6 +592,17 @@ export default function UpdateChallengeForm({ challenge }: any) {
                     </div>
 
                 </form>
+                <LocationSelectModal
+                    open={openLocationModal}
+                    onClose={() => setOpenLocationModal(false)}
+                    onConfirm={(locations) => {
+                        setSelectedLocations(locations);
+                        setRuleData({
+                            ...ruleData,
+                            venue_id: locations.map(v => v.id)
+                        });
+                    }}
+                />
             </div>
         </div>
     );

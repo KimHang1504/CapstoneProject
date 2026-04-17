@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import { MapPin, Megaphone, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import BackButton from "@/components/BackButton";
 
 export default function AdvertisementAllList() {
     const [data, setData] = useState<Advertisement[]>([]);
@@ -102,6 +103,7 @@ export default function AdvertisementAllList() {
 
     return (
         <div className="px-8 py-4">
+            <BackButton />
             <h2 className="text-2xl font-bold mb-6 bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
                 Tất cả quảng cáo
             </h2>

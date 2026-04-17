@@ -161,7 +161,11 @@ export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) =>
 }
 
 export const getAllAdvertisements = () => {
-    return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/all");
+    return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/all", {
+        params: {
+            status: "APPROVED"
+        }
+    });
 }
 
 //Voucher management
