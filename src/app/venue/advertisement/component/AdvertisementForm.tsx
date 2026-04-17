@@ -118,8 +118,29 @@ export default function AdvertisementForm({
       });
 
       if (imageUrl) {
-        setForm({ ...form, bannerUrl: imageUrl });
-        toast.success("Đã tạo banner thành công!");
+        const proxyResponse = await fetch("/api/ai-image/download", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ url: imageUrl }),
+        });
+
+        if (!proxyResponse.ok) {
+          throw new Error("Không thể tải ảnh AI để upload");
+        }
+
+        const imageBlob = await proxyResponse.blob();
+        const extension = imageBlob.type.split("/")[1] || "png";
+        const aiImageFile = new File(
+          [imageBlob],
+          `advertisement-ai-${Date.now()}.${extension}`,
+          { type: imageBlob.type || "image/png" }
+        );
+
+        const uploadedUrl = await uploadImage(aiImageFile);
+        setForm({ ...form, bannerUrl: uploadedUrl });
+        toast.success("Đã tạo và tải banner lên thành công!");
       } else {
         toast.error("Không thể tạo banner, vui lòng thử lại");
       }
