@@ -43,6 +43,34 @@ export const updateVenueStatusToInactive = (venueId: number, reason: string | nu
     });
 }
 
+export const clearVenueLocationSearchIndex = () => {
+    return apiClient.delete<ApiResponse<boolean>>('/api/venue-location/search/index/clear');
+}
+
+export const clearVenueLocationSearchIndexV2 = () => {
+    return apiClient.delete<ApiResponse<boolean>>('/api/venue-location/v2/search/index/clear');
+}
+
+export const syncVenueLocationSearchIndex = () => {
+    return apiClient.post<ApiResponse<number>>('/api/venue-location/search/sync');
+}
+
+export const syncVenueLocationSearchIndexV2 = () => {
+    return apiClient.post<ApiResponse<number>>('/api/venue-location/v2/search/sync');
+}
+
+export const refreshVenueLocationSearchIndexes = async () => {
+    await Promise.all([
+        clearVenueLocationSearchIndex(),
+        clearVenueLocationSearchIndexV2(),
+    ]);
+
+    await Promise.all([
+        syncVenueLocationSearchIndex(),
+        syncVenueLocationSearchIndexV2(),
+    ]);
+}
+
 // Special Event
 export const getAllSpecialEvents = (page: number, pageSize: number) => {
     return apiClient.get<ApiResponse<SpecialEventPagination>>("/api/SpecialEvent", {

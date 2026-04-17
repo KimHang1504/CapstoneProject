@@ -16,6 +16,10 @@ type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "CANCELLED" | "EXPIRED";
 
 const POLL_INTERVAL_MS = 5000;
 const MIN_TOPUP_AMOUNT = 1000;
+const MAX_TOPUP_AMOUNT = 100_000_000;
+const TOPUP_VALIDATION_TOAST_ID = "venue-owner-topup-amount-validation";
+
+type AmountValidationState = "EMPTY" | "INVALID" | "BELOW_MIN" | "ABOVE_MAX" | "VALID";
 
 export default function TopupModal({ onClose, onSuccess }: Props) {
   const [amountInput, setAmountInput] = useState("");
@@ -25,6 +29,7 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
   const [topup, setTopup] = useState<WalletTopupResponse | null>(null);
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("PENDING");
   const [secondsLeft, setSecondsLeft] = useState(0);
+  const [amountValidation, setAmountValidation] = useState<AmountValidationState>("EMPTY");
 
   const transactionId = topup?.transactionId;
 
@@ -78,10 +83,44 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
     }
   };
 
-  const canSubmit = useMemo(() => {
-    const amount = Number(amountInput);
-    return Number.isFinite(amount) && amount >= MIN_TOPUP_AMOUNT;
-  }, [amountInput]);
+  const canSubmit = useMemo(() => amountValidation === "VALID", [amountValidation]);
+
+  const validateAmountInput = (rawValue: string): AmountValidationState => {
+    if (!rawValue.trim()) return "EMPTY";
+
+    const amount = Number(rawValue);
+
+    if (!Number.isFinite(amount) || amount <= 0) return "INVALID";
+    if (amount < MIN_TOPUP_AMOUNT) return "BELOW_MIN";
+    if (amount > MAX_TOPUP_AMOUNT) return "ABOVE_MAX";
+
+    return "VALID";
+  };
+
+  const handleAmountInputChange = (value: string) => {
+    setAmountInput(value);
+    setAmountValidation(validateAmountInput(value));
+  };
+
+  useEffect(() => {
+    if (amountValidation === "BELOW_MIN") {
+      toast.error(`Số tiền nạp tối thiểu là ${MIN_TOPUP_AMOUNT.toLocaleString("vi-VN")} VND`, {
+        id: TOPUP_VALIDATION_TOAST_ID,
+      });
+      return;
+    }
+
+    if (amountValidation === "ABOVE_MAX") {
+      toast.error(`Số tiền nạp tối đa là ${MAX_TOPUP_AMOUNT.toLocaleString("vi-VN")} VND`, {
+        id: TOPUP_VALIDATION_TOAST_ID,
+      });
+      return;
+    }
+
+    if (amountValidation === "VALID" || amountValidation === "EMPTY") {
+      toast.dismiss(TOPUP_VALIDATION_TOAST_ID);
+    }
+  }, [amountValidation]);
 
   useEffect(() => {
     const loadBalance = async () => {
@@ -201,6 +240,11 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
         return;
       }
 
+      if (amount > MAX_TOPUP_AMOUNT) {
+        toast.error(`Số tiền nạp tối đa là ${MAX_TOPUP_AMOUNT.toLocaleString("vi-VN")} VND`);
+        return;
+      }
+
       hasCancelledRef.current = false; // Reset flag for new transaction
 
       const response = await createWalletTopup({ amount });
@@ -289,11 +333,15 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
                   placeholder="Nhập số tiền nạp"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-12 focus:outline-none focus:ring-2 focus:ring-emerald-400 text-gray-900"
                   value={amountInput}
-                  onChange={(e) => setAmountInput(e.target.value)}
+                  min={MIN_TOPUP_AMOUNT}
+                  max={MAX_TOPUP_AMOUNT}
+                  onChange={(e) => handleAmountInputChange(e.target.value)}
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">₫</span>
               </div>
-              <p className="text-xs text-gray-500 mt-1">Tối thiểu {MIN_TOPUP_AMOUNT.toLocaleString("vi-VN")} VND</p>
+              <p className="text-xs text-gray-500 mt-1">
+                Từ {MIN_TOPUP_AMOUNT.toLocaleString("vi-VN")} đến {MAX_TOPUP_AMOUNT.toLocaleString("vi-VN")} VND
+              </p>
             </div>
 
             <div className="flex gap-3 pt-2">
