@@ -9,11 +9,13 @@ import { VenueCard } from "./VenueCard";
 import { OrderCard } from "./OrderCard";
 import { RejectionCard } from "./RejectionCard";
 import { StatusCard } from "./StatusCard";
+import BackButton from "@/components/BackButton";
 
 export default function AdsDetailPage({ data }: { data: AdvertisementDetail }) {
     return (
         <div className="p-6 space-y-6">
             {/* HEADER */}
+            <BackButton />
             <h1 className="text-2xl font-bold">Chi tiết quảng cáo</h1>
 
             {/* HERO */}

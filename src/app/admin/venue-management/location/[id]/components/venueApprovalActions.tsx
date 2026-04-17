@@ -69,6 +69,10 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
                 console.error("Background venue search refresh failed:", refreshError);
               });
             } else if (action === "DRAFTED") {
+              if (!reason) {
+                toast.error("Vui lòng nhập lý do từ chối");
+                return;
+              }
               const body: VenueApprovalRequest = {
                 venueId: Number(id),
                 status: action as 'DRAFTED',
@@ -106,7 +110,7 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
             : "Quản lý hoạt động của địa điểm"}
         </p>
 
-         <div className="flex gap-4 justify-start">
+        <div className="flex gap-4 justify-start">
           {status === "PENDING" ? (
             <>
               <button

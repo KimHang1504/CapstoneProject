@@ -62,7 +62,7 @@ export function StatusCard({
 
     const confirmReject = async () => {
         if (!reason.trim()) {
-            toast.error("Vui lòng nhập lý do");
+            toast.error("Vui lòng nhập lý do từ chối");
             return;
         }
 
