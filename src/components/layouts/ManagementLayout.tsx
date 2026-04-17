@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarConfig, IconName } from '@/types/sidebar';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Menu,
   X,
@@ -164,18 +164,15 @@ export default function ManagementLayout({
     return roleMap[role] || role;
   };
 
-  const fetchUserProfile = useCallback(async () => {
-    const response = await getMe();
-    setUserProfile(response.data);
-  }, []);
-
   const handleProfileUpdated = async () => {
-    await fetchUserProfile();
+    const res = await getMe();
+    setUserProfile(res.data);
+    console.log("🔥 NEW PROFILE AFTER UPDATE:", res.data);
   };
 
   const getDashboardUrl = () => {
     if (!userProfile) return '/';
-    
+
     const role = userProfile.role;
     if (role === 'VENUEOWNER') {
       return '/venue/dashboard';
@@ -211,7 +208,7 @@ export default function ManagementLayout({
         <div className="p-2.5 border-b border-white/10 bg-[#8093F1]">
           <div className="flex items-center justify-between">
             {isSidebarOpen && (
-              <Link 
+              <Link
                 href={getDashboardUrl()}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200"
               >

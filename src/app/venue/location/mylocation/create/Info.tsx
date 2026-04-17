@@ -139,7 +139,7 @@ export default function Info({ formData, setFormData }: Props) {
             <input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nhập tên chủ địa điểm"
+              placeholder="Nhập tên địa điểm"
               className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-purple-100 transition-all"
             />
           </div>

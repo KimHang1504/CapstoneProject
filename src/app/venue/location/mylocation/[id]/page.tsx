@@ -11,7 +11,7 @@ import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 
 import ReviewSection from '@/app/venue/review/component/ReviewSection';
-import {XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
+import { XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
@@ -87,6 +87,7 @@ export default function LocationDetailPage() {
             try {
                 const res = await getMe();
                 setUserProfile(res.data);
+                console.log('Fetched user profile:', res.data);
             } catch (error) {
                 console.error('Error fetching user profile:', error);
             }
@@ -154,10 +155,14 @@ export default function LocationDetailPage() {
         router.push(`/venue/location/mylocation/edit/${id}`);
     };
 
-    const handleSubmitForApproval = () => {
-        if (isPending) return;
+const handleSubmitForApproval = async () => {
+    if (isPending) return;
 
-        const { missingCitizenId } = checkVenueOwnerVerification(userProfile);
+    try {
+        const res = await getMe();
+        const freshProfile = res.data;
+
+        const { missingCitizenId } = checkVenueOwnerVerification(freshProfile);
 
         if (missingCitizenId) {
             setOpenMissingCitizenPopup(true);
@@ -185,7 +190,11 @@ export default function LocationDetailPage() {
         }
 
         router.push(`/venue/location/mylocation/subscriptions?locationId=${location.id}`);
-    };
+    } catch (err) {
+        console.error("Failed to fetch latest profile:", err);
+        toast.error("Không thể kiểm tra thông tin tài khoản. Vui lòng thử lại.");
+    }
+};
 
     const canShowReview =
         location.status === "ACTIVE" ||
