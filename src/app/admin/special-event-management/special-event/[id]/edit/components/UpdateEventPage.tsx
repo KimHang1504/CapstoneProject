@@ -81,6 +81,10 @@ export default function UpdateEventPage({ event }: any) {
         e.preventDefault();
 
         try {
+            if (new Date(form.startDate) > new Date(form.endDate)) {
+                toast.error("Ngày bắt đầu phải trước ngày kết thúc");
+                return;
+            }
             let bannerUrl = form.bannerUrl;
 
             if (file) {

@@ -56,13 +56,13 @@ export default function VoucherPage() {
     <div className="px-8 py-4 min-h-screen space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between w-full">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+        <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
           Quản lí voucher
         </h2>
 
         <Link
           href="/admin/voucher-management/voucher/all"
-          className="inline-flex items-center gap-2 text-sm bg-gradient-to-r from-violet-500 to-pink-500 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition"
+          className="inline-flex items-center gap-2 text-sm bg-linear-to-r from-violet-500 to-pink-500 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition"
         >
           <Plus size={18} />
           Xem tất cả voucher

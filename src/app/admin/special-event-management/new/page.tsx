@@ -60,6 +60,14 @@ export default function CreateEventPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      if (!file) {
+        toast.error("Vui lòng chọn ảnh banner cho sự kiện");
+        return;
+      }
+      if (new Date(form.startDate) > new Date(form.endDate)) {
+        toast.error("Ngày bắt đầu phải trước ngày kết thúc");
+        return;
+      }
       const url = await uploadImage(file as File);
       const payload: CreateSpecialEventRequest = {
         eventName: form.eventName,
@@ -83,15 +91,6 @@ export default function CreateEventPage() {
       const errorMessage = error instanceof Error ? error.message : "Có lỗi xảy ra khi tạo sự kiện";
       toast.error(errorMessage);
     } finally {
-      setForm({
-        eventName: "",
-        description: "",
-        bannerUrl: "",
-        startDate: "",
-        endDate: "",
-        isYearly: false,
-      });
-      setBannerPreview(null);
     }
 
   };
