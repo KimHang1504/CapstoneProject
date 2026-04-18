@@ -385,18 +385,29 @@ export default function AdvertisementForm({
           className="hidden"
         />
 
-        {form.bannerUrl && (
-          <div className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm relative">
-            <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">Preview</div>
-            <Image
-              src={form.bannerUrl}
-              alt="preview"
-              width={800}
-              height={200}
-              className="w-full h-48 object-cover"
-            />
-          </div>
-        )}
+        <div
+          className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm relative bg-violet-50/30"
+          onClick={() => !isUploadingBanner && document.getElementById('banner-file-input')?.click()}
+        >
+          {form.bannerUrl ? (
+            <>
+              <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">Preview</div>
+              <Image
+                src={form.bannerUrl}
+                alt="preview"
+                width={800}
+                height={200}
+                className="w-full h-48 object-cover"
+              />
+            </>
+          ) : (
+            <div className="h-48 flex flex-col items-center justify-center gap-2 text-violet-500 cursor-pointer">
+              <Upload size={22} />
+              <p className="text-sm font-medium">Chưa có banner</p>
+              <p className="text-xs text-violet-400">Nhấn để tải ảnh lên hoặc dùng AI</p>
+            </div>
+          )}
+        </div>
       </FieldWrapper>
 
       {!isCreateMode && (
