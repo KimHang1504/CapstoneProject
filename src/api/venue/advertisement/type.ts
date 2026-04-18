@@ -112,6 +112,7 @@ export interface AdvertisementPackagesResponse {
 export interface SubmitAdvertisementPaymentRequest {
     packageId: number;
     venueIds: number[];
+    quantity?: number;
     paymentMethod?: 'VIETQR' | 'WALLET';
 }
 
