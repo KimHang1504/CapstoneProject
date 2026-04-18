@@ -21,7 +21,9 @@ const statusConfig: Record<string, { label: string; dot: string; badge: string }
 export default function AdvertisementCard({ ad }: Props) {
   const router = useRouter();
   const status = statusConfig[ad.status] ?? { label: ad.status, dot: "bg-gray-400", badge: "bg-gray-50 text-gray-500 border-gray-200" };
-  const placementLabel = PLACEMENT_LABEL[ad.placementType] ?? ad.placementType;
+  const placementLabel = ad.placementType
+    ? (PLACEMENT_LABEL[ad.placementType as keyof typeof PLACEMENT_LABEL] ?? ad.placementType)
+    : "Chưa chọn";
 
   return (
     <div
