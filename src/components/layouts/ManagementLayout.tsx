@@ -88,6 +88,15 @@ export default function ManagementLayout({
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
 
+  const dashboardTitle = title || 'Bảng điều khiển';
+  const normalizedTitle = dashboardTitle.toLowerCase();
+  const isAdminDashboard = normalizedTitle.includes('admin') || normalizedTitle.includes('quản trị');
+  const HeaderIcon = isAdminDashboard ? LayoutDashboard : Building2;
+  const headerBadge = isAdminDashboard ? 'Trang quản trị' : 'Không gian vận hành';
+  const headerDescription = isAdminDashboard
+    ? 'Quản lý người dùng, cấu hình hệ thống và theo dõi số liệu tổng quan.'
+    : 'Quản lý địa điểm, gói dịch vụ và hiệu suất kinh doanh của bạn.';
+
   // Helper function to check if a route is active (exact match or parent route)
   const isRouteActive = (currentPath: string, routePath: string) => {
     return currentPath === routePath || currentPath.startsWith(routePath + '/');
@@ -353,10 +362,17 @@ export default function ManagementLayout({
           <div className="px-8 py-4">
             <div className="flex items-center justify-between">
               {/* Left side - Title */}
-              <div>
-                <h1 className="text-2xl font-bold text-black">
-                  {title || 'Chủ địa điểm'}
+              <div className="min-w-0">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-linear-to-r from-indigo-50 to-violet-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-2">
+                  <HeaderIcon className="w-3.5 h-3.5" />
+                  <span>{headerBadge}</span>
+                </div>
+                <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-tight">
+                  {dashboardTitle}
                 </h1>
+                <p className="text-sm text-slate-500 mt-1 line-clamp-1">
+                  {headerDescription}
+                </p>
               </div>
 
               {/* Right side - Actions */}
