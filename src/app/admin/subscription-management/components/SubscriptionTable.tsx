@@ -137,8 +137,8 @@ export default function SubscriptionTable() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6 space-y-6">
+    <div className="min-h-full bg-gray-50">
+      <div className="w-full max-w-7xl mx-auto p-6 space-y-6">
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
@@ -168,9 +168,8 @@ export default function SubscriptionTable() {
             Tải lại
           </button>
         </div>
-      </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <label className="text-sm font-medium text-gray-700">
             Loại gói:
@@ -179,7 +178,7 @@ export default function SubscriptionTable() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="min-w-[200px] px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
+              className="min-w-50 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
             >
               <span className="text-gray-700">
                 {typeFilter === "" ? "Tất cả" : getTypeLabel(typeFilter)}
@@ -226,9 +225,9 @@ export default function SubscriptionTable() {
             </button>
           )}
         </div>
-      </div>
+        </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
@@ -350,6 +349,7 @@ export default function SubscriptionTable() {
               )}
             </tbody>
           </table>
+        </div>
         </div>
       </div>
     </div>
