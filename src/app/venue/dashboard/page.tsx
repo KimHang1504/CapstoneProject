@@ -6,7 +6,7 @@ import Link from 'next/link';
 import {
   Star, MapPin, Heart, CheckCircle, Ticket, Users,
   TrendingUp, ChevronLeft, ChevronRight,
-  BarChart2, Sparkles, Megaphone
+  BarChart2, Megaphone
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
@@ -175,18 +175,6 @@ export default function VenueDashboardPage() {
 
   return (
     <div className="p-4 space-y-4 max-w-350 mx-auto">
-
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-bold text-gray-900">Dashboard</h1>
-          <p className="text-xs text-gray-400">Tổng quan hoạt động của bạn</p>
-        </div>
-        <div className="flex items-center gap-2 bg-linear-to-r from-purple-50 to-violet-50 px-3 py-1.5 rounded-lg border border-purple-200">
-          <Sparkles size={14} className="text-purple-600" />
-          <span className="text-xs font-medium text-purple-700">AI Insights</span>
-        </div>
-      </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
