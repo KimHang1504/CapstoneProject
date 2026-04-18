@@ -53,7 +53,7 @@ export default function AdvertisementForm({
     content: initialData?.content || "",
     bannerUrl: initialData?.bannerUrl || "",
     targetUrl: initialData?.targetUrl || "",
-    placementType: initialData?.placementType || "HOME_BANNER",
+    placementType: initialData?.placementType || "",
     moodTypeId: initialData?.moodTypeId ?? "",
   });
 
@@ -241,7 +241,7 @@ export default function AdvertisementForm({
 
     if (date < minDate) {
       const daysRemaining = Math.ceil((minDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
-      setDateError(`Ngày bắt đầu phải sau ${daysRemaining} ngày để admin có thời gian duyệt`);
+      setDateError(`Ngày bắt đầu phải sau 72h ngày để admin có thời gian duyệt`);
       return false;
     }
 
@@ -393,7 +393,7 @@ export default function AdvertisementForm({
       </FieldWrapper>
 
       {/* Placement */}
-      <FieldWrapper>
+      {/* <FieldWrapper>
         <label className={labelClass}>Vị trí hiển thị</label>
         <div className="mt-2 grid grid-cols-2 gap-3">
           {([
@@ -429,7 +429,6 @@ export default function AdvertisementForm({
           ))}
         </div>
 
-        {/* hidden select to keep form.placementType in sync */}
         <select
           name="placementType"
           value={form.placementType}
@@ -440,7 +439,8 @@ export default function AdvertisementForm({
           <option value="HOME_BANNER">Banner đầu trang</option>
           <option value="POPUP">Popup</option>
         </select>
-      </FieldWrapper>
+      </FieldWrapper> */}
+
       <FieldWrapper>
         <label className={labelClass}>Tâm trạng</label>
 
@@ -498,9 +498,7 @@ export default function AdvertisementForm({
         </div>
         {dateError && (
           <p className="text-xs text-rose-600 mt-2 flex items-center gap-1.5">
-            <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18.101 12.93a1 1 0 00-1.415-1.414L11 16.586V9.5a1 1 0 10-2 0v7.086L3.314 11.516a1 1 0 00-1.414 1.414l9.9 9.9a1 1 0 001.415 0l9.9-9.9z" clipRule="evenodd" />
-            </svg>
             {dateError}
           </p>
         )}
