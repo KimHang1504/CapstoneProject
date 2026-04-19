@@ -197,6 +197,30 @@ export default function EditPackageModal({ package: pkg, onClose, onSuccess }: E
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
+              Hoạt động gói
+            </label>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={formData.isActive}
+              onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+              className="w-full flex items-center justify-between px-4 py-3 border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+            >
+              <span className={`text-sm font-medium ${formData.isActive ? "text-emerald-700" : "text-slate-600"}`}>
+                {formData.isActive ? "Đang hoạt động" : "Đã ngưng"}
+              </span>
+              <span
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.isActive ? "bg-emerald-500" : "bg-slate-300"}`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isActive ? "translate-x-6" : "translate-x-1"}`}
+                />
+              </span>
+            </button>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Mô tả
             </label>
             <textarea
