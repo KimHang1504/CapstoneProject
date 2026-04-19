@@ -141,7 +141,7 @@ export default function VoucherTabs({ voucher }: Props) {
                                     Hạn dùng sau khi nhận
                                 </p>
                                 <p className="font-semibold">
-                                    {voucher.usageValiDays} ngày
+                                    {voucher.usageValidDays} ngày
                                 </p>
                             </div>
 

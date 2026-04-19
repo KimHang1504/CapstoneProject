@@ -38,7 +38,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     discountPercent: null,
     quantity: null,
     usageLimitPerMember: null,
-    usageValiDays: null,
+    usageValidDays: null,
     venueLocationIds: [],
     imageUrl: "",
     startDate: "",
@@ -63,36 +63,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   //lỗi onblur
-  // const validateTitle = (value: string) => {
-  //   if (!value.trim()) return "Vui lòng nhập tên voucher";
-  //   return "";
-  // };
-  // const handleBlurTitle = () => {
-  //   setTouched((prev) => ({ ...prev, title: true }));
 
-  //   const error = validateTitle(form.title);
-
-  //   setErrors((prev) => ({
-  //     ...prev,
-  //     title: error,
-  //   }));
-  // };
-
-  // const handleChangeTitle = (value: string) => {
-  //   setForm((prev) => ({
-  //     ...prev,
-  //     title: value,
-  //   }));
-
-  //   if (touched.title) {
-  //     const error = validateTitle(value);
-
-  //     setErrors((prev) => ({
-  //       ...prev,
-  //       title: error,
-  //     }));
-  //   }
-  // };
 
   const validateField = (
     key: keyof CreateVoucherRequest,
@@ -100,44 +71,70 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     form: CreateVoucherRequest
   ): string => {
     switch (key) {
-      case "title":
-        if (!value?.trim()) return "Vui lòng nhập tên voucher";
-        return "";
+      // case "title":
+      //   if (!value?.trim()) return "Vui lòng nhập tên voucher";
+      //   return "";
 
-      case "description":
-        if (!value?.trim()) return "Vui lòng nhập mô tả voucher";
-        return "";
+      // case "description":
+      //   if (!value?.trim()) return "Vui lòng nhập mô tả voucher";
+      //   return "";
 
       case "voucherPrice":
-        if (value == null) return "Vui lòng nhập giá đổi";
+        // if (value == null) return "Vui lòng nhập giá đổi";
         if (value < 0) return "Giá đổi không được âm";
         if (value > 100_000_000) return "Không vượt quá 100,000,000";
         return "";
 
-      case "quantity":
-        if (value == null) return "Vui lòng nhập số lượng";
-        if (value <= 0) return "Số lượng phải > 0";
-        if (value > 100_000) return "Không vượt quá 100,000";
-        return "";
+      case "quantity": {
+        if (value == null || value === "") return "";
 
-      case "usageLimitPerMember":
-        if (value == null) return "Vui lòng nhập giới hạn";
-        if (value <= 0) return "Phải > 0";
-        if (form.quantity && value > form.quantity)
+        const num = Number(value);
+        if (Number.isNaN(num)) return "Giá trị không hợp lệ";
+
+        if (num <= 0) return "Số lượng phải > 0";
+        if (num > 100_000) return "Không vượt quá 100,000";
+
+        return "";
+      }
+
+      case "usageLimitPerMember": {
+        if (value == null || value === "") return "";
+
+        const num = Number(value);
+        if (Number.isNaN(num)) return "Giá trị không hợp lệ";
+
+        if (num <= 0) return "Phải > 0";
+
+        if (form.quantity != null && num > form.quantity)
           return "Không vượt quá số lượng";
+
+        return "";
+      }
+
+      case "usageValidDays":
+        if (value == null || value === "") return "";
+
+        const num = Number(value);
+        if (Number.isNaN(num)) return "Giá trị không hợp lệ";
+        if (num <= 0) return "Phải > 0";
+        if (num > 365) return "Không vượt quá 365 ngày";
         return "";
 
-      case "usageValiDays":
-        if (value == null) return "Vui lòng nhập hạn sử dụng";
-        if (value <= 0) return "Phải > 0";
-        if (value > 365) return "Không vượt quá 365 ngày";
-        return "";
-
-      case "discountAmount":
+      case "discountAmount": {
         if (form.discountType !== "FIXED_AMOUNT") return "";
-        if (value == null) return "Nhập số tiền giảm";
-        if (value <= 0) return "Phải > 0";
+
+        if (value == null || value === "") return "";
+
+        const num = Number(value);
+
+        if (Number.isNaN(num)) return "Giá trị không hợp lệ";
+
+        if (num <= 0) return "Số tiền giảm phải > 0";
+
+        if (num > 100_000_000) return "Không vượt quá 100,000,000";
+
         return "";
+      }
 
       case "discountPercent":
         if (form.discountType !== "PERCENTAGE") return "";
@@ -160,9 +157,9 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           return "End date quá xa";
         return "";
 
-      case "imageUrl":
-        if (!value) return "Vui lòng tải ảnh";
-        return "";
+      // case "imageUrl":
+      //   if (!value) return "Vui lòng tải ảnh";
+      //   return "";
 
       default:
         return "";
@@ -172,35 +169,51 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const handleBlur = (key: keyof CreateVoucherRequest) => {
     setTouched((prev) => ({ ...prev, [key]: true }));
 
-    const error = validateField(key, form[key], form);
+    const rawValue = form[key];
 
-    setErrors((prev) => ({
-      ...prev,
-      [key]: error,
-    }));
+    const error = validateField(key, rawValue, form);
+
+    setErrors((prev) => {
+      const updated = { ...prev };
+
+      if (!error) delete updated[key];
+      else updated[key] = error;
+
+      return updated;
+    });
   };
 
-  const handleChangeField = (
-    key: keyof CreateVoucherRequest,
-    value: any
-  ) => {
-    setForm((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+  const handleChangeField = (key: keyof CreateVoucherRequest, value: any) => {
+    // console.log("[CHANGE]", key, value, typeof value);
 
-    if (touched[key]) {
-      const error = validateField(key, value, {
-        ...form,
+    setForm((prev) => {
+      const nextForm = {
+        ...prev,
         [key]: value,
+      };
+
+      const error = validateField(key, value, nextForm);
+
+      console.log("[VALIDATE]", key, {
+        value,
+        nextForm,
+        error,
+        touched: touched[key],
       });
 
-      setErrors((prev) => ({
-        ...prev,
-        [key]: error,
-      }));
-    }
+      setErrors((prevErr) => {
+        const updated = { ...prevErr };
+
+        if (!error) delete updated[key];
+        else updated[key] = error;
+
+        return updated;
+      });
+
+      return nextForm;
+    });
   };
+
   // Date validation helpers (Vietnam timezone UTC+7)
   const getToday = () => {
     const today = new Date();
@@ -231,7 +244,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const getMaxEndDate = () => {
     if (!form.startDate) return "";
     const startDate = new Date(form.startDate + 'T00:00:00');
-    startDate.setDate(startDate.getDate() + 30);
+    startDate.setDate(startDate.getDate() + 90);
     return startDate.toISOString().split('T')[0];
   };
 
@@ -346,15 +359,15 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         return;
       }
 
-      if (form.discountAmount <= 0) {
-        toast.error("Số tiền giảm phải lớn hơn 0");
-        return;
-      }
+      // if (form.discountAmount <= 0) {
+      //   toast.error("Số tiền giảm phải lớn hơn 0");
+      //   return;
+      // }
 
-      if (form.discountAmount > 100_000_000) {
-        toast.error("Số tiền giảm không được vượt quá 100,000,000 VND");
-        return;
-      }
+      // if (form.discountAmount > 100_000_000) {
+      //   toast.error("Số tiền giảm không được vượt quá 100,000,000 VND");
+      //   return;
+      // }
     }
 
     if (form.discountType === "PERCENTAGE") {
@@ -367,10 +380,10 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         return;
       }
 
-      if (form.discountPercent > 100) {
-        toast.error("Phần trăm giảm không được vượt quá 100%");
-        return;
-      }
+      // if (form.discountPercent > 100) {
+      //   toast.error("Phần trăm giảm không được vượt quá 100%");
+      //   return;
+      // }
     }
 
     if (form.voucherPrice === null || form.voucherPrice === undefined) {
@@ -378,15 +391,15 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       return;
     }
 
-    if (form.voucherPrice < 0) {
-      toast.error("Giá đổi không được âm");
-      return;
-    }
+    // if (form.voucherPrice < 0) {
+    //   toast.error("Giá đổi không được âm");
+    //   return;
+    // }
 
-    if (form.voucherPrice > 100_000_000) {
-      toast.error("Giá đổi không được vượt quá 100,000,000 điểm");
-      return;
-    }
+    // if (form.voucherPrice > 100_000_000) {
+    //   toast.error("Giá đổi không được vượt quá 100,000,000 điểm");
+    //   return;
+    // }
 
     if (
       form.quantity === null ||
@@ -397,15 +410,15 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       return;
     }
 
-    if (form.quantity <= 0) {
-      toast.error("Số lượng phải lớn hơn 0");
-      return;
-    }
+    // if (form.quantity <= 0) {
+    //   toast.error("Số lượng phải lớn hơn 0");
+    //   return;
+    // }
 
-    if (form.quantity > 100_000) {
-      toast.error("Số lượng không được vượt quá 100,000");
-      return;
-    }
+    // if (form.quantity > 100_000) {
+    //   toast.error("Số lượng không được vượt quá 100,000");
+    //   return;
+    // }
 
     if (
       form.usageLimitPerMember === null ||
@@ -416,22 +429,31 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       return;
     }
 
-    if (form.usageLimitPerMember <= 0) {
-      toast.error("Giới hạn mỗi người phải lớn hơn 0");
-      return;
-    }
+    // if (form.usageLimitPerMember != null) {
+    //   if (form.usageLimitPerMember <= 0) {
+    //     toast.error("Giới hạn mỗi người phải lớn hơn 0");
+    //     return;
+    //   }
 
-    if (form.quantity && form.usageLimitPerMember > form.quantity) {
+    //   if (
+    //     form.quantity != null &&
+    //     form.usageLimitPerMember > form.quantity
+    //   ) {
+    //     toast.error("Giới hạn mỗi người không được vượt quá số lượng");
+    //     return;
+    //   }
+    // }
+
+    if (
+      form.quantity != null &&
+      form.usageLimitPerMember != null &&
+      form.usageLimitPerMember > form.quantity
+    ) {
       toast.error("Giới hạn mỗi người không được vượt quá số lượng");
       return;
     }
 
-    if (form.quantity && form.usageLimitPerMember > form.quantity) {
-      toast.error("Giới hạn mỗi người không được vượt quá số lượng");
-      return;
-    }
-
-    if (!form.usageValiDays) {
+    if (!form.usageValidDays) {
       toast.error("Vui lòng nhập hạn sử dụng");
       return;
     }
@@ -441,28 +463,28 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       return;
     }
 
-    const minStartDate = getMinStartDate();
-    if (form.startDate < minStartDate) {
-      toast.error(`Ngày bắt đầu phải từ ${formatDateVN(minStartDate)} trở đi (cần 3 ngày để admin duyệt)`);
-      return;
-    }
+    // const minStartDate = getMinStartDate();
+    // if (form.startDate < minStartDate) {
+    //   toast.error(`Ngày bắt đầu phải từ ${formatDateVN(minStartDate)} trở đi (cần 3 ngày để admin duyệt)`);
+    //   return;
+    // }
 
     if (!form.endDate) {
       toast.error("Vui lòng chọn ngày kết thúc");
       return;
     }
 
-    const minEndDate = getMinEndDate();
-    const maxEndDate = getMaxEndDate();
-    if (form.endDate < minEndDate) {
-      toast.error(`Ngày kết thúc phải từ ${formatDateVN(minEndDate)} trở đi`);
-      return;
-    }
+    // const minEndDate = getMinEndDate();
+    // const maxEndDate = getMaxEndDate();
+    // if (form.endDate < minEndDate) {
+    //   toast.error(`Ngày kết thúc phải từ ${formatDateVN(minEndDate)} trở đi`);
+    //   return;
+    // }
 
-    if (form.endDate > maxEndDate) {
-      toast.error(`Ngày kết thúc không được quá ${formatDateVN(maxEndDate)}`);
-      return;
-    }
+    // if (form.endDate > maxEndDate) {
+    //   toast.error(`Ngày kết thúc không được quá ${formatDateVN(maxEndDate)}`);
+    //   return;
+    // }
 
     if (selectedLocationIds.length === 0) {
       toast.error("Vui lòng chọn ít nhất một địa điểm");
@@ -475,23 +497,23 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     }
 
     if (
-      form.usageValiDays === null ||
-      form.usageValiDays === undefined ||
-      Number.isNaN(form.usageValiDays)
+      form.usageValidDays === null ||
+      form.usageValidDays === undefined ||
+      Number.isNaN(form.usageValidDays)
     ) {
       toast.error("Vui lòng nhập hạn sử dụng");
       return;
     }
 
-    if (form.usageValiDays <= 0) {
-      toast.error("Hạn sử dụng phải lớn hơn 0");
-      return;
-    }
+    // if (form.usageValidDays <= 0) {
+    //   toast.error("Hạn sử dụng phải lớn hơn 0");
+    //   return;
+    // }
 
-    if (form.usageValiDays > 365) {
-      toast.error("Hạn sử dụng không được vượt quá 365 ngày");
-      return;
-    }
+    // if (form.usageValidDays > 365) {
+    //   toast.error("Hạn sử dụng không được vượt quá 365 ngày");
+    //   return;
+    // }
 
     const payload: CreateVoucherRequest = {
       ...form,
@@ -516,8 +538,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         setForm(defaultForm);
         setSelectedLocationIds([]);
       }
-    } catch {
-      toast.error("Submit failed");
+    } catch (error: any) {
+      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra, vui lòng thử lại");
     } finally {
       setLoading(false);
     }
@@ -532,7 +554,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
       {/* TITLE */}
       <FieldWrapper>
-        <label className={labelClass}>Tên voucher</label>
+        <label className={labelClass}>Tên voucher <span className="text-red-500">*</span></label>
         <input
           name="title"
           value={form.title}
@@ -540,13 +562,13 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           onBlur={() => handleBlur("title")}
           placeholder="Nhập tên voucher..."
           className={`
-  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
-  focus:outline-none focus:ring-1 transition placeholder-gray-300
-  ${errors.title
+    w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+    focus:outline-none focus:ring-1 transition placeholder-gray-300
+    ${errors.title
               ? "border-red-500 focus:ring-red-500 focus:border-red-500"
               : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
             }
-`}
+  `}
         />
 
         {errors.title && (
@@ -558,11 +580,11 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
       {/* DESCRIPTION */}
       <FieldWrapper>
-        <label className={labelClass}>Mô tả</label>
+        <label className={labelClass}>Mô tả <span className="text-red-500">*</span></label>
         {/* <Tiptap
-          value={form.description || ""}
-          onChange={(val) => handleChange("description", val)}
-        /> */}
+            value={form.description || ""}
+            onChange={(val) => handleChange("description", val)}
+          /> */}
         <textarea
           name="description"
           value={form.description}
@@ -572,13 +594,13 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           onBlur={() => handleBlur("description")}
           placeholder="Nhập mô tả voucher..."
           className={`
-          w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
-          focus:outline-none focus:ring-1 transition placeholder-gray-300
-          ${errors.description
+            w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+            focus:outline-none focus:ring-1 transition placeholder-gray-300
+            ${errors.description
               ? "border-red-500 focus:ring-red-500 focus:border-red-500"
               : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
             }
-`}
+  `}
           rows={4}
         />
         {errors.description && (
@@ -591,7 +613,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       {/* IMAGE */}
       <FieldWrapper>
         <div className="flex items-center justify-between">
-          <label className={labelClass}>Ảnh voucher</label>
+          <label className={labelClass}>Ảnh voucher <span className="text-red-500">*</span></label>
           <div className="flex gap-2">
             <button
               type="button"
@@ -653,7 +675,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
       {/* DISCOUNT TYPE */}
       <FieldWrapper>
-        <label className={labelClass}>Loại giảm giá</label>
+        <label className={labelClass}>Loại giảm giá <span className="text-red-500">*</span></label>
         <select
           value={form.discountType}
           onChange={(e) => handleChange("discountType", e.target.value as DiscountType)}
@@ -667,111 +689,216 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       {/* DISCOUNT VALUE */}
       {form.discountType === "FIXED_AMOUNT" && (
         <FieldWrapper>
-          <label className={labelClass}>Số tiền giảm (VND)</label>
+          <label className={labelClass}>Số tiền giảm (VND) <span className="text-red-500">*</span></label>
           <input
             type="number"
             value={form.discountAmount ?? ""}
-            onChange={(e) => handleChange("discountAmount", Number(e.target.value))}
-            className={inputClass}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              handleChangeField(
+                "discountAmount",
+                value === "" ? null : Number(value)
+              );
+            }}
+            className={`
+                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+                  focus:outline-none focus:ring-1 transition placeholder-gray-300
+                  ${errors.discountAmount
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+              }
+            `}
           />
+          {errors.discountAmount && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.discountAmount}
+            </p>
+          )}
         </FieldWrapper>
       )}
 
       {form.discountType === "PERCENTAGE" && (
         <FieldWrapper>
-          <label className={labelClass}>Phần trăm giảm (%)</label>
+          <label className={labelClass}>Phần trăm giảm (%) <span className="text-red-500">*</span></label>
           <input
             type="number"
             value={form.discountPercent ?? ""}
             onChange={(e) => {
               const value = e.target.value;
-              handleChange(
+
+              handleChangeField(
                 "discountPercent",
                 value === "" ? null : Number(value)
               );
-            }} className={inputClass}
+            }}
+            className={`
+                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+                  focus:outline-none focus:ring-1 transition placeholder-gray-300
+                  ${errors.discountPercent
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+              }
+            `}
           />
+          {errors.discountPercent && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.discountPercent}
+            </p>
+          )}
         </FieldWrapper>
       )}
 
       {/* PRICE + QUANTITY */}
       <div className="grid grid-cols-2 gap-5">
         <FieldWrapper>
-          <label className={labelClass}>Giá đổi</label>
+          <label className={labelClass}>Giá đổi <span className="text-red-500">*</span></label>
           <input
             type="number"
             value={form.voucherPrice ?? ""}
             onChange={(e) => {
               const value = e.target.value;
-              handleChange(
+
+              handleChangeField(
                 "voucherPrice",
                 value === "" ? null : Number(value)
               );
-            }} className={inputClass}
+            }}
+            className={`
+                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+                  focus:outline-none focus:ring-1 transition placeholder-gray-300
+                  ${errors.voucherPrice
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+              }
+            `}
           />
+          {errors.voucherPrice && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.voucherPrice}
+            </p>
+          )}
         </FieldWrapper>
 
         <FieldWrapper>
-          <label className={labelClass}>Số lượng</label>
+          <label className={labelClass}>Số lượng <span className="text-red-500">*</span></label>
           <input
             type="number"
             value={form.quantity ?? ""}
             onChange={(e) => {
               const value = e.target.value;
-              handleChange(
+
+              handleChangeField(
                 "quantity",
                 value === "" ? null : Number(value)
               );
-            }} className={inputClass}
+            }}
+            className={`
+                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+                  focus:outline-none focus:ring-1 transition placeholder-gray-300
+                  ${errors.quantity
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+              }
+            `}
           />
+          {errors.quantity && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.quantity}
+            </p>
+          )}
         </FieldWrapper>
       </div>
 
       {/* LIMIT */}
       <div className="grid grid-cols-2 gap-5">
         <FieldWrapper>
-          <label className={labelClass}>Giới hạn mỗi người</label>
+          <label className={labelClass}>Giới hạn mỗi người <span className="text-red-500">*</span></label>
           <input
             type="number"
             value={form.usageLimitPerMember ?? ""}
             onChange={(e) => {
               const value = e.target.value;
-              handleChange(
+
+              handleChangeField(
                 "usageLimitPerMember",
                 value === "" ? null : Number(value)
               );
             }}
-            className={inputClass}
+            className={`
+                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+                  focus:outline-none focus:ring-1 transition placeholder-gray-300
+                  ${errors.usageLimitPerMember
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+              }
+            `}
           />
+          {errors.usageLimitPerMember && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.usageLimitPerMember}
+            </p>
+          )}
         </FieldWrapper>
 
         <FieldWrapper>
-          <label className={labelClass}>Hạn sử dụng (ngày)</label>
+          <label className={labelClass}>Hạn sử dụng (ngày) <span className="text-red-500">*</span></label>
           <input
             type="number"
-            value={form.usageValiDays || ""}
-            onChange={(e) => handleChange("usageValiDays", Number(e.target.value))}
-            className={inputClass}
+            value={form.usageValidDays ?? ""}
+            onChange={(e) => {
+              const value = e.target.value;
+
+              handleChangeField(
+                "usageValidDays",
+                value === "" ? null : Number(value)
+              );
+            }}
+            className={`
+                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+                  focus:outline-none focus:ring-1 transition placeholder-gray-300
+                  ${errors.usageValidDays
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+              }
+            `}
           />
+          {errors.usageValidDays && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.usageValidDays}
+            </p>
+          )}
         </FieldWrapper>
       </div>
 
       {/* DATE */}
       <div className="grid grid-cols-2 gap-5">
         <FieldWrapper>
-          <label className={labelClass}>Ngày bắt đầu</label>
+          <label className={labelClass}>Ngày bắt đầu <span className="text-red-500">*</span></label>
           <input
             type="date"
             value={form.startDate}
             onChange={(e) => handleChange("startDate", e.target.value)}
             min={getMinStartDate()}
-            className={inputClass}
+            className={`
+                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+                  focus:outline-none focus:ring-1 transition placeholder-gray-300
+                  ${errors.startDate
+                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+              }
+            `}
           />
+          {errors.startDate && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.startDate}
+            </p>
+          )}
           <p className="text-xs text-gray-500 mt-1">Tối thiểu: {formatDateVN(getMinStartDate())} (cần 3 ngày để admin duyệt)</p>
         </FieldWrapper>
 
         <FieldWrapper>
-          <label className={labelClass}>Ngày kết thúc</label>
+          <label className={labelClass}>Ngày kết thúc <span className="text-red-500">*</span></label>
           <input
             type="date"
             value={form.endDate}
@@ -781,6 +908,11 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
             disabled={!form.startDate}
             className={`${inputClass} ${!form.startDate ? "opacity-50 cursor-not-allowed" : ""}`}
           />
+          {errors.endDate && (
+            <p className="text-red-500 text-xs mt-1">
+              {errors.endDate}
+            </p>
+          )}
           <p className="text-xs text-gray-500 mt-1">
             {form.startDate
               ? `Từ ${formatDateVN(getMinEndDate())} đến ${formatDateVN(getMaxEndDate())}`
@@ -791,7 +923,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
       {/* LOCATION */}
       <FieldWrapper>
-        <label className={labelClass}>Địa điểm áp dụng</label>
+        <label className={labelClass}>Địa điểm áp dụng <span className="text-red-500">*</span></label>
         <button
           type="button"
           onClick={() => setOpenLocationModal(true)}
