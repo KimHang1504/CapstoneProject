@@ -9,7 +9,7 @@ export const STATUS_STYLE: Record<string, string> = {
   COMPLETED: 'bg-emerald-100 text-emerald-600',
   PENDING:   'bg-amber-100 text-amber-600',
   REFUNDED:  'bg-sky-100 text-sky-600',
-  FAILED:    'bg-rose-100 text-rose-500',
+  PAYMENT_FAILED:'bg-rose-100 text-rose-500',
   CANCELLED: 'bg-gray-100 text-gray-500',
 };
 
@@ -17,7 +17,7 @@ export const STATUS_LABEL: Record<string, string> = {
   COMPLETED: 'Hoàn thành',
   PENDING:   'Đang chờ',
   REFUNDED:  'Hoàn tiền',
-  FAILED:    'Thất bại',
+  PAYMENT_FAILED:'Thất bại',
   CANCELLED: 'Đã hủy',
 };
 
@@ -30,6 +30,14 @@ const AD_STATUS_STYLE: Record<string, string> = {
   INACTIVE: 'bg-gray-100 text-gray-400',
 };
 
+export const AD_STATUS_LABEL: Record<string, string> = {
+  ACTIVE:   'Đang chạy',
+  PENDING:  'Đang xét duyệt',
+  DRAFT:    'Nháp',
+  REJECTED: 'Bị từ chối',
+  APPROVED: 'Đã duyệt',
+  INACTIVE: 'Không hoạt động',
+};
 export default function TransactionCard({ item }: { item: AdsOrderTransaction }) {
   const [expanded, setExpanded] = useState(false);
   const ad = item.advertisement;
@@ -56,7 +64,7 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
                   {PLACEMENT_LABEL[item.package.placementType as keyof typeof PLACEMENT_LABEL] ?? item.package.placementType}
                 </span>
                 <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${AD_STATUS_STYLE[ad.status] ?? 'bg-gray-100 text-gray-500'}`}>
-                  QC: {ad.status}
+                  QC: {AD_STATUS_LABEL[ad.status] ?? ad.status}
                 </span>
                 <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${STATUS_STYLE[item.status] ?? 'bg-gray-100 text-gray-500'}`}>
                   {STATUS_LABEL[item.status] ?? item.status}

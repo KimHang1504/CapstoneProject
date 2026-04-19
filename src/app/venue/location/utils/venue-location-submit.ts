@@ -27,7 +27,7 @@ export function getLocationSubmitErrors(location: VenueLocationDetail) {
   if (!location.coverImage?.length) errors.push('Hình ảnh bìa');
   // if (!location.interiorImage?.length) errors.push('Hình ảnh nội thất');
   // if (!location.fullPageMenuImage?.length) errors.push('Hình ảnh menu');
-  // if (!location.businessLicenseUrl?.length) errors.push('Hình ảnh giấy phép kinh doanh');
+  if (!location.businessLicenseUrl?.length) errors.push('Hình ảnh giấy phép kinh doanh');
 
 
   const hasCategories =

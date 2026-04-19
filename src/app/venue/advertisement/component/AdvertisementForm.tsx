@@ -17,7 +17,7 @@ type Props = {
     content: string;
     bannerUrl: string;
     targetUrl: string;
-    placementType: PlacementType;
+    placementType?: PlacementType | null;
     moodTypeId?: number | null;
     desiredStartDate?: string | null;
   };
@@ -44,6 +44,8 @@ export default function AdvertisementForm({
   submitLabel = "Hoàn thành",
   moodOptions = [],
 }: Props) {
+  const isCreateMode = !initialData;
+
   const [desiredStartDate, setDesiredStartDate] = useState<Date | null>(
     initialData?.desiredStartDate ? new Date(initialData.desiredStartDate) : null
   );
@@ -53,7 +55,7 @@ export default function AdvertisementForm({
     content: initialData?.content || "",
     bannerUrl: initialData?.bannerUrl || "",
     targetUrl: initialData?.targetUrl || "",
-    placementType: initialData?.placementType || "HOME_BANNER",
+    placementType: initialData?.placementType || "",
     moodTypeId: initialData?.moodTypeId ?? "",
   });
 
@@ -62,6 +64,36 @@ export default function AdvertisementForm({
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [dateError, setDateError] = useState<string>("");
   const router = useRouter()
+
+  const [errors, setErrors] = useState({
+    title: "",
+
+  });
+
+  const [touched, setTouched] = useState({
+    title: false,
+
+  });
+
+  const validateField = (name: string, value: any) => {
+    switch (name) {
+      case "title":
+        return !value?.trim() ? "Vui lòng nhập mục đích quảng cáo" : "";
+      default:
+        return "";
+    }
+  };
+
+  const handleBlur = (name: string, value: any) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+
+    const error = validateField(name, value);
+
+    setErrors(prev => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
@@ -210,6 +242,11 @@ export default function AdvertisementForm({
       desiredStartDate: desiredStartDate ? desiredStartDate.toISOString() : null,
     };
 
+    // Placement is derived from package when submitting with payment in create flow.
+    if (isCreateMode) {
+      delete (payload as { placementType?: PlacementType }).placementType;
+    }
+
     try {
       await onSubmit(payload);
       toast.success("Đã lưu quảng cáo thành công!");
@@ -241,7 +278,7 @@ export default function AdvertisementForm({
 
     if (date < minDate) {
       const daysRemaining = Math.ceil((minDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
-      setDateError(`Ngày bắt đầu phải sau ${daysRemaining} ngày để admin có thời gian duyệt`);
+      setDateError(`Ngày bắt đầu phải sau 72h ngày để admin có thời gian duyệt`);
       return false;
     }
 
@@ -256,14 +293,24 @@ export default function AdvertisementForm({
       </h1>
       {/* Title */}
       <FieldWrapper>
-        <label className={labelClass}>Mục đích quảng cáo</label>
+        <label className={labelClass}>Mục đích quảng cáo <span className="text-red-500">*</span></label>
         <input
           name="title"
           value={form.title}
           onChange={handleChange}
-          placeholder="Nhập tiêu đề quảng cáo..."
-          className={inputClass}
+          onBlur={() => handleBlur("title", form.title)}
+          className={`w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+  focus:outline-none focus:ring-1 transition
+  ${errors.title && touched.title
+              ? "border-red-500 focus:ring-red-300 focus:border-red-500"
+              : "border-violet-200 focus:ring-violet-400 focus:border-violet-400"
+            }
+`}
         />
+
+        {errors.title && touched.title && (
+          <p className="text-xs text-red-500 mt-1">{errors.title}</p>
+        )}
       </FieldWrapper>
 
       {/* Content */}
@@ -329,7 +376,7 @@ export default function AdvertisementForm({
       {/* Banner + Preview */}
       <FieldWrapper>
         <div className="flex items-center justify-between">
-          <label className={labelClass}>Banner</label>
+          <label className={labelClass}>Banner <span className="text-red-500">*</span></label>
           <div className="flex gap-2">
             <button
               type="button"
@@ -392,57 +439,57 @@ export default function AdvertisementForm({
         )}
       </FieldWrapper>
 
-      {/* Placement */}
-      <FieldWrapper>
-        <label className={labelClass}>Vị trí hiển thị</label>
-        <div className="mt-2 grid grid-cols-2 gap-3">
-          {([
-            {
-              value: "HOME_BANNER", label: "Banner đầu trang", icon: (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" />
-                </svg>
-              )
-            },
-            {
-              value: "POPUP", label: "Popup", icon: (
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-                </svg>
-              )
-            },
-          ] as { value: PlacementType; label: string; icon: React.ReactNode }[]).map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => setForm({ ...form, placementType: opt.value })}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 ${form.placementType === opt.value
-                ? "border-violet-500 bg-violet-50 text-violet-700 shadow-sm"
-                : "border-gray-200 bg-white text-gray-500 hover:border-violet-200 hover:bg-violet-50/50"
-                }`}
-            >
-              <span className={form.placementType === opt.value ? "text-violet-500" : "text-gray-400"}>
-                {opt.icon}
-              </span>
-              {opt.label}
-            </button>
-          ))}
-        </div>
+      {!isCreateMode && (
+        <FieldWrapper>
+          <label className={labelClass}>Vị trí hiển thị</label>
+          <div className="mt-2 grid grid-cols-2 gap-3">
+            {([
+              {
+                value: "HOME_BANNER", label: "Banner đầu trang", icon: (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" />
+                  </svg>
+                )
+              },
+              {
+                value: "POPUP", label: "Popup", icon: (
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
+                  </svg>
+                )
+              },
+            ] as { value: PlacementType; label: string; icon: React.ReactNode }[]).map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setForm({ ...form, placementType: opt.value })}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 ${form.placementType === opt.value
+                  ? "border-violet-500 bg-violet-50 text-violet-700 shadow-sm"
+                  : "border-gray-200 bg-white text-gray-500 hover:border-violet-200 hover:bg-violet-50/50"
+                  }`}
+              >
+                <span className={form.placementType === opt.value ? "text-violet-500" : "text-gray-400"}>
+                  {opt.icon}
+                </span>
+                {opt.label}
+              </button>
+            ))}
+          </div>
 
-        {/* hidden select to keep form.placementType in sync */}
-        <select
-          name="placementType"
-          value={form.placementType}
-          onChange={handleChange}
-          className="sr-only"
-          aria-hidden="true"
-        >
-          <option value="HOME_BANNER">Banner đầu trang</option>
-          <option value="POPUP">Popup</option>
-        </select>
-      </FieldWrapper>
+          <select
+            name="placementType"
+            value={form.placementType}
+            onChange={handleChange}
+            className="sr-only"
+            aria-hidden="true"
+          >
+            <option value="HOME_BANNER">Banner đầu trang</option>
+            <option value="POPUP">Popup</option>
+          </select>
+        </FieldWrapper>
+      )}
       <FieldWrapper>
-        <label className={labelClass}>Tâm trạng</label>
+        <label className={labelClass}>Tâm trạng <span className="text-red-500">*</span></label>
 
         <div className="mt-2 flex flex-wrap gap-2">
           {(moodOptions ?? []).map((mood) => {
@@ -473,7 +520,7 @@ export default function AdvertisementForm({
 
       {/* Date */}
       <FieldWrapper>
-        <label className={labelClass}>Ngày bắt đầu</label>
+        <label className={labelClass}>Ngày bắt đầu <span className="text-red-500">*</span></label>
         <div className="relative mt-2">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-violet-400 z-10 pointer-events-none">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -491,16 +538,14 @@ export default function AdvertisementForm({
             dateFormat="yyyy-MM-dd HH:mm"
             placeholderText="Chọn ngày bắt đầu..."
             className={`w-full border rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition ${dateError
-                ? "border-rose-300 focus:ring-rose-400"
-                : "border-violet-200 focus:ring-violet-400"
+              ? "border-rose-300 focus:ring-rose-400"
+              : "border-violet-200 focus:ring-violet-400"
               }`}
           />
         </div>
         {dateError && (
           <p className="text-xs text-rose-600 mt-2 flex items-center gap-1.5">
-            <svg className="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M18.101 12.93a1 1 0 00-1.415-1.414L11 16.586V9.5a1 1 0 10-2 0v7.086L3.314 11.516a1 1 0 00-1.414 1.414l9.9 9.9a1 1 0 001.415 0l9.9-9.9z" clipRule="evenodd" />
-            </svg>
+            <path fillRule="evenodd" d="M18.101 12.93a1 1 0 00-1.415-1.414L11 16.586V9.5a1 1 0 10-2 0v7.086L3.314 11.516a1 1 0 00-1.414 1.414l9.9 9.9a1 1 0 001.415 0l9.9-9.9z" clipRule="evenodd" />
             {dateError}
           </p>
         )}
