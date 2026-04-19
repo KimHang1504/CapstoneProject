@@ -56,10 +56,8 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
   function prevStep() {
     if (step === 1) {
       if (mode === "edit" && locationId) {
-        // Về trang detail
         router.push(`/venue/location/mylocation/${locationId}`)
       } else {
-        // Mode create → về trang danh sách
         router.push("/venue/location/mylocation")
       }
       return
@@ -89,7 +87,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         return;
       }
       // VALIDATE PRICE
-      if (formData.priceMin < 0) {
+      if (formData.priceMin !== null && formData.priceMin < 0) {
         toast.error("Giá tối thiểu phải ≥ 0");
         return;
       }
@@ -101,6 +99,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
       if (
         formData.priceMax != null &&
+        formData.priceMin !== null &&
         formData.priceMin > formData.priceMax
       ) {
         toast.error("Giá tối thiểu phải < giá tối đa");
@@ -150,25 +149,25 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     return errors;
   }
 
-  function hasAtLeastOneField(data: VenueFormData) {
-    return (
-      data.name ||
-      data.description ||
-      data.address ||
-      data.selectedCategories.length > 0 ||
-      data.email ||
-      data.phoneNumber ||
-      data.websiteUrl ||
-      data.priceMin > 0 ||
-      data.priceMax != null ||
-      data.businessLicense ||
-      data.coverImage ||
-      data.interiorImage.length > 0 ||
-      data.fullPageMenuImage.length > 0 ||
-      data.selectedMoods.length > 0 ||
-      data.selectedStyles.length > 0
-    );
-  }
+  // function hasAtLeastOneField(data: VenueFormData) {
+  //   return (
+  //     data.name ||
+  //     data.description ||
+  //     data.address ||
+  //     data.selectedCategories.length > 0 ||
+  //     data.email ||
+  //     data.phoneNumber ||
+  //     data.websiteUrl ||
+  //     data.priceMin > 0 ||
+  //     data.priceMax != null ||
+  //     data.businessLicense ||
+  //     data.coverImage ||
+  //     data.interiorImage.length > 0 ||
+  //     data.fullPageMenuImage.length > 0 ||
+  //     data.selectedMoods.length > 0 ||
+  //     data.selectedStyles.length > 0
+  //   );
+  // }
   async function handleSubmit() {
     try {
       // ===== COVER =====
@@ -228,6 +227,11 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         return;
       }
 
+      if (!formData.coverImage && !formData.existingCoverUrl) {
+        toast.error("Vui lòng chọn ảnh bìa");
+        return;
+      }
+
       const venueTags = Array.from(
         new Map(
           formData.selectedMoods.flatMap(moodId =>
@@ -243,6 +247,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         ).values()
       );
 
+
       const payload = {
         name: formData.name,
         description: formData.description,
@@ -253,7 +258,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         email: formData.email,
         phoneNumber: formData.phoneNumber,
         websiteUrl: formData.websiteUrl,
-        priceMin: formData.priceMin,
+        priceMin: formData.priceMin ?? 0,
         priceMax: formData.priceMax ?? null,
         // isOwnerVerified: true,
 

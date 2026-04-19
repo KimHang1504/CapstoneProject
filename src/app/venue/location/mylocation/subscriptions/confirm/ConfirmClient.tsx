@@ -14,13 +14,14 @@ export default function ConfirmClient() {
   const [status, setStatus] = useState<"confirming" | "processing" | "success" | "error">("confirming");
   const [errorMessage, setErrorMessage] = useState("");
   const [progress, setProgress] = useState(0);
+  const quantity = Number(searchParams.get("quantity") || 1);
 
   useEffect(() => {
     if (status === "processing") {
       const duration = 5000;
       const interval = 50;
       const increment = (interval / duration) * 100;
-      
+
       const timer = setInterval(() => {
         setProgress((prev) => {
           if (prev >= 100) {
@@ -48,21 +49,21 @@ export default function ConfirmClient() {
     try {
       const response = await submitVenueWithPayment(Number(locationId), {
         packageId: Number(packageId),
-        quantity: 1,
+        quantity: quantity,
         paymentMethod: 'WALLET'
       });
-      
+
       if (!response.data || !response.data.transactionId) {
         throw new Error('Thanh toán thất bại, vui lòng thử lại');
       }
-      
+
       const payment = response.data;
 
       await new Promise(resolve => setTimeout(resolve, 5000));
-      
+
       setProgress(100);
       setStatus("success");
-      
+
       setTimeout(() => {
         router.push(
           `/payment/success?transactionId=${payment.transactionId}&type=location&locationId=${locationId}`
@@ -72,7 +73,7 @@ export default function ConfirmClient() {
     } catch (error: any) {
       console.error("Confirm payment error:", error);
       const errorMsg = error?.response?.data?.message || error?.message || "Có lỗi xảy ra khi xác nhận thanh toán";
-      
+
       if (errorMsg.includes('pending') || errorMsg.includes('transaction')) {
         setErrorMessage('Bạn đang có giao dịch chưa hoàn thành. Vui lòng hoàn tất hoặc đợi giao dịch hết hạn.');
       } else if (errorMsg.includes('balance') || errorMsg.includes('insufficient')) {
@@ -80,16 +81,21 @@ export default function ConfirmClient() {
       } else {
         setErrorMessage(errorMsg);
       }
-      
+
       setStatus("error");
     }
   };
+  if (quantity < 1 || quantity > 12) {
+    setErrorMessage("Số lượng không hợp lệ");
+    setStatus("error");
+    return;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-xl">
         <div className="bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden">
-          
+
           {/* Icon Section */}
           <div className="relative pt-8 pb-6 bg-gradient-to-br from-purple-50 to-indigo-50">
             <div className="flex justify-center mb-3">
@@ -192,7 +198,7 @@ export default function ConfirmClient() {
                     <span className="font-semibold">{Math.round(progress)}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                    <div 
+                    <div
                       className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full transition-all duration-300 ease-out relative overflow-hidden"
                       style={{ width: `${progress}%` }}
                     >
