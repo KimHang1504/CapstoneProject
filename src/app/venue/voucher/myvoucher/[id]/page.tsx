@@ -7,6 +7,7 @@ import { VoucherDetail } from "@/api/venue/vouchers/type";
 import VoucherActions from "@/app/venue/voucher/component/VoucherActions";
 import Summary from "@/app/venue/voucher/myvoucher/[id]/component/Summary";
 import VoucherTabs from "@/app/venue/voucher/myvoucher/[id]/component/VoucherTabs";
+import Loading from "@/components/Loading";
 
 
 
@@ -32,7 +33,7 @@ export default function VoucherDetailPage() {
         fetchVoucher();
     }, [id]);
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <Loading />;
     if (!voucher) return <p>Voucher not found</p>;
 
     return (

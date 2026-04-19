@@ -9,6 +9,7 @@ import {
 import AdvertisementForm from "@/app/venue/advertisement/component/AdvertisementForm";
 import {toast} from "sonner";
 import { getMoodTypes } from "@/api/mood/api";
+import Loading from "@/components/Loading";
 
 type MoodOption = {
   id: number;
@@ -59,7 +60,7 @@ export default function EditAdvertisementPage() {
     router.push(`/venue/advertisement/myadvertisement/${id}`);
   };
 
-  if (loading || !data) return <p>Loading...</p>;
+if (loading || !data) return <Loading />;
 
   return (
     <AdvertisementForm
