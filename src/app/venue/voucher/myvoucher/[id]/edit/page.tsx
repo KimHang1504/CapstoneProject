@@ -12,6 +12,7 @@ import {
 
 import { CreateVoucherRequest } from "@/api/venue/vouchers/type";
 import {toast} from "sonner";
+import Loading from "@/components/Loading";
 
 export default function EditVoucherPage() {
 
@@ -48,7 +49,7 @@ export default function EditVoucherPage() {
           imageUrl: data.imageUrl ?? "",
 
           usageLimitPerMember: data.usageLimitPerMember,
-          usageValiDays: data.usageValiDays ?? 7,
+          usageValidDays: data.usageValidDays ?? 7,
 
           venueLocationIds: data.locations.map(
             (l) => l.venueLocationId
@@ -80,7 +81,7 @@ export default function EditVoucherPage() {
 
       await updateVoucher(id, data);
 
-      toast.success("Voucher updated");
+      toast.success("Voucher cập nhật thành công");
 
       router.push(`/venue/voucher/myvoucher/${id}`);
 
@@ -88,13 +89,13 @@ export default function EditVoucherPage() {
 
       console.error(err);
 
-      toast.error("Update failed");
+      toast.error("Vui lòng kiểm tra lại thông tin voucher");
 
     }
 
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
 
   if (!voucher) return <p>Voucher not found</p>;
 

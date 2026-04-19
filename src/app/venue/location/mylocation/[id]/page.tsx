@@ -11,7 +11,7 @@ import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 
 import ReviewSection from '@/app/venue/review/component/ReviewSection';
-import {XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
+import { XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
@@ -87,6 +87,7 @@ export default function LocationDetailPage() {
             try {
                 const res = await getMe();
                 setUserProfile(res.data);
+                console.log('Fetched user profile:', res.data);
             } catch (error) {
                 console.error('Error fetching user profile:', error);
             }
@@ -154,10 +155,14 @@ export default function LocationDetailPage() {
         router.push(`/venue/location/mylocation/edit/${id}`);
     };
 
-    const handleSubmitForApproval = () => {
-        if (isPending) return;
+const handleSubmitForApproval = async () => {
+    if (isPending) return;
 
-        const { missingCitizenId } = checkVenueOwnerVerification(userProfile);
+    try {
+        const res = await getMe();
+        const freshProfile = res.data;
+
+        const { missingCitizenId } = checkVenueOwnerVerification(freshProfile);
 
         if (missingCitizenId) {
             setOpenMissingCitizenPopup(true);
@@ -185,7 +190,11 @@ export default function LocationDetailPage() {
         }
 
         router.push(`/venue/location/mylocation/subscriptions?locationId=${location.id}`);
-    };
+    } catch (err) {
+        console.error("Failed to fetch latest profile:", err);
+        toast.error("Không thể kiểm tra thông tin tài khoản. Vui lòng thử lại.");
+    }
+};
 
     const canShowReview =
         location.status === "ACTIVE" ||
@@ -556,56 +565,6 @@ export default function LocationDetailPage() {
                             <FieldDisplay value={location.websiteUrl} label="website" onEdit={handleEdit}>
                                 <p className="text-sm text-gray-700">{location.websiteUrl}</p>
                             </FieldDisplay>
-                        </div>
-                        <div className="bg-linear-to-br from-violet-50 to-purple-50 border border-violet-100 rounded-2xl p-4 space-y-3">
-
-                            {/* Title + description */}
-                            <div>
-                                <p className="font-semibold text-gray-900">
-                                    Link cho nhân viên quét voucher
-                                </p>
-                                <p className="text-xs text-gray-500 mt-1">
-                                    Gửi link này cho nhân viên để họ truy cập trang quét voucher tại địa điểm
-                                </p>
-                            </div>
-
-                            {/* Link display */}
-                            <div className="flex items-center gap-2 bg-white border rounded-lg px-3 py-2">
-                                <span className="text-sm text-gray-700 truncate flex-1">
-                                    {redeemLink}
-                                </span>
-
-                                <button
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(redeemLink);
-                                        toast.success("Đã copy link cho nhân viên");
-                                    }}
-                                    className="px-3 py-1.5 bg-violet-500 text-white rounded-md text-xs hover:bg-violet-600 transition"
-                                >
-                                    Copy
-                                </button>
-                            </div>
-
-                            {/* Actions */}
-                            {/* <div className="flex items-center gap-3 text-xs">
-                                <a
-                                    href={redeemLink}
-                                    target="_blank"
-                                    className="text-blue-500 hover:underline"
-                                >
-                                    Mở thử link →
-                                </a>
-
-                                <button
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(redeemLink);
-                                        toast.success("Link đã sẵn sàng để gửi qua Zalo / Messenger");
-                                    }}
-                                    className="text-gray-500 hover:text-gray-700"
-                                >
-                                    Copy để gửi
-                                </button>
-                            </div> */}
                         </div>
                     </div>
                 </div>

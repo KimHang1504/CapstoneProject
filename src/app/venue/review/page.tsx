@@ -7,6 +7,7 @@ import Statistic from "@/app/venue/review/component/Statistic"
 import Filter from "@/app/venue/review/component/Filter"
 import ReviewList from "@/app/venue/review/component/ReviewList"
 import { ReviewSummary, Review } from "@/api/venue/review/type"
+import Loading from "@/components/Loading"
 
 export default function ReviewPage() {
   const [summary, setSummary] = useState<ReviewSummary | null>(null)
@@ -39,7 +40,7 @@ export default function ReviewPage() {
     fetchData()
   }, [filterParams])
 
-  if (loading && !summary) return <div>Loading...</div>
+  if (loading && !summary) return <Loading />;
 
   return (
     <div className="p-6 space-y-6">

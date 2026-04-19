@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarConfig, IconName } from '@/types/sidebar';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Menu,
   X,
@@ -43,6 +43,7 @@ type ManagementLayoutProps = {
   children: React.ReactNode;
   sidebarConfig: SidebarConfig;
   title?: string;
+   hideSidebar?: boolean;
 };
 
 // Icon mapper
@@ -80,6 +81,7 @@ export default function ManagementLayout({
   children,
   sidebarConfig,
   title,
+  hideSidebar = false,
 }: ManagementLayoutProps) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -87,6 +89,15 @@ export default function ManagementLayout({
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+
+  const dashboardTitle = title || 'Bảng điều khiển';
+  const normalizedTitle = dashboardTitle.toLowerCase();
+  const isAdminDashboard = normalizedTitle.includes('admin') || normalizedTitle.includes('quản trị');
+  const HeaderIcon = isAdminDashboard ? LayoutDashboard : Building2;
+  const headerBadge = isAdminDashboard ? 'Trang quản trị' : 'Không gian vận hành';
+  const headerDescription = isAdminDashboard
+    ? 'Quản lý người dùng, cấu hình hệ thống và theo dõi số liệu tổng quan.'
+    : 'Quản lý địa điểm, gói dịch vụ và hiệu suất kinh doanh của bạn.';
 
   // Helper function to check if a route is active (exact match or parent route)
   const isRouteActive = (currentPath: string, routePath: string) => {
@@ -164,18 +175,15 @@ export default function ManagementLayout({
     return roleMap[role] || role;
   };
 
-  const fetchUserProfile = useCallback(async () => {
-    const response = await getMe();
-    setUserProfile(response.data);
-  }, []);
-
   const handleProfileUpdated = async () => {
-    await fetchUserProfile();
+    const res = await getMe();
+    setUserProfile(res.data);
+    console.log("🔥 NEW PROFILE AFTER UPDATE:", res.data);
   };
 
   const getDashboardUrl = () => {
     if (!userProfile) return '/';
-    
+
     const role = userProfile.role;
     if (role === 'VENUEOWNER') {
       return '/venue/dashboard';
@@ -200,18 +208,24 @@ export default function ManagementLayout({
   return (
     <div className="h-screen flex overflow-hidden">
       {/* Sidebar */}
+      {!hideSidebar && (
       <aside
         className={`
           ${isSidebarOpen ? 'w-56' : 'w-16'} 
           bg-[#8093F1] flex flex-col transition-all duration-300 ease-in-out
-          border-r border-purple-200/50
+          relative
+          shadow-[inset_-1px_0_0_rgba(255,255,255,0.32),10px_0_24px_-20px_rgba(47,70,186,0.65)]
+          hover:shadow-[inset_-1px_0_0_rgba(255,255,255,0.4),12px_0_28px_-18px_rgba(47,70,186,0.75)]
+          before:content-[''] before:absolute before:right-0 before:top-3 before:bottom-3 before:w-px
+          before:bg-white/35 before:blur-[0.5px] before:rounded-full before:transition-opacity before:duration-300
+          hover:before:opacity-90
         `}
       >
         {/* Sidebar Header */}
         <div className="p-2.5 border-b border-white/10 bg-[#8093F1]">
           <div className="flex items-center justify-between">
             {isSidebarOpen && (
-              <Link 
+              <Link
                 href={getDashboardUrl()}
                 className="flex items-center gap-2 hover:opacity-80 transition-opacity duration-200"
               >
@@ -345,6 +359,7 @@ export default function ManagementLayout({
           </button>
         </div> */}
       </aside>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
@@ -353,10 +368,17 @@ export default function ManagementLayout({
           <div className="px-8 py-4">
             <div className="flex items-center justify-between">
               {/* Left side - Title */}
-              <div>
-                <h1 className="text-2xl font-bold text-black">
-                  {title || 'Chủ địa điểm'}
+              <div className="min-w-0">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-linear-to-r from-indigo-50 to-violet-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-2">
+                  <HeaderIcon className="w-3.5 h-3.5" />
+                  <span>{headerBadge}</span>
+                </div>
+                <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-tight">
+                  {dashboardTitle}
                 </h1>
+                <p className="text-sm text-slate-500 mt-1 line-clamp-1">
+                  {headerDescription}
+                </p>
               </div>
 
               {/* Right side - Actions */}

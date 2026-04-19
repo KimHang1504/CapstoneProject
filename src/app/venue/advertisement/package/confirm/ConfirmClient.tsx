@@ -11,6 +11,7 @@ export default function ConfirmClient() {
   const packageId = searchParams.get("packageId");
   const advertisementId = searchParams.get("advertisementId");
   const venueIds = searchParams.get("venueIds");
+  const quantityParam = searchParams.get("quantity");
 
   const [status, setStatus] = useState<"confirming" | "processing" | "success" | "error">("confirming");
   const [errorMessage, setErrorMessage] = useState("");
@@ -48,10 +49,12 @@ export default function ConfirmClient() {
 
     try {
       const venueIdArray = venueIds.split(",").map(id => Number(id));
+      const quantity = quantityParam ? Math.max(1, Math.min(200, Math.trunc(Number(quantityParam)))) : 1;
       
       const response = await submitAdvertisementPayment(Number(advertisementId), {
         packageId: Number(packageId),
         venueIds: venueIdArray,
+        quantity,
         paymentMethod: 'WALLET'
       });
       
@@ -89,16 +92,16 @@ export default function ConfirmClient() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-purple-50 via-white to-blue-50 flex items-center justify-center p-4">
       <div className="w-full max-w-xl">
         <div className="bg-white rounded-3xl shadow-2xl border border-purple-100 overflow-hidden">
           
           {/* Icon Section */}
-          <div className="relative pt-8 pb-6 bg-gradient-to-br from-purple-50 to-indigo-50">
+          <div className="relative pt-8 pb-6 bg-linear-to-br from-purple-50 to-indigo-50">
             <div className="flex justify-center mb-3">
               {status === "confirming" && (
                 <div className="relative">
-                  <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-24 h-24 bg-linear-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center shadow-lg">
                     <Wallet className="text-white" size={48} />
                   </div>
                   <div className="absolute inset-0 bg-purple-400 rounded-full animate-ping opacity-20" />
@@ -106,7 +109,7 @@ export default function ConfirmClient() {
               )}
               {status === "processing" && (
                 <div className="relative">
-                  <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
+                  <div className="w-24 h-24 bg-linear-to-br from-blue-400 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
                     <Wallet className="text-white animate-pulse" size={48} />
                   </div>
                   <svg className="absolute inset-0 w-24 h-24 -rotate-90">
@@ -136,14 +139,14 @@ export default function ConfirmClient() {
               )}
               {status === "success" && (
                 <div className="relative">
-                  <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-bounce-once">
+                  <div className="w-24 h-24 bg-linear-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-lg animate-bounce-once">
                     <CheckCircle2 className="text-white" size={48} />
                   </div>
                   <div className="absolute inset-0 bg-green-400 rounded-full animate-ping opacity-20" />
                 </div>
               )}
               {status === "error" && (
-                <div className="w-24 h-24 bg-gradient-to-br from-red-400 to-rose-600 rounded-full flex items-center justify-center shadow-lg animate-shake">
+                <div className="w-24 h-24 bg-linear-to-br from-red-400 to-rose-600 rounded-full flex items-center justify-center shadow-lg animate-shake">
                   <XCircle className="text-white" size={48} />
                 </div>
               )}
@@ -173,7 +176,7 @@ export default function ConfirmClient() {
               <div className="space-y-3">
                 <button
                   onClick={handleConfirm}
-                  className="w-full py-4 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-2xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full py-4 bg-linear-to-r from-purple-500 to-purple-600 text-white rounded-2xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Xác nhận thanh toán
                 </button>
@@ -196,10 +199,10 @@ export default function ConfirmClient() {
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
                     <div 
-                      className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full transition-all duration-300 ease-out relative overflow-hidden"
+                      className="h-full bg-linear-to-r from-blue-500 via-indigo-500 to-purple-500 rounded-full transition-all duration-300 ease-out relative overflow-hidden"
                       style={{ width: `${progress}%` }}
                     >
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
+                      <div className="absolute inset-0 bg-linear-to-r from-transparent via-white to-transparent opacity-30 animate-shimmer" />
                     </div>
                   </div>
                 </div>

@@ -17,7 +17,7 @@ export type CreateVoucherRequest = {
 
   usageLimitPerMember: number | null;
 
-  usageValiDays: number | null;
+  usageValidDays: number | null;
 
   venueLocationIds: number[];
    imageUrl: string;
@@ -58,7 +58,7 @@ export type Voucher = {
   remainingQuantity: number;
 
   usageLimitPerMember: number | null;
-  usageValiDays: number | null;
+  usageValidDays: number | null;
 
   rejectReason: string | null;
 

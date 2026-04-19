@@ -29,7 +29,7 @@ export function VenueCard({ venues }: any) {
                         <thead className="bg-gray-50 text-gray-500">
                             <tr>
                                 <th className="px-4 py-3 text-left font-medium">Địa điểm</th>
-                                <th className="px-4 py-3 text-left font-medium">Ưu tiên</th>
+                                {/* <th className="px-4 py-3 text-left font-medium">Ưu tiên</th> */}
                                 <th className="px-4 py-3 text-left font-medium">Bắt đầu</th>
                                 <th className="px-4 py-3 text-left font-medium">Kết thúc</th>
                                 <th className="px-4 py-3 text-left font-medium">Trạng thái</th>
@@ -48,11 +48,11 @@ export function VenueCard({ venues }: any) {
                                     </td>
 
                                     {/* Priority */}
-                                    <td className="px-4 py-3">
+                                    {/* <td className="px-4 py-3">
                                         <span className="px-2 py-1 rounded-lg bg-violet-50 text-violet-600 text-xs font-medium">
                                             {v.priorityScore}
                                         </span>
-                                    </td>
+                                    </td> */}
 
                                     {/* Start */}
                                     <td className="px-4 py-3 text-gray-600">

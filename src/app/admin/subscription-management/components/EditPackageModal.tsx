@@ -197,6 +197,30 @@ export default function EditPackageModal({ package: pkg, onClose, onSuccess }: E
 
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-2">
+              Hoạt động gói
+            </label>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={formData.isActive}
+              onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+              className="w-full flex items-center justify-between px-4 py-3 border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+            >
+              <span className={`text-sm font-medium ${formData.isActive ? "text-emerald-700" : "text-slate-600"}`}>
+                {formData.isActive ? "Đang hoạt động" : "Đã ngưng"}
+              </span>
+              <span
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${formData.isActive ? "bg-emerald-500" : "bg-slate-300"}`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isActive ? "translate-x-6" : "translate-x-1"}`}
+                />
+              </span>
+            </button>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-2">
               Mô tả
             </label>
             <textarea
@@ -212,21 +236,6 @@ export default function EditPackageModal({ package: pkg, onClose, onSuccess }: E
             <p className="text-xs text-slate-400 mt-1.5">{formData.description.length}/1000 ký tự</p>
           </div>
 
-          <div className="flex items-center gap-3">
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formData.isActive}
-                onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-            </label>
-            <div>
-              <span className="text-sm font-medium text-slate-700">Trạng thái hoạt động</span>
-              <p className="text-xs text-slate-500">Bật để kích hoạt gói này</p>
-            </div>
-          </div>
         </form>
 
         <div className="px-6 py-4 bg-slate-50 rounded-b-2xl flex justify-end gap-3 sticky bottom-0">
@@ -240,7 +249,7 @@ export default function EditPackageModal({ package: pkg, onClose, onSuccess }: E
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
+            className="px-4 py-2.5 text-sm font-medium bg-linear-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
           >
             <Pencil className="w-4 h-4" />
             {loading ? "Đang cập nhật..." : "Cập nhật"}

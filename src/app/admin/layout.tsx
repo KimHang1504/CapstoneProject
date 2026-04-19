@@ -8,7 +8,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ManagementLayout sidebarConfig={adminSidebarConfig} title="Admin Panel">
+    <ManagementLayout sidebarConfig={adminSidebarConfig} title="Bảng điều khiển quản trị">
       {children}
       <Toaster richColors position="top-center" />
     </ManagementLayout>

@@ -19,7 +19,7 @@ export type VenueFormData = {
   phoneNumber: string
   websiteUrl?: string
 
-  priceMin: number
+  priceMin: number | null
   priceMax: number | null
 
   latitude: number
@@ -55,34 +55,84 @@ export default function Info({ formData, setFormData }: Props) {
   const [styles, setStyles] = useState<CouplePersonalityType[]>([]);
 
 
+  //lỗi onblur
+  const [touched, setTouched] = useState({
+    name: false,
+    description: false,
+    priceMin: false,
+    priceMax: false,
+  });
+
   const [errors, setErrors] = useState({
     priceMin: "",
     priceMax: "",
+    name: "",
+    description: "",
   });
+  const handleNameBlur = () => {
+    setTouched(prev => ({ ...prev, name: true }));
 
-  function validatePrice(min: number, max: number | null) {
-    const newErrors = {
-      priceMin: "",
-      priceMax: "",
-    };
+    const err = validateName(formData.name);
+    setErrors(prev => ({ ...prev, name: err }));
+  };
 
-    if (min < 0) {
-      newErrors.priceMin = "Không được âm";
+  const handleDescriptionBlur = () => {
+    setTouched(prev => ({ ...prev, description: true }));
+
+    const err = validateDescription(formData.description);
+    setErrors(prev => ({ ...prev, description: err }));
+  };
+
+  const handlePriceMinBlur = () => {
+    setTouched(prev => ({ ...prev, priceMin: true }));
+    validatePrice(formData.priceMin, formData.priceMax);
+  };
+
+  const handlePriceMaxBlur = () => {
+    setTouched(prev => ({ ...prev, priceMax: true }));
+    validatePrice(formData.priceMin, formData.priceMax);
+  };
+
+  function validateName(value: string) {
+    if (value.length > 500) {
+      return "Tối đa 500 ký tự";
     }
-
-    if (max !== null) {
-      if (max <= 0) {
-        newErrors.priceMax = "Phải > 0";
-      }
-
-      if (min > max) {
-        newErrors.priceMin = "Min > Max";
-        newErrors.priceMax = "Max < Min";
-      }
-    }
-
-    setErrors(newErrors);
+    return "";
   }
+
+  function validateDescription(value: string) {
+    if (value.length > 2000) {
+      return "Tối đa 2000 ký tự";
+    }
+    return "";
+  }
+
+  function validatePrice(min: number | null, max: number | null) {
+    let priceMinError = "";
+    let priceMaxError = "";
+    if (Object.is(min, -0)) {
+      priceMinError = "Giá tối thiểu không được âm";
+    }
+    if (min !== null && min < 0) {
+      priceMinError = "Giá tối thiểu không được âm";
+    }
+
+    if (max !== null && max <= 0) {
+      priceMaxError = "Giá tối đa không được âm";
+    }
+
+    if (min !== null && max !== null && min > max) {
+      priceMinError = "Giá tối thiểu phải ≤ giá tối đa";
+    }
+
+    setErrors(prev => ({
+      ...prev,
+      priceMin: priceMinError,
+      priceMax: priceMaxError,
+    }));
+  }
+
+  // console.log(typeof formData.priceMin)
 
   useEffect(() => {
     async function fetchData() {
@@ -138,10 +188,26 @@ export default function Info({ formData, setFormData }: Props) {
           <div className="relative">
             <input
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Nhập tên chủ địa điểm"
-              className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-purple-100 transition-all"
-            />
+              onBlur={handleNameBlur}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                setFormData(prev => ({ ...prev, name: value }));
+
+                // nếu đã blur rồi thì mới validate lại
+                if (touched.name) {
+                  const err = validateName(value);
+                  setErrors(prev => ({ ...prev, name: err }));
+                }
+              }} placeholder="Nhập tên chủ địa điểm"
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
+                  ${errors.name && touched.name
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-[#E4D7FF] focus:ring-purple-100"
+                }`} />
+            {errors.name && touched.name && (
+              <p className="text-xs text-red-500 mt-1">{errors.name}</p>
+            )}
           </div>
         </div>
 
@@ -154,11 +220,32 @@ export default function Info({ formData, setFormData }: Props) {
           <div className="relative">
             <textarea
               value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
-              placeholder="Mô tả ngắn gọn về địa điểm tối đa 150 kí tự"
-              className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-purple-100 transition-all resize-none"
-            />
+              onBlur={handleDescriptionBlur}
+              onChange={(e) => {
+                const value = e.target.value;
+
+                setFormData(prev => ({
+                  ...prev,
+                  description: value,
+                }));
+
+                if (touched.description) {
+                  setErrors(prev => ({
+                    ...prev,
+                    description: validateDescription(value),
+                  }));
+                }
+              }}
+              rows={5}
+              placeholder="Mô tả ngắn gọn về địa điểm"
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all resize-none
+  ${errors.description && touched.description
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-[#E4D7FF] focus:ring-purple-100"
+                }`} />
+            {errors.description && touched.description && (
+              <p className="text-xs text-red-500">{errors.description}</p>
+            )}
           </div>
         </div>
 
@@ -181,7 +268,7 @@ export default function Info({ formData, setFormData }: Props) {
         </div>
 
         {/* Giá cả */}
-        <div className="mb-4">
+        <div className="mb-8">
           <label className="mb-1 flex items-center gap-1.5 text-sm font-medium text-gray-800">
             <DollarSign className="w-4 h-4 text-purple-500" />
             Khoảng giá
@@ -197,25 +284,33 @@ export default function Info({ formData, setFormData }: Props) {
               <input
                 type="number"
                 min={0}
-                max={formData.priceMax ?? 100000000}
+                max={100000000}
                 value={formData.priceMin ?? ""}
                 onChange={(e) => {
-                  const value = e.target.value === "" ? 0 : Number(e.target.value);
+                  const value = e.target.value === "" ? null : Number(e.target.value);
 
-                  const newData = {
-                    ...formData,
-                    priceMin: value,
-                  };
+                  const newMin = value;
+                  const newMax = formData.priceMax;
 
-                  setFormData(newData);
-                  validatePrice(value, newData.priceMax);
+                  setFormData(prev => ({
+                    ...prev,
+                    priceMin: newMin,
+                  }));
+
+                  if (touched.priceMin || touched.priceMax) {
+                    validatePrice(newMin, newMax);
+                  }
                 }}
+                onBlur={handlePriceMinBlur}
                 className={`w-full pl-7 rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
     ${errors.priceMin
                     ? "border-red-500 focus:ring-red-200"
                     : "border-[#E4D7FF] focus:ring-purple-100"
                   }`}
               />
+              <p className="absolute -bottom-5 left-0 text-xs text-red-500">
+                {errors.priceMin}
+              </p>
             </div>
 
             {/* PRICE MAX */}
@@ -225,40 +320,48 @@ export default function Info({ formData, setFormData }: Props) {
               </span>
               <input
                 type="number"
-                min={formData.priceMin || 0}
+                min={0}
                 max={100000000}
                 value={formData.priceMax ?? ""}
                 onChange={(e) => {
                   const value = e.target.value === "" ? null : Number(e.target.value);
 
-                  const newData = {
-                    ...formData,
-                    priceMax: value,
-                  };
+                  const newMax = value;
+                  const newMin = formData.priceMin;
 
-                  setFormData(newData);
-                  validatePrice(newData.priceMin, value);
+                  setFormData(prev => ({
+                    ...prev,
+                    priceMax: newMax,
+                  }));
+
+                  if (touched.priceMin || touched.priceMax) {
+                    validatePrice(newMin, newMax);
+                  }
                 }}
+                onBlur={handlePriceMaxBlur}
                 className={`w-full pl-7 rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
     ${errors.priceMax
                     ? "border-red-500 focus:ring-red-200"
                     : "border-[#E4D7FF] focus:ring-purple-100"
                   }`}
               />
+              <p className="absolute -bottom-5 left-0 text-xs text-red-500">
+                {errors.priceMax}
+              </p>
             </div>
 
           </div>
 
-          <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+          {/* <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
             <InfoCircle className="w-3 h-3" />
             Ví dụ: 50.000đ - 200.000đ
-          </p>
+          </p> */}
         </div>
 
         <div className="mb-4">
           <label className="mb-2 flex items-center gap-1.5 text-sm font-medium text-gray-800">
             <Heart className="w-4 h-4 text-purple-500" />
-            Thẻ tâm trạng
+            Không gian của bạn mang lại tâm trạng gì cho khách?
           </label>
 
           <div className="flex flex-wrap gap-2 ">
@@ -305,7 +408,7 @@ export default function Info({ formData, setFormData }: Props) {
         <div>
           <label className="mb-2 flex items-center gap-1.5 text-sm font-medium text-gray-800">
             <Sparkles className="w-4 h-4 text-indigo-500" />
-            Thẻ tính cách
+            Địa điểm của bạn phù hợp với phong cách nào của cặp đôi?
           </label>
 
           <div className="flex flex-wrap gap-2">

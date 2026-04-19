@@ -18,32 +18,107 @@ export default function Contact({ formData, setFormData }: Props) {
   const [isMapLoading, setIsMapLoading] = useState(false)
   const [mapError, setMapError] = useState<string | null>(null)
   const [errors, setErrors] = useState({
+    address: "",
     phone: "",
     email: "",
     website: ""
   });
 
+  const [touched, setTouched] = useState({
+    address: false,
+    phone: false,
+    email: false,
+    website: false
+  });
 
   const handleAddressBlur = async () => {
-    if (!formData.address) return
+    setTouched(prev => ({ ...prev, address: true }));
 
+    const value = formData.address;
+
+    // validate required trước
+    if (!value.trim()) {
+      setErrors(prev => ({
+        ...prev,
+        address: "Không được để trống"
+      }));
+      return;
+    }
+
+    // clear lỗi nếu ok
+    setErrors(prev => ({
+      ...prev,
+      address: ""
+    }));
+
+    // gọi API
     try {
-      setIsMapLoading(true)
-      setMapError(null)
+      setIsMapLoading(true);
+      setMapError(null);
 
-      const { lat, lon } = await geocodeAddress(formData.address)
+      const { lat, lon } = await geocodeAddress(value);
 
-      setFormData((prev) => ({
+      setFormData(prev => ({
         ...prev,
         latitude: lat,
         longitude: lon,
-      }))
+      }));
     } catch {
-      setMapError("Không xác định được vị trí từ địa chỉ này")
+      setMapError("Không xác định được vị trí từ địa chỉ này");
     } finally {
-      setIsMapLoading(false)
+      setIsMapLoading(false);
     }
-  }
+  };
+
+  const handlePhoneBlur = (value: string) => {
+    setTouched(prev => ({ ...prev, phone: true }));
+
+    const err = validatePhone(value);
+    setErrors(prev => ({ ...prev, phone: err }));
+  };
+
+  const handleEmailBlur = (value: string) => {
+    setTouched(prev => ({ ...prev, email: true }));
+
+    const err = validateEmail(value);
+    setErrors(prev => ({ ...prev, email: err }));
+  };
+
+  const handleWebsiteBlur = (value: string) => {
+    setTouched(prev => ({ ...prev, website: true }));
+
+    const err = validateWebsite(value);
+    setErrors(prev => ({ ...prev, website: err }));
+  };
+
+  const validateAddress = (value: string) => {
+    if (!value.trim()) return "Không được để trống";
+    return "";
+  };
+
+  const validatePhone = (value: string) => {
+    if (!value) return "";
+    if (!/^(0|\+84)[0-9]{9,10}$/.test(value)) {
+      return "Số điện thoại không hợp lệ";
+    }
+    return "";
+  };
+
+  const validateEmail = (value: string) => {
+    if (!value) return "";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      return "Email không hợp lệ";
+    }
+    return "";
+  };
+
+  const validateWebsite = (value: string) => {
+    if (!value) return "";
+    if (!/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(value)) {
+      return "Website không hợp lệ";
+    }
+    return "";
+  };
 
   const handleMapClick = async (lat: number, lon: number) => {
     try {
@@ -93,14 +168,37 @@ export default function Contact({ formData, setFormData }: Props) {
           </label>
           <div className="relative">
             <input
-              className="w-full rounded-lg border border-[#E4D7FF] bg-white px-4 py-2.5 text-sm outline-none focus:border-[#C9A7FF] focus:ring-2 focus:ring-blue-100 transition-all"
+              className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
+    ${errors.address && touched.address
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-[#E4D7FF] focus:border-[#C9A7FF] focus:ring-2 focus:ring-blue-100"
+                }`}
               value={formData.address}
-              onChange={(e) =>
-                setFormData({ ...formData, address: e.target.value })
-              }
+              onChange={(e) => {
+                const value = e.target.value;
+
+                setFormData({ ...formData, address: value });
+
+                if (touched.address) {
+                  if (!value.trim()) {
+                    setErrors(prev => ({
+                      ...prev,
+                      address: "Không được để trống"
+                    }));
+                  } else {
+                    setErrors(prev => ({
+                      ...prev,
+                      address: ""
+                    }));
+                  }
+                }
+              }}
               onBlur={handleAddressBlur}
               placeholder="Nhập địa chỉ hoặc click vào bản đồ để chọn vị trí"
             />
+            {errors.address && touched.address && (
+              <p className="text-xs text-red-500 mt-1">{errors.address}</p>
+            )}
           </div>
 
           {mapError && (
@@ -139,29 +237,26 @@ export default function Contact({ formData, setFormData }: Props) {
             </label>
             <input
               value={formData.phoneNumber}
-              onChange={(e) =>
-                setFormData({ ...formData, phoneNumber: e.target.value })
-              }
-              onBlur={(e) => {
+              onChange={(e) => {
                 const value = e.target.value;
 
-                if (value && !/^(0|\+84)[0-9]{9,10}$/.test(value)) {
-                  setErrors(prev => ({
-                    ...prev,
-                    phone: "Số điện thoại không hợp lệ"
-                  }));
-                } else {
-                  setErrors(prev => ({
-                    ...prev,
-                    phone: ""
-                  }));
+                setFormData({ ...formData, phoneNumber: value });
+
+                if (touched.phone) {
+                  const err = validatePhone(value);
+                  setErrors(prev => ({ ...prev, phone: err }));
                 }
               }}
+              onBlur={(e) => handlePhoneBlur(e.target.value)}
               placeholder="03xxxxxxxx"
-              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              className={`w-full rounded-[8.33px] border px-4 py-3 text-sm outline-none
+  ${errors.phone && touched.phone
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-[#E4D7FF] focus:border-[#C9A7FF]"
+                }`}
             />
 
-            {errors.phone && (
+            {errors.phone && touched.phone && (
               <p className="mt-1 text-xs text-red-500">{errors.phone}</p>
             )}
           </div>
@@ -172,32 +267,26 @@ export default function Contact({ formData, setFormData }: Props) {
             </label>
             <input
               value={formData.websiteUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, websiteUrl: e.target.value })
-              }
-              onBlur={(e) => {
+              onChange={(e) => {
                 const value = e.target.value;
 
-                if (
-                  value &&
-                  !/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(value)
-                ) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    website: "Website không hợp lệ",
-                  }));
-                } else {
-                  setErrors((prev) => ({
-                    ...prev,
-                    website: "",
-                  }));
+                setFormData({ ...formData, websiteUrl: value });
+
+                if (touched.website) {
+                  const err = validateWebsite(value);
+                  setErrors(prev => ({ ...prev, website: err }));
                 }
               }}
-              placeholder="hehe.com"
-              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              onBlur={(e) => handleWebsiteBlur(e.target.value)}
+              placeholder="venue.com"
+              className={`w-full rounded-[8.33px] border px-4 py-3 text-sm outline-none
+  ${errors.website && touched.website
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-[#E4D7FF] focus:border-[#C9A7FF]"
+                }`}
             />
 
-            {errors.website && (
+            {errors.website && touched.website && (
               <p className="mt-1 text-xs text-red-500">{errors.website}</p>
             )}
           </div>
@@ -207,29 +296,26 @@ export default function Contact({ formData, setFormData }: Props) {
             </label>
             <input
               value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              onBlur={(e) => {
+              onChange={(e) => {
                 const value = e.target.value;
 
-                if (value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                  setErrors((prev) => ({
-                    ...prev,
-                    email: "Email không hợp lệ",
-                  }));
-                } else {
-                  setErrors((prev) => ({
-                    ...prev,
-                    email: "",
-                  }));
+                setFormData({ ...formData, email: value });
+
+                if (touched.email) {
+                  const err = validateEmail(value);
+                  setErrors(prev => ({ ...prev, email: err }));
                 }
               }}
-              placeholder="hehe@gmail.com"
-              className="w-full rounded-[8.33px] border border-[#E4D7FF] bg-white px-4 py-3 text-sm outline-none focus:border-[#C9A7FF]"
+              onBlur={(e) => handleEmailBlur(e.target.value)}
+              placeholder="venue@gmail.com"
+              className={`w-full rounded-[8.33px] border px-4 py-3 text-sm outline-none
+  ${errors.email && touched.email
+                  ? "border-red-500 focus:ring-red-200"
+                  : "border-[#E4D7FF] focus:border-[#C9A7FF]"
+                }`}
             />
 
-            {errors.email && (
+            {errors.email && touched.email && (
               <p className="mt-1 text-xs text-red-500">{errors.email}</p>
             )}
           </div>

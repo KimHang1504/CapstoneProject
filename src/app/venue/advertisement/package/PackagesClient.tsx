@@ -24,9 +24,15 @@ export default function PackagesClient() {
     const [openDurationModal, setOpenDurationModal] = useState(false);
     const [selectedPlacementPackages, setSelectedPlacementPackages] = useState<AdvertisementPackage[]>([]);
     const [selectedVenues, setSelectedVenues] = useState<number[]>([]);
+    const [selectedQuantity, setSelectedQuantity] = useState(1);
     const [openVenueModal, setOpenVenueModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const MIN_QTY = 1;
+    const MAX_QTY = 12;
+
+    const selectedPackage = selectedPlacementPackages.find((pkg) => pkg.id === selectedPackageId) ?? null;
+    const totalPrice = selectedPackage ? selectedPackage.price * selectedQuantity : 0;
 
     useEffect(() => {
         const fetchPackages = async () => {
@@ -54,13 +60,14 @@ export default function PackagesClient() {
 
         if (method === 'WALLET') {
             const venueIdsStr = selectedVenues.join(',');
-            router.push(`/venue/advertisement/package/confirm?packageId=${selectedPackageId}&advertisementId=${adId}&venueIds=${venueIdsStr}`);
+            router.push(`/venue/advertisement/package/confirm?packageId=${selectedPackageId}&advertisementId=${adId}&venueIds=${venueIdsStr}&quantity=${selectedQuantity}`);
         } else {
             try {
                 setIsProcessing(true);
                 const res = await submitAdvertisementPayment(Number(adId), {
                     packageId: selectedPackageId,
                     venueIds: selectedVenues,
+                    quantity: selectedQuantity,
                     paymentMethod: 'VIETQR'
                 });
                 const transactionId = res.data.transactionId;
@@ -144,6 +151,7 @@ export default function PackagesClient() {
                                             onClick={() => {
                                                 setSelectedPlacementPackages(pkgs);
                                                 setSelectedPackageId(null);
+                                                setSelectedQuantity(1);
                                                 setOpenDurationModal(true);
                                             }}
                                             className="flex items-center gap-2 w-fit px-7 py-3 bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
@@ -219,6 +227,60 @@ export default function PackagesClient() {
                                         </div>
                                     );
                                 })}
+
+                            <div className="mt-5 rounded-2xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+                                <div>
+                                    <p className="text-xs text-violet-500 font-semibold uppercase tracking-wider">Số lượng gói</p>
+                                    <p className="text-[11px] text-gray-500 mt-1">Mua nhiều gói sẽ tăng tổng ngày hiển thị theo số lượng</p>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className="inline-flex items-center rounded-xl border border-violet-200 bg-white overflow-hidden">
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedQuantity((prev) => Math.max(MIN_QTY, prev - 1))}
+                                            className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                        >
+                                            -
+                                        </button>
+                                        <input
+                                            type="number"
+                                            min={MIN_QTY}
+                                            max={MAX_QTY}
+                                            value={selectedQuantity}
+                                            onChange={(e) => {
+                                                const rawValue = Number(e.target.value);
+                                                if (Number.isNaN(rawValue)) {
+                                                    setSelectedQuantity(MIN_QTY);
+                                                    return;
+                                                }
+
+                                                const nextValue = Math.min(MAX_QTY, Math.max(MIN_QTY, Math.trunc(rawValue)));
+                                                setSelectedQuantity(nextValue);
+                                            }}
+                                            className="w-16 text-center text-sm font-semibold text-gray-800 focus:outline-none"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setSelectedQuantity((prev) => Math.min(MAX_QTY, prev + 1))}
+                                            className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+
+                                    <div className="text-right">
+                                        <p className="text-[11px] text-gray-500">Tổng thanh toán</p>
+                                        <p className="text-lg font-extrabold text-violet-700">{totalPrice.toLocaleString()} VND</p>
+                                    </div>
+                                </div>
+
+                                {selectedPackage && (
+                                    <p className="text-[11px] text-gray-600">
+                                        {selectedPackage.durationDays} ngày x {selectedQuantity} gói = {selectedPackage.durationDays * selectedQuantity} ngày (tối đa {MAX_QTY} gói)
+                                    </p>
+                                )}
+                            </div>
                         </div>
 
                         <div className="flex gap-3 px-6 pb-6">

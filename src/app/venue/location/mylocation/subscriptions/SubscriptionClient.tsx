@@ -19,6 +19,9 @@ export default function LocationRegisterPage() {
     const [processingPackageId, setProcessingPackageId] = useState<number | null>(null);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState<SubscriptionPackage | null>(null);
+    const [quantity, setQuantity] = useState(1);
+    const MIN_QTY = 1;
+    const MAX_QTY = 12;
     useEffect(() => {
         const fetchPackages = async () => {
             try {
@@ -38,6 +41,7 @@ export default function LocationRegisterPage() {
 
     const handleOpenPaymentModal = (pkg: SubscriptionPackage) => {
         setSelectedPackage(pkg);
+        setQuantity(1);
         setShowPaymentModal(true);
     };
 
@@ -51,7 +55,7 @@ export default function LocationRegisterPage() {
 
         if (method === 'WALLET') {
             // Redirect to wallet confirmation page (will call API there)
-            router.push(`/venue/location/mylocation/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}`);
+            router.push(`/venue/location/mylocation/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}&quantity=${quantity}`);
         } else {
             // VietQR: Call API and redirect to checkout
             try {
@@ -59,7 +63,7 @@ export default function LocationRegisterPage() {
 
                 const response = await submitVenueWithPayment(Number(locationId), {
                     packageId: selectedPackage.id,
-                    quantity: 1,
+                    quantity: quantity,
                     paymentMethod: method
                 });
                 console.log('Payment submission response:', response);
@@ -180,6 +184,60 @@ export default function LocationRegisterPage() {
                         <p className="text-sm text-gray-500 mb-6">
                             {selectedPackage.packageName} - {selectedPackage.price.toLocaleString('vi-VN')} VND
                         </p>
+
+                        <div className="mb-6 rounded-2xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+                            <div>
+                                <p className="text-xs text-violet-500 font-semibold uppercase tracking-wider">Số lượng gói</p>
+                                <p className="text-[11px] text-gray-500 mt-1">Mua nhiều gói sẽ tăng tổng ngày hiển thị theo số lượng</p>
+                            </div>
+
+                            <div className="flex items-center justify-between">
+                                <div className="inline-flex items-center rounded-xl border border-violet-200 bg-white overflow-hidden">
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuantity((prev) => Math.max(MIN_QTY, prev - 1))}
+                                        className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                    >
+                                        -
+                                    </button>
+                                    <input
+                                        type="number"
+                                        min={MIN_QTY}
+                                        max={MAX_QTY}
+                                        value={quantity}
+                                        onChange={(e) => {
+                                            const rawValue = Number(e.target.value);
+                                            if (Number.isNaN(rawValue)) {
+                                                setQuantity(MIN_QTY);
+                                                return;
+                                            }
+
+                                            const nextValue = Math.min(MAX_QTY, Math.max(MIN_QTY, Math.trunc(rawValue)));
+                                            setQuantity(nextValue);
+                                        }}
+                                        className="w-16 text-center text-sm font-semibold text-gray-800 focus:outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuantity((prev) => Math.min(MAX_QTY, prev + 1))}
+                                        className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                    >
+                                        +
+                                    </button>
+                                </div>
+
+                                <div className="text-right">
+                                    <p className="text-[11px] text-gray-500">Tổng thanh toán</p>
+                                    <p className="text-lg font-extrabold text-violet-700">
+                                        {(selectedPackage.price * quantity).toLocaleString('vi-VN')} VND
+                                    </p>
+                                </div>
+                            </div>
+
+                            <p className="text-[11px] text-gray-600">
+                                {selectedPackage.durationDays} ngày x {quantity} gói = {selectedPackage.durationDays * quantity} ngày (tối đa {MAX_QTY} gói)
+                            </p>
+                        </div>
 
                         <div className="space-y-3">
                             {/* Wallet Payment */}
