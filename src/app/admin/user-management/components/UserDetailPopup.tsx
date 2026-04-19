@@ -7,8 +7,6 @@ import {
   Phone,
   Shield,
   Calendar,
-  Wallet,
-  Star,
   UserCircle2,
 } from 'lucide-react';
 import { Users } from '@/api/admin/user/type';
@@ -143,8 +141,6 @@ export default function UserDetailPopup({
                 <InfoCard icon={<Phone size={16} />} label="Số điện thoại" value={user.phoneNumber || '---'} />
                 <InfoCard icon={<Shield size={16} />} label="Vai trò" value={getRoleLabel(user.role)} />
                 <InfoCard icon={<Calendar size={16} />} label="Đăng nhập gần nhất" value={formatDate(user.lastLoginAt)} />
-                <InfoCard icon={<Wallet size={16} />} label="Số dư" value={`${user.balance ?? 0}`} />
-                <InfoCard icon={<Star size={16} />} label="Điểm" value={`${user.points ?? 0}`} />
                 <InfoCard icon={<Calendar size={16} />} label="Ngày tạo" value={formatDate(user.createdAt)} />
                 <InfoCard icon={<Calendar size={16} />} label="Cập nhật lần cuối" value={formatDate(user.updatedAt)} />
               </div>
