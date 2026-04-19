@@ -683,14 +683,27 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           disabled={isUploadingImage}
           className="hidden"
         />
-        {form.imageUrl && (
-          <div className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={form.imageUrl}
-              alt="preview"
-              className="w-full h-48 object-cover"
-            />
+        {form.imageUrl ? (
+          <div className="mt-3 p-3 bg-gradient-to-br from-violet-50 to-white rounded-2xl border border-violet-200 shadow-md">
+            <div className="rounded-xl overflow-hidden border border-violet-300 shadow-inner">
+              <img
+                src={form.imageUrl}
+                alt="preview"
+                className="w-full h-48 object-cover"
+              />
+            </div>
+          </div>
+        ) : (
+          <div
+            onClick={() => document.getElementById("voucher-image-input")?.click()}
+            className="mt-3 h-48 flex flex-col items-center justify-center gap-2 text-violet-500 cursor-pointer 
+               border border-dashed border-violet-300 rounded-2xl bg-violet-50 hover:bg-violet-100 transition"
+          >
+            <Upload size={22} />
+            <p className="text-sm font-medium">Chưa có banner</p>
+            <p className="text-xs text-violet-400">
+              Nhấn để tải ảnh lên hoặc dùng AI
+            </p>
           </div>
         )}
       </FieldWrapper>
