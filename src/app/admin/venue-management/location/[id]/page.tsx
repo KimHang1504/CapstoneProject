@@ -4,25 +4,80 @@ import {
     User,
     AlertTriangle,
     Tag,
+    Info,
+    Sparkles,
+    HeartHandshake,
+    Phone,
+    Mail,
+    Globe,
+    CircleDollarSign,
+    Text,
 } from "lucide-react";
 
-import { getPendingVenueDetail } from "@/api/admin/api";
+import { getAllPendingVenues, getPendingVenueDetail } from "@/api/admin/api";
 import VenueApprovalActions from "./components/venueApprovalActions";
 import ImagePreview from "./components/ImagePreview";
 import BackButton from "@/components/BackButton";
 
 type Props = {
     params: Promise<{ id: number }>;
+    searchParams?: Promise<{ lt?: string }>;
 };
 
-export default async function VenueDetailPage({ params }: Props) {
+export default async function VenueDetailPage({ params, searchParams }: Props) {
     const { id } = await params;
+    const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
     const res = await getPendingVenueDetail(id);
     const data = res.data;
 
     const venue = data.venue;
     const owner = data.venueOwner;
+    let listLocationTags = data.locationTags ?? [];
+    let queryLocationTags = [] as typeof listLocationTags;
+
+    if (resolvedSearchParams?.lt) {
+        try {
+            queryLocationTags = JSON.parse(decodeURIComponent(resolvedSearchParams.lt));
+        } catch {
+            queryLocationTags = [];
+        }
+    }
+
+    try {
+        const searchKeyword = venue?.name ?? String(id);
+        const listRes = await getAllPendingVenues(1, 100, undefined, searchKeyword);
+        const matchedItem = listRes.data.items.find((item) => item.id === id);
+        listLocationTags = matchedItem?.locationTags ?? [];
+    } catch {
+        listLocationTags = [];
+    }
+
+    const sourceLocationTags = queryLocationTags.length > 0
+        ? queryLocationTags
+        : venue?.locationTags?.length
+            ? venue.locationTags
+            : (data.locationTags?.length ? data.locationTags : listLocationTags);
+    const moods = Array.from(
+        new Map(
+            sourceLocationTags
+                .map((tag) => tag.coupleMoodType)
+                .filter((m): m is NonNullable<typeof m> => Boolean(m))
+                .map((m) => [m.id, m])
+        ).values()
+    );
+    const personalities = Array.from(
+        new Map(
+            sourceLocationTags
+                .map((tag) => tag.couplePersonalityType)
+                .filter((p): p is NonNullable<typeof p> => Boolean(p))
+                .map((p) => [p.id, p])
+        ).values()
+    );
+    const moodFallback = venue?.coupleMoodTypes ?? [];
+    const personalityFallback = venue?.couplePersonalityTypes ?? [];
+    const finalMoods = moods.length > 0 ? moods : moodFallback;
+    const finalPersonalities = personalities.length > 0 ? personalities : personalityFallback;
 
     const isInactive = data.status === "INACTIVE";
 
@@ -132,48 +187,113 @@ export default async function VenueDetailPage({ params }: Props) {
                         </section>
 
                         {/* MOOD */}
-                        <section className="bg-white border border-gray-200 rounded-xl p-5">
-                            <div className="flex items-center gap-2 mb-4">
-                                <Tag size={16} />
+                        <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
+                            <div className="flex items-center gap-2">
+                                <Tag size={16} className="text-violet-500" />
                                 <h2 className="text-sm font-semibold text-gray-800">
                                     Mood & Personality
                                 </h2>
                             </div>
 
-                            <div className="flex flex-wrap gap-2">
-                                {venue.coupleMoodTypes?.map((m) => (
-                                    <span
-                                        key={m.id}
-                                        className="text-xs bg-gray-100 px-3 py-1 rounded-full"
-                                    >
-                                        {m.name}
-                                    </span>
-                                ))}
-                                {venue.couplePersonalityTypes?.map((p) => (
-                                    <span
-                                        key={p.id}
-                                        className="text-xs bg-gray-100 px-3 py-1 rounded-full"
-                                    >
-                                        {p.name}
-                                    </span>
-                                ))}
+                            <div>
+                                <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1.5">
+                                    <Sparkles size={14} className="text-sky-500" />
+                                    Mood
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {finalMoods.length > 0 ? (
+                                        finalMoods.map((m) => (
+                                            <div key={m.id} className="group relative inline-block">
+                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 text-sky-700 px-3 py-1 text-xs font-medium border border-sky-200">
+                                                    {m.name}
+                                                    <Info size={12} className="opacity-80" />
+                                                </span>
+
+                                                <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                                                    {m.description || "Chưa có mô tả cho mood này"}
+                                                    <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span className="text-xs text-gray-400">Chưa có Mood</span>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1.5">
+                                    <HeartHandshake size={14} className="text-fuchsia-500" />
+                                    Personality
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    {finalPersonalities.length > 0 ? (
+                                        finalPersonalities.map((p) => (
+                                            <div key={p.id} className="group relative inline-block">
+                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-fuchsia-100 text-fuchsia-700 px-3 py-1 text-xs font-medium border border-fuchsia-200">
+                                                    {p.name}
+                                                    <Info size={12} className="opacity-80" />
+                                                </span>
+
+                                                <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
+                                                    {p.description || "Chưa có mô tả cho personality này"}
+                                                    <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
+                                                </div>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <span className="text-xs text-gray-400">Chưa có Personality</span>
+                                    )}
+                                </div>
                             </div>
                         </section>
 
                         {/* INFO */}
-                        <section className="bg-white border border-gray-200 rounded-xl p-5">
+                        <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
                             <h2 className="text-sm font-semibold text-gray-800 mb-3">
                                 Thông tin chi tiết
                             </h2>
 
-                            <p className="text-sm text-gray-600 leading-relaxed">
-                                {venue.description}
-                            </p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 flex items-start gap-2">
+                                    <CircleDollarSign size={16} className="text-emerald-600 mt-0.5" />
+                                    <div className="text-sm text-gray-700">
+                                        <p className="text-xs text-gray-500">Khoảng giá</p>
+                                        <p>{venue.priceMin ?? "-"} - {venue.priceMax ?? "-"}</p>
+                                    </div>
+                                </div>
 
-                            <div className="grid grid-cols-2 gap-4 mt-4 text-sm text-gray-600">
-                                <p>💰 {venue.priceMin} - {venue.priceMax}</p>
-                                <p>📞 {venue.phoneNumber}</p>
-                                <p>📧 {venue.email}</p>
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 flex items-start gap-2">
+                                    <Phone size={16} className="text-blue-600 mt-0.5" />
+                                    <div className="text-sm text-gray-700">
+                                        <p className="text-xs text-gray-500">Số điện thoại</p>
+                                        <p>{venue.phoneNumber || "—"}</p>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 flex items-start gap-2">
+                                    <Mail size={16} className="text-indigo-600 mt-0.5" />
+                                    <div className="text-sm text-gray-700">
+                                        <p className="text-xs text-gray-500">Email</p>
+                                        <p>{venue.email || "—"}</p>
+                                    </div>
+                                </div>
+
+                                <div className="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 flex items-start gap-2">
+                                    <Globe size={16} className="text-purple-600 mt-0.5" />
+                                    <div className="text-sm text-gray-700">
+                                        <p className="text-xs text-gray-500">Website</p>
+                                        <p className="break-all">{venue.websiteUrl || "—"}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="rounded-lg border border-gray-200 bg-white px-3 py-3 flex items-start gap-2">
+                                <Text size={16} className="text-gray-500 mt-0.5" />
+                                <div>
+                                    <p className="text-xs text-gray-500 mb-1">Mô tả</p>
+                                    <p className="text-sm text-gray-700 leading-relaxed">{venue.description || "Không có mô tả"}</p>
+                                </div>
                             </div>
                         </section>
 
@@ -200,7 +320,7 @@ export default async function VenueDetailPage({ params }: Props) {
                         {/* INTERIOR */}
                         <section className="bg-white border border-gray-200 rounded-xl p-5">
                             <h2 className="text-sm font-semibold text-gray-800 mb-4">
-                                Interior
+                                Ảnh nội thất
                             </h2>
 
                             <div className="grid grid-cols-3 gap-3">
