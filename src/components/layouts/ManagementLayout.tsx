@@ -43,6 +43,7 @@ type ManagementLayoutProps = {
   children: React.ReactNode;
   sidebarConfig: SidebarConfig;
   title?: string;
+   hideSidebar?: boolean;
 };
 
 // Icon mapper
@@ -80,6 +81,7 @@ export default function ManagementLayout({
   children,
   sidebarConfig,
   title,
+  hideSidebar = false,
 }: ManagementLayoutProps) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -206,6 +208,7 @@ export default function ManagementLayout({
   return (
     <div className="h-screen flex overflow-hidden">
       {/* Sidebar */}
+      {!hideSidebar && (
       <aside
         className={`
           ${isSidebarOpen ? 'w-56' : 'w-16'} 
@@ -351,6 +354,7 @@ export default function ManagementLayout({
           </button>
         </div> */}
       </aside>
+      )}
 
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-0 overflow-hidden">

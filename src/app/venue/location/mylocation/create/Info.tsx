@@ -94,14 +94,15 @@ export default function Info({ formData, setFormData }: Props) {
   };
 
   function validateName(value: string) {
-    if (!value.trim()) {
-      return "Không được để trống";
+    if (value.length > 500) {
+      return "Tối đa 500 ký tự";
     }
     return "";
   }
+
   function validateDescription(value: string) {
-    if (!value.trim()) {
-      return "Không được để trống";
+    if (value.length > 2000) {
+      return "Tối đa 2000 ký tự";
     }
     return "";
   }
@@ -131,7 +132,7 @@ export default function Info({ formData, setFormData }: Props) {
     }));
   }
 
-  console.log(typeof formData.priceMin)
+  // console.log(typeof formData.priceMin)
 
   useEffect(() => {
     async function fetchData() {
@@ -223,17 +224,19 @@ export default function Info({ formData, setFormData }: Props) {
               onChange={(e) => {
                 const value = e.target.value;
 
-                // chặn vượt 150 luôn (UX tốt hơn)
-                if (value.length > 150) return;
+                setFormData(prev => ({
+                  ...prev,
+                  description: value,
+                }));
 
-                setFormData(prev => ({ ...prev, description: value }));
-
-                // nếu đã blur rồi thì validate realtime
                 if (touched.description) {
-                  const err = validateDescription(value);
-                  setErrors(prev => ({ ...prev, description: err }));
+                  setErrors(prev => ({
+                    ...prev,
+                    description: validateDescription(value),
+                  }));
                 }
-              }} rows={3}
+              }}
+              rows={5}
               placeholder="Mô tả ngắn gọn về địa điểm"
               className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all resize-none
   ${errors.description && touched.description
@@ -358,7 +361,7 @@ export default function Info({ formData, setFormData }: Props) {
         <div className="mb-4">
           <label className="mb-2 flex items-center gap-1.5 text-sm font-medium text-gray-800">
             <Heart className="w-4 h-4 text-purple-500" />
-            Thẻ tâm trạng
+            Không gian của bạn mang lại tâm trạng gì cho khách?
           </label>
 
           <div className="flex flex-wrap gap-2 ">
@@ -405,7 +408,7 @@ export default function Info({ formData, setFormData }: Props) {
         <div>
           <label className="mb-2 flex items-center gap-1.5 text-sm font-medium text-gray-800">
             <Sparkles className="w-4 h-4 text-indigo-500" />
-            Thẻ tính cách
+            Địa điểm của bạn phù hợp với phong cách nào của cặp đôi?
           </label>
 
           <div className="flex flex-wrap gap-2">
