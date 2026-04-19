@@ -21,15 +21,13 @@ export default function VoucherActions({ voucher, onChanged }: Props) {
 
   const isValidStartDate = (startDate: string) => {
     const today = new Date();
-    const vnToday = new Date(today.getTime() + (7 - today.getTimezoneOffset() / 60) * 60 * 60 * 1000);
-    vnToday.setHours(0, 0, 0, 0);
+    today.setDate(today.getDate() + 3);
 
-    const minStart = new Date(vnToday);
-    minStart.setDate(minStart.getDate() + 3);
+    const min = today.toISOString().split("T")[0];
 
-    const start = new Date(startDate);
+    const start = startDate.split("T")[0]; // cắt bỏ time nếu có
 
-    return start >= minStart;
+    return start >= min;
   };
 
   const handleSubmit = async () => {
@@ -39,6 +37,7 @@ export default function VoucherActions({ voucher, onChanged }: Props) {
     }
 
     await submitVoucher(voucher.id);
+    toast.success("Gửi duyệt thành công");
     onChanged();
   };
 
