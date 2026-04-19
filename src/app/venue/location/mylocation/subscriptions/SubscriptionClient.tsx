@@ -184,49 +184,60 @@ export default function LocationRegisterPage() {
                         <p className="text-sm text-gray-500 mb-6">
                             {selectedPackage.packageName} - {selectedPackage.price.toLocaleString('vi-VN')} VND
                         </p>
-<div className="mb-6">
-    <p className="text-sm font-semibold text-gray-700 mb-3">
-        Số lượng
-    </p>
 
-    <div className="flex items-center justify-between bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100 rounded-2xl px-4 py-3 shadow-sm">
+                        <div className="mb-6 rounded-2xl border border-violet-200 bg-violet-50/50 p-4 space-y-3">
+                            <div>
+                                <p className="text-xs text-violet-500 font-semibold uppercase tracking-wider">Số lượng gói</p>
+                                <p className="text-[11px] text-gray-500 mt-1">Mua nhiều gói sẽ tăng tổng ngày hiển thị theo số lượng</p>
+                            </div>
 
-        {/* Minus */}
-        <button
-            onClick={() => setQuantity(q => Math.max(MIN_QTY, q - 1))}
-            className="w-10 h-10 flex items-center justify-center rounded-xl 
-                       bg-white text-purple-600 text-lg font-bold
-                       shadow-sm border border-purple-100
-                       hover:bg-purple-100 hover:scale-105 
-                       active:scale-95 transition"
-        >
-            −
-        </button>
+                            <div className="flex items-center justify-between">
+                                <div className="inline-flex items-center rounded-xl border border-violet-200 bg-white overflow-hidden">
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuantity((prev) => Math.max(MIN_QTY, prev - 1))}
+                                        className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                    >
+                                        -
+                                    </button>
+                                    <input
+                                        type="number"
+                                        min={MIN_QTY}
+                                        max={MAX_QTY}
+                                        value={quantity}
+                                        onChange={(e) => {
+                                            const rawValue = Number(e.target.value);
+                                            if (Number.isNaN(rawValue)) {
+                                                setQuantity(MIN_QTY);
+                                                return;
+                                            }
 
-        {/* Quantity */}
-        <div className="text-center">
-            <p className="text-xs text-gray-500">Số lượng</p>
-            <p className="text-2xl font-extrabold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
-                {quantity}
-            </p>
-        </div>
+                                            const nextValue = Math.min(MAX_QTY, Math.max(MIN_QTY, Math.trunc(rawValue)));
+                                            setQuantity(nextValue);
+                                        }}
+                                        className="w-16 text-center text-sm font-semibold text-gray-800 focus:outline-none"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setQuantity((prev) => Math.min(MAX_QTY, prev + 1))}
+                                        className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                    >
+                                        +
+                                    </button>
+                                </div>
 
-        {/* Plus */}
-        <button
-            onClick={() => setQuantity(q => Math.min(MAX_QTY, q + 1))}
-            className="w-10 h-10 flex items-center justify-center rounded-xl 
-                       bg-gradient-to-r from-purple-500 to-pink-500 
-                       text-white text-lg font-bold shadow-md
-                       hover:scale-105 active:scale-95 transition"
-        >
-            +
-        </button>
-    </div>
+                                <div className="text-right">
+                                    <p className="text-[11px] text-gray-500">Tổng thanh toán</p>
+                                    <p className="text-lg font-extrabold text-violet-700">
+                                        {(selectedPackage.price * quantity).toLocaleString('vi-VN')} VND
+                                    </p>
+                                </div>
+                            </div>
 
-    <p className="text-xs text-gray-400 mt-2 text-right">
-        Tối đa {MAX_QTY}
-    </p>
-</div>
+                            <p className="text-[11px] text-gray-600">
+                                {selectedPackage.durationDays} ngày x {quantity} gói = {selectedPackage.durationDays * quantity} ngày (tối đa {MAX_QTY} gói)
+                            </p>
+                        </div>
 
                         <div className="space-y-3">
                             {/* Wallet Payment */}
