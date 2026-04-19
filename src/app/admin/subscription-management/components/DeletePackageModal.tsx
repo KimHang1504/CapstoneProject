@@ -1,33 +1,16 @@
 "use client";
 
-import { deleteSubscriptionPackage } from "@/api/admin/subscription/api";
 import { SubscriptionPackage } from "@/api/admin/subscription/type";
-import { useState } from "react";
-import { toast } from "sonner";
-import { X, AlertTriangle, Trash2 } from "lucide-react";
+import { AlertTriangle, Power, X } from "lucide-react";
 
 interface DeletePackageModalProps {
   package: SubscriptionPackage;
+  loading?: boolean;
   onClose: () => void;
-  onSuccess: () => void;
+  onConfirm: () => void;
 }
 
-export default function DeletePackageModal({ package: pkg, onClose, onSuccess }: DeletePackageModalProps) {
-  const [loading, setLoading] = useState(false);
-
-  const handleDelete = async () => {
-    try {
-      setLoading(true);
-      await deleteSubscriptionPackage(pkg.id);
-      toast.success("Đã xóa gói subscription");
-      onSuccess();
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Xóa gói thất bại";
-      toast.error(errorMessage);
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function DeletePackageModal({ package: pkg, loading = false, onClose, onConfirm }: DeletePackageModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
@@ -38,8 +21,8 @@ export default function DeletePackageModal({ package: pkg, onClose, onSuccess }:
               <AlertTriangle className="w-5 h-5 text-red-600" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-800">Xác nhận xóa gói</h2>
-              <p className="text-sm text-slate-500 mt-0.5">Hành động này không thể hoàn tác</p>
+              <h2 className="text-lg font-semibold text-slate-800">Xác nhận ngưng hoạt động gói</h2>
+              <p className="text-sm text-slate-500 mt-0.5">Gói sẽ bị dừng bán cho lượt mua mới</p>
             </div>
           </div>
         </div>
@@ -47,13 +30,13 @@ export default function DeletePackageModal({ package: pkg, onClose, onSuccess }:
         <div className="px-6 py-5 space-y-4">
           <div className="bg-red-50 border border-red-200 rounded-xl p-4">
             <div className="flex gap-3">
-              <AlertTriangle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
               <div className="space-y-2">
                 <p className="text-sm font-medium text-red-800">
-                  Cảnh báo quan trọng
+                  Xác nhận ngưng hoạt động gói
                 </p>
                 <p className="text-sm text-red-700">
-                  Bạn sẽ không thể xóa gói này nếu đang có subscription đang hoạt động hoặc đang chờ thanh toán.
+                  Các subscription đã mua từ gói này vẫn tiếp tục hoạt động đến hết hạn. Sau khi ngưng hoạt động, người dùng sẽ không thể mua mới gói này nữa.
                 </p>
               </div>
             </div>
@@ -82,7 +65,7 @@ export default function DeletePackageModal({ package: pkg, onClose, onSuccess }:
           </div>
 
           <p className="text-sm text-slate-600">
-            Bạn có chắc chắn muốn xóa gói subscription này không?
+            Bạn có chắc chắn muốn ngưng hoạt động gói subscription này không?
           </p>
         </div>
 
@@ -95,12 +78,12 @@ export default function DeletePackageModal({ package: pkg, onClose, onSuccess }:
             Hủy
           </button>
           <button
-            onClick={handleDelete}
+            onClick={onConfirm}
             disabled={loading}
-            className="px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-xl hover:from-rose-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
+            className="px-4 py-2.5 text-sm font-medium bg-linear-to-r from-rose-500 to-red-600 text-white rounded-xl hover:from-rose-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
           >
-            <Trash2 className="w-4 h-4" />
-            {loading ? "Đang xóa..." : "Xác nhận xóa"}
+            <Power className="w-4 h-4" />
+            {loading ? "Đang xử lý..." : "Xác nhận ngưng hoạt động"}
           </button>
         </div>
       </div>

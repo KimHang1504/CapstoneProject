@@ -425,69 +425,31 @@ export default function AdvertisementForm({
           className="hidden"
         />
 
-        {form.bannerUrl && (
-          <div className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm relative">
-            <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">Preview</div>
-            <Image
-              src={form.bannerUrl}
-              alt="preview"
-              width={800}
-              height={200}
-              className="w-full h-48 object-cover"
-            />
-          </div>
-        )}
+        <div
+          className="mt-3 rounded-2xl overflow-hidden border border-violet-100 shadow-sm relative bg-violet-50/30"
+          onClick={() => !isUploadingBanner && document.getElementById('banner-file-input')?.click()}
+        >
+          {form.bannerUrl ? (
+            <>
+              <div className="absolute top-2 left-2 bg-black/40 backdrop-blur-sm text-white text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider">Preview</div>
+              <Image
+                src={form.bannerUrl}
+                alt="preview"
+                width={800}
+                height={200}
+                className="w-full h-48 object-cover"
+              />
+            </>
+          ) : (
+            <div className="h-48 flex flex-col items-center justify-center gap-2 text-violet-500 cursor-pointer">
+              <Upload size={22} />
+              <p className="text-sm font-medium">Chưa có banner</p>
+              <p className="text-xs text-violet-400">Nhấn để tải ảnh lên hoặc dùng AI</p>
+            </div>
+          )}
+        </div>
       </FieldWrapper>
 
-      {!isCreateMode && (
-        <FieldWrapper>
-          <label className={labelClass}>Vị trí hiển thị</label>
-          <div className="mt-2 grid grid-cols-2 gap-3">
-            {([
-              {
-                value: "HOME_BANNER", label: "Banner đầu trang", icon: (
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2" />
-                  </svg>
-                )
-              },
-              {
-                value: "POPUP", label: "Popup", icon: (
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-                  </svg>
-                )
-              },
-            ] as { value: PlacementType; label: string; icon: React.ReactNode }[]).map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setForm({ ...form, placementType: opt.value })}
-                className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 text-sm font-medium transition-all duration-200 ${form.placementType === opt.value
-                  ? "border-violet-500 bg-violet-50 text-violet-700 shadow-sm"
-                  : "border-gray-200 bg-white text-gray-500 hover:border-violet-200 hover:bg-violet-50/50"
-                  }`}
-              >
-                <span className={form.placementType === opt.value ? "text-violet-500" : "text-gray-400"}>
-                  {opt.icon}
-                </span>
-                {opt.label}
-              </button>
-            ))}
-          </div>
-
-          <select
-            name="placementType"
-            value={form.placementType}
-            onChange={handleChange}
-            className="sr-only"
-            aria-hidden="true"
-          >
-            <option value="HOME_BANNER">Banner đầu trang</option>
-            <option value="POPUP">Popup</option>
-          </select>
-        </FieldWrapper>
-      )}
       <FieldWrapper>
         <label className={labelClass}>Tâm trạng <span className="text-red-500">*</span></label>
 

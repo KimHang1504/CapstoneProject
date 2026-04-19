@@ -120,6 +120,7 @@ export interface VenueDetail {
   businessLicenseUrl: string;
   venueOwner: VenueOwner;
   venue: VenueInfomation | null;
+  locationTags?: LocationTag[];
 }
 
 export interface VenueInfomation {
@@ -174,6 +175,8 @@ export interface VenueInfomation {
     name: string;
     description: string;
   }[];
+
+  locationTags?: LocationTag[];
 
   openingHours?: {
     day: number;

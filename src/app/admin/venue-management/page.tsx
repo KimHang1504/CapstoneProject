@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ChevronRight, Search, ChevronLeft, ChevronsLeft, ChevronsRight, MapPin, RefreshCw, X, Star, Phone, Mail, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,17 +11,14 @@ import { Venue } from '@/api/admin/type';
 type StatusFilter = 'all' | 'PENDING' | 'ACTIVE' | 'INACTIVE';
 
 export default function MyLocationPage() {
+    const PAGE_SIZE = 10;
 
     const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
-    const [searchQuery, setSearchQuery] = useState('');
     const [searchInput, setSearchInput] = useState('');
-    const [clientSearch, setClientSearch] = useState(''); // Frontend search
     const [data, setData] = useState<Venue[]>([]);
     const [loading, setLoading] = useState(true);
 
     const [page, setPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalCount, setTotalCount] = useState(0);
 
     // Stats from API
     const [stats, setStats] = useState({
@@ -33,26 +30,63 @@ export default function MyLocationPage() {
 
     useEffect(() => {
         fetchData();
-    }, [page, statusFilter, searchQuery]);
+    }, [statusFilter]);
+
+    useEffect(() => {
+        setPage(1);
+    }, [statusFilter, searchInput]);
+
+    const normalizeVietnamese = (value: string) =>
+        value
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D')
+            .toLowerCase()
+            .trim();
+
+    const filteredData = useMemo(() => {
+        const keyword = normalizeVietnamese(searchInput);
+        if (!keyword) return data;
+
+        return data.filter((loc) => {
+            const name = normalizeVietnamese(loc.name ?? '');
+            const address = normalizeVietnamese(loc.address ?? '');
+            const description = normalizeVietnamese(loc.description ?? '');
+
+            return name.includes(keyword) || address.includes(keyword) || description.includes(keyword);
+        });
+    }, [data, searchInput]);
+
+    const totalCount = filteredData.length;
+    const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+    const pagedData = useMemo(() => {
+        const start = (page - 1) * PAGE_SIZE;
+        return filteredData.slice(start, start + PAGE_SIZE);
+    }, [filteredData, page]);
 
     const fetchData = async () => {
         setLoading(true);
 
         try {
-            const res = await getAllPendingVenues(
-                page,
-                10,
-                statusFilter === 'all' ? undefined : statusFilter,
-                searchQuery || undefined
-            );
+            const status = statusFilter === 'all' ? undefined : statusFilter;
+            const pageSize = 100;
+            let currentPage = 1;
+            let apiTotalPages = 1;
+            const allVenues: Venue[] = [];
 
-            setData(res.data.items);
-            setTotalPages(res.data.totalPages);
-            setTotalCount(res.data.totalCount);
+            do {
+                const res = await getAllPendingVenues(currentPage, pageSize, status, undefined);
+                allVenues.push(...res.data.items);
+                apiTotalPages = res.data.totalPages;
+                currentPage += 1;
+            } while (currentPage <= apiTotalPages);
+
+            setData(allVenues);
 
             // Fetch stats for all statuses
             await fetchStats();
-            console.log('Fetched venues:', res.data.items);
+            console.log('Fetched venues:', allVenues);
 
         } catch (error) {
             console.error('Error fetching venues:', error);
@@ -78,17 +112,6 @@ export default function MyLocationPage() {
             });
         } catch (error) {
             console.error('Error fetching stats:', error);
-        }
-    };
-
-    const handleSearch = () => {
-        setSearchQuery(searchInput);
-        setPage(1);
-    };
-
-    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            handleSearch();
         }
     };
 
@@ -135,14 +158,12 @@ export default function MyLocationPage() {
                                         placeholder="Tìm theo tên hoặc địa chỉ..."
                                         value={searchInput}
                                         onChange={(e) => setSearchInput(e.target.value)}
-                                        onKeyDown={handleKeyPress}
                                         className="w-full pl-10 pr-10 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200"
                                     />
                                     {searchInput && (
                                         <button
                                             onClick={() => {
                                                 setSearchInput("");
-                                                setSearchQuery("");
                                                 setPage(1);
                                             }}
                                             className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
@@ -153,7 +174,8 @@ export default function MyLocationPage() {
                                 </div>
 
                                 <button
-                                    onClick={handleSearch}
+                                    type="button"
+                                    onClick={() => setPage(1)}
                                     className="px-6 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md"
                                 >
                                     <span className="text-sm font-medium">Tìm kiếm</span>
@@ -179,18 +201,7 @@ export default function MyLocationPage() {
                                 ))}
 
                             {!loading &&
-                                data
-                                    .filter(loc => {
-                                        // Client-side search filter
-                                        if (!clientSearch) return true;
-                                        const query = clientSearch.toLowerCase();
-                                        return (
-                                            loc.name?.toLowerCase().includes(query) ||
-                                            loc.address?.toLowerCase().includes(query) ||
-                                            loc.description?.toLowerCase().includes(query)
-                                        );
-                                    })
-                                    .map(loc => {
+                                pagedData.map(loc => {
                                         // Validate and get image URL
                                         let imageUrl = 'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg';
 
@@ -226,7 +237,14 @@ export default function MyLocationPage() {
                                                     <div className="flex-1 min-w-0">
                                                         {/* Title and Status */}
                                                         <div className="flex items-start justify-between gap-2 mb-1">
-                                                            <Link href={`/admin/venue-management/location/${loc.id}`}>
+                                                            <Link
+                                                                href={{
+                                                                    pathname: `/admin/venue-management/location/${loc.id}`,
+                                                                    query: {
+                                                                        lt: encodeURIComponent(JSON.stringify(loc.locationTags ?? [])),
+                                                                    },
+                                                                }}
+                                                            >
                                                                 <h3 className="font-semibold text-lg text-slate-800 hover:text-violet-600 transition-colors line-clamp-1">
                                                                     {loc.name}
                                                                 </h3>
@@ -319,7 +337,12 @@ export default function MyLocationPage() {
                                                     </div>
 
                                                     <Link
-                                                        href={`/admin/venue-management/location/${loc.id}`}
+                                                        href={{
+                                                            pathname: `/admin/venue-management/location/${loc.id}`,
+                                                            query: {
+                                                                lt: encodeURIComponent(JSON.stringify(loc.locationTags ?? [])),
+                                                            },
+                                                        }}
                                                         className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200 transition-colors shrink-0"
                                                     >
                                                         <ChevronRight className="w-4 h-4" />
@@ -329,15 +352,7 @@ export default function MyLocationPage() {
                                         );
                                     })}
 
-                            {!loading && data.filter(loc => {
-                                if (!clientSearch) return true;
-                                const query = clientSearch.toLowerCase();
-                                return (
-                                    loc.name?.toLowerCase().includes(query) ||
-                                    loc.address?.toLowerCase().includes(query) ||
-                                    loc.description?.toLowerCase().includes(query)
-                                );
-                            }).length === 0 && (
+                            {!loading && filteredData.length === 0 && (
                                     <div className="flex flex-col items-center justify-center py-20 border border-dashed rounded-xl bg-slate-50 text-center">
                                         <MapPin className="w-16 h-16 text-slate-300 mb-3" strokeWidth={1.5} />
                                         <p className="text-slate-600 font-medium">
