@@ -65,6 +65,36 @@ export default function AdvertisementForm({
   const [dateError, setDateError] = useState<string>("");
   const router = useRouter()
 
+  const [errors, setErrors] = useState({
+    title: "",
+
+  });
+
+  const [touched, setTouched] = useState({
+    title: false,
+
+  });
+
+  const validateField = (name: string, value: any) => {
+    switch (name) {
+      case "title":
+        return !value?.trim() ? "Vui lòng nhập mục đích quảng cáo" : "";
+      default:
+        return "";
+    }
+  };
+
+  const handleBlur = (name: string, value: any) => {
+    setTouched(prev => ({ ...prev, [name]: true }));
+
+    const error = validateField(name, value);
+
+    setErrors(prev => ({
+      ...prev,
+      [name]: error,
+    }));
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -263,14 +293,24 @@ export default function AdvertisementForm({
       </h1>
       {/* Title */}
       <FieldWrapper>
-        <label className={labelClass}>Mục đích quảng cáo</label>
+        <label className={labelClass}>Mục đích quảng cáo <span className="text-red-500">*</span></label>
         <input
           name="title"
           value={form.title}
           onChange={handleChange}
-          placeholder="Nhập tiêu đề quảng cáo..."
-          className={inputClass}
+          onBlur={() => handleBlur("title", form.title)}
+          className={`w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+  focus:outline-none focus:ring-1 transition
+  ${errors.title && touched.title
+              ? "border-red-500 focus:ring-red-300 focus:border-red-500"
+              : "border-violet-200 focus:ring-violet-400 focus:border-violet-400"
+            }
+`}
         />
+
+        {errors.title && touched.title && (
+          <p className="text-xs text-red-500 mt-1">{errors.title}</p>
+        )}
       </FieldWrapper>
 
       {/* Content */}
@@ -336,7 +376,7 @@ export default function AdvertisementForm({
       {/* Banner + Preview */}
       <FieldWrapper>
         <div className="flex items-center justify-between">
-          <label className={labelClass}>Banner</label>
+          <label className={labelClass}>Banner <span className="text-red-500">*</span></label>
           <div className="flex gap-2">
             <button
               type="button"
@@ -449,7 +489,7 @@ export default function AdvertisementForm({
         </FieldWrapper>
       )}
       <FieldWrapper>
-        <label className={labelClass}>Tâm trạng</label>
+        <label className={labelClass}>Tâm trạng <span className="text-red-500">*</span></label>
 
         <div className="mt-2 flex flex-wrap gap-2">
           {(moodOptions ?? []).map((mood) => {
@@ -480,7 +520,7 @@ export default function AdvertisementForm({
 
       {/* Date */}
       <FieldWrapper>
-        <label className={labelClass}>Ngày bắt đầu</label>
+        <label className={labelClass}>Ngày bắt đầu <span className="text-red-500">*</span></label>
         <div className="relative mt-2">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-violet-400 z-10 pointer-events-none">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -498,14 +538,14 @@ export default function AdvertisementForm({
             dateFormat="yyyy-MM-dd HH:mm"
             placeholderText="Chọn ngày bắt đầu..."
             className={`w-full border rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition ${dateError
-                ? "border-rose-300 focus:ring-rose-400"
-                : "border-violet-200 focus:ring-violet-400"
+              ? "border-rose-300 focus:ring-rose-400"
+              : "border-violet-200 focus:ring-violet-400"
               }`}
           />
         </div>
         {dateError && (
           <p className="text-xs text-rose-600 mt-2 flex items-center gap-1.5">
-              <path fillRule="evenodd" d="M18.101 12.93a1 1 0 00-1.415-1.414L11 16.586V9.5a1 1 0 10-2 0v7.086L3.314 11.516a1 1 0 00-1.414 1.414l9.9 9.9a1 1 0 001.415 0l9.9-9.9z" clipRule="evenodd" />
+            <path fillRule="evenodd" d="M18.101 12.93a1 1 0 00-1.415-1.414L11 16.586V9.5a1 1 0 10-2 0v7.086L3.314 11.516a1 1 0 00-1.414 1.414l9.9 9.9a1 1 0 001.415 0l9.9-9.9z" clipRule="evenodd" />
             {dateError}
           </p>
         )}

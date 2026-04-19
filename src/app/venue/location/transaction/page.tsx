@@ -7,7 +7,7 @@ import { MySubscription } from "@/api/venue/subscription/type";
 const statusConfig: Record<string, { label: string; badge: string; dot: string }> = {
   ACTIVE:          { label: "Đang hoạt động", badge: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-400" },
   CANCELLED:       { label: "Đã hủy",         badge: "bg-gray-100 text-gray-500 border-gray-200",         dot: "bg-gray-400" },
-  PENDING_PAYMENT: { label: "Chờ thanh toán", badge: "bg-amber-50 text-amber-700 border-amber-200",       dot: "bg-amber-400" },
+  // PENDING_PAYMENT: { label: "Chờ thanh toán", badge: "bg-amber-50 text-amber-700 border-amber-200",       dot: "bg-amber-400" },
   REFUNDED:        { label: "Đã hoàn tiền",   badge: "bg-blue-50 text-blue-600 border-blue-200",          dot: "bg-blue-400" },
   EXPIRED:         { label: "Hết hạn",        badge: "bg-rose-50 text-rose-600 border-rose-200",          dot: "bg-rose-400" },
 };
@@ -64,7 +64,7 @@ export default function SubscriptionTransactionPage() {
             {[
               { label: "Tất cả",         value: "ALL" },
               { label: "Đang hoạt động", value: "ACTIVE" },
-              { label: "Chờ thanh toán", value: "PENDING_PAYMENT" },
+              // { label: "Chờ thanh toán", value: "PENDING_PAYMENT" },
               { label: "Đã hủy",         value: "CANCELLED" },
               { label: "Đã hoàn tiền",   value: "REFUNDED" },
             ].map((f) => (
