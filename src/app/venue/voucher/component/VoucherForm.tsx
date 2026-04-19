@@ -191,8 +191,10 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         ...prev,
         [key]: value,
       };
-
+      const nextErrors: Record<string, string> = { ...errors };
       const error = validateField(key, value, nextForm);
+      if (!error) delete nextErrors[key];
+      else nextErrors[key] = error;
 
       console.log("[VALIDATE]", key, {
         value,
@@ -200,16 +202,36 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         error,
         touched: touched[key],
       });
+      if (key === "quantity") {
+        const limitError = validateField(
+          "usageLimitPerMember",
+          nextForm.usageLimitPerMember,
+          nextForm
+        );
 
-      setErrors((prevErr) => {
-        const updated = { ...prevErr };
+        if (!limitError) delete nextErrors["usageLimitPerMember"];
+        else nextErrors["usageLimitPerMember"] = limitError;
+      }
 
-        if (!error) delete updated[key];
-        else updated[key] = error;
+      if (key === "usageLimitPerMember") {
+        const qtyError = validateField(
+          "quantity",
+          nextForm.quantity,
+          nextForm
+        );
 
-        return updated;
-      });
+        if (!qtyError) delete nextErrors["quantity"];
+        else nextErrors["quantity"] = qtyError;
+      }
+      // setErrors((prevErr) => {
+      //   const updated = { ...prevErr };
 
+      //   if (!error) delete updated[key];
+      //   else updated[key] = error;
+
+      //   return updated;
+      // });
+      setErrors(nextErrors);
       return nextForm;
     });
   };

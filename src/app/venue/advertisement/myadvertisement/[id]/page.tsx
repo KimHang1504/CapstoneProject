@@ -352,7 +352,7 @@ export default function AdvertisementDetailPage() {
                             </>
                         )}
                         <div
-                            className="relative max-w-[90vw] max-h-[90vh]"
+                            className="relative w-[90vw] h-[90vh] flex items-center justify-center"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <ImageWithFallback
@@ -360,10 +360,11 @@ export default function AdvertisementDetailPage() {
                                 alt="Full advertisement"
                                 width={1200}
                                 height={800}
-                                className="object-contain rounded-xl max-h-[90vh] w-auto"
+                                className="w-full h-full object-contain rounded-xl"
                             />
+
                             {images.length > 1 && (
-                                <p className="text-center text-white/60 text-xs mt-3">
+                                <p className="text-center text-white/60 text-xs mt-3 absolute bottom-2">
                                     {safeIndex + 1} / {images.length}
                                 </p>
                             )}

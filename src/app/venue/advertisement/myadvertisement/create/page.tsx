@@ -6,6 +6,7 @@ import AdvertisementForm from "@/app/venue/advertisement/component/Advertisement
 import { useRouter } from "next/navigation";
 import {toast} from "sonner";
 import { getMoodTypes } from "@/api/mood/api";
+import Loading from "@/components/Loading";
 
 type MoodOption = {
   id: number;
@@ -45,7 +46,7 @@ export default function CreateAdvertisementPage() {
     router.push("/venue/advertisement/myadvertisement");
   };
 
-  if (loadingMoods) return <p>Loading...</p>;
+  if (loadingMoods) return <Loading />;
 
   return (
     <AdvertisementForm
