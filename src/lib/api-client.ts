@@ -21,6 +21,7 @@ export type ApiResponse<T> = {
 class ApiClient {
   private NEXT_PUBLIC_API_URL: string;
   private defaultHeaders: Record<string, string>;
+  private hasTriggeredForceLogout = false;
 
   constructor(baseURL = '') {
     this.NEXT_PUBLIC_API_URL = baseURL;
@@ -41,6 +42,34 @@ class ApiClient {
   // Xóa token
   clearAuthToken() {
     delete this.defaultHeaders['Authorization'];
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("access_token");
+    }
+  }
+
+  private forceLogout() {
+    if (typeof window === "undefined" || this.hasTriggeredForceLogout) {
+      return;
+    }
+
+    this.hasTriggeredForceLogout = true;
+    this.clearAuthToken();
+    document.cookie = "accessToken=; path=/; max-age=0";
+
+    if (!window.location.pathname.startsWith("/auth")) {
+      window.location.replace("/auth");
+    }
+  }
+
+  private isLockedAccountMessage(message: string) {
+    const normalized = message.toLowerCase();
+    return (
+      normalized.includes("tài khoản đã bị khóa") ||
+      normalized.includes("tai khoan da bi khoa") ||
+      normalized.includes("inactive") ||
+      normalized.includes("locked") ||
+      normalized.includes("bị khóa")
+    );
   }
 
   // Hàm gọi API chung
@@ -90,11 +119,27 @@ class ApiClient {
         const error = await response.json().catch(() => ({
           message: response.statusText,
         }));
-        throw new Error(error.message || 'Request failed');
+        const errorMessage = String(error?.message || response.statusText || 'Request failed');
+
+        if (response.status === 401 && this.isLockedAccountMessage(errorMessage)) {
+          this.forceLogout();
+        }
+
+        throw new Error(errorMessage);
       }
 
       // Trả về data
-      return await response.json();
+      const data = await response.json();
+
+      if (
+        endpoint.toLowerCase().includes('/api/auth/me') &&
+        data?.data?.isActive === false
+      ) {
+        this.forceLogout();
+        throw new Error('Tài khoản đã bị khóa');
+      }
+
+      return data;
     } catch (error) {
       console.error('API Error:', error);
       throw error;
