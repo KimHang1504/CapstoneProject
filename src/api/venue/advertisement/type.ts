@@ -50,7 +50,7 @@ export interface CreateAdvertisementRequest {
     content: string;
     bannerUrl: string;
     targetUrl: string;
-    placementType: PlacementType;
+    placementType?: PlacementType;
 }
 
 // Type nhận về từ BE
@@ -61,7 +61,7 @@ export interface Advertisement {
     content: string;
     bannerUrl: string;
     targetUrl: string;
-    placementType: PlacementType;
+    placementType: PlacementType | null;
     status: AdvertisementStatus;
     rejectionHistory: RejectionHistory[];
     desiredStartDate: string | null;
@@ -76,7 +76,7 @@ export interface AdvertisementListItem {
     id: number;
     title: string;
     bannerUrl: string;
-    placementType: PlacementType;
+    placementType: PlacementType | null;
     status: AdvertisementStatus;
     rejectionReason: string | null;
     desiredStartDate: string | null;

@@ -158,7 +158,7 @@ export default function Media({ formData, setFormData }: Props) {
                     <div>
                         <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
                             <FileImage className="w-4 h-4 text-purple-500" />
-                            Ảnh nội thất <span className="text-pink-500">*</span>
+                            Ảnh nội thất
                         </p>
 
                         <label className="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500 hover:border-purple-400 hover:bg-purple-50 transition-all">
@@ -213,7 +213,7 @@ export default function Media({ formData, setFormData }: Props) {
                     <div>
                         <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
                             <FileImage className="w-4 h-4 text-purple-500" />
-                            Ảnh thực đơn <span className="text-pink-500">*</span>
+                            Ảnh thực đơn
                         </p>
 
                         <label className="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500 hover:border-purple-400 hover:bg-purple-50 transition-all">
@@ -268,7 +268,7 @@ export default function Media({ formData, setFormData }: Props) {
                     <div>
                         <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
                             <FileCheck className="w-4 h-4 text-purple-500" />
-                            Giấy phép kinh doanh <span className="text-pink-500">*</span>
+                            Giấy phép kinh doanh
                         </p>
 
                         <label className="group flex h-28 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#D3D6FF] bg-white text-sm text-gray-500 hover:border-purple-400 hover:bg-purple-50 transition-all">

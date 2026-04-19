@@ -19,6 +19,9 @@ export default function LocationRegisterPage() {
     const [processingPackageId, setProcessingPackageId] = useState<number | null>(null);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [selectedPackage, setSelectedPackage] = useState<SubscriptionPackage | null>(null);
+    const [quantity, setQuantity] = useState(1);
+    const MIN_QTY = 1;
+    const MAX_QTY = 12;
     useEffect(() => {
         const fetchPackages = async () => {
             try {
@@ -38,6 +41,7 @@ export default function LocationRegisterPage() {
 
     const handleOpenPaymentModal = (pkg: SubscriptionPackage) => {
         setSelectedPackage(pkg);
+        setQuantity(1);
         setShowPaymentModal(true);
     };
 
@@ -51,7 +55,7 @@ export default function LocationRegisterPage() {
 
         if (method === 'WALLET') {
             // Redirect to wallet confirmation page (will call API there)
-            router.push(`/venue/location/mylocation/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}`);
+            router.push(`/venue/location/mylocation/subscriptions/confirm?packageId=${selectedPackage.id}&locationId=${locationId}&quantity=${quantity}`);
         } else {
             // VietQR: Call API and redirect to checkout
             try {
@@ -59,7 +63,7 @@ export default function LocationRegisterPage() {
 
                 const response = await submitVenueWithPayment(Number(locationId), {
                     packageId: selectedPackage.id,
-                    quantity: 1,
+                    quantity: quantity,
                     paymentMethod: method
                 });
                 console.log('Payment submission response:', response);
@@ -180,6 +184,49 @@ export default function LocationRegisterPage() {
                         <p className="text-sm text-gray-500 mb-6">
                             {selectedPackage.packageName} - {selectedPackage.price.toLocaleString('vi-VN')} VND
                         </p>
+<div className="mb-6">
+    <p className="text-sm font-semibold text-gray-700 mb-3">
+        Số lượng
+    </p>
+
+    <div className="flex items-center justify-between bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-100 rounded-2xl px-4 py-3 shadow-sm">
+
+        {/* Minus */}
+        <button
+            onClick={() => setQuantity(q => Math.max(MIN_QTY, q - 1))}
+            className="w-10 h-10 flex items-center justify-center rounded-xl 
+                       bg-white text-purple-600 text-lg font-bold
+                       shadow-sm border border-purple-100
+                       hover:bg-purple-100 hover:scale-105 
+                       active:scale-95 transition"
+        >
+            −
+        </button>
+
+        {/* Quantity */}
+        <div className="text-center">
+            <p className="text-xs text-gray-500">Số lượng</p>
+            <p className="text-2xl font-extrabold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">
+                {quantity}
+            </p>
+        </div>
+
+        {/* Plus */}
+        <button
+            onClick={() => setQuantity(q => Math.min(MAX_QTY, q + 1))}
+            className="w-10 h-10 flex items-center justify-center rounded-xl 
+                       bg-gradient-to-r from-purple-500 to-pink-500 
+                       text-white text-lg font-bold shadow-md
+                       hover:scale-105 active:scale-95 transition"
+        >
+            +
+        </button>
+    </div>
+
+    <p className="text-xs text-gray-400 mt-2 text-right">
+        Tối đa {MAX_QTY}
+    </p>
+</div>
 
                         <div className="space-y-3">
                             {/* Wallet Payment */}
