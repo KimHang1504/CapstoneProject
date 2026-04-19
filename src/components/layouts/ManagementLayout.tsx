@@ -213,7 +213,12 @@ export default function ManagementLayout({
         className={`
           ${isSidebarOpen ? 'w-56' : 'w-16'} 
           bg-[#8093F1] flex flex-col transition-all duration-300 ease-in-out
-          border-r border-purple-200/50
+          relative
+          shadow-[inset_-1px_0_0_rgba(255,255,255,0.32),10px_0_24px_-20px_rgba(47,70,186,0.65)]
+          hover:shadow-[inset_-1px_0_0_rgba(255,255,255,0.4),12px_0_28px_-18px_rgba(47,70,186,0.75)]
+          before:content-[''] before:absolute before:right-0 before:top-3 before:bottom-3 before:w-px
+          before:bg-white/35 before:blur-[0.5px] before:rounded-full before:transition-opacity before:duration-300
+          hover:before:opacity-90
         `}
       >
         {/* Sidebar Header */}
