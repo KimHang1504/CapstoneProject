@@ -1,6 +1,6 @@
 "use client";
 
-import { getSubscriptionPackages, deleteSubscriptionPackage, updateSubscriptionPackage } from "@/api/admin/subscription/api";
+import { getSubscriptionPackages, deleteSubscriptionPackage } from "@/api/admin/subscription/api";
 import { SubscriptionPackage, PackageType } from "@/api/admin/subscription/type";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -11,18 +11,13 @@ import {
   Check,
   Package,
   Clock,
-  Plus,
   Pencil,
-  Trash2,
-  CheckCircle,
-  XCircle,
   Users,
   Building2,
   UserCircle,
   Calendar,
   DollarSign,
 } from "lucide-react";
-import CreatePackageModal from "./CreatePackageModal";
 import EditPackageModal from "./EditPackageModal";
 import DeletePackageModal from "./DeletePackageModal";
 
@@ -35,9 +30,8 @@ export default function SubscriptionTable() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const [createModalOpen, setCreateModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [deactivateModalOpen, setDeactivateModalOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<SubscriptionPackage | null>(null);
 
   useEffect(() => {
@@ -69,45 +63,32 @@ export default function SubscriptionTable() {
     }
   };
 
-  const handleToggleActive = async (pkg: SubscriptionPackage) => {
-    toast(`Bạn có chắc muốn ${pkg.isActive ? 'vô hiệu hóa' : 'kích hoạt'} gói này?`, {
-      action: {
-        label: "Xác nhận",
-        onClick: async () => {
-          try {
-            setActionLoading(pkg.id);
-            await updateSubscriptionPackage(pkg.id, {
-              packageName: pkg.packageName,
-              price: pkg.price,
-              durationDays: pkg.durationDays,
-              description: pkg.description || undefined,
-              isActive: !pkg.isActive,
-            });
-            toast.success(`Đã ${!pkg.isActive ? 'kích hoạt' : 'vô hiệu hóa'} gói`);
-            fetchData();
-          } catch (error) {
-            const errorMessage = error instanceof Error ? error.message : "Cập nhật thất bại";
-            toast.error(errorMessage);
-          } finally {
-            setActionLoading(null);
-          }
-        },
-      },
-      cancel: {
-        label: "Hủy",
-        onClick: () => { },
-      },
-    });
+  const openDeactivateModal = (pkg: SubscriptionPackage) => {
+    setSelectedPackage(pkg);
+    setDeactivateModalOpen(true);
+  };
+
+  const handleConfirmDeactivate = async () => {
+    if (!selectedPackage) return;
+
+    try {
+      setActionLoading(selectedPackage.id);
+      await deleteSubscriptionPackage(selectedPackage.id);
+      toast.success("Đã ngưng hoạt động gói subscription");
+      setDeactivateModalOpen(false);
+      setSelectedPackage(null);
+      fetchData();
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Ngưng hoạt động thất bại";
+      toast.error(errorMessage);
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const openEditModal = (pkg: SubscriptionPackage) => {
     setSelectedPackage(pkg);
     setEditModalOpen(true);
-  };
-
-  const openDeleteModal = (pkg: SubscriptionPackage) => {
-    setSelectedPackage(pkg);
-    setDeleteModalOpen(true);
   };
 
   const getTypeIcon = (type: PackageType) => {
@@ -137,6 +118,7 @@ export default function SubscriptionTable() {
   };
 
   return (
+    <>
     <div className="min-h-full bg-gray-50">
       <div className="w-full max-w-7xl mx-auto p-6 space-y-6">
         <div className="flex justify-between items-center">
@@ -303,17 +285,24 @@ export default function SubscriptionTable() {
                       </td>
 
                       <td className="px-4 py-3 whitespace-nowrap">
-                        <button
-                          onClick={() => handleToggleActive(pkg)}
-                          disabled={actionLoading === pkg.id}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors disabled:opacity-50 ${pkg.isActive
-                              ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
-                              : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
-                            }`}
-                        >
-                          {pkg.isActive ? <CheckCircle className="w-3.5 h-3.5" /> : <XCircle className="w-3.5 h-3.5" />}
-                          {pkg.isActive ? "Hoạt động" : "Vô hiệu"}
-                        </button>
+                        <label className="inline-flex items-center gap-2">
+                          <span className={`text-xs font-medium ${pkg.isActive ? "text-green-700" : "text-slate-500"}`}>
+                            {pkg.isActive ? "Hoạt động" : "Đã ngưng"}
+                          </span>
+                          <button
+                            type="button"
+                            role="switch"
+                            aria-checked={pkg.isActive}
+                            disabled={!pkg.isActive || actionLoading === pkg.id}
+                            onClick={() => openDeactivateModal(pkg)}
+                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pkg.isActive ? "bg-green-500" : "bg-slate-300"} disabled:cursor-not-allowed disabled:opacity-70`}
+                            title={pkg.isActive ? "Ngưng hoạt động gói" : "Gói đã ngưng hoạt động"}
+                          >
+                            <span
+                              className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${pkg.isActive ? "translate-x-6" : "translate-x-1"}`}
+                            />
+                          </button>
+                        </label>
                       </td>
 
                       <td className="px-4 py-3 whitespace-nowrap">
@@ -333,14 +322,6 @@ export default function SubscriptionTable() {
                             <Pencil className="w-3.5 h-3.5" />
                             Sửa
                           </button>
-                          <button
-                            onClick={() => openDeleteModal(pkg)}
-                            disabled={actionLoading === pkg.id}
-                            className="px-3 py-1.5 text-xs font-medium bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition-colors flex items-center gap-1"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                            Xóa
-                          </button>
                         </div>
                       </td>
                     </tr>
@@ -354,46 +335,33 @@ export default function SubscriptionTable() {
       </div>
     </div>
 
-    //       {createModalOpen && (
-    //         <CreatePackageModal
-    //           onClose={() => setCreateModalOpen(false)}
-    //           onSuccess={() => {
-    //             setCreateModalOpen(false);
-    //             fetchData();
-    //           }}
-    //         />
-    //       )}
+    {editModalOpen && selectedPackage && (
+      <EditPackageModal
+        package={selectedPackage}
+        onClose={() => {
+          setEditModalOpen(false);
+          setSelectedPackage(null);
+        }}
+        onSuccess={() => {
+          setEditModalOpen(false);
+          setSelectedPackage(null);
+          fetchData();
+        }}
+      />
+    )}
 
-    //       {editModalOpen && selectedPackage && (
-    //         <EditPackageModal
-    //           package={selectedPackage}
-    //           onClose={() => {
-    //             setEditModalOpen(false);
-    //             setSelectedPackage(null);
-    //           }}
-    //           onSuccess={() => {
-    //             setEditModalOpen(false);
-    //             setSelectedPackage(null);
-    //             fetchData();
-    //           }}
-    //         />
-    //       )}
-
-    //       {deleteModalOpen && selectedPackage && (
-    //         <DeletePackageModal
-    //           package={selectedPackage}
-    //           onClose={() => {
-    //             setDeleteModalOpen(false);
-    //             setSelectedPackage(null);
-    //           }}
-    //           onSuccess={() => {
-    //             setDeleteModalOpen(false);
-    //             setSelectedPackage(null);
-    //             fetchData();
-    //           }}
-    //         />
-    //       )}
-    //     </div>
+    {deactivateModalOpen && selectedPackage && (
+      <DeletePackageModal
+        package={selectedPackage}
+        loading={actionLoading === selectedPackage.id}
+        onClose={() => {
+          setDeactivateModalOpen(false);
+          setSelectedPackage(null);
+        }}
+        onConfirm={handleConfirmDeactivate}
+      />
+    )}
+    </>
   );
 }
 
