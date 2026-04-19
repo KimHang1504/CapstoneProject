@@ -106,14 +106,6 @@ export default function UpdateChallengeForm({ challenge }: any) {
                     t.replace("#", "")
                 )
             });
-        } else {
-            if (challenge.triggerEvent !== "CHECKIN") {
-                setRuleData({
-                    has_image: false,
-                    venue_id: [],
-                    hash_tags: []
-                });
-            }
         }
 
     }, [challenge]);
@@ -204,7 +196,14 @@ export default function UpdateChallengeForm({ challenge }: any) {
             toast.error("Mục tiêu và điểm thưởng phải lớn hơn 0");
             return;
         }
+        let finalRuleData;
 
+        if (form.triggerEvent === "CHECKIN") {
+            finalRuleData = {
+            };
+        } else {
+            finalRuleData = rulePayload;
+        }
         const payload = {
             title: form.title,
             description: form.description,
@@ -215,10 +214,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
             startDate: toISO(form.startDate),
             endDate: toISO(form.endDate),
             status: 'INACTIVE',
-            ruleData:
-                form.triggerEvent === "CHECKIN"
-                    ? null
-                    : rulePayload
+            ruleData: finalRuleData
         };
 
         try {
