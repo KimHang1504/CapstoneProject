@@ -28,6 +28,8 @@ export default function PackagesClient() {
     const [openVenueModal, setOpenVenueModal] = useState(false);
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
+    const MIN_QTY = 1;
+    const MAX_QTY = 12;
 
     const selectedPackage = selectedPlacementPackages.find((pkg) => pkg.id === selectedPackageId) ?? null;
     const totalPrice = selectedPackage ? selectedPackage.price * selectedQuantity : 0;
@@ -236,31 +238,31 @@ export default function PackagesClient() {
                                     <div className="inline-flex items-center rounded-xl border border-violet-200 bg-white overflow-hidden">
                                         <button
                                             type="button"
-                                            onClick={() => setSelectedQuantity((prev) => Math.max(1, prev - 1))}
+                                            onClick={() => setSelectedQuantity((prev) => Math.max(MIN_QTY, prev - 1))}
                                             className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
                                         >
                                             -
                                         </button>
                                         <input
                                             type="number"
-                                            min={1}
-                                            max={200}
+                                            min={MIN_QTY}
+                                            max={MAX_QTY}
                                             value={selectedQuantity}
                                             onChange={(e) => {
                                                 const rawValue = Number(e.target.value);
                                                 if (Number.isNaN(rawValue)) {
-                                                    setSelectedQuantity(1);
+                                                    setSelectedQuantity(MIN_QTY);
                                                     return;
                                                 }
 
-                                                const nextValue = Math.min(200, Math.max(1, Math.trunc(rawValue)));
+                                                const nextValue = Math.min(MAX_QTY, Math.max(MIN_QTY, Math.trunc(rawValue)));
                                                 setSelectedQuantity(nextValue);
                                             }}
                                             className="w-16 text-center text-sm font-semibold text-gray-800 focus:outline-none"
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => setSelectedQuantity((prev) => Math.min(200, prev + 1))}
+                                            onClick={() => setSelectedQuantity((prev) => Math.min(MAX_QTY, prev + 1))}
                                             className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
                                         >
                                             +
@@ -275,7 +277,7 @@ export default function PackagesClient() {
 
                                 {selectedPackage && (
                                     <p className="text-[11px] text-gray-600">
-                                        {selectedPackage.durationDays} ngày x {selectedQuantity} gói = {selectedPackage.durationDays * selectedQuantity} ngày
+                                        {selectedPackage.durationDays} ngày x {selectedQuantity} gói = {selectedPackage.durationDays * selectedQuantity} ngày (tối đa {MAX_QTY} gói)
                                     </p>
                                 )}
                             </div>

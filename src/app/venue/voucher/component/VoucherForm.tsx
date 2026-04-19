@@ -59,7 +59,148 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const [loading, setLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
+  //lỗi onblur
+  // const validateTitle = (value: string) => {
+  //   if (!value.trim()) return "Vui lòng nhập tên voucher";
+  //   return "";
+  // };
+  // const handleBlurTitle = () => {
+  //   setTouched((prev) => ({ ...prev, title: true }));
+
+  //   const error = validateTitle(form.title);
+
+  //   setErrors((prev) => ({
+  //     ...prev,
+  //     title: error,
+  //   }));
+  // };
+
+  // const handleChangeTitle = (value: string) => {
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     title: value,
+  //   }));
+
+  //   if (touched.title) {
+  //     const error = validateTitle(value);
+
+  //     setErrors((prev) => ({
+  //       ...prev,
+  //       title: error,
+  //     }));
+  //   }
+  // };
+
+  const validateField = (
+    key: keyof CreateVoucherRequest,
+    value: any,
+    form: CreateVoucherRequest
+  ): string => {
+    switch (key) {
+      case "title":
+        if (!value?.trim()) return "Vui lòng nhập tên voucher";
+        return "";
+
+      case "description":
+        if (!value?.trim()) return "Vui lòng nhập mô tả voucher";
+        return "";
+
+      case "voucherPrice":
+        if (value == null) return "Vui lòng nhập giá đổi";
+        if (value < 0) return "Giá đổi không được âm";
+        if (value > 100_000_000) return "Không vượt quá 100,000,000";
+        return "";
+
+      case "quantity":
+        if (value == null) return "Vui lòng nhập số lượng";
+        if (value <= 0) return "Số lượng phải > 0";
+        if (value > 100_000) return "Không vượt quá 100,000";
+        return "";
+
+      case "usageLimitPerMember":
+        if (value == null) return "Vui lòng nhập giới hạn";
+        if (value <= 0) return "Phải > 0";
+        if (form.quantity && value > form.quantity)
+          return "Không vượt quá số lượng";
+        return "";
+
+      case "usageValiDays":
+        if (value == null) return "Vui lòng nhập hạn sử dụng";
+        if (value <= 0) return "Phải > 0";
+        if (value > 365) return "Không vượt quá 365 ngày";
+        return "";
+
+      case "discountAmount":
+        if (form.discountType !== "FIXED_AMOUNT") return "";
+        if (value == null) return "Nhập số tiền giảm";
+        if (value <= 0) return "Phải > 0";
+        return "";
+
+      case "discountPercent":
+        if (form.discountType !== "PERCENTAGE") return "";
+        if (value == null) return "Nhập % giảm";
+        if (value <= 0) return "Phải > 0";
+        if (value > 100) return "Không vượt quá 100%";
+        return "";
+
+      case "startDate":
+        if (!value) return "Chọn ngày bắt đầu";
+        if (value < getMinStartDate())
+          return "Ngày bắt đầu không hợp lệ";
+        return "";
+
+      case "endDate":
+        if (!value) return "Chọn ngày kết thúc";
+        if (value < getMinEndDate())
+          return "End date quá sớm";
+        if (value > getMaxEndDate())
+          return "End date quá xa";
+        return "";
+
+      case "imageUrl":
+        if (!value) return "Vui lòng tải ảnh";
+        return "";
+
+      default:
+        return "";
+    }
+  };
+
+  const handleBlur = (key: keyof CreateVoucherRequest) => {
+    setTouched((prev) => ({ ...prev, [key]: true }));
+
+    const error = validateField(key, form[key], form);
+
+    setErrors((prev) => ({
+      ...prev,
+      [key]: error,
+    }));
+  };
+
+  const handleChangeField = (
+    key: keyof CreateVoucherRequest,
+    value: any
+  ) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+
+    if (touched[key]) {
+      const error = validateField(key, value, {
+        ...form,
+        [key]: value,
+      });
+
+      setErrors((prev) => ({
+        ...prev,
+        [key]: error,
+      }));
+    }
+  };
   // Date validation helpers (Vietnam timezone UTC+7)
   const getToday = () => {
     const today = new Date();
@@ -184,11 +325,12 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   };
 
   const handleSubmit = async () => {
-    // Validation
+
     if (!form.title.trim()) {
       toast.error("Vui lòng nhập tên voucher");
       return;
     }
+
 
     if (!form.description?.trim()) {
       toast.error("Vui lòng nhập mô tả voucher");
@@ -392,11 +534,26 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       <FieldWrapper>
         <label className={labelClass}>Tên voucher</label>
         <input
+          name="title"
           value={form.title}
-          onChange={(e) => handleChange("title", e.target.value)}
+          onChange={(e) => handleChangeField("title", e.target.value)}
+          onBlur={() => handleBlur("title")}
           placeholder="Nhập tên voucher..."
-          className={inputClass}
+          className={`
+  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+  focus:outline-none focus:ring-1 transition placeholder-gray-300
+  ${errors.title
+              ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+              : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+            }
+`}
         />
+
+        {errors.title && (
+          <p className="text-red-500 text-xs mt-1">
+            {errors.title}
+          </p>
+        )}
       </FieldWrapper>
 
       {/* DESCRIPTION */}
@@ -407,12 +564,28 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           onChange={(val) => handleChange("description", val)}
         /> */}
         <textarea
+          name="description"
           value={form.description}
-          onChange={(e) => handleChange("description", e.target.value)}
+          onChange={(e) =>
+            handleChangeField("description", e.target.value)
+          }
+          onBlur={() => handleBlur("description")}
           placeholder="Nhập mô tả voucher..."
-          className={inputClass}
+          className={`
+          w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
+          focus:outline-none focus:ring-1 transition placeholder-gray-300
+          ${errors.description
+              ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+              : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
+            }
+`}
           rows={4}
         />
+        {errors.description && (
+          <p className="text-red-500 text-xs mt-1">
+            {errors.description}
+          </p>
+        )}
       </FieldWrapper>
 
       {/* IMAGE */}
@@ -510,8 +683,13 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           <input
             type="number"
             value={form.discountPercent ?? ""}
-            onChange={(e) => handleChange("discountPercent", Number(e.target.value))}
-            className={inputClass}
+            onChange={(e) => {
+              const value = e.target.value;
+              handleChange(
+                "discountPercent",
+                value === "" ? null : Number(value)
+              );
+            }} className={inputClass}
           />
         </FieldWrapper>
       )}
@@ -523,8 +701,13 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           <input
             type="number"
             value={form.voucherPrice ?? ""}
-            onChange={(e) => handleChange("voucherPrice", Number(e.target.value))}
-            className={inputClass}
+            onChange={(e) => {
+              const value = e.target.value;
+              handleChange(
+                "voucherPrice",
+                value === "" ? null : Number(value)
+              );
+            }} className={inputClass}
           />
         </FieldWrapper>
 
@@ -533,8 +716,13 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           <input
             type="number"
             value={form.quantity ?? ""}
-            onChange={(e) => handleChange("quantity", Number(e.target.value) || 0)}
-            className={inputClass}
+            onChange={(e) => {
+              const value = e.target.value;
+              handleChange(
+                "quantity",
+                value === "" ? null : Number(value)
+              );
+            }} className={inputClass}
           />
         </FieldWrapper>
       </div>
