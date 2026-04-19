@@ -43,16 +43,19 @@ export default function VoucherActions({ voucher, onChanged }: Props) {
 
   const handleRevoke = async () => {
     await revokeVoucher(voucher.id);
+    toast.success("Thu hồi thành công");
     onChanged();
   };
 
   const handleActivate = async () => {
     await activateVoucher(voucher.id);
+    toast.success("Kích hoạt thành công");
     onChanged();
   };
 
   const handleEnd = async () => {
     await endVoucher(voucher.id);
+    toast.success("Đã kết thúc voucher");
     onChanged();
   };
 
