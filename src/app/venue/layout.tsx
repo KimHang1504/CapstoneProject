@@ -19,7 +19,7 @@ export default async function VenueLayout({
    const hideSidebar = role === 'STAFF';
 
   return (
-    <ManagementLayout sidebarConfig={venueSidebarConfig} title="Venue Panel" hideSidebar={hideSidebar}>
+    <ManagementLayout sidebarConfig={venueSidebarConfig} title="Bảng điều khiển của chủ địa điểm" hideSidebar={hideSidebar}>
       {children}
     </ManagementLayout>
   );
