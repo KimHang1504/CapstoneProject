@@ -29,6 +29,8 @@ export default async function VoucherDetailPage({ params }: Props) {
                 return "bg-red-200/20 text-[#F87171]";
             case "ENDED":
                 return "bg-gray-200 text-gray-600";
+            case "APPROVED":
+                return "bg-green-200/20 text-[#34D399]";
             default:
                 return "bg-gray-100 text-gray-500";
         }
@@ -50,6 +52,15 @@ export default async function VoucherDetailPage({ params }: Props) {
             <BackButton />
 
             <div className="bg-white rounded-2xl border border-violet-100 shadow-sm p-6 space-y-5">
+                {voucher.imageUrl && (
+                    <div className="w-full h-48 rounded-xl overflow-hidden border border-violet-100">
+                        <img
+                            src={voucher.imageUrl}
+                            alt={voucher.title}
+                            className="w-full h-full object-cover"
+                        />
+                    </div>
+                )}
                 <div className="flex justify-between items-start gap-4">
                     <h1 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
                         {voucher.title}
@@ -65,6 +76,7 @@ export default async function VoucherDetailPage({ params }: Props) {
                         {voucher.status === "PENDING" && "Đang chờ duyệt"}
                         {voucher.status === "REJECTED" && "Từ chối"}
                         {voucher.status === "DISABLED" && "Vô hiệu hóa"}
+                        {voucher.status === "APPROVED" && "Đã duyệt"}
                     </span>
                 </div>
 

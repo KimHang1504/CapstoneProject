@@ -15,6 +15,8 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
         return "bg-red-50 text-red-500 border-red-200";
       case "PENDING":
         return "bg-amber-50 text-amber-600 border-amber-200";
+      case "APPROVED":
+        return "bg-green-50 text-green-600 border-green-200";
       default:
         return "bg-gray-100 text-gray-500 border-gray-200";
     }
@@ -62,6 +64,7 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
             {voucher.status === "PENDING" && "Đang chờ duyệt"}
             {voucher.status === "REJECTED" && "Từ chối"}
             {voucher.status === "DISABLED" && "Vô hiệu hóa"}
+            {voucher.status === "APPROVED" && "Đã duyệt"}
           </span>
         </div>
 
