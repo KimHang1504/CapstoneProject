@@ -114,7 +114,7 @@ export default function Contact({ formData, setFormData }: Props) {
 
   const validateWebsite = (value: string) => {
     if (!value) return "";
-    if (!/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(value)) {
+    if (!/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/.test(value)) {
       return "Website không hợp lệ";
     }
     return "";
