@@ -5,11 +5,11 @@ import { getMySubscriptions } from "@/api/venue/subscription/api";
 import { MySubscription } from "@/api/venue/subscription/type";
 
 const statusConfig: Record<string, { label: string; badge: string; dot: string }> = {
-  ACTIVE:          { label: "Đang hoạt động", badge: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-400" },
-  CANCELLED:       { label: "Đã hủy",         badge: "bg-gray-100 text-gray-500 border-gray-200",         dot: "bg-gray-400" },
+  ACTIVE: { label: "Đang hoạt động", badge: "bg-emerald-50 text-emerald-700 border-emerald-200", dot: "bg-emerald-400" },
+  CANCELLED: { label: "Đã hủy", badge: "bg-gray-100 text-gray-500 border-gray-200", dot: "bg-gray-400" },
   // PENDING_PAYMENT: { label: "Chờ thanh toán", badge: "bg-amber-50 text-amber-700 border-amber-200",       dot: "bg-amber-400" },
-  REFUNDED:        { label: "Đã hoàn tiền",   badge: "bg-blue-50 text-blue-600 border-blue-200",          dot: "bg-blue-400" },
-  EXPIRED:         { label: "Hết hạn",        badge: "bg-rose-50 text-rose-600 border-rose-200",          dot: "bg-rose-400" },
+  REFUNDED: { label: "Đã hoàn tiền", badge: "bg-blue-50 text-blue-600 border-blue-200", dot: "bg-blue-400" },
+  EXPIRED: { label: "Hết hạn", badge: "bg-rose-50 text-rose-600 border-rose-200", dot: "bg-rose-400" },
 };
 
 const ITEMS_PER_PAGE = 5;
@@ -62,20 +62,19 @@ export default function SubscriptionTransactionPage() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4">
           <div className="flex gap-2 flex-wrap w-full sm:w-auto">
             {[
-              { label: "Tất cả",         value: "ALL" },
+              { label: "Tất cả", value: "ALL" },
               { label: "Đang hoạt động", value: "ACTIVE" },
               // { label: "Chờ thanh toán", value: "PENDING_PAYMENT" },
-              { label: "Đã hủy",         value: "CANCELLED" },
-              { label: "Đã hoàn tiền",   value: "REFUNDED" },
+              { label: "Đã hủy", value: "CANCELLED" },
+              { label: "Đã hoàn tiền", value: "REFUNDED" },
             ].map((f) => (
               <button
                 key={f.value}
                 onClick={() => setStatusFilter(f.value)}
-                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  statusFilter === f.value
-                    ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
-                    : "bg-white text-gray-500 border border-violet-100 hover:border-violet-300"
-                }`}
+                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${statusFilter === f.value
+                  ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
+                  : "bg-white text-gray-500 border border-violet-100 hover:border-violet-300"
+                  }`}
               >
                 {f.label} ({countByStatus(f.value)})
               </button>
@@ -119,7 +118,7 @@ export default function SubscriptionTransactionPage() {
                   <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                     {/* Color indicator */}
                     <div className={`w-1 h-full min-h-[60px] sm:h-14 rounded-full ${st.dot} shrink-0`} />
-                    
+
                     {/* Main content */}
                     <div className="flex-1 min-w-0 w-full">
                       <div className="flex items-start gap-2 mb-1 flex-wrap">
@@ -129,9 +128,16 @@ export default function SubscriptionTransactionPage() {
                           {st.label}
                         </span>
                       </div>
-                      <p className="text-xs text-violet-600 font-medium">{sub.package.packageName}</p>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-xs text-violet-600 font-medium">
+                          {sub.package.packageName}
+                        </p>
+                        <span className="text-[11px] bg-violet-100 text-violet-700 px-2 py-0.5 rounded-full font-semibold">
+                          x{sub.quantity}
+                        </span>
+                      </div>
                       <p className="text-xs text-gray-400 mt-0.5 line-clamp-2">{sub.package.description}</p>
-                      
+
                       {/* Date info - mobile */}
                       {sub.startDate && (
                         <div className="mt-3 pt-3 border-t border-violet-50 sm:hidden">
@@ -148,7 +154,7 @@ export default function SubscriptionTransactionPage() {
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Date info - desktop */}
                     <div className="hidden sm:flex items-center gap-4 shrink-0">
                       {sub.startDate ? (
@@ -169,10 +175,12 @@ export default function SubscriptionTransactionPage() {
                         <p className="text-xs text-gray-400 italic bg-gray-50 rounded-xl px-4 py-2.5">Chưa kích hoạt</p>
                       )}
                     </div>
-                    
+
                     {/* Price */}
                     <div className="flex sm:flex-col items-center sm:items-end gap-2 sm:gap-0 shrink-0 ml-auto sm:ml-0">
-                      <p className="text-xs text-gray-400 order-2 sm:order-1 mb-0 sm:mb-0.5">{sub.package.durationDays} ngày</p>
+                      <p className="text-xs text-gray-400 order-2 sm:order-1 mb-0 sm:mb-0.5">
+                        {sub.package.durationDays * sub.quantity} ngày
+                      </p>
                       <p className="text-lg sm:text-base font-bold text-violet-600 order-1 sm:order-2">{sub.package.price.toLocaleString()}</p>
                       <p className="text-[10px] text-gray-400 order-3">VND</p>
                     </div>
@@ -211,11 +219,10 @@ export default function SubscriptionTransactionPage() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg text-xs sm:text-sm font-medium transition-all ${
-                          currentPage === page
-                            ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
-                            : "text-gray-700 hover:bg-violet-50 border border-violet-100"
-                        }`}
+                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg text-xs sm:text-sm font-medium transition-all ${currentPage === page
+                          ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
+                          : "text-gray-700 hover:bg-violet-50 border border-violet-100"
+                          }`}
                       >
                         {page}
                       </button>
