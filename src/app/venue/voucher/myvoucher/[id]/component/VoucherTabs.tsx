@@ -120,10 +120,10 @@ export default function VoucherTabs({ voucher }: Props) {
 
                             <div>
                                 <p className="text-sm text-gray-500">
-                                    Điểm đổi
+                                    Giá trị voucher
                                 </p>
                                 <p className="font-semibold">
-                                    {voucher.voucherPrice} điểm
+                                    {voucher.voucherPrice?.toLocaleString()} VND
                                 </p>
                             </div>
 

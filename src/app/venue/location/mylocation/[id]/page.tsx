@@ -375,7 +375,7 @@ const handleSubmitForApproval = async () => {
                                 </p>
                             </FieldDisplay>
                         </div>
-                        {(location.status === 'ACTIVE' || location.status === 'INACTIVE') && (
+                        {/* {(location.status === 'ACTIVE' || location.status === 'INACTIVE') && (
                             <div className="items-center gap-3">
                                 <div className="flex justify-between">
                                     <div
@@ -415,7 +415,7 @@ const handleSubmitForApproval = async () => {
 
                                 </div>
                             </div>
-                        )}
+                        )} */}
                         <div>
                             <p className="text-sm font-bold mb-1">Mô tả</p>
                             <p className="text-sm text-gray-700">{location.description}</p>
