@@ -158,63 +158,71 @@ export default function AdvertisementDetailPage() {
     };
 
 
-
+    const baseBtn =
+        "inline-flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg font-medium whitespace-nowrap shrink-0 transition-all duration-200";
     return (
         <div className="min-h-screen p-8">
-            <div className="max-w-5xl mx-auto space-y-6">
+            <div className="mx-auto space-y-6">
 
                 {/* HEADER */}
-                <div className="flex flex-col md:flex-row items-start justify-between gap-6">
-                    <div className="flex gap-4">
-                        <p className="text-gray-900 text-3xl font-bold">{ad.title}</p>
-                        <span
-                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border
+                <div className="flex flex-col md:flex-row items-start justify-between gap-4">
+                    <div className="flex gap-2">
+                        <div className="min-w-0">
+                            <p className="text-gray-900 text-3xl font-bold line-clamp-2 mb-2">
+                                {ad.title}
+                            </p>
+                        </div>
+                        <div className="shrink-0">
+                            <span
+                                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border min-w-[110px]
                                 ${ad.status === "ACTIVE"
-                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    : ad.status === "APPROVED"
-                                        ? "bg-blue-50 text-blue-700 border-blue-200"
-                                        : ad.status === "PENDING"
-                                            ? "bg-amber-50 text-amber-700 border-amber-200"
-                                            : ad.status === "DRAFT"
-                                                ? "bg-gray-100 text-gray-600 border-gray-200"
-                                                : "bg-rose-50 text-rose-600 border-rose-200"
-                                }`}
-                        >
-                            {ad.status === "ACTIVE" && <CheckCircle2 size={16} />}
-                            {ad.status === "APPROVED" && <CheckCircle2 size={16} />}
-                            {ad.status === "PENDING" && <Clock size={16} />}
-                            {ad.status === "DRAFT" && <FileEdit size={16} />}
-                            {ad.status === "REJECTED" && <XCircle size={16} />}
-                            {ad.status === "ACTIVE" ? "Đang chạy"
-                                : ad.status === "APPROVED" ? "Đã duyệt"
-                                    : ad.status === "PENDING" ? "Chờ duyệt"
-                                        : ad.status === "DRAFT" ? "Bản nháp"
-                                            : "Từ chối"}
-                        </span>
+                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                        : ad.status === "APPROVED"
+                                            ? "bg-blue-50 text-blue-700 border-blue-200"
+                                            : ad.status === "PENDING"
+                                                ? "bg-amber-50 text-amber-700 border-amber-200"
+                                                : ad.status === "DRAFT"
+                                                    ? "bg-gray-100 text-gray-600 border-gray-200"
+                                                    : "bg-rose-50 text-rose-600 border-rose-200"
+                                    }`}
+                            >
+                                {ad.status === "ACTIVE" && <CheckCircle2 size={16} />}
+                                {ad.status === "APPROVED" && <CheckCircle2 size={16} />}
+                                {ad.status === "PENDING" && <Clock size={16} />}
+                                {ad.status === "DRAFT" && <FileEdit size={16} />}
+                                {ad.status === "REJECTED" && <XCircle size={16} />}
+                                {ad.status === "ACTIVE" ? "Đang chạy"
+                                    : ad.status === "APPROVED" ? "Đã duyệt"
+                                        : ad.status === "PENDING" ? "Chờ duyệt"
+                                            : ad.status === "DRAFT" ? "Bản nháp"
+                                                : "Từ chối"}
+                            </span>
+                        </div>
+
                     </div>
 
                     <div className="flex justify-end gap-3">
-                        {isDraft && (
-                            <button
-                                onClick={handleSubmit}
-                                className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm
-                                    bg-linear-to-r from-violet-500 to-purple-500 text-white
-                                    hover:shadow-md hover:scale-[1.02] active:scale-[0.98]
-                                    transition-all duration-200"
-                            >
-                                <Send size={18} />
-                                Gửi duyệt
-                            </button>
-                        )}
+
                         {canEdit && (
                             <button
                                 onClick={handleEdit}
-                                className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
-                                    bg-gray-100 text-gray-700 border border-gray-200
-                                    hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
+                                className={`${baseBtn}
+    bg-gray-100 text-gray-700 border border-gray-200
+    hover:bg-gray-200 hover:shadow-sm`}
                             >
                                 <Pencil size={18} />
                                 Chỉnh sửa
+                            </button>
+                        )}
+                        {isDraft && (
+                            <button
+                                onClick={handleSubmit}
+                                className={`${baseBtn}
+    bg-linear-to-r from-violet-500 to-purple-500 text-white
+    hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+                            >
+                                <Send size={18} />
+                                Gửi duyệt
                             </button>
                         )}
                         {/* Pause / Resume */}
@@ -352,7 +360,7 @@ export default function AdvertisementDetailPage() {
                             </>
                         )}
                         <div
-                            className="relative max-w-[90vw] max-h-[90vh]"
+                            className="relative w-[90vw] h-[90vh] flex items-center justify-center"
                             onClick={(e) => e.stopPropagation()}
                         >
                             <ImageWithFallback
@@ -360,10 +368,11 @@ export default function AdvertisementDetailPage() {
                                 alt="Full advertisement"
                                 width={1200}
                                 height={800}
-                                className="object-contain rounded-xl max-h-[90vh] w-auto"
+                                className="w-full h-full object-contain rounded-xl"
                             />
+
                             {images.length > 1 && (
-                                <p className="text-center text-white/60 text-xs mt-3">
+                                <p className="text-center text-white/60 text-xs mt-3 absolute bottom-2">
                                     {safeIndex + 1} / {images.length}
                                 </p>
                             )}

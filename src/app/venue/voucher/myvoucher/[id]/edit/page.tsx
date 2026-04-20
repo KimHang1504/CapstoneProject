@@ -12,6 +12,7 @@ import {
 
 import { CreateVoucherRequest } from "@/api/venue/vouchers/type";
 import {toast} from "sonner";
+import Loading from "@/components/Loading";
 
 export default function EditVoucherPage() {
 
@@ -94,7 +95,7 @@ export default function EditVoucherPage() {
 
   };
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
 
   if (!voucher) return <p>Voucher not found</p>;
 

@@ -9,6 +9,7 @@ import { getMyVenueLocations } from '@/api/venue/location/api';
 import { MyVenueLocation } from '@/api/venue/location/type';
 import { resolveLocationStatus } from '@/app/venue/location/resolver';
 import { locationStatusMeta } from "@/app/venue/location/locationStatusMeta";
+import Loading from '@/components/Loading';
 
 
 type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'CLOSED' | 'EXPIRED' | 'PENDING' | 'DRAFTED';
@@ -140,7 +141,7 @@ export default function MyLocationPage() {
 
 
   if (loading) {
-    return <div className="p-8 text-gray-500">Đang tải dữ liệu...</div>;
+   return <Loading />;
   }
 
   return (
@@ -159,80 +160,91 @@ export default function MyLocationPage() {
             )
           )}
 
-          {locations.map((loc) => {
-            const sub = getSubscriptionInfo(loc);
-            const displayStatus = resolveLocationStatus(loc);
-            const meta = locationStatusMeta[displayStatus];
-            return (
-              <div
-                key={loc.id}
-                className="group relative flex gap-4 bg-white rounded-2xl p-4 border border-violet-100
-                hover:shadow-lg hover:-translate-y-0.5 hover:border-violet-300 transition-all duration-200"
-              >
-                <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
-                  <ImageWithFallback
-                    src={loc.coverImage?.[0] && typeof loc.coverImage[0] === 'string' && loc.coverImage[0].startsWith('http') ? loc.coverImage[0] : ''}
-                    alt={loc.name}
-                    className="absolute inset-0 object-cover w-full h-full group-hover:scale-105 transition duration-300"
-                  />
-                </div>
-
-                <div className="flex-1 pr-10">
-                  <div className="flex items-center gap-2">
-                    <Link href={`/venue/location/mylocation/${loc.id}`}>
-                      <h3 className="font-semibold text-lg text-gray-900 hover:underline">
-                        {loc.name}
-                      </h3>
-                    </Link>
-
-                    <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full font-medium uppercase tracking-wide ${meta.color}`}>
-                      <span className="relative flex h-2 w-2">
-                        {displayStatus === "ACTIVE" && (
-                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
-                        )}
-                        <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
-                      </span>
-
-                      {meta.label}
-                    </span>
-                  </div>
-
-                  <p className="text-sm text-gray-500 mt-1 line-clamp-2">{loc.description}</p>
-
-                  <div className="mt-1 space-y-1 text-sm text-gray-500">
-                    <div className="flex items-start gap-1">
-                      <MapPin size={14} className="mt-0.5 shrink-0" />
-                      <span className="line-clamp-2">{loc.address}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-xs text-gray-400">
-                      <CalendarDays size={13} />
-                      {new Date(loc.createdAt).toLocaleDateString("vi-VN")}
-                    </div>
-                  </div>
-
-                  <div className="mt-2">
-                    {sub.type === "EXPIRED" || sub.type === "CLOSED" || sub.type === "REJECTED" ? (
-                      <div className="px-3 py-2">
-                        <div className="text-sm font-semibold text-red-600">{sub.label}</div>
-                        <div className="text-xs text-red-500">{sub.subLabel}</div>
-                      </div>
-                    ) : (
-                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${sub.className}`}>
-                        {sub.label}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <Link href={`/venue/location/mylocation/${loc.id}`} className="absolute bottom-4 right-4">
-                  <div className="flex items-center justify-center w-9 h-9 rounded-full bg-violet-100 text-violet-600 
-                    group-hover:bg-violet-600 group-hover:text-white transition">
-                    <ChevronRight size={18} />
-                  </div>
-                </Link>
+          {locations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center text-gray-500">
+              <div className="text-lg font-medium text-gray-700">
+                Chưa có địa điểm nào
               </div>
-            );
-          })}
+              <p className="text-sm text-gray-400 mt-1">
+                Hãy tạo địa điểm đầu tiên của bạn
+              </p>
+            </div>
+          ) : (
+            locations.map((loc) => {
+              const sub = getSubscriptionInfo(loc);
+              const displayStatus = resolveLocationStatus(loc);
+              const meta = locationStatusMeta[displayStatus];
+              return (
+                <div
+                  key={loc.id}
+                  className="group relative flex gap-4 bg-white rounded-2xl p-4 border border-violet-100
+                hover:shadow-lg hover:-translate-y-0.5 hover:border-violet-300 transition-all duration-200"
+                >
+                  <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0 bg-gray-100">
+                    <ImageWithFallback
+                      src={loc.coverImage?.[0] && typeof loc.coverImage[0] === 'string' && loc.coverImage[0].startsWith('http') ? loc.coverImage[0] : ''}
+                      alt={loc.name}
+                      className="absolute inset-0 object-cover w-full h-full group-hover:scale-105 transition duration-300"
+                    />
+                  </div>
+
+                  <div className="flex-1 pr-10">
+                    <div className="flex items-center gap-2">
+                      <Link href={`/venue/location/mylocation/${loc.id}`}>
+                        <h3 className="font-semibold text-lg text-gray-900 hover:underline">
+                          {loc.name}
+                        </h3>
+                      </Link>
+
+                      <span className={`inline-flex items-center gap-1 text-[11px] px-2 py-1 rounded-full font-medium uppercase tracking-wide ${meta.color}`}>
+                        <span className="relative flex h-2 w-2">
+                          {displayStatus === "ACTIVE" && (
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-current opacity-75"></span>
+                          )}
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-current"></span>
+                        </span>
+
+                        {meta.label}
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{loc.description}</p>
+
+                    <div className="mt-1 space-y-1 text-sm text-gray-500">
+                      <div className="flex items-start gap-1">
+                        <MapPin size={14} className="mt-0.5 shrink-0" />
+                        <span className="line-clamp-2">{loc.address}</span>
+                      </div>
+                      <div className="flex items-center gap-1 text-xs text-gray-400">
+                        <CalendarDays size={13} />
+                        {new Date(loc.createdAt).toLocaleDateString("vi-VN")}
+                      </div>
+                    </div>
+
+                    <div className="mt-2">
+                      {sub.type === "EXPIRED" || sub.type === "CLOSED" || sub.type === "REJECTED" ? (
+                        <div className="px-3 py-2">
+                          <div className="text-sm font-semibold text-red-600">{sub.label}</div>
+                          <div className="text-xs text-red-500">{sub.subLabel}</div>
+                        </div>
+                      ) : (
+                        <div className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${sub.className}`}>
+                          {sub.label}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <Link href={`/venue/location/mylocation/${loc.id}`} className="absolute bottom-4 right-4">
+                    <div className="flex items-center justify-center w-9 h-9 rounded-full bg-violet-100 text-violet-600 
+                    group-hover:bg-violet-600 group-hover:text-white transition">
+                      <ChevronRight size={18} />
+                    </div>
+                  </Link>
+                </div>
+              );
+            })
+          )}
         </div>
 
         <div className="w-[320px] space-y-2 sticky top-8 self-start">

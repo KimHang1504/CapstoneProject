@@ -114,7 +114,7 @@ export default function Contact({ formData, setFormData }: Props) {
 
   const validateWebsite = (value: string) => {
     if (!value) return "";
-    if (!/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w-]*)*$/.test(value)) {
+    if (!/^(https?:\/\/)?([\w-]+\.)+[\w-]+(\/[\w\-._~:/?#[\]@!$&'()*+,;=]*)?$/.test(value)) {
       return "Website không hợp lệ";
     }
     return "";
@@ -278,7 +278,7 @@ export default function Contact({ formData, setFormData }: Props) {
                 }
               }}
               onBlur={(e) => handleWebsiteBlur(e.target.value)}
-              placeholder="hehe.com"
+              placeholder="venue.com"
               className={`w-full rounded-[8.33px] border px-4 py-3 text-sm outline-none
   ${errors.website && touched.website
                   ? "border-red-500 focus:ring-red-200"
@@ -307,7 +307,7 @@ export default function Contact({ formData, setFormData }: Props) {
                 }
               }}
               onBlur={(e) => handleEmailBlur(e.target.value)}
-              placeholder="hehe@gmail.com"
+              placeholder="venue@gmail.com"
               className={`w-full rounded-[8.33px] border px-4 py-3 text-sm outline-none
   ${errors.email && touched.email
                   ? "border-red-500 focus:ring-red-200"
