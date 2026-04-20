@@ -44,11 +44,11 @@ export default function ReviewModeration() {
     }, [page]);
 
     const handleAction = (id: number, action: 'PUBLISH' | 'CANCEL') => {
-        const actionText = action === 'PUBLISH' ? "duyệt" : "từ chối";
+        const actionText = action === 'PUBLISH' ? "duyệt" : "chặn";
 
         toast(`Bạn có chắc muốn ${actionText} review này không?`, {
             action: {
-                label: action === 'PUBLISH' ? "Duyệt" : "Từ chối",
+                label: action === 'PUBLISH' ? "Cho qua" : "Chặn",
                 onClick: async () => {
                     try {
                         await ModerateReview(id, action);

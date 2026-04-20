@@ -44,11 +44,11 @@ export default function PostModeration() {
   }, [page]);
 
   const handleAction = (id: number, action: 'PUBLISH' | 'CANCEL') => {
-    const actionText = action === 'PUBLISH' ? "duyệt" : "hủy";
+    const actionText = action === 'PUBLISH' ? "duyệt" : "chặn";
 
     toast(`Bạn có chắc muốn ${actionText} bài post này không?`, {
       action: {
-        label: action === 'PUBLISH' ? "Duyệt" : "Hủy",
+        label: action === 'PUBLISH' ? "Cho qua" : "Chặn",
         onClick: async () => {
           try {
             await ModeratePost(id, action);

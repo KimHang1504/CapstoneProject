@@ -65,7 +65,7 @@ export function CommentCardModeration({ comment, onApprove, onReject }: Props) {
                         className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
                     >
                         <CheckCircle className="w-3.5 h-3.5" />
-                        Cho phép
+                        Cho qua
                     </button>
 
                     <button
@@ -73,7 +73,7 @@ export function CommentCardModeration({ comment, onApprove, onReject }: Props) {
                         className="flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
                     >
                         <XCircle className="w-3.5 h-3.5" />
-                        Từ chối
+                        Chặn
                     </button>
                 </div>
             </div>

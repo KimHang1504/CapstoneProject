@@ -46,11 +46,11 @@ export default function CommentModeration() {
   }, [page]);
 
   const handleAction = (id: number, action: 'PUBLISH' | 'CANCEL') => {
-    const actionText = action === 'PUBLISH' ? "duyệt" : "hủy";
+    const actionText = action === 'PUBLISH' ? "duyệt" : "chặn";
 
     toast(`Bạn có chắc muốn ${actionText} comment này không?`, {
       action: {
-        label: action === 'PUBLISH' ? "Duyệt" : "Hủy comment",
+        label: action === 'PUBLISH' ? "Cho qua" : "Chặn",
         onClick: async () => {
           try {
             await ModerateComment(id, action);

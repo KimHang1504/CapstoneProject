@@ -94,7 +94,7 @@ export function PostCardModeration({ post, onApprove, onReject }: any) {
           className="flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
         >
           <CheckCircle className="w-4 h-4" />
-          Duyệt
+          Cho qua
         </button>
 
         <button
@@ -102,7 +102,7 @@ export function PostCardModeration({ post, onApprove, onReject }: any) {
           className="flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
         >
           <XCircle className="w-4 h-4" />
-          Từ chối
+          Chặn
         </button>
       </div>
 
