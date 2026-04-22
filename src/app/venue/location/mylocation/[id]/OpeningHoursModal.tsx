@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { updateOpeningHours } from '@/api/venue/location/api';
-import {toast} from 'sonner';
+import { toast } from 'sonner';
+import { OpeningHour } from '@/api/venue/location/type';
+import { useEffect } from 'react';
 
 type OpeningHoursModalProps = {
   locationId: number;
+  openingHours?: OpeningHour[] | null;
   onClose: () => void;
   onSuccess: () => void;
 };
@@ -21,17 +24,25 @@ const DAYS = [
   { value: 8, label: 'Chủ nhật' },
 ];
 
-export default function OpeningHoursModal({ locationId, onClose, onSuccess }: OpeningHoursModalProps) {
+
+export default function OpeningHoursModal({ locationId, openingHours, onClose, onSuccess }: OpeningHoursModalProps) {
   const [saving, setSaving] = useState(false);
 
-  const [schedules, setSchedules] = useState(
-    DAYS.map(d => ({
-      day: d.value,
-      openTime: '09:00',
-      closeTime: '22:00',
-      isClosed: false,
-    }))
-  );
+
+  const buildSchedules = (openingHours?: OpeningHour[] | null) => {
+    return DAYS.map(day => {
+      const found = openingHours?.find(o => o.day === day.value);
+
+      return {
+        day: day.value,
+        openTime: found?.openTime?.slice(0, 5) || '09:00',
+        closeTime: found?.closeTime?.slice(0, 5) || '22:00',
+        isClosed: found?.isClosed ?? false,
+      };
+    });
+  };
+  const [schedules, setSchedules] = useState(() => buildSchedules(openingHours));
+
 
   const updateDay = (day: number, field: string, value: any) => {
     setSchedules(prev =>
@@ -55,6 +66,10 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
       setSaving(false);
     }
   };
+
+  useEffect(() => {
+    setSchedules(buildSchedules(openingHours));
+  }, [openingHours]);
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -84,7 +99,7 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
                 const schedule = schedules.find(s => s.day === day.value)!;
 
                 return (
-                  <tr key={day.value} className="border-t">
+                  <tr key={day.value} className="border-t border-gray-300">
                     <td className="p-3 font-medium">{day.label}</td>
 
                     <td className="p-3 text-center">
@@ -126,14 +141,14 @@ export default function OpeningHoursModal({ locationId, onClose, onSuccess }: Op
         <div className="flex justify-end gap-3 pt-6">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 border-2 border-gray-300 rounded-full font-semibold"
+            className="px-6 py-2 border-2 border-gray-300 rounded-md font-semibold"
           >
             Đóng
           </button>
           <button
             onClick={saveAll}
             disabled={saving}
-            className="px-6 py-2.5 bg-linear-to-r from-violet-500 to-purple-600 text-white rounded-full font-semibold disabled:opacity-60"
+            className="px-6 py-2 bg-linear-to-r from-violet-500 to-purple-600 text-white rounded-md font-semibold disabled:opacity-60"
           >
             {saving ? 'Đang lưu...' : 'Lưu tất cả'}
           </button>

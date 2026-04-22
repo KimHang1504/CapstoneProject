@@ -46,6 +46,7 @@ export default function Summary({ voucherId }: { voucherId: number }) {
 
     fetchSummary();
   }, [voucherId]);
+  console.log("Voucher Summary:", summary);
 
   if (!summary) return <div>Đang tải...</div>;
 
