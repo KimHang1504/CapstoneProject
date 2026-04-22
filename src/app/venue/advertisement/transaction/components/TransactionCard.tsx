@@ -7,40 +7,107 @@ import { CreditCard, Calendar, MapPin, ExternalLink, ChevronDown, ChevronUp } fr
 
 export const STATUS_STYLE: Record<string, string> = {
   COMPLETED: 'bg-emerald-100 text-emerald-600',
-  PENDING:   'bg-amber-100 text-amber-600',
-  REFUNDED:  'bg-sky-100 text-sky-600',
-  PAYMENT_FAILED:'bg-rose-100 text-rose-500',
+  PENDING: 'bg-amber-100 text-amber-600',
+  REFUNDED: 'bg-sky-100 text-sky-600',
+  PAYMENT_FAILED: 'bg-rose-100 text-rose-500',
   CANCELLED: 'bg-gray-100 text-gray-500',
 };
 
 export const STATUS_LABEL: Record<string, string> = {
   COMPLETED: 'Hoàn thành',
-  PENDING:   'Đang chờ',
-  REFUNDED:  'Hoàn tiền',
-  PAYMENT_FAILED:'Thất bại',
+  PENDING: 'Đang chờ',
+  REFUNDED: 'Hoàn tiền',
+  PAYMENT_FAILED: 'Thất bại',
   CANCELLED: 'Đã hủy',
 };
 
 const AD_STATUS_STYLE: Record<string, string> = {
-  ACTIVE:   'bg-emerald-100 text-emerald-600',
-  PENDING:  'bg-amber-100 text-amber-600',
-  DRAFT:    'bg-gray-100 text-gray-500',
+  ACTIVE: 'bg-emerald-100 text-emerald-600',
+  PENDING: 'bg-amber-100 text-amber-600',
+  DRAFT: 'bg-gray-100 text-gray-500',
   REJECTED: 'bg-rose-100 text-rose-500',
   APPROVED: 'bg-blue-100 text-blue-600',
   INACTIVE: 'bg-gray-100 text-gray-400',
 };
 
 export const AD_STATUS_LABEL: Record<string, string> = {
-  ACTIVE:   'Đang chạy',
-  PENDING:  'Đang xét duyệt',
-  DRAFT:    'Nháp',
+  ACTIVE: 'Đang chạy',
+  PENDING: 'Đang xét duyệt',
+  DRAFT: 'Nháp',
   REJECTED: 'Bị từ chối',
   APPROVED: 'Đã duyệt',
   INACTIVE: 'Không hoạt động',
 };
+
+const formatDateTime = (date?: string | null) => {
+  if (!date) return '—';
+
+  return new Intl.DateTimeFormat('vi-VN', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(date));
+};
+
+const formatRange = (start?: string | null, end?: string | null) => {
+  if (!start && !end) return '—';
+
+  const s = formatDateTime(start);
+  const e = formatDateTime(end);
+
+  if (start && end) return `${s} → ${e}`;
+  return s || e;
+};
+
+const getAmountDisplay = (status: string, amount: number) => {
+  if (status === 'PAYMENT_FAILED' || status === 'CANCELLED') {
+    return '0 ₫';
+  }
+
+  const sign = status === 'REFUNDED' ? '+' : '-';
+
+  return `${sign}${amount.toLocaleString('vi-VN')} ₫`;
+};
+
 export default function TransactionCard({ item }: { item: AdsOrderTransaction }) {
   const [expanded, setExpanded] = useState(false);
   const ad = item.advertisement;
+
+  const calcQuantityFromDate = (
+    start?: string | null,
+    end?: string | null,
+    durationDays?: number
+  ) => {
+    if (!start || !end || !durationDays) return 1;
+
+    const s = new Date(start);
+    const e = new Date(end);
+
+    // normalize về ngày local (tránh lệch timezone)
+    const startDay = new Date(s.getFullYear(), s.getMonth(), s.getDate());
+    const endDay = new Date(e.getFullYear(), e.getMonth(), e.getDate());
+
+    const diffDays = Math.round(
+      (endDay.getTime() - startDay.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    if (diffDays <= 0) return 1;
+
+    return Math.max(1, Math.round(diffDays / durationDays));
+  };
+
+  const firstAd = item.venueLocationAds[0];
+
+  const quantity = calcQuantityFromDate(
+    firstAd?.startDate,
+    firstAd?.endDate,
+    item.package.durationDays
+  );
+
+
 
   return (
     <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
@@ -70,17 +137,36 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
                   {STATUS_LABEL[item.status] ?? item.status}
                 </span>
               </div>
+              <div className="mt-1 flex items-center gap-2 flex-wrap text-xs">
+
+                {/* Payment */}
+                <span className="text-gray-400">
+                  Thanh toán: {formatDateTime(item.payment.paidAt)}
+                </span>
+
+                {/* Campaign time */}
+                {(ad.desiredStartDate || item.venueLocationAds.length > 0) && (
+                  <span className="bg-violet-50 text-violet-600 px-2 py-0.5 rounded-full font-medium">
+                    {formatRange(
+                      item.venueLocationAds[0]?.startDate ?? ad.desiredStartDate,
+                      item.venueLocationAds[0]?.endDate
+                    )}
+                  </span>
+                )}
+              </div>
             </div>
             <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
-              <p className={`text-xl sm:text-lg font-bold ${
-                item.status === 'REFUNDED' ? 'text-sky-500'
-                : item.status === 'COMPLETED' ? 'text-emerald-600'
-                : 'text-gray-700'
-              }`}>
-                {item.status === 'REFUNDED' ? '−' : ''}{item.payment.amount.toLocaleString('vi-VN')} ₫
+              <p className={`text-xl sm:text-lg font-bold ${item.status === 'REFUNDED'
+                  ? 'text-sky-500'
+                  : item.status === 'COMPLETED'
+                    ? 'text-emerald-600'
+                    : 'text-gray-700'
+                }`}>
+                {getAmountDisplay(item.status, item.payment.amount)}
               </p>
             </div>
           </div>
+
 
           <div className="flex flex-wrap gap-x-3 sm:gap-x-4 gap-y-1 mt-2 text-xs text-gray-400">
             <span className="flex items-center gap-1">
@@ -89,10 +175,14 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
             <span className="flex items-center gap-1">
               <Calendar size={11} />{new Date(item.payment.paidAt).toLocaleDateString('vi-VN')}
             </span>
-            <span>{item.package.name} · {item.package.durationDays} ngày</span>
+            <span>
+              {item.package.name} x {quantity} · {item.package.durationDays * quantity} ngày
+            </span>
             <span className="hidden sm:inline">Đơn #{item.id}</span>
           </div>
         </div>
+
+
       </div>
 
       {/* Expand venues */}

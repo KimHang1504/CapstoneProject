@@ -131,7 +131,7 @@ export type OpeningHour = {
   day: number;
   openTime: string;
   closeTime: string;
-  enabled: boolean;
+  isClosed: boolean;
 };
 
 export type TodayOpeningHour = {
