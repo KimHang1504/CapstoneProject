@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { VenueLocationDetail } from '@/api/venue/location/type';
+import { OpeningHour, VenueLocationDetail } from '@/api/venue/location/type';
 import { getVenueLocationDetail } from '@/api/venue/location/api';
 import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
@@ -20,6 +20,8 @@ import { checkVenueOwnerVerification, getLocationSubmitErrors } from '@/app/venu
 import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 
 export default function LocationDetailPage() {
+    type OpenStatus = 'CLOSED_ALL_DAY' | 'OPEN_NOW' | 'CLOSED_NOW';
+
     const params = useParams();
     const id = Number(params.id);
     const router = useRouter();
@@ -31,12 +33,63 @@ export default function LocationDetailPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [currentImageIndex, setCurrentImageIndex] = useState(0)
     const [showOpeningHoursModal, setShowOpeningHoursModal] = useState(false);
-    const isOpen = location?.todayOpeningHour?.isClosed === false;
     const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
     const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
 
 
+    const getOpenStatus = (today: OpeningHour | null): OpenStatus => {
+        if (!today) return 'CLOSED_ALL_DAY';
 
+        // đóng cả ngày
+        if (today.isClosed) return 'CLOSED_ALL_DAY';
+
+        const now = new Date(
+            new Date().toLocaleString('en-US', { timeZone: 'Asia/Ho_Chi_Minh' })
+        );
+
+        const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+        const toMinutes = (time: string) => {
+            const [h, m] = time.split(':').map(Number);
+            return h * 60 + m;
+        };
+
+        const open = toMinutes(today.openTime);
+        const close = toMinutes(today.closeTime);
+        if (open === close) return 'OPEN_NOW';
+
+        // qua đêm
+        if (close < open) {
+            return (currentMinutes >= open || currentMinutes < close)
+                ? 'OPEN_NOW'
+                : 'CLOSED_NOW';
+        }
+
+        return (currentMinutes >= open && currentMinutes < close)
+            ? 'OPEN_NOW'
+            : 'CLOSED_NOW';
+    };
+
+    const getTodayOpeningHour = () => {
+        if (!location?.openingHours) return null;
+
+        const now = new Date();
+
+        // JS: 0 (CN) → 6 (T7)
+        const jsDay = now.getDay();
+
+        // Map sang BE:
+        // CN = 8
+        // T2 = 2 ... T7 = 7
+        const beDay = jsDay === 0 ? 8 : jsDay + 1;
+
+        return location.openingHours.find(d => d.day === beDay) || null;
+    };
+    const todayOpeningHour = getTodayOpeningHour();
+    const status = getOpenStatus(todayOpeningHour);
+    const is24Hours =
+        todayOpeningHour &&
+        todayOpeningHour.openTime === todayOpeningHour.closeTime;
 
     const moods = Array.from(
         new Map(
@@ -132,11 +185,6 @@ export default function LocationDetailPage() {
 
     const isPriceEmpty = location.priceMax === null;
 
-    const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || window.location.origin;
-
-    const redeemLink = `${baseUrl}/staff/redeem?locationId=${location.id}`;
-
     const isPending = location.status === 'PENDING';
     const canSubmitForApproval =
         location.status === 'DRAFTED' ||
@@ -155,46 +203,46 @@ export default function LocationDetailPage() {
         router.push(`/venue/location/mylocation/edit/${id}`);
     };
 
-const handleSubmitForApproval = async () => {
-    if (isPending) return;
+    const handleSubmitForApproval = async () => {
+        if (isPending) return;
 
-    try {
-        const res = await getMe();
-        const freshProfile = res.data;
+        try {
+            const res = await getMe();
+            const freshProfile = res.data;
 
-        const { missingCitizenId } = checkVenueOwnerVerification(freshProfile);
+            const { missingCitizenId } = checkVenueOwnerVerification(freshProfile);
 
-        if (missingCitizenId) {
-            setOpenMissingCitizenPopup(true);
-            return;
+            if (missingCitizenId) {
+                setOpenMissingCitizenPopup(true);
+                return;
+            }
+
+            const errors = getLocationSubmitErrors(location);
+
+            if (errors.length > 0) {
+                toast.error(
+                    <div className="flex flex-wrap gap-1">
+                        <span>Vui lòng cập nhật:</span>
+                        {errors.map((err, i) => (
+                            <span
+                                key={i}
+                                className="bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs"
+                            >
+                                {err}
+                            </span>
+                        ))}
+                    </div>,
+                    { duration: 7000 }
+                );
+                return;
+            }
+
+            router.push(`/venue/location/mylocation/subscriptions?locationId=${location.id}`);
+        } catch (err) {
+            console.error("Failed to fetch latest profile:", err);
+            toast.error("Không thể kiểm tra thông tin tài khoản. Vui lòng thử lại.");
         }
-
-        const errors = getLocationSubmitErrors(location);
-
-        if (errors.length > 0) {
-            toast.error(
-                <div className="flex flex-wrap gap-1">
-                    <span>Vui lòng cập nhật:</span>
-                    {errors.map((err, i) => (
-                        <span
-                            key={i}
-                            className="bg-red-100 text-red-800 px-2 py-0.5 rounded text-xs"
-                        >
-                            {err}
-                        </span>
-                    ))}
-                </div>,
-                { duration: 7000 }
-            );
-            return;
-        }
-
-        router.push(`/venue/location/mylocation/subscriptions?locationId=${location.id}`);
-    } catch (err) {
-        console.error("Failed to fetch latest profile:", err);
-        toast.error("Không thể kiểm tra thông tin tài khoản. Vui lòng thử lại.");
-    }
-};
+    };
 
     const canShowReview =
         location.status === "ACTIVE" ||
@@ -375,29 +423,55 @@ const handleSubmitForApproval = async () => {
                                 </p>
                             </FieldDisplay>
                         </div>
-                        {/* {(location.status === 'ACTIVE' || location.status === 'INACTIVE') && (
+                        {(location.status === 'ACTIVE' || location.status === 'INACTIVE') && (
                             <div className="items-center gap-3">
                                 <div className="flex justify-between">
                                     <div
                                         className={`inline-flex items-center gap-2 py-1.5 text-sm font-semibold
-                                                 ${isOpen
-                                                ? " text-emerald-700"
-                                                : "bg-rose-50 text-rose-600 border-rose-200"}
-                                                `}
+    ${status === 'OPEN_NOW'
+                                                ? 'text-emerald-700'
+                                                : 'text-rose-600'
+                                            }
+  `}
                                     >
-                                        <span className={`w-2 h-2 rounded-full ${isOpen ? "bg-emerald-500 animate-pulse" : "bg-rose-500"}`} />
-                                        {isOpen && location?.todayOpeningHour ? (
+                                        <span
+                                            className={`w-2 h-2 rounded-full ${status === 'OPEN_NOW'
+                                                ? 'bg-emerald-500 animate-pulse'
+                                                : 'bg-rose-500'
+                                                }`}
+                                        />
+
+                                        {status === 'OPEN_NOW' && todayOpeningHour && (
                                             <>
-                                                Đang mở cửa từ{" "}
+                                                {is24Hours ? (
+                                                    <>
+                                                        Mở cửa 24 giờ
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        Đang mở cửa từ{" "}
+                                                        <span className="font-bold">
+                                                            {todayOpeningHour.openTime.slice(0, 5)}
+                                                        </span>{" "}
+                                                        đến{" "}
+                                                        <span className="font-bold">
+                                                            {todayOpeningHour.closeTime.slice(0, 5)}
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </>
+                                        )}
+
+                                        {status === 'CLOSED_NOW' && todayOpeningHour && (
+                                            <>
+                                                Đang đóng cửa • Mở lúc{" "}
                                                 <span className="font-bold">
-                                                    {location.todayOpeningHour.openTime.slice(0, 5)}
-                                                </span>{" "}
-                                                đến{" "}
-                                                <span className="font-bold">
-                                                    {location.todayOpeningHour.closeTime.slice(0, 5)}
+                                                    {todayOpeningHour.openTime.slice(0, 5)}
                                                 </span>
                                             </>
-                                        ) : (
+                                        )}
+
+                                        {status === 'CLOSED_ALL_DAY' && (
                                             <>Hôm nay đóng cửa</>
                                         )}
                                     </div>
@@ -415,41 +489,12 @@ const handleSubmitForApproval = async () => {
 
                                 </div>
                             </div>
-                        )} */}
+                        )}
                         <div>
                             <p className="text-sm font-bold mb-1">Mô tả</p>
                             <p className="text-sm text-gray-700">{location.description}</p>
                         </div>
-                        {/* <div className="bg-white rounded-2xl p-4 space-y-3">
-                            <p className="font-semibold">Link quét voucher cho nhân viên</p>
 
-                            <div className="flex items-center gap-2">
-                                <input
-                                    value={redeemLink}
-                                    readOnly
-                                    className="flex-1 text-sm px-3 py-2 border rounded-lg bg-gray-50"
-                                />
-
-                                <button
-                                    onClick={() => {
-                                        navigator.clipboard.writeText(redeemLink);
-                                        toast.success("Đã copy link!");
-                                    }}
-                                    className="px-3 py-2 bg-violet-500 text-white rounded-lg text-sm hover:bg-violet-600"
-                                >
-                                    Copy
-                                </button>
-                            </div>
-
-                            <a
-                                href={redeemLink}
-                                target="_blank"
-                                className="text-sm text-blue-500 hover:underline"
-                            >
-                                Mở trang redeem →
-                            </a>
-                        </div> */}
-                        {/* <p className="text-sm font-bold mb-2">Danh mục</p> */}
 
                         {location.categories?.length ? (
                             <div className="flex gap-2 flex-wrap">
@@ -593,6 +638,7 @@ const handleSubmitForApproval = async () => {
                 {showOpeningHoursModal && (
                     <OpeningHoursModal
                         locationId={location.id}
+                        openingHours={location.openingHours}
                         onClose={() => setShowOpeningHoursModal(false)}
                         onSuccess={handleRefresh}
                     />
