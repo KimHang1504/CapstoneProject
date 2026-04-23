@@ -629,7 +629,11 @@ export default function LocationDetailPage() {
 
                 <div>
                     {canShowReview && (
-                        <ReviewSection venueId={location.id} />
+                        <ReviewSection
+                            venueId={location.id}
+                            venueName={location.name}
+                            venueDescription={location.description}
+                        />
                     )}
                 </div>
 
