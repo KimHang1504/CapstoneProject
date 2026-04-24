@@ -113,8 +113,11 @@ export default function ReviewImprovePanel({
         priorityActions,
       });
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Khong the tao de xuat cai thien luc nay.";
-      setError(message);
+      const message = "AI đang quá tải, bạn quay lại sau nhé!";
+
+      console.error(err); // dev xem
+      setError(message);  // user xem
+
     } finally {
       setIsLoading(false);
     }
