@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
-import { Review, ReviewReply } from "@/api/venue/review/type"
-import { replyReview, updateReply } from "@/api/venue/review/api"
+import { useEffect, useState } from "react"
+import { ReportType, Review, ReviewReply } from "@/api/venue/review/type"
+import { createReviewReportByOwner, getReportTypes, replyReview, updateReply } from "@/api/venue/review/api"
 import Image from "next/image"
 import { Star, ThumbsUp } from "lucide-react"
+import { toast } from "sonner"
 
 type Props = {
     reviews: Review[]
@@ -21,7 +22,49 @@ export default function ReviewList({
     const [content, setContent] = useState("")
     const [loading, setLoading] = useState(false)
     const [editingId, setEditingId] = useState<number | null>(null)
+    const [reportingId, setReportingId] = useState<number | null>(null)
+    const [reportTypes, setReportTypes] = useState<ReportType[]>([])
+    const [selectedType, setSelectedType] = useState<number | null>(null)
+    const [reportReason, setReportReason] = useState("")
+    const [reportLoading, setReportLoading] = useState(false)
 
+    useEffect(() => {
+        const fetchTypes = async () => {
+            try {
+                const res = await getReportTypes()
+                const active = res.data.items.filter(t => t.isActive)
+                setReportTypes(active)
+            } catch (err) {
+                console.error("Failed to load report types", err)
+            }
+        }
+
+        fetchTypes()
+    }, [])
+
+    const handleReport = async (reviewId: number) => {
+        if (!selectedType) return
+        if (!reportReason.trim()) return
+
+        try {
+            setReportLoading(true)
+
+            await createReviewReportByOwner(reviewId, {
+                reportTypeId: selectedType,
+                reason: reportReason,
+            })
+
+            setReportingId(null)
+            setSelectedType(null)
+            setReportReason("")
+            toast.success("Báo cáo đã được gửi")
+        } catch (err) {
+            console.error("Report failed", err)
+            toast.error("Failed to submit report")
+        } finally {
+            setReportLoading(false)
+        }
+    }
 
     if (isLoading) {
         return (
@@ -72,7 +115,7 @@ export default function ReviewList({
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Image
-                                src={review.member.avatarUrl || "/avatar-placeholder.png"}
+                                src={review.member.avatarUrl || "/logo.png"}
                                 alt="avatar"
                                 width={40}
                                 height={40}
@@ -107,15 +150,25 @@ export default function ReviewList({
 
                     {/* Footer */}
                     <div className="flex items-center justify-between text-xs text-gray-400">
-                        <div className="flex  gap-1">
-                            <ThumbsUp size={14} color="#9CA3AF" className="text-gray-400" />
+                        <div className="flex gap-1">
+                            <ThumbsUp size={14} className="text-gray-400" />
                             <span>{review.likeCount} lượt thích</span>
                         </div>
-                        {review.isAnonymous && (
-                            <span className="px-2 py-1 rounded-full bg-green-50 text-green-600 text-xs">
-                                Mood phù hợp
-                            </span>
-                        )}
+
+                        <div className="flex items-center gap-3">
+                            {review.isMatched && (
+                                <span className="px-2 py-1 rounded-full bg-green-50 text-green-600 text-xs">
+                                    Mood phù hợp
+                                </span>
+                            )}
+
+                            <button
+                                onClick={() => setReportingId(review.id)}
+                                className="text-red-500 hover:underline text-xs"
+                            >
+                                Báo cáo
+                            </button>
+                        </div>
                     </div>
 
                     {/* ===== OWNER REPLY DISPLAY ===== */}
@@ -213,6 +266,58 @@ export default function ReviewList({
                                 </div>
                             )}
                         </>
+                    )}
+
+                    {reportingId === review.id && (
+                        <div className="bg-red-50 border border-red-100 rounded-xl p-4 space-y-3">
+                            <p className="text-sm font-medium text-red-600">
+                                Báo cáo đánh giá
+                            </p>
+
+                            {/* Type */}
+                            <select
+                                value={selectedType ?? ""}
+                                onChange={(e) => setSelectedType(Number(e.target.value))}
+                                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                            >
+                                <option value="">Chọn lý do</option>
+                                {reportTypes.map((t) => (
+                                    <option key={t.id} value={t.id}>
+                                        {t.typeName} - {t.description}
+                                    </option>
+                                ))}
+                            </select>
+
+                            {/* Reason */}
+                            <textarea
+                                value={reportReason}
+                                onChange={(e) => setReportReason(e.target.value)}
+                                rows={3}
+                                placeholder="Mô tả thêm..."
+                                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
+                            />
+
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => handleReport(review.id)}
+                                    disabled={reportLoading}
+                                    className="px-4 py-1.5 bg-red-600 text-white text-sm rounded-lg"
+                                >
+                                    {reportLoading ? "Đang gửi..." : "Gửi báo cáo"}
+                                </button>
+
+                                <button
+                                    onClick={() => {
+                                        setReportingId(null)
+                                        setSelectedType(null)
+                                        setReportReason("")
+                                    }}
+                                    className="px-4 py-1.5 bg-gray-100 text-sm rounded-lg"
+                                >
+                                    Hủy
+                                </button>
+                            </div>
+                        </div>
                     )}
                 </div>
             ))}

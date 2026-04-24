@@ -52,12 +52,13 @@ export default function ReviewSection({ venueId }: Props) {
         await fetchReviews()
     }
 
-
+ console.log("Review list: ", reviews)
     if (!summary) return null
 
 
     return (
         <div className="space-y-6">
+            <h2 className="text-2xl font-semibold">Đánh giá của bạn</h2>
 
             <Statistic summary={summary} />
 
