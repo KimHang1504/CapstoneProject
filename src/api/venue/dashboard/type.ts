@@ -84,6 +84,7 @@ export interface VenueOwnerDashboardOverview {
   activeAdvertisements: number;
   pendingAdvertisements: number;
   rejectedAdvertisements: number;
+  draftAdvertisements: number;
   recentAdvertisements: RecentAdvertisement[];
 
   // top venue
