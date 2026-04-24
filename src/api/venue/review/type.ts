@@ -1,3 +1,5 @@
+import { ApiResponse } from "@/lib/api-client"
+
 export interface GetVenueReviewsResponse {
   message: string
   code: number
@@ -40,6 +42,7 @@ export interface Review {
   content: string
   visitedAt: string
   isAnonymous: boolean
+  isMatched: boolean
   likeCount: number
   status: string
   createdAt: string
@@ -101,3 +104,18 @@ export interface ReplyReviewResponse {
   traceId: string
   timestamp: string
 }
+
+export type ReportType = {
+  id: number
+  typeName: string
+  description: string
+  isActive: boolean
+}
+
+export type GetReportTypesResponse = ApiResponse<{
+  items: ReportType[]
+  pageNumber: number
+  pageSize: number
+  totalCount: number
+  totalPages: number
+}>

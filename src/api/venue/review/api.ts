@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { GetVenueReviewsParams, GetVenueReviewsResponse, ReplyReviewResponse, ReviewReply } from "./type";
+import { GetReportTypesResponse, GetVenueReviewsParams, GetVenueReviewsResponse, ReplyReviewResponse, ReviewReply } from "./type";
 
 
 export const getMyReviews = (params: GetVenueReviewsParams) => {
@@ -41,5 +41,30 @@ export const updateReply = (
 export const deleteReply = (reviewId: number) => {
   return apiClient.delete<ApiResponse<null>>(
     `/api/Review/${reviewId}/reply`
+  )
+}
+
+export const getReportTypes = () => {
+  return apiClient.get<GetReportTypesResponse>(
+    `/api/ReportType`,
+    {
+      params: {
+        page: 1,
+        pageSize: 20,
+      },
+    }
+  )
+}
+
+export const createReviewReportByOwner = (
+  reviewId: number,
+  body: {
+    reportTypeId: number
+    reason: string
+  }
+) => {
+  return apiClient.post<ApiResponse<null>>(
+    `/api/Report/venue-owner/reviews/${reviewId}`,
+    body
   )
 }

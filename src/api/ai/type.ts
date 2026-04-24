@@ -15,3 +15,20 @@ export type GenerateImageRequest = {
 export type GenerateImageResponse = ApiResponse<{
   imageUrl: string;
 }>;
+
+export type VenueReviewImprovementRequest = {
+  venueId: number;
+  reviewContents: string[];
+  prompt: string;
+  maxSuggestions?: number;
+};
+
+export type VenueReviewImprovementData = {
+  summary?: string;
+  improvements?: string[];
+  recommendations?: string[];
+  priorityActions?: string[];
+  content?: string;
+};
+
+export type VenueReviewImprovementResponse = ApiResponse<VenueReviewImprovementData>;
