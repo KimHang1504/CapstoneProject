@@ -18,6 +18,7 @@ import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
 import { toast } from 'sonner';
 import { checkVenueOwnerVerification, getLocationSubmitErrors } from '@/app/venue/location/utils/venue-location-submit';
 import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
+import TagAnalysisWarning from './TagAnalysisWarning';
 
 export default function LocationDetailPage() {
     type OpenStatus = 'CLOSED_ALL_DAY' | 'OPEN_NOW' | 'CLOSED_NOW';
@@ -354,6 +355,11 @@ export default function LocationDetailPage() {
                     </div>
                 ) : null}
 
+                {/* Tag Analysis Warning - chỉ hiển thị cho venue ACTIVE hoặc INACTIVE */}
+                {(location.status === 'ACTIVE' || location.status === 'INACTIVE') && (
+                    <TagAnalysisWarning venueId={location.id} />
+                )}
+
                 <div className="bg-white rounded-2xl">
                     <div className="relative w-full h-95 overflow-hidden rounded-xl">
 
@@ -629,7 +635,11 @@ export default function LocationDetailPage() {
 
                 <div>
                     {canShowReview && (
-                        <ReviewSection venueId={location.id} />
+                        <ReviewSection
+                            venueId={location.id}
+                            venueName={location.name}
+                            venueDescription={location.description}
+                        />
                     )}
                 </div>
 

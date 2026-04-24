@@ -273,6 +273,18 @@ export default function VenueDashboardPage() {
                       />
                     </div>
                   </div>
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Bản nháp</span>
+                      <span className="font-semibold text-slate-600">{data.draftAdvertisements}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-slate-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalAdvertisements > 0 ? Math.min(100, (data.draftAdvertisements / data.totalAdvertisements) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="mt-2.5 pt-2.5 border-t border-gray-100">
                   <p className="text-[11px] text-gray-400">Tổng: <span className="font-bold text-gray-900">{data.totalAdvertisements}</span></p>
