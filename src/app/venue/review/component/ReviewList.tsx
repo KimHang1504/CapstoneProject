@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react"
 import { ReportType, Review, ReviewReply } from "@/api/venue/review/type"
-import { createReviewReportByOwner, getReportTypes, replyReview, updateReply } from "@/api/venue/review/api"
+import {
+    createReviewReportByOwner,
+    getReportTypes,
+    replyReview,
+    updateReply,
+} from "@/api/venue/review/api"
 import Image from "next/image"
 import { Star, ThumbsUp } from "lucide-react"
 import { toast } from "sonner"
@@ -13,26 +18,33 @@ type Props = {
     onReplySuccess?: (reviewId: number, reply: ReviewReply) => void
 }
 
+type ActionType = "reply" | "edit" | "report" | null
+
 export default function ReviewList({
     reviews,
     isLoading,
     onReplySuccess,
 }: Props) {
-    const [replyingId, setReplyingId] = useState<number | null>(null)
+    const [activeAction, setActiveAction] = useState<{
+        id: number | null
+        type: ActionType
+    }>({ id: null, type: null })
+
     const [content, setContent] = useState("")
     const [loading, setLoading] = useState(false)
-    const [editingId, setEditingId] = useState<number | null>(null)
-    const [reportingId, setReportingId] = useState<number | null>(null)
+
     const [reportTypes, setReportTypes] = useState<ReportType[]>([])
     const [selectedType, setSelectedType] = useState<number | null>(null)
     const [reportReason, setReportReason] = useState("")
     const [reportLoading, setReportLoading] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
+    // ===== Fetch report types =====
     useEffect(() => {
         const fetchTypes = async () => {
             try {
                 const res = await getReportTypes()
-                const active = res.data.items.filter(t => t.isActive)
+                const active = res.data.items.filter((t) => t.isActive)
                 setReportTypes(active)
             } catch (err) {
                 console.error("Failed to load report types", err)
@@ -42,11 +54,20 @@ export default function ReviewList({
         fetchTypes()
     }, [])
 
+    // ===== Report =====
     const handleReport = async (reviewId: number) => {
-        if (!selectedType) return
-        if (!reportReason.trim()) return
+        if (!selectedType) {
+            setError("type")
+            return
+        }
+
+        if (!reportReason.trim()) {
+            setError("reason")
+            return
+        }
 
         try {
+            setError(null)
             setReportLoading(true)
 
             await createReviewReportByOwner(reviewId, {
@@ -54,34 +75,19 @@ export default function ReviewList({
                 reason: reportReason,
             })
 
-            setReportingId(null)
+            toast.success("Báo cáo đã được gửi")
+
+            setActiveAction({ id: null, type: null })
             setSelectedType(null)
             setReportReason("")
-            toast.success("Báo cáo đã được gửi")
         } catch (err) {
-            console.error("Report failed", err)
-            toast.error("Failed to submit report")
+            toast.error("Gửi báo cáo thất bại")
         } finally {
             setReportLoading(false)
         }
     }
 
-    if (isLoading) {
-        return (
-            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <p className="text-sm text-gray-500">Đang tải đánh giá...</p>
-            </div>
-        )
-    }
-
-    if (!reviews.length) {
-        return (
-            <div className="bg-white rounded-2xl p-10 shadow-sm border border-gray-100 text-center">
-                <p className="text-gray-400 text-sm">Chưa có đánh giá nào</p>
-            </div>
-        )
-    }
-
+    // ===== Reply / Edit =====
     const handleSubmit = async (reviewId: number, isEdit = false) => {
         if (!content.trim()) return
 
@@ -91,234 +97,282 @@ export default function ReviewList({
             const res = isEdit
                 ? await updateReply(reviewId, { content })
                 : await replyReview(reviewId, { content })
-            console.log("REPLY RESPONSE:", res)
-            console.log("REPLY DATA:", res.data)
+
             onReplySuccess?.(reviewId, res.data)
 
-            setReplyingId(null)
-            setEditingId(null)
+            // reset
+            setActiveAction({ id: null, type: null })
             setContent("")
         } finally {
             setLoading(false)
         }
     }
 
+    // ===== Loading =====
+    if (isLoading) {
+        return (
+            <div className="py-10 text-center text-sm text-gray-500">
+                Đang tải đánh giá...
+            </div>
+        )
+    }
+
+    // ===== Empty =====
+    if (!reviews.length) {
+        return (
+            <div className="py-16 text-center text-sm text-gray-400">
+                Chưa có đánh giá nào
+            </div>
+        )
+    }
 
     return (
-        <div className="space-y-4">
+        <div className="divide-y divide-gray-100">
             {reviews.map((review) => (
-                <div
-                    key={review.id}
-                    className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 hover:shadow-md transition space-y-4"
-                >
-                    {/* Header */}
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <Image
-                                src={review.member.avatarUrl || "/logo.png"}
-                                alt="avatar"
-                                width={40}
-                                height={40}
-                                className="w-10 h-10 rounded-full object-cover"
-                            />
+                <div key={review.id} className="py-6 space-y-3">
 
-                            <div>
-                                <p className="text-sm font-medium text-gray-900">
-                                    {review.member.fullName}
-                                </p>
-                                <p className="text-xs text-gray-400">
-                                    {new Date(review.createdAt).toLocaleDateString("vi-VN")}
-                                </p>
+                    {/* ===== HEADER ===== */}
+                    <div className="flex items-start gap-3">
+                        <Image
+                            src={review.member.avatarUrl || "/logo.png"}
+                            alt="avatar"
+                            width={40}
+                            height={40}
+                            className="w-10 h-10 rounded-full object-cover"
+                        />
+
+                        <div className="flex-1">
+
+                            {/* Name + date + rating */}
+                            <div className="flex items-center justify-between">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-900">
+                                        {review.member.fullName}
+                                    </p>
+                                    <p className="text-xs text-gray-400">
+                                        {new Date(review.createdAt).toLocaleDateString("vi-VN")}
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center gap-1">
+                                    {Array.from({ length: review.rating }).map((_, i) => (
+                                        <Star key={i} size={14} className="fill-yellow-400 text-yellow-400" />
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="flex items-center gap-1">
-                            {Array.from({ length: review.rating }).map((_, i) => (
-                                <Star
-                                    key={i}
-                                    size={16}
-                                    className="fill-yellow-400 text-yellow-400"
-                                />
-                            ))}
-                        </div>
-                    </div>
+                            {/* CONTENT */}
+                            <p className="text-sm text-gray-800 mt-2">
+                                {review.content}
+                            </p>
 
-                    {/* Comment */}
-                    <p className="text-sm text-gray-700 leading-relaxed">
-                        {review.content}
-                    </p>
+                            {/* FOOTER */}
+                            <div className="flex items-center gap-4 mt-2 text-xs text-gray-400">
 
-                    {/* Footer */}
-                    <div className="flex items-center justify-between text-xs text-gray-400">
-                        <div className="flex gap-1">
-                            <ThumbsUp size={14} className="text-gray-400" />
-                            <span>{review.likeCount} lượt thích</span>
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            {review.isMatched && (
-                                <span className="px-2 py-1 rounded-full bg-green-50 text-green-600 text-xs">
-                                    Mood phù hợp
+                                <span className="flex items-center gap-1">
+                                    <ThumbsUp size={13} />
+                                    {review.likeCount}
                                 </span>
-                            )}
 
-                            <button
-                                onClick={() => setReportingId(review.id)}
-                                className="text-red-500 hover:underline text-xs"
-                            >
-                                Báo cáo
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* ===== OWNER REPLY DISPLAY ===== */}
-                    {review.reviewReply && editingId !== review.id && (
-                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100 space-y-2">
-                            <p className="text-xs font-semibold text-gray-500">
-                                Chủ địa điểm
-                            </p>
-                            <p className="text-sm text-gray-800">
-                                {review.reviewReply.content}
-                            </p>
-
-                            <button
-                                onClick={() => {
-                                    setEditingId(review.id)
-                                    setContent(review.reviewReply!.content)
-                                }}
-                                className="text-xs text-blue-600 hover:underline"
-                            >
-                                Chỉnh sửa
-                            </button>
-                        </div>
-                    )}
-                    {review.reviewReply && editingId === review.id && (
-                        <div className="space-y-2">
-                            <textarea
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                rows={3}
-                                className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm"
-                            />
-
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => handleSubmit(review.id, true)}
-                                    disabled={loading}
-                                    className="px-4 py-1.5 bg-black text-white text-sm rounded-xl"
-                                >
-                                    {loading ? "Đang lưu..." : "Lưu"}
-                                </button>
+                                {review.isMatched && (
+                                    <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
+                                        Mood phù hợp
+                                    </span>
+                                )}
 
                                 <button
-                                    onClick={() => {
-                                        setEditingId(null)
-                                        setContent("")
-                                    }}
-                                    className="px-4 py-1.5 bg-gray-100 text-sm rounded-xl"
+                                    onClick={() =>
+                                        setActiveAction({ id: review.id, type: "report" })
+                                    }
+                                    className="hover:text-red-500"
                                 >
-                                    Hủy
+                                    Báo cáo
                                 </button>
+
+                                {!review.reviewReply && (
+                                    <button
+                                        onClick={() =>
+                                            setActiveAction({ id: review.id, type: "reply" })
+                                        }
+                                        className="text-violet-500 hover:text-violet-600 hover:underline"                                    >
+                                        Trả lời
+                                    </button>
+                                )}
                             </div>
-                        </div>
-                    )}
 
-
-                    {/* ===== OWNER REPLY FORM ===== */}
-                    {!review.reviewReply && (
-                        <>
-                            {replyingId !== review.id ? (
-                                <button
-                                    onClick={() => setReplyingId(review.id)}
-                                    className="text-sm text-blue-600 hover:underline"
-                                >
-                                    Trả lời
-                                </button>
-                            ) : (
-                                <div className="space-y-2">
-                                    <textarea
-                                        value={content}
-                                        onChange={(e) => setContent(e.target.value)}
-                                        rows={3}
-                                        className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/10"
-                                        placeholder="Nhập phản hồi của bạn..."
-                                    />
-
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={() => handleSubmit(review.id)}
-                                            disabled={loading}
-                                            className="px-4 py-1.5 bg-black text-white text-sm rounded-xl"
-                                        >
-                                            {loading ? "Đang gửi..." : "Gửi"}
-                                        </button>
+                            {/* ===== REPLY DISPLAY ===== */}
+                            {review.reviewReply &&
+                                !(activeAction.id === review.id && activeAction.type === "edit") && (
+                                    <div className="ml-12 mt-3 pl-4 border-l border-gray-200">
+                                        <p className="text-xs text-gray-500 font-medium">
+                                            Chủ địa điểm
+                                        </p>
+                                        <p className="text-sm text-gray-800">
+                                            {review.reviewReply.content}
+                                        </p>
 
                                         <button
                                             onClick={() => {
-                                                setReplyingId(null)
-                                                setContent("")
+                                                setActiveAction({ id: review.id, type: "edit" })
+                                                setContent(review.reviewReply!.content)
                                             }}
-                                            className="px-4 py-1.5 bg-gray-100 text-sm rounded-xl"
+                                            className="text-xs text-blue-500 hover:underline"
                                         >
-                                            Hủy
+                                            Chỉnh sửa
                                         </button>
                                     </div>
-                                </div>
-                            )}
-                        </>
-                    )}
+                                )}
 
-                    {reportingId === review.id && (
-                        <div className="bg-red-50 border border-red-100 rounded-xl p-4 space-y-3">
-                            <p className="text-sm font-medium text-red-600">
-                                Báo cáo đánh giá
-                            </p>
+                            {/* ===== EDIT ===== */}
+                            {review.reviewReply &&
+                                activeAction.id === review.id &&
+                                activeAction.type === "edit" && (
+                                    <div className="mt-3 space-y-2">
+                                        <textarea
+                                            value={content}
+                                            onChange={(e) => setContent(e.target.value)}
+                                            rows={3}
+                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                        />
 
-                            {/* Type */}
-                            <select
-                                value={selectedType ?? ""}
-                                onChange={(e) => setSelectedType(Number(e.target.value))}
-                                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-                            >
-                                <option value="">Chọn lý do</option>
-                                {reportTypes.map((t) => (
-                                    <option key={t.id} value={t.id}>
-                                        {t.typeName} - {t.description}
-                                    </option>
-                                ))}
-                            </select>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleSubmit(review.id, true)}
+                                                disabled={loading}
+                                                className="px-3 py-1.5 bg-violet-500 hover:bg-violet-600 text-white rounded-lg transition"                                            >
+                                                {loading ? "Đang lưu..." : "Lưu"}
+                                            </button>
 
-                            {/* Reason */}
-                            <textarea
-                                value={reportReason}
-                                onChange={(e) => setReportReason(e.target.value)}
-                                rows={3}
-                                placeholder="Mô tả thêm..."
-                                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm"
-                            />
+                                            <button
+                                                onClick={() => {
+                                                    setActiveAction({ id: null, type: null })
+                                                    setContent("")
+                                                }}
+                                                className="px-3 py-1.5 bg-gray-100 rounded-lg"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => handleReport(review.id)}
-                                    disabled={reportLoading}
-                                    className="px-4 py-1.5 bg-red-600 text-white text-sm rounded-lg"
-                                >
-                                    {reportLoading ? "Đang gửi..." : "Gửi báo cáo"}
-                                </button>
+                            {/* ===== CREATE REPLY ===== */}
+                            {!review.reviewReply &&
+                                activeAction.id === review.id &&
+                                activeAction.type === "reply" && (
+                                    <div className="mt-3 space-y-2">
+                                        <textarea
+                                            value={content}
+                                            onChange={(e) => setContent(e.target.value)}
+                                            rows={3}
+                                            placeholder="Nhập phản hồi..."
+                                            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm"
+                                        />
 
-                                <button
-                                    onClick={() => {
-                                        setReportingId(null)
-                                        setSelectedType(null)
-                                        setReportReason("")
-                                    }}
-                                    className="px-4 py-1.5 bg-gray-100 text-sm rounded-lg"
-                                >
-                                    Hủy
-                                </button>
-                            </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleSubmit(review.id)}
+                                                disabled={loading}
+                                                className="px-3 py-1.5 bg-violet-500 hover:bg-violet-600 text-white rounded-lg transition"                                            >
+                                                {loading ? "Đang gửi..." : "Gửi"}
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setActiveAction({ id: null, type: null })
+                                                    setContent("")
+                                                }}
+                                                className="px-3 py-1.5 bg-gray-100 rounded-lg"
+                                            >
+                                                Hủy
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                            {/* ===== REPORT ===== */}
+                            {activeAction.id === review.id &&
+                                activeAction.type === "report" && (
+                                    <div className="mt-3 border border-gray-200 rounded-xl p-4 space-y-3 bg-white">
+
+                                        {/* Title */}
+                                        <p className="text-sm font-medium text-gray-800">
+                                            Báo cáo đánh giá
+                                        </p>
+
+                                        {/* Select */}
+                                        <div className="space-y-1">
+                                            <p className="text-xs text-gray-500">Lý do</p>
+                                            <select
+                                                value={selectedType ?? ""}
+                                                onChange={(e) => {
+                                                    setSelectedType(Number(e.target.value))
+                                                    setError(null)
+                                                }}
+                                                className={`w-full border rounded-lg px-3 py-2 text-sm ${!selectedType && error === "type"
+                                                    ? "border-red-400 focus:ring-red-100"
+                                                    : "border-gray-200 focus:ring-2 focus:ring-violet-100 focus:border-violet-400"
+                                                    }`}
+                                            >
+                                                <option value="">Chọn lý do</option>
+                                                {reportTypes.map((t) => (
+                                                    <option key={t.id} value={t.id}>
+                                                        {t.description}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            {!selectedType && error === "type" && (
+                                                <p className="text-xs text-red-500 mt-1">
+                                                    Vui lòng chọn lý do
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* Textarea */}
+                                        <div className="space-y-1">
+                                            <p className="text-xs text-gray-500">Mô tả thêm</p>
+                                            <textarea
+                                                value={reportReason}
+                                                onChange={(e) => {
+                                                    setReportReason(e.target.value)
+                                                    setError(null)
+                                                }} rows={3}
+                                                placeholder="Nhập mô tả chi tiết..."
+                                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm 
+focus:ring-2 focus:ring-violet-100 focus:border-violet-400"                                            />
+                                            {selectedType && !reportReason.trim() && error === "reason" && (
+                                                <p className="text-xs text-red-500 mt-1">
+                                                    Vui lòng nhập mô tả
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        {/* Actions */}
+                                        <div className="flex items-center justify-between pt-2">
+                                            <button
+                                                onClick={() => {
+                                                    setActiveAction({ id: null, type: null })
+                                                    setSelectedType(null)
+                                                    setReportReason("")
+                                                }}
+                                                className="text-xs text-gray-500 hover:underline"
+                                            >
+                                                Hủy
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleReport(review.id)}
+                                                disabled={reportLoading}
+                                                className="px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition"
+                                            >
+                                                {reportLoading ? "Đang gửi..." : "Gửi báo cáo"}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
                         </div>
-                    )}
+                    </div>
                 </div>
             ))}
         </div>
