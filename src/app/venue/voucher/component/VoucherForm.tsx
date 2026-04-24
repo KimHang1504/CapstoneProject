@@ -55,6 +55,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     initialData?.venueLocationIds ?? []
   );
 
+  const [activeLocationIds, setActiveLocationIds] = useState<number[]>([]);
+
   const [openLocationModal, setOpenLocationModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);

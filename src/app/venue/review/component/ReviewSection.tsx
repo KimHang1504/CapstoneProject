@@ -14,9 +14,10 @@ type Props = {
     venueId: number
     venueName?: string
     venueDescription?: string
+    canInteractReview: boolean
 }
 
-export default function ReviewSection({ venueId, venueName, venueDescription }: Props) {
+export default function ReviewSection({ venueId, venueName, venueDescription, canInteractReview }: Props) {
     const [activeTab, setActiveTab] = useState<"reviews" | "improve">("reviews")
 
     const [summary, setSummary] = useState<ReviewSummary>()
@@ -29,9 +30,7 @@ export default function ReviewSection({ venueId, venueName, venueDescription }: 
         year?: number
     }>({})
 
-    /**
-     * Fetch reviews (source of truth)
-     */
+
     const fetchReviews = useCallback(async () => {
         try {
             setIsLoading(true)
@@ -57,7 +56,7 @@ export default function ReviewSection({ venueId, venueName, venueDescription }: 
         await fetchReviews()
     }
 
- console.log("Review list: ", reviews)
+    console.log("Review list: ", reviews)
     if (!summary) return null
 
 
@@ -70,22 +69,20 @@ export default function ReviewSection({ venueId, venueName, venueDescription }: 
             <div className="inline-flex items-center gap-2 bg-gray-100 p-1 rounded-xl">
                 <button
                     onClick={() => setActiveTab("reviews")}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition ${
-                        activeTab === "reviews"
+                    className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition ${activeTab === "reviews"
                             ? "bg-white shadow-sm text-gray-900"
                             : "text-gray-500 hover:text-gray-700"
-                    }`}
+                        }`}
                 >
                     <MessageSquareText size={16} />
                     Reviews
                 </button>
                 <button
                     onClick={() => setActiveTab("improve")}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition ${
-                        activeTab === "improve"
+                    className={`cursor-pointer inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm transition ${activeTab === "improve"
                             ? "bg-white shadow-sm text-gray-900"
                             : "text-gray-500 hover:text-gray-700"
-                    }`}
+                        }`}
                 >
                     <Sparkles size={16} />
                     Improve
@@ -100,6 +97,7 @@ export default function ReviewSection({ venueId, venueName, venueDescription }: 
                         reviews={reviews}
                         isLoading={isLoading}
                         onReplySuccess={handleReplySuccess}
+                        canInteractReview={canInteractReview}
                     />
                 </>
             )}

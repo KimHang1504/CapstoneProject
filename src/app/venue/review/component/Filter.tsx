@@ -49,7 +49,7 @@ export default function ReviewFilter({ onChange }: Props) {
           <button
             key={item.value}
             onClick={() => handleTypeChange(item.value as FilterType)}
-            className={`px-4 py-1.5 text-sm rounded-lg transition-all
+            className={`px-4 py-1.5 text-sm rounded-lg transition-all cursor-pointer
               ${
                 type === item.value
                   ? "bg-white shadow-sm text-black"
