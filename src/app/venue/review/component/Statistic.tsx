@@ -1,12 +1,6 @@
 "use client"
 
 import { ReviewSummary } from "@/api/venue/review/type"
-// type Props = {
-//   summary: Pick<
-//     ReviewSummary,
-//     "averageRating" | "totalReviews" | "moodMatchPercentage" | "matchedReviewsCount"
-//   >
-// }
 
 type Props = {
   summary: ReviewSummary
