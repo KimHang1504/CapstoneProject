@@ -134,10 +134,15 @@ export default function ReviewList({
                     {/* ===== HEADER ===== */}
                     <div className="flex items-start gap-3">
                         <Image
-                            src={review.member.avatarUrl || "/logo.png"}
+                            src={
+                                review.member.avatarUrl
+                                    ? decodeURIComponent(review.member.avatarUrl)
+                                    : "/logo.png"
+                            }
                             alt="avatar"
                             width={40}
                             height={40}
+                            unoptimized
                             className="w-10 h-10 rounded-full object-cover"
                         />
 
