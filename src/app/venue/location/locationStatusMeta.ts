@@ -8,11 +8,11 @@ export const locationStatusMeta: Record<
   }
 > = {
   ACTIVE: {
-    label: "Đang mở",
+    label: "Đang hoạt động",
     color: "bg-green-100 text-green-700",
   },
   INACTIVE: {
-    label: "Tạm ngưng",
+    label: "Ngưng hoạt động",
     color: "bg-red-100 text-red-700",
   },
   PENDING: {
@@ -29,7 +29,7 @@ export const locationStatusMeta: Record<
     color: "bg-red-100 text-red-700",
   },
   CLOSED: {
-    label: "Đóng cửa",
+    label: "Tạm ngưng",
     color: "bg-red-100 text-red-700",
   },
   EXPIRED: {
