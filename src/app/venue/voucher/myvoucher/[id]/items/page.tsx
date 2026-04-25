@@ -34,8 +34,29 @@ export default function VoucherItemsPage() {
 
     }, [id]);
 
-    if (loading) return <p className="p-6">Loading voucher items...</p>;
-    if (loading) return <p className="p-6">Loading voucher items...</p>;
+    // =======================
+    // Mapping tiếng Việt
+    // =======================
+    const getStatusText = (status: string) => {
+        switch (status) {
+            case "ACTIVE":
+                return "Đang hoạt động";
+            case "INACTIVE":
+                return "Không hoạt động";
+            case "USED":
+                return "Đã sử dụng";
+            case "EXPIRED":
+                return "Hết hạn sử dụng";
+            case "PENDING":
+                return "Chờ xử lý";
+                case "ENDED":
+                return "Voucher đã kết thúc";
+            default:
+                return status;
+        }
+    };
+
+    if (loading) return <p className="p-6">Đang tải voucher items...</p>;
 
     if (items.length === 0) {
         return (
@@ -51,7 +72,7 @@ export default function VoucherItemsPage() {
         <div className="p-6 space-y-4">
 
             <h1 className="text-2xl font-semibold">
-                Voucher Items
+                Danh sách item của voucher
             </h1>
 
             <div className="border rounded overflow-hidden">
@@ -61,11 +82,11 @@ export default function VoucherItemsPage() {
                     <thead className="bg-gray-100">
                         <tr>
                             <th className="p-3 text-left">ID</th>
-                            <th className="p-3 text-left">Code</th>
-                            <th className="p-3 text-left">Status</th>
-                            <th className="p-3 text-left">Assigned</th>
-                            <th className="p-3 text-left">Expired At</th>
-                            <th className="p-3 text-left">Created</th>
+                            <th className="p-3 text-left">Mã code</th>
+                            <th className="p-3 text-left">Trạng thái</th>
+                            <th className="p-3 text-left">Đã sở hữu</th>
+                            <th className="p-3 text-left">Ngày hết hạn</th>
+                            <th className="p-3 text-left">Ngày tạo</th>
                         </tr>
                     </thead>
 
@@ -82,21 +103,21 @@ export default function VoucherItemsPage() {
                                 </td>
 
                                 <td className="p-3">
-                                    {item.status}
+                                    {getStatusText(item.status)}
                                 </td>
 
                                 <td className="p-3">
-                                    {item.isAssigned ? "Yes" : "No"}
+                                    {item.isAssigned ? "Đã sở hữu" : "Chưa sở hữu"}
                                 </td>
 
                                 <td className="p-3">
                                     {item.expiredAt
-                                        ? new Date(item.expiredAt).toLocaleDateString()
+                                        ? new Date(item.expiredAt).toLocaleDateString("vi-VN")
                                         : "-"}
                                 </td>
 
                                 <td className="p-3">
-                                    {new Date(item.createdAt).toLocaleDateString()}
+                                    {new Date(item.createdAt).toLocaleDateString("vi-VN")}
                                 </td>
 
                             </tr>

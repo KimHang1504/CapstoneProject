@@ -98,14 +98,16 @@ export default function VoucherTabs({ voucher }: Props) {
                         {/* Locations */}
                         <div className="flex flex-wrap gap-2 pt-1">
                             Áp dụng tại:{" "}
-                            {voucher.locations.map((l) => (
-                                <span
-                                    key={l.venueLocationId}
-                                    className="px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs"
-                                >
-                                    {l.venueLocationName}
-                                </span>
-                            ))}
+                            {voucher.locations
+                                ?.filter((l) => l.isActive)
+                                .map((l) => (
+                                    <span
+                                        key={l.venueLocationId}
+                                        className="px-2.5 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs"
+                                    >
+                                        {l.venueLocationName}
+                                    </span>
+                                ))}
                         </div>
 
                     </div>

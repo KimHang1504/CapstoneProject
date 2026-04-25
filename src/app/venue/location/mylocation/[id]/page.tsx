@@ -244,10 +244,12 @@ export default function LocationDetailPage() {
             toast.error("Không thể kiểm tra thông tin tài khoản. Vui lòng thử lại.");
         }
     };
-
-    const canShowReview =
-        location.status === "ACTIVE" ||
-        location.status === "INACTIVE";
+    // const hasReviews = location.reviewCount > 0;
+    // const canShowReview =
+    //     location.status === "ACTIVE" ||
+    //     location.status === "INACTIVE" ||
+    //     (location.status === "PENDING" && hasReviews) ||
+    //     (location.status === "DRAFTED" && hasReviews);
 
     const canEditOpeningHours =
         location.status === "ACTIVE" ||
@@ -265,7 +267,7 @@ export default function LocationDetailPage() {
         };
         fetchLocation();
     };
-
+    const canInteractReview = location.status === "ACTIVE";
     const statusUI = getLocationStatusUI(location);
 
     return (
@@ -634,13 +636,12 @@ export default function LocationDetailPage() {
                 )}
 
                 <div>
-                    {canShowReview && (
                         <ReviewSection
                             venueId={location.id}
                             venueName={location.name}
                             venueDescription={location.description}
+                            canInteractReview={canInteractReview}
                         />
-                    )}
                 </div>
 
 
