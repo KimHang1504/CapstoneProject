@@ -85,7 +85,7 @@ export default function ReviewSection({ venueId, venueName, venueDescription, ca
                         }`}
                 >
                     <Sparkles size={16} />
-                    Improve
+                    Cải thiện
                 </button>
             </div>
 

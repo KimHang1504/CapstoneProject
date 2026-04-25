@@ -169,17 +169,22 @@ export default function ReviewList({
                             </div>
 
                             {review.coupleMoodSnapshot && (
-                                <div className="mt-2">
-                                    <span className="inline-flex items-center gap-1
-                                            px-3 py-1 text-xs font-medium
-                                            rounded-full
-                                            bg-gradient-to-r from-purple-50 to-pink-50
-                                            text-purple-700
-                                            border border-purple-200
-                                            shadow-sm
-                                        ">
-                                        Mood: {review.coupleMoodSnapshot}
-                                    </span>
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                    {review.coupleMoodSnapshot.split(',').map((mood, index) => (
+                                        <span 
+                                            key={index}
+                                            className="inline-flex items-center gap-1
+                                                px-3 py-1 text-xs font-medium
+                                                rounded-full
+                                                bg-gradient-to-r from-purple-50 to-pink-50
+                                                text-purple-700
+                                                border border-purple-200
+                                                shadow-sm
+                                            "
+                                        >
+                                            {mood.trim()}
+                                        </span>
+                                    ))}
                                 </div>
                             )}
 
