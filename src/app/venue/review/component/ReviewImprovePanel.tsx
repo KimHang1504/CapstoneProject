@@ -88,11 +88,11 @@ const safeJsonParse = (content: string): OpenAIImprovePayload | null => {
     // Extract summary
     const summaryMatch = content.match(/"summary"\s*:\s*"((?:[^"\\]|\\.)*)"/);
     
-    // Extract improvements array
-    const improvementsMatch = content.match(/"improvements"\s*:\s*\[(.*?)\]\s*,?\s*"priorityActions"/s);
+    // Extract improvements array (use [\s\S] instead of . with s flag)
+    const improvementsMatch = content.match(/"improvements"\s*:\s*\[([\s\S]*?)\]\s*,?\s*"priorityActions"/);
     
-    // Extract priorityActions array
-    const priorityMatch = content.match(/"priorityActions"\s*:\s*\[(.*?)\]\s*\}/s);
+    // Extract priorityActions array (use [\s\S] instead of . with s flag)
+    const priorityMatch = content.match(/"priorityActions"\s*:\s*\[([\s\S]*?)\]\s*\}/);
 
     const extractArray = (arrayContent: string | undefined): string[] => {
       if (!arrayContent) return [];
