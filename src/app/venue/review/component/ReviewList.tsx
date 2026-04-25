@@ -84,7 +84,7 @@ export default function ReviewList({
             setSelectedType(null)
             setReportReason("")
         } catch (err) {
-            toast.error("Gửi báo cáo thất bại",git  { description: (err as Error).message })
+            toast.error("Gửi báo cáo thất bại", { description: (err as Error).message })
         } finally {
             setReportLoading(false)
         }
