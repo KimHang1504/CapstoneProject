@@ -13,6 +13,8 @@ import {
 } from 'recharts';
 import SubscriptionExpiredModal from '@/components/SubscriptionExpiredModal';
 import InsightSkeleton from "@/components/skeleton/InsightSkeleton";
+import VenueInsightExpiryBadge from '@/components/VenueInsightExpiryBanner';
+import { getVenueOwnerSubscriptionInfo } from '@/api/venue/dashboard/api';
 
 const TIMEFRAME_OPTIONS: { value: Timeframe; label: string }[] = [
   { value: 'all', label: 'Tất cả' },
@@ -86,6 +88,31 @@ export default function InsightPage() {
   const [loading, setLoading] = useState(false);
   const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [subscriptionMessage, setSubscriptionMessage] = useState('');
+  const [isCheckingAccess, setIsCheckingAccess] = useState(true);
+
+  // Kiểm tra quyền truy cập khi load trang
+  useEffect(() => {
+    const checkAccess = async () => {
+      try {
+        const res = await getVenueOwnerSubscriptionInfo();
+        if (res.code === 200 && res.data) {
+          const { venueInsightAccess } = res.data;
+          
+          // Nếu không có quyền truy cập hoặc hết hạn (0 ngày)
+          if (!venueInsightAccess?.hasAccess || (venueInsightAccess.daysRemaining !== null && venueInsightAccess.daysRemaining <= 0)) {
+            setSubscriptionMessage('Gói VENUE_INSIGHT của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng.');
+            setShowSubscriptionModal(true);
+          }
+        }
+      } catch (error) {
+        console.error('Check access error:', error);
+      } finally {
+        setIsCheckingAccess(false);
+      }
+    };
+
+    checkAccess();
+  }, []);
 
   const fetchInsight = async (tf: Timeframe) => {
     try {
@@ -109,22 +136,48 @@ export default function InsightPage() {
     }
   };
 
-  useEffect(() => { fetchInsight(timeframe); }, [timeframe]);
+  useEffect(() => { 
+    if (!isCheckingAccess && !showSubscriptionModal) {
+      fetchInsight(timeframe); 
+    }
+  }, [timeframe, isCheckingAccess, showSubscriptionModal]);
 
   const inner = data?.data;
   const trend = data?.trendAnalysis;
+
+  const handleModalClose = () => {
+    // Nếu không có quyền truy cập, không cho đóng modal và chuyển về trang dashboard
+    if (showSubscriptionModal && subscriptionMessage.includes('hết hạn')) {
+      window.location.href = '/venue/dashboard';
+    } else {
+      setShowSubscriptionModal(false);
+    }
+  };
 
   return (
     <>
       <SubscriptionExpiredModal
         isOpen={showSubscriptionModal}
-        onClose={() => setShowSubscriptionModal(false)}
+        onClose={handleModalClose}
         message={subscriptionMessage}
       />
 
       <div className="p-6 space-y-6 max-w-6xl mx-auto">
 
+        {/* Subscription Expiry Banner */}
+        {!isCheckingAccess && !showSubscriptionModal && <VenueInsightExpiryBadge />}
+
+        {/* Loading state while checking access */}
+        {isCheckingAccess && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mb-4"></div>
+            <p className="text-gray-600">Đang kiểm tra quyền truy cập...</p>
+          </div>
+        )}
+
         {/* Header + Timeframe */}
+        {!isCheckingAccess && !showSubscriptionModal && (
+        <>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-xl font-bold text-gray-900">Insight</h1>
@@ -386,6 +439,8 @@ export default function InsightPage() {
             </div>
           </>
         ) : null}
+        </>
+        )}
       </div>
     </>
   );
