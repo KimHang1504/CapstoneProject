@@ -19,11 +19,11 @@ export function getLocationSubmitErrors(location: VenueLocationDetail) {
   if (!location.name) errors.push('Tên địa điểm');
   if (!location.description) errors.push('Mô tả');
   if (!location.address) errors.push('Địa chỉ');
-  if (!location.email) errors.push('Email');
+  // if (!location.email) errors.push('Email');
   if (!location.latitude || !location.longitude) errors.push('Vị trí trên bản đồ');
-  if (!location.websiteUrl) errors.push('Website');
-  if (!location.phoneNumber) errors.push('Số điện thoại');
-  if (!location.priceMin || !location.priceMax) errors.push('Khoảng giá');
+  // if (!location.websiteUrl) errors.push('Website');
+  // if (!location.phoneNumber) errors.push('Số điện thoại');
+  // if (!location.priceMin || !location.priceMax) errors.push('Khoảng giá');
   if (!location.coverImage?.length) errors.push('Hình ảnh bìa');
   // if (!location.interiorImage?.length) errors.push('Hình ảnh nội thất');
   // if (!location.fullPageMenuImage?.length) errors.push('Hình ảnh menu');

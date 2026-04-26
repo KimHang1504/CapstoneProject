@@ -56,7 +56,7 @@ export default function MyLocationPage() {
         const rejection = rejectionDetails[0];
         return {
           type: "CLOSED",
-          label: "Địa điểm đã đóng cửa",
+          label: "Địa điểm đã đóng cửa bởi admin",
           subLabel: `Lý do: ${rejection.reason}`,
           className: "bg-red-100 text-red-700",
           cta: "Xem chi tiết",
@@ -289,8 +289,8 @@ export default function MyLocationPage() {
             {[
               { key: 'all', label: 'Tất cả', value: stats.all },
               { key: 'DRAFTED', label: 'Bản nháp', value: stats.DRAFTED },
-              { key: 'ACTIVE', label: 'Đang mở', value: stats.ACTIVE },
-              { key: 'CLOSED', label: 'Đóng cửa', value: stats.CLOSED },
+              { key: 'ACTIVE', label: 'Đang hoạt động', value: stats.ACTIVE },
+              { key: 'CLOSED', label: 'Tạm ngưng', value: stats.CLOSED },
               { key: 'EXPIRED', label: 'Hết hạn', value: stats.EXPIRED },
               { key: 'PENDING', label: 'Chờ duyệt', value: stats.PENDING },
             ].map(item => (

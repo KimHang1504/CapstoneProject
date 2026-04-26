@@ -84,7 +84,7 @@ export default function ReviewList({
             setSelectedType(null)
             setReportReason("")
         } catch (err) {
-            toast.error("Gửi báo cáo thất bại")
+            toast.error("Gửi báo cáo thất bại", { description: (err as Error).message })
         } finally {
             setReportLoading(false)
         }
@@ -205,6 +205,11 @@ export default function ReviewList({
                                 {review.isMatched && (
                                     <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
                                         Mood phù hợp
+                                    </span>
+                                )}
+                                {!review.isMatched && (
+                                    <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded-full">
+                                        Mood không phù hợp
                                     </span>
                                 )}
 
