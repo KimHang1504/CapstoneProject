@@ -81,18 +81,6 @@ function safeImg(src: string[] | string | null | undefined) {
   return FALLBACK_IMG;
 }
 
-  // nếu là array → lấy phần tử đầu
-  if (Array.isArray(src)) {
-    return src[0] ?? FALLBACK_IMG;
-  }
-
-  // nếu là string
-  if (typeof src === 'string') {
-    return src.startsWith('http') ? src : FALLBACK_IMG;
-  }
-
-  return FALLBACK_IMG;
-}
 function VenueRow({ v }: { v: VenuePerformance }) {
   const statusUI = getLocationStatusUI(v);
   return (
