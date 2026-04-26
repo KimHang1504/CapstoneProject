@@ -97,6 +97,12 @@ export default function AdvertisementDetailPage() {
 
     const MIN_HOURS_AHEAD = 72;
 
+    function formatVNDate(dateStr: string) {
+        return new Date(dateStr).toLocaleDateString('vi-VN', {
+            timeZone: 'Asia/Ho_Chi_Minh'
+        });
+    }
+
     const handleSubmit = () => {
         const { missingCitizenId } = checkVenueOwnerVerification(userProfile);
 
@@ -392,7 +398,9 @@ export default function AdvertisementDetailPage() {
                         iconBg: "bg-violet-100 text-violet-600",
                     }, {
                         label: "Ngày bắt đầu",
-                        value: ad.desiredStartDate ? new Date(ad.desiredStartDate).toLocaleDateString('vi-VN') : 'Chưa đặt',
+                        value: ad.desiredStartDate
+                            ? formatVNDate(ad.desiredStartDate)
+                            : 'Chưa đặt',
                         icon: <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>,
                         bar: "from-pink-500 to-rose-500",
                         iconBg: "bg-pink-100 text-pink-600",

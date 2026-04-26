@@ -2,9 +2,10 @@
 
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info"
 import { geocodeAddress, reverseGeocode } from "@/api/geocode/nominatim";
-import { useState } from "react";
 import dynamic from "next/dynamic";
 import { MapPin, Phone, Mail, Globe, Loader2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { searchMapbox } from "@/api/geocode/mapbox";
 
 // Lazy load MapPicker để tránh lỗi SSR với Leaflet
 const MapPicker = dynamic(() => import("./MapPicker"), { ssr: false });
@@ -24,12 +25,67 @@ export default function Contact({ formData, setFormData }: Props) {
     website: ""
   });
 
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const debounceRef = useRef<NodeJS.Timeout | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
+
   const [touched, setTouched] = useState({
     address: false,
     phone: false,
     email: false,
     website: false
   });
+
+  const handleAddressChange = (value: string) => {
+    setFormData(prev => ({ ...prev, address: value }));
+
+    if (touched.address) {
+      setErrors(prev => ({
+        ...prev,
+        address: value.trim() ? "" : "Không được để trống"
+      }));
+    }
+
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    debounceRef.current = setTimeout(async () => {
+      if (value.length < 3) {
+        setSuggestions([]);
+        return;
+      }
+
+      try {
+        setIsSearching(true);
+
+        // cancel request cũ
+        abortRef.current?.abort();
+        const controller = new AbortController();
+        abortRef.current = controller;
+
+        const results = await searchMapbox(value, controller.signal);
+        setSuggestions(results);
+
+      } catch (err: any) {
+        if (err.name !== "AbortError") {
+          console.error(err);
+        }
+      } finally {
+        setIsSearching(false);
+      }
+    }, 800);
+  };
+
+  const handleSelectSuggestion = (item: any) => {
+    setFormData(prev => ({
+      ...prev,
+      address: item.label,
+      latitude: item.lat,
+      longitude: item.lon,
+    }));
+
+    setSuggestions([]);
+  };
 
   const handleAddressBlur = async () => {
     setTouched(prev => ({ ...prev, address: true }));
@@ -146,7 +202,6 @@ export default function Contact({ formData, setFormData }: Props) {
     }
   }
 
-
   return (
     <div className="flex justify-center">
       <div className="w-full max-w-3xl px-4 py-4">
@@ -166,7 +221,7 @@ export default function Contact({ formData, setFormData }: Props) {
             <MapPin className="w-4 h-4 text-blue-500" />
             Địa chỉ của địa điểm<span className="text-pink-500"> *</span>
           </label>
-          <div className="relative">
+          <div className="relative z-50">
             <input
               className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
     ${errors.address && touched.address
@@ -174,28 +229,25 @@ export default function Contact({ formData, setFormData }: Props) {
                   : "border-[#E4D7FF] focus:border-[#C9A7FF] focus:ring-2 focus:ring-blue-100"
                 }`}
               value={formData.address}
-              onChange={(e) => {
-                const value = e.target.value;
-
-                setFormData({ ...formData, address: value });
-
-                if (touched.address) {
-                  if (!value.trim()) {
-                    setErrors(prev => ({
-                      ...prev,
-                      address: "Không được để trống"
-                    }));
-                  } else {
-                    setErrors(prev => ({
-                      ...prev,
-                      address: ""
-                    }));
-                  }
-                }
-              }}
-              onBlur={handleAddressBlur}
+              onChange={(e) => handleAddressChange(e.target.value)}
+              onFocus={() => setTouched(prev => ({ ...prev, address: true }))}
               placeholder="Nhập địa chỉ hoặc click vào bản đồ để chọn vị trí"
             />
+            {suggestions.length > 0 && (
+              <div className="absolute z-[9999] w-full bg-white border border-gray-200 rounded-lg shadow-lg mt-1 max-h-60 overflow-auto">                {suggestions.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="px-3 py-2 text-sm cursor-pointer hover:bg-blue-50"
+                  onMouseDown={() => handleSelectSuggestion(item)}                >
+                  {item.label}
+                </div>
+              ))}
+              </div>
+            )}
+
+            {isSearching && (
+              <div className="text-xs text-gray-400 mt-1">Đang tìm...</div>
+            )}
             {errors.address && touched.address && (
               <p className="text-xs text-red-500 mt-1">{errors.address}</p>
             )}
@@ -220,6 +272,7 @@ export default function Contact({ formData, setFormData }: Props) {
                 <p>Click vào bản đồ để chọn vị trí chính xác</p>
               </div>
               <MapPicker
+                key={`${formData.latitude}-${formData.longitude}`}
                 latitude={formData.latitude}
                 longitude={formData.longitude}
                 onLocationChange={handleMapClick}
