@@ -9,7 +9,8 @@ import {
   BarChart2, Megaphone
 } from 'lucide-react';
 import {
-  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  AreaChart, Area, CartesianGrid, Legend
 } from 'recharts';
 import { getVenueOwnerDashboardOverview } from '@/api/venue/dashboard/api';
 import { VenueOwnerDashboardOverview, VenuePerformance, RecentAdvertisement } from '@/api/venue/dashboard/type';
@@ -67,21 +68,19 @@ function SectionTitle({ children, icon: Icon }: { children: React.ReactNode; ico
 }
 
 const FALLBACK_IMG = 'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg';
-function safeImg(src: string | string[] | null | undefined) {
-  if (!src) return FALLBACK_IMG;
-
-  // nếu là array → lấy phần tử đầu
-  if (Array.isArray(src)) {
-    return src[0] ?? FALLBACK_IMG;
+function safeImg(src: string[] | string | null | undefined) {
+  // Handle array format (new API response)
+  if (Array.isArray(src) && src.length > 0) {
+    const firstImg = src[0];
+    return firstImg && firstImg.startsWith('http') ? firstImg : FALLBACK_IMG;
   }
-
-  // nếu là string
-  if (typeof src === 'string') {
-    return src.startsWith('http') ? src : FALLBACK_IMG;
+  // Handle string format (legacy or fallback)
+  if (typeof src === 'string' && src.startsWith('http')) {
+    return src;
   }
-
   return FALLBACK_IMG;
 }
+
 function VenueRow({ v }: { v: VenuePerformance }) {
   const statusUI = getLocationStatusUI(v);
   return (
@@ -184,18 +183,119 @@ export default function VenueDashboardPage() {
   };
 
 
+  // Mock revenue data (voucher commission)
+  const revenueData = [
+    { month: 'T1', doanhThu: 1200000, voucher: 320000 },
+    { month: 'T2', doanhThu: 1850000, voucher: 510000 },
+    { month: 'T3', doanhThu: 1400000, voucher: 390000 },
+    { month: 'T4', doanhThu: 2300000, voucher: 680000 },
+    { month: 'T5', doanhThu: 1950000, voucher: 540000 },
+    { month: 'T6', doanhThu: 2700000, voucher: 820000 },
+    { month: 'T7', doanhThu: 3100000, voucher: 950000 },
+    { month: 'T8', doanhThu: 2600000, voucher: 710000 },
+    { month: 'T9', doanhThu: 2200000, voucher: 600000 },
+    { month: 'T10', doanhThu: 3400000, voucher: 1050000 },
+    { month: 'T11', doanhThu: 2900000, voucher: 870000 },
+    { month: 'T12', doanhThu: 3800000, voucher: 1200000 },
+  ];
+
+  const formatVND = (v: number) => {
+    if (v >= 1_000_000) return (v / 1_000_000).toFixed(1) + 'M';
+    if (v >= 1_000) return (v / 1_000).toFixed(0) + 'k';
+    return v.toString();
+  };
+
+  const RevenueTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 text-xs space-y-1">
+          <p className="font-semibold text-gray-700 mb-1">{label}</p>
+          {payload.map((p: any) => (
+            <div key={p.dataKey} className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
+              <span className="text-gray-500">{p.name}:</span>
+              <span className="font-bold text-gray-800">
+                {Number(p.value).toLocaleString('vi-VN')}đ
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="p-4 space-y-4 max-w-350 mx-auto">
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-        <StatCard label="Địa điểm" value={data.totalVenues} icon={MapPin} color="bg-violet-500" />
-        <StatCard label="Active" value={data.activeVenues} icon={CheckCircle} color="bg-emerald-500" />
-        <StatCard label="Đánh giá" value={data.averageRating.toFixed(1)} icon={Star} color="bg-amber-500" />
-        <StatCard label="Check-in" value={data.totalCheckIns} icon={CheckCircle} color="bg-sky-500" />
-        <StatCard label="Yêu thích" value={data.totalFavorites} icon={Heart} color="bg-rose-500" />
-        <StatCard label="Khách hàng" value={data.uniqueCustomers} icon={Users} color="bg-indigo-500" />
-        <StatCard label="Quảng cáo" value={data.totalAdvertisements} icon={Megaphone} color="bg-purple-500" />
+      {/* Revenue Chart */}
+      <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+        <div className="flex items-center justify-between mb-4">
+          <SectionTitle icon={TrendingUp}>Doanh thu từ hoa hồng Voucher</SectionTitle>
+          <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-1 rounded-full">Mock data</span>
+        </div>
+        <div className="grid grid-cols-3 gap-3 mb-4">
+          <div className="bg-violet-50 rounded-lg p-3">
+            <p className="text-[11px] text-gray-500">Tổng doanh thu</p>
+            <p className="text-lg font-bold text-violet-700">
+              {formatVND(revenueData.reduce((s, d) => s + d.doanhThu, 0))}đ
+            </p>
+          </div>
+          <div className="bg-pink-50 rounded-lg p-3">
+            <p className="text-[11px] text-gray-500">Hoa hồng voucher</p>
+            <p className="text-lg font-bold text-pink-600">
+              {formatVND(revenueData.reduce((s, d) => s + d.voucher, 0))}đ
+            </p>
+          </div>
+          <div className="bg-emerald-50 rounded-lg p-3">
+            <p className="text-[11px] text-gray-500">Tỉ lệ hoa hồng TB</p>
+            <p className="text-lg font-bold text-emerald-600">
+              {(revenueData.reduce((s, d) => s + d.voucher / d.doanhThu, 0) / revenueData.length * 100).toFixed(1)}%
+            </p>
+          </div>
+        </div>
+        <div className="h-64">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={revenueData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+              <defs>
+                <linearGradient id="gradDoanhThu" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="gradVoucher" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3} />
+                  <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="month" tick={{ fontSize: 11 }} />
+              <YAxis tickFormatter={formatVND} tick={{ fontSize: 10 }} width={45} />
+              <Tooltip content={<RevenueTooltip />} />
+              <Legend
+                formatter={(value) => value === 'doanhThu' ? 'Doanh thu' : 'Hoa hồng voucher'}
+                wrapperStyle={{ fontSize: 11 }}
+              />
+              <Area
+                type="monotone"
+                dataKey="doanhThu"
+                name="doanhThu"
+                stroke="#8b5cf6"
+                strokeWidth={2.5}
+                fill="url(#gradDoanhThu)"
+                dot={false}
+              />
+              <Area
+                type="monotone"
+                dataKey="voucher"
+                name="voucher"
+                stroke="#ec4899"
+                strokeWidth={2.5}
+                fill="url(#gradVoucher)"
+                dot={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
       {/* Main Content Grid */}
