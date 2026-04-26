@@ -88,6 +88,10 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
     if (!analysis) return null;
 
     const messageType = getMessageType(analysis);
+    
+    // Ẩn component nếu không có đủ dữ liệu
+    if (messageType === 'NO_DATA') return null;
+    
     const ui = uiMap[messageType];
 
     return (
@@ -127,9 +131,11 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
 
                 {isExpanded && (
                     <div className="mt-3 pt-3 border-t border-gray-200 space-y-2.5">
-                        <p className="text-xs text-gray-500">
-                           Có {analysis.totalReviews} đánh giá và độ phù hợp là {analysis.overallMatchRate}%.
-                        </p>
+                        {analysis.totalReviews > 0 && (
+                            <p className="text-xs text-gray-500">
+                               Có {analysis.totalReviews} đánh giá và độ phù hợp là {analysis.overallMatchRate}%.
+                            </p>
+                        )}
 
                         {analysis.tagAnalysis
                             .filter(tag => tag.status === 'POOR' || tag.status === 'WARNING')
@@ -168,7 +174,7 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
 
                                     <div className="flex items-center justify-between text-xs">
                                         <span className="text-gray-500">
-                                           Trong {tag.totalReviews} khách hàng có tag "{tag.tag}", {tag.matchedCount} khách hàng đồng ý với tag "{tag.tag}" mà bạn đặt ra.
+                                           {tag.matchedCount}/{tag.totalReviews} khách hàng đồng ý với tag này
                                         </span>
                                         {tag.status === 'POOR' && (
                                             <span className="text-red-600 font-medium">Nên xóa</span>

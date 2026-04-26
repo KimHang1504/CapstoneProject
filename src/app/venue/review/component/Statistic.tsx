@@ -1,5 +1,6 @@
 "use client"
 
+import { Star } from "lucide-react"
 import { ReviewSummary } from "@/api/venue/review/type"
 
 type Props = {
@@ -34,19 +35,16 @@ export default function Statistic({ summary }: Props) {
 
       {/* Mood Match */}
       <div className="bg-white p-6 border-r border-gray-200">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <p className="text-sm text-gray-500">
-              Tỉ lệ khách hàng cảm thấy phù hợp
-            </p>
-            <p className="text-3xl font-semibold tracking-tight">
-              {summary.moodMatchPercentage}%
-            </p>
-          </div>
-
-          <div className="text-sm text-gray-400">
-            {summary.matchedReviewsCount} đánh giá phù hợp
-          </div>
+        <p className="text-sm text-gray-500 mb-2">
+          Tỉ lệ khách hàng cảm thấy phù hợp
+        </p>
+        <div className="flex items-baseline gap-2 mb-3">
+          <p className="text-3xl font-semibold tracking-tight">
+            {summary.moodMatchPercentage}%
+          </p>
+          <span className="text-sm text-gray-400">
+            ({summary.matchedReviewsCount} phù hợp)
+          </span>
         </div>
 
         <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -71,8 +69,9 @@ export default function Statistic({ summary }: Props) {
             <div key={star} className="flex items-center gap-3">
 
               {/* Star */}
-              <div className="w-10 text-sm text-gray-500">
+              <div className="w-10 text-sm text-gray-500 flex items-center gap-1">
                 {star}
+                <Star size={14} className="fill-yellow-400 text-yellow-400" />
               </div>
 
               {/* Bar */}
