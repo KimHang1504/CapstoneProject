@@ -37,7 +37,7 @@ export default function Statistic({ summary }: Props) {
         <div className="flex justify-between items-start mb-4">
           <div>
             <p className="text-sm text-gray-500">
-              Phù hợp với mood
+              Tỉ lệ khách hàng cảm thấy phù hợp
             </p>
             <p className="text-3xl font-semibold tracking-tight">
               {summary.moodMatchPercentage}%
