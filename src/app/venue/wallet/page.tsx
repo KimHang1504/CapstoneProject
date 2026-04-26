@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { getWalletBalance, getWithdrawRequests, getTransactionHistory } from "@/api/venue/wallet/api";
 import { Wallet, WithdrawRequest, PaginatedTransactionResponse } from "@/api/venue/wallet/type";
 import WithdrawModal from "@/app/venue/wallet/components/WithdrawModal";
 import TopupModal from "@/app/venue/wallet/components/TopupModal";
-import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight, QrCode } from "lucide-react";
+import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight, QrCode, Search, Filter, ChevronDown } from "lucide-react";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   APPROVED: { label: "Đã duyệt", cls: "bg-emerald-100 text-emerald-600" },
@@ -32,6 +32,11 @@ export default function WalletPage() {
   const [activeTab, setActiveTab] = useState<'transactions' | 'withdraws'>('transactions');
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<string>('ALL');
+  const [showFilterDropdown, setShowFilterDropdown] = useState(false);
+  const filterButtonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
 
   useEffect(() => { loadWallet(); }, []);
 
@@ -40,6 +45,16 @@ export default function WalletPage() {
       loadTransactions(currentPage);
     }
   }, [currentPage, activeTab]);
+
+  useEffect(() => {
+    if (showFilterDropdown && filterButtonRef.current) {
+      const rect = filterButtonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right
+      });
+    }
+  }, [showFilterDropdown]);
 
   const loadWallet = async () => {
     try {
@@ -167,7 +182,75 @@ export default function WalletPage() {
         {activeTab === 'transactions' && (
           <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
-              <h2 className="font-semibold text-gray-800">Biến động số dư</h2>
+              <h2 className="font-semibold text-gray-800 mb-4">Biến động số dư</h2>
+              
+              {/* Search and Filter Row */}
+              <div className="flex items-center gap-3">
+                {/* Search Input */}
+                <div className="flex-1 relative">
+                  <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Tìm kiếm giao dịch..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+                  />
+                </div>
+
+                {/* Filter Dropdown */}
+                <div className="relative">
+                  <button
+                    ref={filterButtonRef}
+                    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                    className="flex items-center gap-2 pl-3 pr-3 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white transition"
+                  >
+                    <Filter size={18} className="text-gray-400" />
+                    <span className="text-gray-700">
+                      {filterType === 'ALL' ? 'Tất cả loại' : TRANSACTION_TYPE_MAP[filterType]}
+                    </span>
+                    <ChevronDown size={16} className={`text-gray-400 transition-transform ${showFilterDropdown ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {showFilterDropdown && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-40" 
+                        onClick={() => setShowFilterDropdown(false)}
+                      />
+                      <div 
+                        className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+                        style={{
+                          top: `${dropdownPosition.top}px`,
+                          right: `${dropdownPosition.right}px`
+                        }}
+                      >
+                        {[
+                          { value: 'ALL', label: 'Tất cả loại' },
+                          { value: 'ADS_ORDER', label: 'Quảng cáo' },
+                          { value: 'VENUE_SUBSCRIPTION', label: 'Đăng ký địa điểm' },
+                          { value: 'REFUND', label: 'Hoàn tiền' },
+                          { value: 'DEPOSIT', label: 'Nạp tiền' },
+                          { value: 'WITHDRAW', label: 'Rút tiền' },
+                        ].map((option) => (
+                          <button
+                            key={option.value}
+                            onClick={() => {
+                              setFilterType(option.value);
+                              setShowFilterDropdown(false);
+                            }}
+                            className={`w-full text-left px-4 py-2 text-sm hover:bg-violet-50 transition ${
+                              filterType === option.value ? 'bg-violet-50 text-violet-600 font-medium' : 'text-gray-700'
+                            }`}
+                          >
+                            {option.label}
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
 
             {loadingTransactions ? (
@@ -182,7 +265,22 @@ export default function WalletPage() {
             ) : (
               <>
                 <div className="divide-y divide-gray-50">
-                  {transactionData.items.map((item) => {
+                  {transactionData.items
+                    .filter((item) => {
+                      // Filter by transaction type
+                      if (filterType !== 'ALL' && item.transactionType !== filterType) {
+                        return false;
+                      }
+                      // Filter by search query
+                      if (searchQuery.trim()) {
+                        const query = searchQuery.toLowerCase();
+                        const matchesDescription = item.description.toLowerCase().includes(query);
+                        const matchesType = TRANSACTION_TYPE_MAP[item.transactionType]?.toLowerCase().includes(query);
+                        return matchesDescription || matchesType;
+                      }
+                      return true;
+                    })
+                    .map((item) => {
                     const isIncoming = item.direction === 'IN';
                     return (
                       <div key={item.transactionId} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-violet-50/40 transition">
@@ -218,6 +316,23 @@ export default function WalletPage() {
                     );
                   })}
                 </div>
+
+                {/* No results message */}
+                {transactionData.items.filter((item) => {
+                  if (filterType !== 'ALL' && item.transactionType !== filterType) return false;
+                  if (searchQuery.trim()) {
+                    const query = searchQuery.toLowerCase();
+                    const matchesDescription = item.description.toLowerCase().includes(query);
+                    const matchesType = TRANSACTION_TYPE_MAP[item.transactionType]?.toLowerCase().includes(query);
+                    return matchesDescription || matchesType;
+                  }
+                  return true;
+                }).length === 0 && (
+                  <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
+                    <Search size={36} className="opacity-30" />
+                    <p className="text-sm">Không tìm thấy giao dịch phù hợp</p>
+                  </div>
+                )}
 
                 {/* Pagination */}
                 {transactionData.totalPages > 1 && (

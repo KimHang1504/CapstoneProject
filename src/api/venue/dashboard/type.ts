@@ -93,3 +93,28 @@ export interface VenueOwnerDashboardOverview {
   // venues list
   venues: VenuePerformance[];
 }
+
+// Subscription Info Types
+export interface ActiveSubscriptionDetail {
+  subscriptionId: number;
+  packageId: number;
+  packageName: string | null;
+  packageType: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  venueId: number | null;
+  features: Record<string, boolean> | null;
+}
+
+export interface FeatureAccessInfo {
+  hasAccess: boolean;
+  expiryDate: string | null;
+  daysRemaining: number | null;
+  providingPackages: string[];
+}
+
+export interface VenueOwnerSubscriptionInfo {
+  hasActiveSubscription: boolean;
+  activeSubscriptions: ActiveSubscriptionDetail[];
+  venueInsightAccess: FeatureAccessInfo | null;
+}
