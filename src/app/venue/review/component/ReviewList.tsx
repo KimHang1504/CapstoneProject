@@ -16,6 +16,7 @@ type Props = {
     reviews: Review[]
     isLoading?: boolean
     onReplySuccess?: (reviewId: number, reply: ReviewReply) => void
+    canInteractReview: boolean
 }
 
 type ActionType = "reply" | "edit" | "report" | null
@@ -24,6 +25,7 @@ export default function ReviewList({
     reviews,
     isLoading,
     onReplySuccess,
+    canInteractReview,
 }: Props) {
     const [activeAction, setActiveAction] = useState<{
         id: number | null
@@ -38,6 +40,7 @@ export default function ReviewList({
     const [reportReason, setReportReason] = useState("")
     const [reportLoading, setReportLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+
 
     // ===== Fetch report types =====
     useEffect(() => {
@@ -81,7 +84,7 @@ export default function ReviewList({
             setSelectedType(null)
             setReportReason("")
         } catch (err) {
-            toast.error("Gửi báo cáo thất bại")
+            toast.error("Gửi báo cáo thất bại", { description: (err as Error).message })
         } finally {
             setReportLoading(false)
         }
@@ -117,7 +120,6 @@ export default function ReviewList({
         )
     }
 
-    // ===== Empty =====
     if (!reviews.length) {
         return (
             <div className="py-16 text-center text-sm text-gray-400">
@@ -166,6 +168,27 @@ export default function ReviewList({
                                 </div>
                             </div>
 
+                            {review.coupleMoodSnapshot && (
+                                <div className="mt-2 flex flex-wrap gap-1.5">
+                                    {review.coupleMoodSnapshot.split(',').map((mood, index) => (
+                                        <span 
+                                            key={index}
+                                            className="inline-flex items-center gap-1
+                                                px-3 py-1 text-xs font-medium
+                                                rounded-full
+                                                bg-gradient-to-r from-purple-50 to-pink-50
+                                                text-purple-700
+                                                border border-purple-200
+                                                shadow-sm
+                                            "
+                                        >
+                                            {mood.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+
+
                             {/* CONTENT */}
                             <p className="text-sm text-gray-800 mt-2">
                                 {review.content}
@@ -184,22 +207,27 @@ export default function ReviewList({
                                         Mood phù hợp
                                     </span>
                                 )}
+                                {!review.isMatched && (
+                                    <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded-full">
+                                        Mood không phù hợp
+                                    </span>
+                                )}
 
                                 <button
                                     onClick={() =>
                                         setActiveAction({ id: review.id, type: "report" })
                                     }
-                                    className="hover:text-red-500"
+                                    className="hover:text-red-500 cursor-pointer"
                                 >
                                     Báo cáo
                                 </button>
 
-                                {!review.reviewReply && (
+                                {!review.reviewReply && canInteractReview && (
                                     <button
                                         onClick={() =>
                                             setActiveAction({ id: review.id, type: "reply" })
                                         }
-                                        className="text-violet-500 hover:text-violet-600 hover:underline"                                    >
+                                        className="text-violet-500 hover:text-violet-600 hover:underline cursor-pointer"                                    >
                                         Trả lời
                                     </button>
                                 )}
@@ -221,7 +249,7 @@ export default function ReviewList({
                                                 setActiveAction({ id: review.id, type: "edit" })
                                                 setContent(review.reviewReply!.content)
                                             }}
-                                            className="text-xs text-blue-500 hover:underline"
+                                            className="text-xs text-blue-500 hover:underline cursor-pointer"
                                         >
                                             Chỉnh sửa
                                         </button>
@@ -244,7 +272,7 @@ export default function ReviewList({
                                             <button
                                                 onClick={() => handleSubmit(review.id, true)}
                                                 disabled={loading}
-                                                className="px-3 py-1.5 bg-violet-500 hover:bg-violet-600 text-white rounded-lg transition"                                            >
+                                                className="px-3 py-1.5 bg-violet-500 hover:bg-violet-600 text-white rounded-lg transition cursor-pointer"                                            >
                                                 {loading ? "Đang lưu..." : "Lưu"}
                                             </button>
 
@@ -253,7 +281,7 @@ export default function ReviewList({
                                                     setActiveAction({ id: null, type: null })
                                                     setContent("")
                                                 }}
-                                                className="px-3 py-1.5 bg-gray-100 rounded-lg"
+                                                className="px-3 py-1.5 bg-gray-100 rounded-lg cursor-pointer"
                                             >
                                                 Hủy
                                             </button>
@@ -278,7 +306,7 @@ export default function ReviewList({
                                             <button
                                                 onClick={() => handleSubmit(review.id)}
                                                 disabled={loading}
-                                                className="px-3 py-1.5 bg-violet-500 hover:bg-violet-600 text-white rounded-lg transition"                                            >
+                                                className="px-3 py-1.5 bg-violet-500 hover:bg-violet-600 text-white rounded-lg transition cursor-pointer"                                            >
                                                 {loading ? "Đang gửi..." : "Gửi"}
                                             </button>
 
@@ -287,7 +315,7 @@ export default function ReviewList({
                                                     setActiveAction({ id: null, type: null })
                                                     setContent("")
                                                 }}
-                                                className="px-3 py-1.5 bg-gray-100 rounded-lg"
+                                                className="px-3 py-1.5 bg-gray-100 rounded-lg cursor-pointer"
                                             >
                                                 Hủy
                                             </button>
@@ -360,7 +388,7 @@ focus:ring-2 focus:ring-violet-100 focus:border-violet-400"                     
                                                     setSelectedType(null)
                                                     setReportReason("")
                                                 }}
-                                                className="text-xs text-gray-500 hover:underline"
+                                                className="text-xs text-gray-500 hover:underline cursor-pointer"
                                             >
                                                 Hủy
                                             </button>
@@ -368,7 +396,7 @@ focus:ring-2 focus:ring-violet-100 focus:border-violet-400"                     
                                             <button
                                                 onClick={() => handleReport(review.id)}
                                                 disabled={reportLoading}
-                                                className="px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition"
+                                                className="px-4 py-1.5 bg-red-500 hover:bg-red-600 text-white text-sm rounded-lg transition cursor-pointer"
                                             >
                                                 {reportLoading ? "Đang gửi..." : "Gửi báo cáo"}
                                             </button>

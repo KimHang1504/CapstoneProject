@@ -159,6 +159,14 @@ export default function ReportDetailPage() {
             label="Được báo cáo vào lúc"
             value={new Date(report.createdAt).toLocaleString()}
           />
+            <InfoCard
+            label="Loại báo cáo"
+            value={
+              <span className="px-2 py-1 bg-amber-100 text-amber-600 rounded-md text-xs">
+                {report.reportTypeDescription}
+              </span>
+            }
+          />
         </div>
 
         <div className="px-6 pb-6">

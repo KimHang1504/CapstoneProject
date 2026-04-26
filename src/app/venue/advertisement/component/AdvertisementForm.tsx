@@ -46,8 +46,11 @@ export default function AdvertisementForm({
 }: Props) {
   const isCreateMode = !initialData;
 
+
   const [desiredStartDate, setDesiredStartDate] = useState<Date | null>(
-    initialData?.desiredStartDate ? new Date(initialData.desiredStartDate) : null
+    initialData?.desiredStartDate
+      ? new Date(initialData.desiredStartDate)
+      : null
   );
 
   const [form, setForm] = useState({
@@ -239,8 +242,10 @@ export default function AdvertisementForm({
     const payload = {
       ...form,
       moodTypeId: Number(form.moodTypeId),
-      desiredStartDate: desiredStartDate ? desiredStartDate.toISOString() : null,
+      desiredStartDate: desiredStartDate?.toISOString() ?? null,
     };
+
+
 
     // Placement is derived from package when submitting with payment in create flow.
     if (isCreateMode) {

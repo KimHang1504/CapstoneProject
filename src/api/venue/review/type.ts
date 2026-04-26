@@ -47,6 +47,7 @@ export interface Review {
   status: string
   createdAt: string
   updatedAt: string
+  coupleMoodSnapshot: string | null
 
   member: Member
 

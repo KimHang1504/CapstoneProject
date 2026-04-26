@@ -11,7 +11,7 @@ import {
 } from "@/api/venue/vouchers/api";
 
 import { CreateVoucherRequest } from "@/api/venue/vouchers/type";
-import {toast} from "sonner";
+import { toast } from "sonner";
 import Loading from "@/components/Loading";
 
 export default function EditVoucherPage() {
@@ -51,9 +51,9 @@ export default function EditVoucherPage() {
           usageLimitPerMember: data.usageLimitPerMember,
           usageValidDays: data.usageValidDays ?? 7,
 
-          venueLocationIds: data.locations.map(
-            (l) => l.venueLocationId
-          ),
+          venueLocationIds: data.locations
+            .filter((l) => l.isActive)
+            .map((l) => l.venueLocationId),
 
           startDate: data.startDate.slice(0, 10),
           endDate: data.endDate.slice(0, 10),

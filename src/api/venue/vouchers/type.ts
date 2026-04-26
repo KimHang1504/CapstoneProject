@@ -37,6 +37,7 @@ export type VoucherStatus =
 export type VoucherLocation = {
   venueLocationId: number;
   venueLocationName: string;
+  isActive: boolean;
 };
 
 export type Voucher = {

@@ -583,6 +583,7 @@ export interface Report {
   reporterId: number;
   reporterName: string;
   targetType: 'POST' | 'REVIEW' | 'USER' | 'VENUE' | 'COMMENT';
+  reportTypeDescription: string;
   targetId: number;
   evidenceSnapshot: EvidenceSnapshot;
   reason: string;

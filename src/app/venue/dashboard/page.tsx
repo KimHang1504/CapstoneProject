@@ -67,10 +67,21 @@ function SectionTitle({ children, icon: Icon }: { children: React.ReactNode; ico
 }
 
 const FALLBACK_IMG = 'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg';
-function safeImg(src: string | null | undefined) {
-  return src && src.startsWith('http') ? src : FALLBACK_IMG;
-}
+function safeImg(src: string | string[] | null | undefined) {
+  if (!src) return FALLBACK_IMG;
 
+  // nếu là array → lấy phần tử đầu
+  if (Array.isArray(src)) {
+    return src[0] ?? FALLBACK_IMG;
+  }
+
+  // nếu là string
+  if (typeof src === 'string') {
+    return src.startsWith('http') ? src : FALLBACK_IMG;
+  }
+
+  return FALLBACK_IMG;
+}
 function VenueRow({ v }: { v: VenuePerformance }) {
   const statusUI = getLocationStatusUI(v);
   return (

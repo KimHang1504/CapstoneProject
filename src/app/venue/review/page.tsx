@@ -50,6 +50,7 @@ export default function ReviewPage() {
       <ReviewList
         reviews={reviews}
         isLoading={loading}
+        canInteractReview={true}
       />
     </div>
   )
