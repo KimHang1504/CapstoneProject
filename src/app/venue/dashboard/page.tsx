@@ -67,8 +67,17 @@ function SectionTitle({ children, icon: Icon }: { children: React.ReactNode; ico
 }
 
 const FALLBACK_IMG = 'https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg';
-function safeImg(src: string | null | undefined) {
-  return src && src.startsWith('http') ? src : FALLBACK_IMG;
+function safeImg(src: string[] | string | null | undefined) {
+  // Handle array format (new API response)
+  if (Array.isArray(src) && src.length > 0) {
+    const firstImg = src[0];
+    return firstImg && firstImg.startsWith('http') ? firstImg : FALLBACK_IMG;
+  }
+  // Handle string format (legacy or fallback)
+  if (typeof src === 'string' && src.startsWith('http')) {
+    return src;
+  }
+  return FALLBACK_IMG;
 }
 
 function VenueRow({ v }: { v: VenuePerformance }) {
