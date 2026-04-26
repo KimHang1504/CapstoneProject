@@ -4,16 +4,16 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-  Star, MapPin, Heart, CheckCircle, Ticket, Users,
+  Star, Ticket,
   TrendingUp, ChevronLeft, ChevronRight,
-  BarChart2, Megaphone
+  BarChart2, Megaphone, ChevronDown, Check
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   AreaChart, Area, CartesianGrid, Legend
 } from 'recharts';
-import { getVenueOwnerDashboardOverview } from '@/api/venue/dashboard/api';
-import { VenueOwnerDashboardOverview, VenuePerformance, RecentAdvertisement } from '@/api/venue/dashboard/type';
+import { getVenueOwnerDashboardOverview, getVenueSettlementRevenue } from '@/api/venue/dashboard/api';
+import { VenueOwnerDashboardOverview, VenuePerformance, RecentAdvertisement, RevenueItem } from '@/api/venue/dashboard/type';
 import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 
 // const CHART_COLORS = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#f43f5e'];
@@ -117,12 +117,28 @@ export default function VenueDashboardPage() {
   const [data, setData] = useState<VenueOwnerDashboardOverview | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [revenueItems, setRevenueItems] = useState<RevenueItem[]>([]);
+  const [revenueGroupBy, setRevenueGroupBy] = useState<'day' | 'month' | 'year'>('month');
+  const [revenueYear, setRevenueYear] = useState(new Date().getFullYear());
+  const [revenueYearOpen, setRevenueYearOpen] = useState(false);
+  const [revenueLoading, setRevenueLoading] = useState(false);
+  const YEAR_OPTIONS = [2024, 2025, 2026];
 
   useEffect(() => {
     getVenueOwnerDashboardOverview()
       .then(res => setData(res.data))
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    setRevenueLoading(true);
+    const from = `${revenueYear}-01-01`;
+    const to = `${revenueYear}-12-31`;
+    getVenueSettlementRevenue(from, to, revenueGroupBy)
+      .then(res => setRevenueItems(res.data?.items ?? []))
+      .catch(() => setRevenueItems([]))
+      .finally(() => setRevenueLoading(false));
+  }, [revenueGroupBy, revenueYear]);
 
   console.log("Dashboard render", { data, loading });
 
@@ -184,20 +200,14 @@ export default function VenueDashboardPage() {
 
 
   // Mock revenue data (voucher commission)
-  const revenueData = [
-    { month: 'T1', doanhThu: 1200000, voucher: 320000 },
-    { month: 'T2', doanhThu: 1850000, voucher: 510000 },
-    { month: 'T3', doanhThu: 1400000, voucher: 390000 },
-    { month: 'T4', doanhThu: 2300000, voucher: 680000 },
-    { month: 'T5', doanhThu: 1950000, voucher: 540000 },
-    { month: 'T6', doanhThu: 2700000, voucher: 820000 },
-    { month: 'T7', doanhThu: 3100000, voucher: 950000 },
-    { month: 'T8', doanhThu: 2600000, voucher: 710000 },
-    { month: 'T9', doanhThu: 2200000, voucher: 600000 },
-    { month: 'T10', doanhThu: 3400000, voucher: 1050000 },
-    { month: 'T11', doanhThu: 2900000, voucher: 870000 },
-    { month: 'T12', doanhThu: 3800000, voucher: 1200000 },
-  ];
+  const revenueData = revenueItems.map(item => ({
+    label: item.label,
+    revenue: item.revenue,
+    count: item.count,
+  }));
+
+  const totalRevenue = revenueItems.reduce((s, d) => s + d.revenue, 0);
+  const totalCount = revenueItems.reduce((s, d) => s + d.count, 0);
 
   const formatVND = (v: number) => {
     if (v >= 1_000_000) return (v / 1_000_000).toFixed(1) + 'M';
@@ -213,9 +223,11 @@ export default function VenueDashboardPage() {
           {payload.map((p: any) => (
             <div key={p.dataKey} className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }} />
-              <span className="text-gray-500">{p.name}:</span>
+              <span className="text-gray-500">{p.name === 'revenue' ? 'Doanh thu' : 'Số giao dịch'}:</span>
               <span className="font-bold text-gray-800">
-                {Number(p.value).toLocaleString('vi-VN')}đ
+                {p.name === 'revenue'
+                  ? Number(p.value).toLocaleString('vi-VN') + 'đ'
+                  : p.value + ' GD'}
               </span>
             </div>
           ))}
@@ -232,69 +244,90 @@ export default function VenueDashboardPage() {
       <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <SectionTitle icon={TrendingUp}>Doanh thu từ hoa hồng Voucher</SectionTitle>
-          <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-1 rounded-full">Mock data</span>
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <button
+                onClick={() => setRevenueYearOpen(o => !o)}
+                className="flex items-center gap-1.5 text-xs border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 hover:bg-gray-50 transition focus:outline-none focus:ring-1 focus:ring-violet-400"
+              >
+                {revenueYear}
+                <ChevronDown size={12} className={`transition-transform ${revenueYearOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {revenueYearOpen && (
+                <div className="absolute right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden min-w-[80px]">
+                  {YEAR_OPTIONS.map(y => (
+                    <button
+                      key={y}
+                      onClick={() => { setRevenueYear(y); setRevenueYearOpen(false); }}
+                      className="flex items-center justify-between w-full px-3 py-2 text-xs hover:bg-violet-50 text-gray-700 transition"
+                    >
+                      {y}
+                      {y === revenueYear && <Check size={11} className="text-violet-500" />}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs">
+              {(['day', 'month', 'year'] as const).map(g => (
+                <button
+                  key={g}
+                  onClick={() => setRevenueGroupBy(g)}
+                  className={`px-3 py-1 transition ${revenueGroupBy === g ? 'bg-violet-500 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
+                >
+                  {g === 'day' ? 'Ngày' : g === 'month' ? 'Tháng' : 'Năm'}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-3 gap-3 mb-4">
+        <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-violet-50 rounded-lg p-3">
             <p className="text-[11px] text-gray-500">Tổng doanh thu</p>
             <p className="text-lg font-bold text-violet-700">
-              {formatVND(revenueData.reduce((s, d) => s + d.doanhThu, 0))}đ
+              {totalRevenue.toLocaleString('vi-VN')}đ
             </p>
           </div>
           <div className="bg-pink-50 rounded-lg p-3">
-            <p className="text-[11px] text-gray-500">Hoa hồng voucher</p>
-            <p className="text-lg font-bold text-pink-600">
-              {formatVND(revenueData.reduce((s, d) => s + d.voucher, 0))}đ
-            </p>
-          </div>
-          <div className="bg-emerald-50 rounded-lg p-3">
-            <p className="text-[11px] text-gray-500">Tỉ lệ hoa hồng TB</p>
-            <p className="text-lg font-bold text-emerald-600">
-              {(revenueData.reduce((s, d) => s + d.voucher / d.doanhThu, 0) / revenueData.length * 100).toFixed(1)}%
-            </p>
+            <p className="text-[11px] text-gray-500">Số giao dịch</p>
+            <p className="text-lg font-bold text-pink-600">{totalCount} GD</p>
           </div>
         </div>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={revenueData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
-              <defs>
-                <linearGradient id="gradDoanhThu" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
-                </linearGradient>
-                <linearGradient id="gradVoucher" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3} />
-                  <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-              <YAxis tickFormatter={formatVND} tick={{ fontSize: 10 }} width={45} />
-              <Tooltip content={<RevenueTooltip />} />
-              <Legend
-                formatter={(value) => value === 'doanhThu' ? 'Doanh thu' : 'Hoa hồng voucher'}
-                wrapperStyle={{ fontSize: 11 }}
-              />
-              <Area
-                type="monotone"
-                dataKey="doanhThu"
-                name="doanhThu"
-                stroke="#8b5cf6"
-                strokeWidth={2.5}
-                fill="url(#gradDoanhThu)"
-                dot={false}
-              />
-              <Area
-                type="monotone"
-                dataKey="voucher"
-                name="voucher"
-                stroke="#ec4899"
-                strokeWidth={2.5}
-                fill="url(#gradVoucher)"
-                dot={false}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
+        <div className="h-64 relative">
+          {revenueLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-white/70 rounded-lg z-10">
+              <div className="w-6 h-6 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
+            </div>
+          )}
+          {!revenueLoading && revenueData.length === 0 ? (
+            <div className="h-full flex items-center justify-center text-gray-400 text-sm">
+              Không có dữ liệu trong khoảng thời gian này
+            </div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={revenueData} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="gradRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="label" tick={{ fontSize: 11 }} />
+                <YAxis tickFormatter={formatVND} tick={{ fontSize: 10 }} width={45} />
+                <Tooltip content={<RevenueTooltip />} />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  name="revenue"
+                  stroke="#8b5cf6"
+                  strokeWidth={2.5}
+                  fill="url(#gradRevenue)"
+                  dot={{ r: 3, fill: '#8b5cf6' }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
 

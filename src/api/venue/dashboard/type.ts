@@ -94,6 +94,17 @@ export interface VenueOwnerDashboardOverview {
   venues: VenuePerformance[];
 }
 
+// Settlement Revenue Types
+export interface RevenueItem {
+  label: string;
+  revenue: number;
+  count: number;
+}
+
+export interface VenueSettlementRevenueResponse {
+  items: RevenueItem[];
+}
+
 // Subscription Info Types
 export interface ActiveSubscriptionDetail {
   subscriptionId: number;
