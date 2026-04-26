@@ -12,7 +12,7 @@ export interface TopPerformingVenue {
   favoriteCount: number;
   datePlanCount: number;
   collectionCount: number;
-  coverImage: string;
+  coverImage: string[] | null;
 }
 
 export interface VenuePerformance {
@@ -27,7 +27,7 @@ export interface VenuePerformance {
   favoriteCount: number;
   datePlanCount: number;
   collectionCount: number;
-  coverImage: string;
+  coverImage: string[] | null;
 }
 
 export interface RecentAdvertisement {
