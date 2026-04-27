@@ -8,6 +8,7 @@ import {
   AdvertisementPackagesResponse,
   UpdateAdvertisementRequest,
 } from "./type";
+import { PurchaseSubscriptionResponse } from "@/api/venue/subscription/type";
 
 //create
 export const createAdvertisement = async (
@@ -93,5 +94,13 @@ export const restoreAdvertisement = async (
   return apiClient.post<ApiResponse<Advertisement>>(
     `/api/Advertisement/${id}/restore`,
     {}
+  );
+};
+
+export const getPaymentQrInfo = async (
+  transactionId: number
+): Promise<ApiResponse<PurchaseSubscriptionResponse>> => {
+  return apiClient.get<ApiResponse<PurchaseSubscriptionResponse>>(
+    `/api/Payment/qr-info/${transactionId}`
   );
 };

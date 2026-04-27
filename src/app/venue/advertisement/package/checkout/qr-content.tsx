@@ -1,13 +1,14 @@
 "use client";
 
-import { getPaymentQrInfo, getPaymentStatus, cancelPayment } from "@/api/venue/payment/api";
-import { PaymentQrInfo } from "@/api/venue/payment/type";
+import { getPaymentStatus, cancelPayment } from "@/api/venue/payment/api";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { QrCode,X } from "lucide-react";
 import {toast} from "sonner";
+import { PurchaseSubscriptionResponse } from "@/api/venue/subscription/type";
+import { getPaymentQrInfo } from "@/api/venue/advertisement/api";
 
 export default function QRContent() {
     const searchParams = useSearchParams();
@@ -18,7 +19,7 @@ export default function QRContent() {
     const [showLeavePopup, setShowLeavePopup] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
 
-    const [payment, setPayment] = useState<PaymentQrInfo | null>(null);
+    const [payment, setPayment] = useState<PurchaseSubscriptionResponse | null>(null);
 
     useEffect(() => {
         if (!transactionId) return;
