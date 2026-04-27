@@ -45,8 +45,12 @@ export interface RecentAdvertisement {
 export interface VenueOwnerDashboardOverview {
   // venue metrics
   totalVenues: number;
+  draftVenues: number;
+  pendingVenues: number;
   activeVenues: number;
-  inactiveVenues: number;
+  suspendedVenues: number; // INACTIVE có rejectionDetail (bị admin tắt)
+  expiredVenues: number; // INACTIVE không có rejectionDetail (hết hạn subscription)
+  inactiveVenues: number; // Tổng INACTIVE (suspendedVenues + expiredVenues)
 
   // review metrics
   averageRating: number;
