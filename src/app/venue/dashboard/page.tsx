@@ -342,9 +342,33 @@ export default function VenueDashboardPage() {
             <SectionTitle icon={BarChart2}>Trạng thái tổng quan</SectionTitle>
             <div className="grid grid-cols-2 gap-6 mt-3">
               {/* Venue Status */}
-              <div className="min-w-0">
+              <div className="min-w-0 flex flex-col">
                 <p className="text-xs text-gray-600 mb-2.5 font-medium">Địa điểm</p>
-                <div className="space-y-2.5">
+                <div className="space-y-2.5 flex-1">
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Bản nháp</span>
+                      <span className="font-semibold text-slate-600">{data.draftVenues}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-slate-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.draftVenues / data.totalVenues) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Chờ duyệt</span>
+                      <span className="font-semibold text-yellow-600">{data.pendingVenues}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-yellow-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.pendingVenues / data.totalVenues) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
                       <span className="text-gray-700">Đang hoạt động</span>
@@ -359,18 +383,28 @@ export default function VenueDashboardPage() {
                   </div>
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
-                      <span className="text-gray-700">Ngưng hoạt động</span>
-                      <span className="font-semibold text-gray-600">{data.inactiveVenues}</span>
+                      <span className="text-gray-700">Tạm ngưng</span>
+                      <span className="font-semibold text-orange-600">{data.suspendedVenues}</span>
                     </div>
                     <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gray-400 rounded-full transition-all duration-500"
-                        style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.inactiveVenues / data.totalVenues) * 100) : 0}%` }}
+                        className="h-full bg-orange-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.suspendedVenues / data.totalVenues) * 100) : 0}%` }}
                       />
                     </div>
                   </div>
-                  {/* Spacer để cân bằng với cột bên phải */}
-                  <div className="h-7.5"></div>
+                  <div className="min-w-0">
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-gray-700">Hết hạn</span>
+                      <span className="font-semibold text-red-600">{data.expiredVenues}</span>
+                    </div>
+                    <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-red-500 rounded-full transition-all duration-500"
+                        style={{ width: `${data.totalVenues > 0 ? Math.min(100, (data.expiredVenues / data.totalVenues) * 100) : 0}%` }}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div className="mt-2.5 pt-2.5 border-t border-gray-100">
                   <p className="text-[11px] text-gray-400">Tổng: <span className="font-bold text-gray-900">{data.totalVenues}</span></p>
@@ -378,9 +412,9 @@ export default function VenueDashboardPage() {
               </div>
 
               {/* Ads Status */}
-              <div className="min-w-0">
+              <div className="min-w-0 flex flex-col">
                 <p className="text-xs text-gray-600 mb-2.5 font-medium">Quảng cáo</p>
-                <div className="space-y-2.5">
+                <div className="space-y-2.5 flex-1">
                   <div className="min-w-0">
                     <div className="flex justify-between text-[11px] mb-1">
                       <span className="text-gray-700">Đang hoạt động</span>
