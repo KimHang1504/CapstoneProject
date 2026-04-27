@@ -444,17 +444,23 @@ export default function VenueDashboardPage() {
             <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-60 flex flex-col">
               <SectionTitle icon={TrendingUp}>Tương tác</SectionTitle>
               <div className="flex-1">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={engagementData}>
-                    <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                    <YAxis
-                      tick={{ fontSize: 10 }}
-                      label={{ value: 'Lượt', angle: -90, position: 'insideLeft', fontSize: 10 }}
-                    />
-                    <Tooltip content={<CustomTooltip unit="lượt" />} />
-                    <Bar dataKey="value" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                {data.activeVenues === 0 ? (
+                  <div className="h-full flex items-center text-center justify-center text-gray-400 text-sm">
+                    Chưa có tương tác nào do chưa có địa điểm hoạt động.
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={engagementData}>
+                      <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        label={{ value: 'Lượt', angle: -90, position: 'insideLeft', fontSize: 10 }}
+                      />
+                      <Tooltip content={<CustomTooltip unit="lượt" />} />
+                      <Bar dataKey="value" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </div>
 
@@ -509,29 +515,47 @@ export default function VenueDashboardPage() {
           {/* Voucher Chart */}
           <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm h-60 flex flex-col">
             <SectionTitle icon={Ticket}>Voucher</SectionTitle>
-            <div className="flex-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={voucherData}>
-                  <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-                  <YAxis
-                    tick={{ fontSize: 10 }}
-                    label={{ value: 'Mã', angle: -90, position: 'insideLeft', fontSize: 10 }}
-                  />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" fill="#ec4899" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-            <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
-              <div className="bg-orange-50 rounded-lg p-2">
-                <p className="text-gray-600">Tỉ lệ đổi</p>
-                <p className="font-bold text-orange-600">{data.voucherExchangeRate.toFixed(1)}%</p>
+            {data.totalVouchers === 0 ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center text-gray-500 text-sm">
+                  <p className="font-medium">Chưa có dữ liệu voucher</p>
+                  <p className="text-xs mt-1">Hãy tạo voucher để xem thống kê tại đây</p>
+                </div>
               </div>
-              <div className="bg-teal-50 rounded-lg p-2">
-                <p className="text-gray-600">Tỉ lệ dùng</p>
-                <p className="font-bold text-teal-600">{data.voucherUsageRate.toFixed(1)}%</p>
-              </div>
-            </div>
+            ) : (
+              <>
+                <div className="flex-1">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={voucherData}>
+                      <XAxis dataKey="name" tick={{ fontSize: 11 }} />
+                      <YAxis
+                        tick={{ fontSize: 10 }}
+                        label={{ value: 'Mã', angle: -90, position: 'insideLeft', fontSize: 10 }}
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar dataKey="value" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 mt-2 text-xs">
+                  <div className="bg-orange-50 rounded-lg p-2">
+                    <p className="text-gray-600">Tỉ lệ đổi</p>
+                    <p className="font-bold text-orange-600">
+                      {data.voucherExchangeRate.toFixed(1)}%
+                    </p>
+                  </div>
+                  <div className="bg-teal-50 rounded-lg p-2">
+                    <p className="text-gray-600">Tỉ lệ dùng</p>
+                    <p className="font-bold text-teal-600">
+                      {data.voucherUsageRate.toFixed(1)}%
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+
           </div>
         </div>
 
