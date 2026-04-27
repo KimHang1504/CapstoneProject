@@ -18,14 +18,20 @@ export default function VoucherPage() {
     status: "",
   });
 
-  const fetchVouchers = async (page: number = currentPage) => {
+  const fetchVouchers = async (
+    page: number = currentPage,
+    f?: VoucherFilterType
+  ) => {
+    const finalFilters = f ?? filters;
+
     try {
       setLoading(true);
+
       const res = await getMyVouchers({
         pageNumber: page,
         pageSize: 8,
-        keyword: filters.keyword || undefined,
-        status: filters.status || undefined,
+        keyword: finalFilters.keyword || undefined,
+        status: finalFilters.status || undefined,
       });
 
       setVouchers(res.data.items);
@@ -37,7 +43,6 @@ export default function VoucherPage() {
       setLoading(false);
     }
   };
-
   // Fetch vouchers on mount
   useEffect(() => {
     fetchVouchers(1);
@@ -75,7 +80,7 @@ export default function VoucherPage() {
         <VoucherFilter
           filters={filters}
           setFilters={setFilters}
-          onFilter={() => fetchVouchers(1)}
+          onFilter={(f) => fetchVouchers(1, f)}
         />
       </div>
 
@@ -100,11 +105,10 @@ export default function VoucherPage() {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                currentPage === page
-                  ? "bg-violet-600 text-white shadow-md"
-                  : "border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-white"
-              }`}
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${currentPage === page
+                ? "bg-violet-600 text-white shadow-md"
+                : "border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-white"
+                }`}
             >
               {page}
             </button>

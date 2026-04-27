@@ -45,9 +45,11 @@ export default function AdvertisementPage() {
   }, []);
 
   const total = ads.length;
-  const active = ads.filter((ad) => ad.status === "ACTIVE").length;
+  const approved = ads.filter((ad) => ad.status === "APPROVED").length;
   const pending = ads.filter((ad) => ad.status === "PENDING").length;
   const draft = ads.filter((ad) => ad.status === "DRAFT").length;
+  const rejected = ads.filter((ad) => ad.status === "REJECTED").length;
+console.log ("rejected ads", rejected);
 
   const filteredAds = useMemo(() => {
     return ads
@@ -74,7 +76,7 @@ export default function AdvertisementPage() {
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-6">
-      
+
       {loading ? (
         <>
           <HeaderSkeleton />
@@ -115,9 +117,10 @@ export default function AdvertisementPage() {
           {/* Stats */}
           <AdvertisementStats
             total={total}
-            active={active}
+            approved={approved}
             pending={pending}
             draft={draft}
+            rejected={rejected}
           />
 
           {/* Filter */}
@@ -137,11 +140,10 @@ export default function AdvertisementPage() {
                 <button
                   key={p.value}
                   onClick={() => setActivePlacement(p.value)}
-                  className={`px-4 py-2 text-sm ${
-                    activePlacement === p.value
+                  className={`px-4 py-2 text-sm ${activePlacement === p.value
                       ? "text-purple-600 border-b-2 border-purple-600"
                       : "text-gray-500"
-                  }`}
+                    }`}
                 >
                   {p.label} ({countByPlacement(p.value)})
                 </button>

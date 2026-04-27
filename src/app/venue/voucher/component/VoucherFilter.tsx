@@ -7,7 +7,7 @@ import { Search, Filter, Sparkles } from "lucide-react";
 type Props = {
   filters: VoucherFilterType;
   setFilters: Dispatch<SetStateAction<VoucherFilterType>>;
-  onFilter: () => void;
+  onFilter: (f?: VoucherFilterType) => void; // 🔥 sửa ở đây
 };
 
 export default function VoucherFilter({
@@ -32,6 +32,9 @@ export default function VoucherFilter({
           onChange={(e) =>
             setFilters({ ...filters, keyword: e.target.value })
           }
+          onKeyDown={(e) => {
+            if (e.key === "Enter") onFilter(filters); // 🔥 enter để filter luôn
+          }}
           className="w-full pl-10 pr-4 py-2.5 text-sm 
                      border border-purple-100 rounded-xl 
                      bg-white/70 backdrop-blur
@@ -72,7 +75,6 @@ export default function VoucherFilter({
           <option value="ENDED">Đã kết thúc</option>
         </select>
 
-        {/* Custom arrow */}
         <span className="pointer-events-none absolute right-3 text-purple-300 text-xs">
           ▼
         </span>
@@ -80,7 +82,7 @@ export default function VoucherFilter({
 
       {/* Filter Button */}
       <button
-        onClick={onFilter}
+        onClick={() => onFilter(filters)} // 🔥 đảm bảo dùng đúng state
         className="flex items-center justify-center gap-2 px-5 py-2.5 
                    rounded-xl text-sm font-semibold text-white
                    bg-linear-to-r from-[#8093F1] to-pink-400
@@ -90,6 +92,27 @@ export default function VoucherFilter({
       >
         <Sparkles size={16} />
         Lọc
+      </button>
+
+      {/* Reset Button */}
+      <button
+        onClick={() => {
+          const newFilters: VoucherFilterType = {
+            ...filters,
+            keyword: "",
+            status: "",
+          };
+
+          setFilters(newFilters);
+          onFilter(newFilters); // 🔥 FIX CHÍNH: dùng state mới
+        }}
+        className="px-5 py-2.5 text-sm font-medium
+                   rounded-xl border border-purple-200
+                   text-purple-500 bg-white/70 backdrop-blur
+                   hover:bg-purple-50 hover:border-purple-300
+                   transition-all"
+      >
+        Xóa
       </button>
     </div>
   );
