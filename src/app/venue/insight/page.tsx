@@ -164,7 +164,7 @@ export default function InsightPage() {
 
       <div className="p-6 space-y-6 max-w-6xl mx-auto">
 
-        {/* Subscription Expiry Banner */}
+        {/* Subscription Expiry Bannenr */}
         {!isCheckingAccess && !showSubscriptionModal && <VenueInsightExpiryBadge />}
 
         {/* Loading state while checking access */}
