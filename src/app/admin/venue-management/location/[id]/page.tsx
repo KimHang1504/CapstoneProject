@@ -23,7 +23,6 @@ type Props = {
     params: Promise<{ id: number }>;
     searchParams?: Promise<{ lt?: string }>;
 };
-
 export default async function VenueDetailPage({ params, searchParams }: Props) {
     const { id } = await params;
     const resolvedSearchParams = searchParams ? await searchParams : undefined;
@@ -53,6 +52,16 @@ export default async function VenueDetailPage({ params, searchParams }: Props) {
         listLocationTags = [];
     }
 
+    if (resolvedSearchParams?.lt) {
+        const decoded = decodeURIComponent(resolvedSearchParams.lt);
+        console.log("decoded lt:", decoded);
+
+        try {
+            console.log("parsed lt:", JSON.parse(decoded));
+        } catch (e) {
+            console.log("parse failed");
+        }
+    }
     const sourceLocationTags = queryLocationTags.length > 0
         ? queryLocationTags
         : venue?.locationTags?.length
