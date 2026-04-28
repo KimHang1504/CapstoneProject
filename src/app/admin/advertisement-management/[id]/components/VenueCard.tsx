@@ -1,3 +1,4 @@
+import { MapPin } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 
 export function VenueCard({ venues }: any) {
@@ -6,66 +7,57 @@ export function VenueCard({ venues }: any) {
     }
 
     return (
-        <div className="p-5 rounded-2xl shadow-md bg-white">
+        <div className="p-6 rounded-2xl shadow-md bg-white border border-slate-100 hover:shadow-lg transition-shadow">
             {/* Header */}
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold text-lg">Địa điểm áp dụng</h3>
-                <span className="text-sm text-gray-500">
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                        <MapPin className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="font-semibold text-lg text-slate-800">Địa điểm áp dụng</h3>
+                </div>
+                <span className="px-3 py-1 text-sm font-medium bg-blue-50 text-blue-600 rounded-full">
                     {venues?.length || 0} địa điểm
                 </span>
             </div>
 
             {/* Empty state */}
             {(!venues || venues.length === 0) && (
-                <div className="text-center py-6 text-gray-400 text-sm">
-                    Chưa có địa điểm nào
+                <div className="text-center py-12 text-gray-400">
+                    <MapPin className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                    <p className="text-sm font-medium">Chưa có địa điểm nào</p>
                 </div>
             )}
 
             {/* Table */}
             {venues && venues.length > 0 && (
-                <div className="overflow-hidden rounded-xl border border-gray-200">
+                <div className="overflow-hidden rounded-xl border border-slate-200">
                     <table className="w-full text-sm">
-                        <thead className="bg-gray-50 text-gray-500">
+                        <thead className="bg-slate-50">
                             <tr>
-                                <th className="px-4 py-3 text-left font-medium">Địa điểm</th>
-                                {/* <th className="px-4 py-3 text-left font-medium">Ưu tiên</th> */}
-                                <th className="px-4 py-3 text-left font-medium">Bắt đầu</th>
-                                <th className="px-4 py-3 text-left font-medium">Kết thúc</th>
-                                <th className="px-4 py-3 text-left font-medium">Trạng thái</th>
+                                <th className="px-4 py-3 text-left font-semibold text-slate-700">Địa điểm</th>
+                                <th className="px-4 py-3 text-left font-semibold text-slate-700">Bắt đầu</th>
+                                <th className="px-4 py-3 text-left font-semibold text-slate-700">Kết thúc</th>
+                                <th className="px-4 py-3 text-center font-semibold text-slate-700">Trạng thái</th>
                             </tr>
                         </thead>
 
-                        <tbody>
+                        <tbody className="divide-y divide-slate-100">
                             {venues.map((v: any) => (
                                 <tr
                                     key={v.id}
-                                    className="border-t hover:bg-gray-50 transition"
+                                    className="hover:bg-slate-50 transition-colors"
                                 >
-                                    {/* Venue name */}
-                                    <td className="px-4 py-3 font-medium text-gray-800">
+                                    <td className="px-4 py-3 font-medium text-slate-800">
                                         {v.venueName}
                                     </td>
-
-                                    {/* Priority */}
-                                    {/* <td className="px-4 py-3">
-                                        <span className="px-2 py-1 rounded-lg bg-violet-50 text-violet-600 text-xs font-medium">
-                                            {v.priorityScore}
-                                        </span>
-                                    </td> */}
-
-                                    {/* Start */}
-                                    <td className="px-4 py-3 text-gray-600">
+                                    <td className="px-4 py-3 text-slate-600">
                                         {formatDate(v.startDate)}
                                     </td>
-
-                                    {/* End */}
-                                    <td className="px-4 py-3 text-gray-600">
+                                    <td className="px-4 py-3 text-slate-600">
                                         {formatDate(v.endDate)}
                                     </td>
-
-                                    {/* Status */}
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 text-center">
                                         <StatusBadge status={v.status} />
                                     </td>
                                 </tr>
