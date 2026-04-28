@@ -1,11 +1,12 @@
 type Props = {
   total: number;
-  active: number;
+  approved: number;
   pending: number;
   draft: number;
+  rejected: number;
 };
 
-const stats = (total: number, active: number, pending: number, draft: number) => [
+const stats = (total: number, approved: number, pending: number, draft: number, rejected: number) => [
   {
     label: "Tổng quảng cáo",
     value: total,
@@ -18,9 +19,9 @@ const stats = (total: number, active: number, pending: number, draft: number) =>
     ),
   },
   {
-    label: "Đang chạy",
-    value: active,
-    bg: "from-pink-500 to-rose-500",
+    label: "Đã duyệt",
+    value: approved,
+    bg: "from-emerald-500 to-green-600",
     iconBg: "bg-white/20",
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -50,12 +51,23 @@ const stats = (total: number, active: number, pending: number, draft: number) =>
       </svg>
     ),
   },
+  {
+    label: "Từ chối",
+    value: rejected,
+    bg: "from-rose-500 to-red-600",
+    iconBg: "bg-white/20",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+    ),
+  }
 ];
 
-export default function AdvertisementStats({ total, active, pending, draft }: Props) {
+export default function AdvertisementStats({ total, approved, pending, draft, rejected }: Props) {
   return (
-    <div className="grid grid-cols-4 gap-5 mb-8">
-      {stats(total, active, pending, draft).map((s, idx) => (
+    <div className="grid grid-cols-5 gap-5 mb-8">
+      {stats(total, approved, pending, draft, rejected).map((s, idx) => (
         <div
           key={s.label}
           className={`relative bg-gradient-to-br ${s.bg} rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden group`}

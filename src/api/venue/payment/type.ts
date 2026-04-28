@@ -7,9 +7,9 @@ export interface PaymentQrInfo {
   expireAt: string;
 
   bankInfo: {
-    bankName: string;
-    accountNumber: string;
-    accountName: string;
+    BankName: string;
+    AccountNumber: string;
+    AccountName: string;
   };
 }
 
