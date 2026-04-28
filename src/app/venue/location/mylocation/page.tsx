@@ -219,7 +219,7 @@ export default function MyLocationPage() {
                           </span>
                         </div>
 
-                        <p className="text-sm text-gray-500 mt-1 line-clamp-2">{loc.description}</p>
+                        <p className="text-sm text-gray-500 mt-1 line-clamp-2"><span className="font-semibold">Mô tả:</span> {loc.description}</p>
 
                         <div className="mt-1 space-y-1 text-sm text-gray-500">
                           <div className="flex items-start gap-1">
@@ -261,26 +261,49 @@ export default function MyLocationPage() {
         </div>
         {loading ? <SidebarLocationSkeleton /> : (
           <div className="w-[320px] space-y-2 sticky top-8 self-start">
-            <div className="flex items-center gap-2 bg-white border border-[#8093F1] rounded-3xl px-4 py-3 mb-4">
-              <Search className="text-[#8093F1] w-5 h-5" />
+            <div className="flex items-center gap-2 
+                bg-white/70 backdrop-blur
+                border border-purple-100 
+                rounded-xl px-3 py-2.5 mb-4
+                group focus-within:ring-1 focus-within:ring-[#8093F1]
+                transition-all">
 
+              {/* Icon */}
+              <Search
+                size={18}
+                className="text-purple-300 group-focus-within:text-[#8093F1] transition"
+              />
+
+              {/* Input */}
               <input
                 ref={inputRef}
-                placeholder="Tìm kiếm"
-                className="w-full bg-transparent outline-none text-sm"
+                placeholder="Tìm kiếm địa điểm..."
+                className="flex-1 bg-transparent outline-none text-sm 
+               placeholder:text-purple-300"
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
               />
 
+              {/* Search Button */}
               <button
                 onClick={handleSearch}
-                className="px-3 py-1 bg-[#8093F1] text-white rounded-xl text-sm"
+                className="flex items-center gap-1 px-3 py-1.5 
+               rounded-lg text-xs font-semibold text-white
+               bg-linear-to-r from-[#8093F1] to-pink-400
+               hover:from-[#6f82e8] hover:to-pink-500
+               active:scale-[0.97]
+               transition-all shadow-sm hover:shadow-md"
               >
                 Tìm
               </button>
 
+              {/* Reset Button */}
               <button
                 onClick={handleReset}
-                className="px-3 py-1 border border-[#8093F1] text-[#8093F1] rounded-xl text-sm"
+                className="px-3 py-1.5 text-xs font-medium
+               rounded-lg border border-purple-200
+               text-purple-500 bg-white/70
+               hover:bg-purple-50 hover:border-purple-300
+               transition-all"
               >
                 Xóa
               </button>

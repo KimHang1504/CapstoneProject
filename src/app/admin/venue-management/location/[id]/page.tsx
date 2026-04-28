@@ -80,6 +80,7 @@ export default async function VenueDetailPage({ params, searchParams }: Props) {
     const finalPersonalities = personalities.length > 0 ? personalities : personalityFallback;
 
     const isInactive = data.status === "INACTIVE";
+    console.log("VenueDetailPage render with data:", data);
 
     if (!venue) {
         return (

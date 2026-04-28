@@ -45,8 +45,12 @@ export interface RecentAdvertisement {
 export interface VenueOwnerDashboardOverview {
   // venue metrics
   totalVenues: number;
+  draftVenues: number;
+  pendingVenues: number;
   activeVenues: number;
-  inactiveVenues: number;
+  suspendedVenues: number; // INACTIVE có rejectionDetail (bị admin tắt)
+  expiredVenues: number; // INACTIVE không có rejectionDetail (hết hạn subscription)
+  inactiveVenues: number; // Tổng INACTIVE (suspendedVenues + expiredVenues)
 
   // review metrics
   averageRating: number;
@@ -92,6 +96,17 @@ export interface VenueOwnerDashboardOverview {
 
   // venues list
   venues: VenuePerformance[];
+}
+
+// Settlement Revenue Types
+export interface RevenueItem {
+  label: string;
+  revenue: number;
+  count: number;
+}
+
+export interface VenueSettlementRevenueResponse {
+  items: RevenueItem[];
 }
 
 // Subscription Info Types

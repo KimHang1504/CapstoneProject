@@ -145,11 +145,8 @@ export default function ReviewImprovePanel({
 
   const fetchImprove = useCallback(async () => {
     if (!reviewContents.length) {
-      setResult({
-        summary: "Chưa đủ dữ liệu review để đề xuất cải thiện.",
-        improvements: [],
-        priorityActions: [],
-      });
+      // Không hiển thị gì khi chưa có đủ dữ liệu
+      setResult(null);
       return;
     }
 
