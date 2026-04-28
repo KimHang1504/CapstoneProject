@@ -10,7 +10,8 @@
   } from 'lucide-react';
   import toast from 'react-hot-toast';
   import Image from 'next/image';
-  import { getPaymentQrInfo, getPaymentStatus, cancelPayment } from '@/api/venue/payment/api';
+  import { getPaymentStatus, cancelPayment, getPaymentQrInfo } from '@/api/venue/payment/api';
+
   import { PaymentQrInfo } from '@/api/venue/payment/type';
 
   interface SubscriptionExpiredModalProps {
@@ -683,15 +684,15 @@
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-gray-600">Ngân hàng</span>
-                        <span className="font-semibold text-gray-900">{qrPayment.bankInfo.bankName}</span>
+                        <span className="font-semibold text-gray-900">{qrPayment.bankInfo.BankName}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">STK</span>
-                        <span className="font-mono font-semibold text-gray-900">{qrPayment.bankInfo.accountNumber}</span>
+                        <span className="font-mono font-semibold text-gray-900">{qrPayment.bankInfo.AccountNumber}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-gray-600">Chủ TK</span>
-                        <span className="font-semibold text-gray-900">{qrPayment.bankInfo.accountName}</span>
+                        <span className="font-semibold text-gray-900">{qrPayment.bankInfo.AccountName}</span>
                       </div>
                     </div>
                   </div>

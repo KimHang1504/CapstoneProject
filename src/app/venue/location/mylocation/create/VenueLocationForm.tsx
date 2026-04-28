@@ -293,10 +293,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      {/* <h1 className="text-2xl font-bold text-gray-900 mb-4">
-        {mode === 'edit' ? 'Chỉnh sửa địa điểm' : 'Tạo địa điểm mới'}
-      </h1> */}
-
+      
       {/* Progress Steps */}
       <div className="mb-6">
         <div className="flex items-center justify-center gap-2">
@@ -310,7 +307,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
                 <div className="flex flex-col items-center">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm transition-all ${isActive
-                      ? "bg-linear-to-br from-purple-500 to-indigo-600 text-white shadow-lg scale-110"
+                      ? " bg-purple-500 text-white shadow-lg scale-110"
                       : isCompleted
                         ? "bg-green-500 text-white"
                         : "bg-gray-200 text-gray-400"
@@ -343,7 +340,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         <button
           type="button"
           onClick={prevStep}
-          className="cursor-pointer flex items-center gap-2 rounded-lg border-2 border-[#D3D6FF] bg-white px-5 py-2.5 text-sm font-medium text-[#4C5A8F] hover:bg-gray-50 hover:border-purple-300 hover:shadow-md transition-all disabled:opacity-50"
+          className="cursor-pointer flex items-center gap-2 rounded-lg border-2 border-[#D3D6FF] bg-white px-3 py-2.5 text-sm font-medium text-[#4C5A8F] hover:bg-gray-50 hover:border-purple-300 hover:shadow-md transition-all disabled:opacity-50"
         >
           <ArrowLeft className="w-4 h-4" />
           Trở về
@@ -353,7 +350,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={handleSubmit}
-            className="flex items-center gap-2 rounded-lg bg-linear-to-r from-purple-500 to-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
+            className="flex items-center gap-2 rounded-lg bg-purple-500 px-6 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
           >
             <Check className="w-4 h-4" />
             {mode === 'edit' ? 'Cập nhật' : 'Hoàn tất'}
@@ -362,7 +359,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
           <button
             type="button"
             onClick={nextStep}
-            className="cursor-pointer flex items-center gap-2 rounded-lg bg-linear-to-r from-purple-500 to-indigo-600 px-6 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
+            className="cursor-pointer flex items-center gap-2 rounded-lg  bg-purple-500 px-3 py-2.5 text-sm font-semibold text-white hover:from-purple-600 hover:to-indigo-700 hover:shadow-lg transition-all"
           >
             Tiếp tục
             <ArrowRight className="w-4 h-4" />

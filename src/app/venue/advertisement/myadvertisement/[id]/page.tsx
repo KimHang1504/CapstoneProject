@@ -13,6 +13,8 @@ import MissingCitizenPopup from '@/app/venue/advertisement/component/MissingCiti
 import { getMe } from '@/api/auth/api';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import { toast } from 'sonner';
+import { STATUS_CONFIG } from '@/app/venue/advertisement/component/AdStatusConfig';
+import { getAdStatus } from '@/app/venue/advertisement/component/AdStatus';
 
 export default function AdvertisementDetailPage() {
     const params = useParams();
@@ -29,6 +31,7 @@ export default function AdvertisementDetailPage() {
 
     const contentRef = useRef<HTMLParagraphElement>(null);
     const [isOverflowing, setIsOverflowing] = useState(false);
+
 
     useEffect(() => {
         if (contentRef.current && ad?.content) {
@@ -80,7 +83,9 @@ export default function AdvertisementDetailPage() {
         );
     }
 
-
+    const currentStatus = getAdStatus(ad);
+    const config = STATUS_CONFIG[currentStatus];
+    const Icon = config.icon;
 
     const images = ad.bannerUrl
         ? ad.bannerUrl.split(',').map(url => url.trim()).filter(Boolean)
@@ -179,29 +184,9 @@ export default function AdvertisementDetailPage() {
                             </p>
                         </div>
                         <div className="shrink-0">
-                            <span
-                                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border min-w-[110px]
-                                ${ad.status === "ACTIVE"
-                                        ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                        : ad.status === "APPROVED"
-                                            ? "bg-blue-50 text-blue-700 border-blue-200"
-                                            : ad.status === "PENDING"
-                                                ? "bg-amber-50 text-amber-700 border-amber-200"
-                                                : ad.status === "DRAFT"
-                                                    ? "bg-gray-100 text-gray-600 border-gray-200"
-                                                    : "bg-rose-50 text-rose-600 border-rose-200"
-                                    }`}
-                            >
-                                {ad.status === "ACTIVE" && <CheckCircle2 size={16} />}
-                                {ad.status === "APPROVED" && <CheckCircle2 size={16} />}
-                                {ad.status === "PENDING" && <Clock size={16} />}
-                                {ad.status === "DRAFT" && <FileEdit size={16} />}
-                                {ad.status === "REJECTED" && <XCircle size={16} />}
-                                {ad.status === "ACTIVE" ? "Đang chạy"
-                                    : ad.status === "APPROVED" ? "Đã duyệt"
-                                        : ad.status === "PENDING" ? "Chờ duyệt"
-                                            : ad.status === "DRAFT" ? "Bản nháp"
-                                                : "Từ chối"}
+                            <span className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium border ${config.className}`}>
+                                <Icon size={16} />
+                                {config.label}
                             </span>
                         </div>
 

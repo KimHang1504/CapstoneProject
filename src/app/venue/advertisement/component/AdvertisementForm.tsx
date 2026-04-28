@@ -47,11 +47,14 @@ export default function AdvertisementForm({
   const isCreateMode = !initialData;
 
 
-  const [desiredStartDate, setDesiredStartDate] = useState<Date | null>(
-    initialData?.desiredStartDate
-      ? new Date(initialData.desiredStartDate)
-      : null
-  );
+  const [desiredStartDate, setDesiredStartDate] = useState<Date | null>(() => {
+    if (!initialData?.desiredStartDate) return null;
+
+    const d = new Date(initialData.desiredStartDate);
+    d.setHours(0, 0, 0, 0); // 🔥 FIX TẠI ĐÂY
+
+    return d;
+  });
 
   const [form, setForm] = useState({
     title: initialData?.title || "",
@@ -263,7 +266,11 @@ export default function AdvertisementForm({
 
   const getMinDate = () => {
     const now = new Date();
-    const minDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // Add 3 days
+
+    const minDate = new Date(now);
+    minDate.setDate(now.getDate() + 3);
+    minDate.setHours(0, 0, 0, 0); // 🔥 normalize về đầu ngày
+
     return minDate;
   };
 
@@ -274,6 +281,7 @@ export default function AdvertisementForm({
     }
 
     const now = new Date();
+    now.setHours(0, 0, 0, 0);
     const minDate = getMinDate();
 
     if (date < now) {
@@ -282,8 +290,7 @@ export default function AdvertisementForm({
     }
 
     if (date < minDate) {
-      const daysRemaining = Math.ceil((minDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
-      setDateError(`Ngày bắt đầu phải sau 72h ngày để admin có thời gian duyệt`);
+      setDateError("Ngày bắt đầu phải sau ít nhất 3 ngày");
       return false;
     }
 
@@ -497,12 +504,17 @@ export default function AdvertisementForm({
           <DatePicker
             selected={desiredStartDate}
             onChange={(date: Date | null) => {
+              if (!date) {
+                setDesiredStartDate(null);
+                return;
+              }
+
+              date.setHours(0, 0, 0, 0);
               setDesiredStartDate(date);
               validateDate(date);
             }}
             minDate={getMinDate()}
-            showTimeSelect
-            dateFormat="yyyy-MM-dd HH:mm"
+            dateFormat="yyyy-MM-dd"
             placeholderText="Chọn ngày bắt đầu..."
             className={`w-full border rounded-xl pl-10 pr-4 py-3 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:border-transparent transition ${dateError
               ? "border-rose-300 focus:ring-rose-400"
