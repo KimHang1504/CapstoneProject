@@ -240,7 +240,7 @@ export default function ManagementLayout({
             )}
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-              className="p-1.5 hover:bg-white/10 rounded-lg transition-all duration-200 text-white"
+              className="p-1.5 cursor-pointer hover:bg-white/10 rounded-lg transition-all duration-200 text-white"
             >
               {isSidebarOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
             </button>
@@ -289,7 +289,7 @@ export default function ManagementLayout({
               {isSidebarOpen && (
                 <button
                   onClick={() => toggleSection(section.title)}
-                  className="w-full flex items-center justify-between px-2.5 py-1.5 text-md font-semibold text-white/80 hover:text-white transition-colors"
+                  className="w-full flex cursor-pointer items-center justify-between px-2.5 py-1.5 text-md font-semibold text-white/80 hover:text-white transition-colors"
                 >
                   <div className="flex items-center gap-1.5">
                     {section.icon && (() => {
@@ -404,7 +404,7 @@ export default function ManagementLayout({
                 <div className="relative">
                   <button
                     onClick={() => setShowProfileMenu(!showProfileMenu)}
-                    className="flex items-center gap-3 pl-4 border-l border-purple-200 hover:bg-purple-50 rounded-xl pr-3 py-2 transition-all duration-200"
+                    className="flex items-center gap-3 cursor-pointerpl-4 border-l border-purple-200 hover:bg-purple-50 rounded-xl pr-3 py-2 transition-all duration-200"
                   >
                     <div className="text-right">
                       <p className="text-sm font-semibold text-gray-700">
@@ -498,14 +498,14 @@ export default function ManagementLayout({
                             setShowProfileMenu(false);
                             setShowEditModal(true);
                           }}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-purple-50 rounded-lg transition-all duration-200 font-medium text-sm"
+                          className="w-full flex cursor-pointer items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-purple-50 rounded-lg transition-all duration-200 font-medium text-sm"
                         >
                           <User className="w-4 h-4" />
                           <span>Chỉnh sửa hồ sơ</span>
                         </button>
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 font-medium text-sm"
+                          className="w-full flex cursor-pointer items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 font-medium text-sm"
                         >
                           <LogOut className="w-4 h-4" />
                           <span>Đăng xuất</span>

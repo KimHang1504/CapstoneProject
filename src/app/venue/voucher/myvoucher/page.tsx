@@ -96,7 +96,7 @@ export default function VoucherPage() {
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage === 1}
-            className="p-2 rounded-lg border border-gray-200 hover:bg-white hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-lg border cursor-pointer border-gray-200 hover:bg-white hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <ChevronLeft size={20} className="text-gray-600" />
           </button>
@@ -105,7 +105,7 @@ export default function VoucherPage() {
             <button
               key={page}
               onClick={() => handlePageChange(page)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${currentPage === page
+              className={`px-4 py-2 rounded-lg font-medium transition-all cursor-pointer ${currentPage === page
                 ? "bg-violet-600 text-white shadow-md"
                 : "border border-gray-200 text-gray-700 hover:border-gray-300 hover:bg-white"
                 }`}
@@ -117,7 +117,7 @@ export default function VoucherPage() {
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage === totalPages}
-            className="p-2 rounded-lg border border-gray-200 hover:bg-white hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="p-2 rounded-lg border cursor-pointer border-gray-200 hover:bg-white hover:border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
           >
             <ChevronRight size={20} className="text-gray-600" />
           </button>

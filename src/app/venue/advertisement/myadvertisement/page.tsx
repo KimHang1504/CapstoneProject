@@ -108,7 +108,7 @@ console.log ("rejected ads", rejected);
                   "/venue/advertisement/myadvertisement/create"
                 )
               }
-              className="bg-linear-to-r from-violet-500 to-purple-600 text-white px-5 py-2.5 rounded-xl font-medium"
+              className="bg-linear-to-r cursor-pointer from-violet-500 to-purple-600 text-white px-5 py-2.5 rounded-xl font-medium"
             >
               + Tạo mới
             </button>
@@ -140,7 +140,7 @@ console.log ("rejected ads", rejected);
                 <button
                   key={p.value}
                   onClick={() => setActivePlacement(p.value)}
-                  className={`px-4 py-2 text-sm ${activePlacement === p.value
+                  className={`px-4 py-2 text-sm cursor-pointer ${activePlacement === p.value
                       ? "text-purple-600 border-b-2 border-purple-600"
                       : "text-gray-500"
                     }`}

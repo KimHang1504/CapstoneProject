@@ -74,7 +74,9 @@ export default function SettlementFilter({ defaultValues }: Props) {
                 <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition focus:border-violet-300"
+                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition 
+    hover:border-violet-300 
+    focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
                 >
                     <option value="">Tất cả trạng thái</option>
                     <option value="PENDING">Chờ đối soát</option>
@@ -86,14 +88,18 @@ export default function SettlementFilter({ defaultValues }: Props) {
                     type="date"
                     value={fromDate}
                     onChange={(e) => setFromDate(e.target.value)}
-                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition focus:border-violet-300"
+                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition 
+    hover:border-violet-300 
+    focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
                 />
 
                 <input
                     type="date"
                     value={toDate}
                     onChange={(e) => setToDate(e.target.value)}
-                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition focus:border-violet-300"
+                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition 
+    hover:border-violet-300 
+    focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
                 />
 
                 {/* <select
@@ -108,12 +114,14 @@ export default function SettlementFilter({ defaultValues }: Props) {
                 <select
                     value={orderBy}
                     onChange={(e) => setOrderBy(e.target.value as "asc" | "desc")}
-                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition focus:border-violet-300"
+                    className="h-11 rounded-2xl border border-violet-100 bg-white px-4 text-sm outline-none transition 
+    hover:border-violet-300 
+    focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
                 >
                     <option value="desc">Mới nhất</option>
                     <option value="asc">Cũ nhất</option>
                 </select>
-{/* 
+                {/* 
                 <select
                     value={size}
                     onChange={(e) => setSize(e.target.value)}
@@ -123,23 +131,23 @@ export default function SettlementFilter({ defaultValues }: Props) {
                     <option value="20">20 / trang</option>
                     <option value="50">50 / trang</option>
                 </select> */}
-                    <button
-                        type="button"
-                        onClick={applyFilter}
-                        className="inline-flex h-11 items-center gap-2 rounded-2xl bg-linear-to-r from-violet-600 to-pink-500 px-5 font-medium text-white shadow-lg shadow-pink-200 transition hover:opacity-95"
-                    >
-                        <Search className="h-4 w-4" />
-                        Áp dụng
-                    </button>
+                <button
+                    type="button"
+                    onClick={applyFilter}
+                    className="inline-flex cursor-pointer h-11 items-center gap-2 rounded-2xl bg-linear-to-r from-violet-600 to-pink-500 px-5 font-medium text-white shadow-lg shadow-pink-200 transition hover:opacity-95"
+                >
+                    <Search className="h-4 w-4" />
+                    Áp dụng
+                </button>
 
-                    <button
-                        type="button"
-                        onClick={resetFilter}
-                        className="inline-flex h-11 items-center gap-2 rounded-2xl border border-violet-200 bg-white px-5 font-medium text-slate-700 transition hover:bg-violet-50"
-                    >
-                        <RotateCcw className="h-4 w-4" />
-                        Reset
-                    </button>
+                <button
+                    type="button"
+                    onClick={resetFilter}
+                    className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-2xl border border-violet-200 bg-white px-5 font-medium text-slate-700 transition hover:bg-violet-50"
+                >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset
+                </button>
             </div>
 
 

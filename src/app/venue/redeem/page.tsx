@@ -94,7 +94,7 @@ export default function RedeemVoucherPage() {
                             <div className="flex border-b border-gray-100">
                                 <button
                                     onClick={() => setMode("input")}
-                                    className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${mode === "input"
+                                    className={`flex-1 cursor-pointer px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${mode === "input"
                                         ? "text-emerald-600 bg-emerald-50 border-b-2 border-emerald-600"
                                         : "text-gray-600 hover:bg-gray-50"
                                         }`}
@@ -107,7 +107,7 @@ export default function RedeemVoucherPage() {
 
                                 <button
                                     onClick={() => setMode("scan")}
-                                    className={`flex-1 px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${mode === "scan"
+                                    className={`flex-1 cursor-pointer px-4 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-2 ${mode === "scan"
                                         ? "text-emerald-600 bg-emerald-50 border-b-2 border-emerald-600"
                                         : "text-gray-600 hover:bg-gray-50"
                                         }`}
@@ -162,7 +162,7 @@ export default function RedeemVoucherPage() {
                             <div className="relative" ref={dropdownRef}>
                                 <button
                                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                                    className="w-full border border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-linear-to-br from-gray-50 to-white hover:from-white hover:to-gray-50 flex items-center justify-between group"
+                                    className="w-full border cursor-pointer border-gray-200 rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all bg-linear-to-br from-gray-50 to-white hover:from-white hover:to-gray-50 flex items-center justify-between group"
                                 >
                                     <div className="flex items-center gap-3 flex-1 min-w-0">
                                         <div className="w-2 h-2 bg-emerald-500 rounded-full shrink-0"></div>
@@ -192,7 +192,7 @@ export default function RedeemVoucherPage() {
                                                         setSelectedLocationId(loc.id);
                                                         setIsDropdownOpen(false);
                                                     }}
-                                                    className={`w-full px-4 py-3 text-left text-sm transition-colors flex items-center gap-3 ${selectedLocationId === loc.id
+                                                    className={`w-full cursor-pointer px-4 py-3 text-left text-sm transition-colors flex items-center gap-3 ${selectedLocationId === loc.id
                                                         ? "bg-emerald-50 text-emerald-900"
                                                         : "text-gray-700 hover:bg-gray-50"
                                                         } ${index !== 0 ? "border-t border-gray-100" : ""}`}
