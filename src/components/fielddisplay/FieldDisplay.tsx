@@ -21,7 +21,7 @@ export default function FieldDisplay({ value, label, onEdit, children }: Props) 
             <span>Chưa có {label}</span>
             <button
                 onClick={onEdit}
-                className="text-violet-500 hover:underline"
+                className="text-violet-500 hover:underline cursor-pointer"
             >
                 Cập nhật ngay
             </button>

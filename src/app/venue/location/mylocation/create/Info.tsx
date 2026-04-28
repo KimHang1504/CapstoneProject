@@ -194,7 +194,6 @@ export default function Info({ formData, setFormData }: Props) {
 
                 setFormData(prev => ({ ...prev, name: value }));
 
-                // nếu đã blur rồi thì mới validate lại
                 if (touched.name) {
                   const err = validateName(value);
                   setErrors(prev => ({ ...prev, name: err }));

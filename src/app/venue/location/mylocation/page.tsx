@@ -286,7 +286,7 @@ export default function MyLocationPage() {
               {/* Search Button */}
               <button
                 onClick={handleSearch}
-                className="flex items-center gap-1 px-3 py-1.5 
+                className="flex cursor-pointer items-center gap-1 px-3 py-1.5 
                rounded-lg text-xs font-semibold text-white
                bg-linear-to-r from-[#8093F1] to-pink-400
                hover:from-[#6f82e8] hover:to-pink-500
@@ -299,7 +299,7 @@ export default function MyLocationPage() {
               {/* Reset Button */}
               <button
                 onClick={handleReset}
-                className="px-3 py-1.5 text-xs font-medium
+                className="px-3 py-1.5 text-xs font-medium cursor-pointer
                rounded-lg border border-purple-200
                text-purple-500 bg-white/70
                hover:bg-purple-50 hover:border-purple-300

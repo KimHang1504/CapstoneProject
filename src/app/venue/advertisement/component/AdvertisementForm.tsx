@@ -540,7 +540,7 @@ export default function AdvertisementForm({
       <div className="pt-2">
         <button
           onClick={handleSubmit}
-          className="w-full py-3.5 bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
+          className="w-full py-3.5 bg-linear-to-r cursor-pointer from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.01] active:scale-[0.99] transition-all duration-200"
         >
           {submitLabel}
         </button>
