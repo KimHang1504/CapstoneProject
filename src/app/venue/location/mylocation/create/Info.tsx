@@ -199,7 +199,7 @@ export default function Info({ formData, setFormData }: Props) {
                   const err = validateName(value);
                   setErrors(prev => ({ ...prev, name: err }));
                 }
-              }} placeholder="Nhập tên chủ địa điểm"
+              }} placeholder="Nhập tên địa điểm"
               className={`w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition-all
                   ${errors.name && touched.name
                   ? "border-red-500 focus:ring-red-200"
