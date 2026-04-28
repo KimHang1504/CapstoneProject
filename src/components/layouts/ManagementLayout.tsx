@@ -465,15 +465,17 @@ export default function ManagementLayout({
 
                       {/* Profile Info */}
                       <div className="p-4 space-y-3 border-b border-purple-100">
-                        <div className="flex items-start gap-2 text-sm">
-                          <User className="w-4 h-4 text-purple-500 mt-0.5" />
-                          <div>
-                            <p className="text-gray-500 text-xs">Số điện thoại</p>
-                            <p className="text-gray-700 font-medium">
-                              {userProfile?.phoneNumber || 'Chưa cập nhật'}
-                            </p>
+                        {userProfile?.role !== 'ADMIN' && (
+                          <div className="flex items-start gap-2 text-sm">
+                            <User className="w-4 h-4 text-purple-500 mt-0.5" />
+                            <div>
+                              <p className="text-gray-500 text-xs">Số điện thoại</p>
+                              <p className="text-gray-700 font-medium">
+                                {userProfile?.phoneNumber || 'Chưa cập nhật'}
+                              </p>
+                            </div>
                           </div>
-                        </div>
+                        )}
                         {userProfile?.venueOwnerProfile && (
                           <div className="flex items-start gap-2 text-sm">
                             <div className="w-4 h-4 bg-purple-100 rounded flex items-center justify-center mt-0.5">

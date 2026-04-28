@@ -323,9 +323,13 @@ export default function MyLocationPage() {
                                                             )}
 
                                                             {/* Price Range */}
-                                                            {loc.priceMin && loc.priceMax && (
+                                                            {loc.priceMin != null && loc.priceMax != null && loc.priceMin > 0 && loc.priceMax > 0 ? (
                                                                 <span className="text-slate-700 font-medium">
                                                                     {loc.priceMin.toLocaleString('vi-VN')} - {loc.priceMax.toLocaleString('vi-VN')} đ
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-slate-500 text-sm italic">
+                                                                    Chưa cập nhật giá
                                                                 </span>
                                                             )}
                                                         </div>

@@ -19,10 +19,13 @@ import { MapPin, Megaphone, CalendarDays } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BackButton from "@/components/BackButton";
+import StatusDropdown from "../components/StatusDropdown";
 
 export default function AdvertisementAllList() {
     const [data, setData] = useState<Advertisement[]>([]);
+    const [filteredData, setFilteredData] = useState<Advertisement[]>([]);
     const [loading, setLoading] = useState(true);
+    const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
 
     const [reason, setReason] = useState("");
     const [open, setOpen] = useState(false);
@@ -40,6 +43,7 @@ export default function AdvertisementAllList() {
             const res = await getAllAdvertisements();
             if (res.code === 200) {
                 setData(res.data);
+                setFilteredData(res.data);
             }
         } finally {
             setLoading(false);
@@ -49,6 +53,14 @@ export default function AdvertisementAllList() {
     useEffect(() => {
         fetchData();
     }, []);
+
+    useEffect(() => {
+        if (statusFilter) {
+            setFilteredData(data.filter(ad => ad.status === statusFilter));
+        } else {
+            setFilteredData(data);
+        }
+    }, [statusFilter, data]);
 
     // ✅ ACCEPT
     const handleAccept = (id: number) => {
@@ -104,9 +116,19 @@ export default function AdvertisementAllList() {
     return (
         <div className="px-8 py-4">
             <BackButton />
-            <h2 className="text-2xl font-bold mb-6 bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
-                Tất cả quảng cáo
-            </h2>
+            <div className="mb-6">
+                <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+                    Tất cả quảng cáo
+                </h2>
+                <p className="text-sm text-gray-600 mt-1">
+                    Đang chờ duyệt: <span className="font-semibold text-yellow-600">{data.filter(ad => ad.status === "PENDING").length}</span> / Tổng số: <span className="font-semibold">{data.length}</span>
+                </p>
+            </div>
+
+            {/* Filter */}
+            <div className="mb-6 flex justify-end">
+                <StatusDropdown value={statusFilter} onChange={setStatusFilter} />
+            </div>
 
             {/* LOADING */}
             {loading ? (
@@ -117,7 +139,7 @@ export default function AdvertisementAllList() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {data.map((ad) => (
+                    {filteredData.map((ad) => (
                         <div
                             key={ad.id}
                             className="group bg-white rounded-2xl overflow-hidden border border-violet-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition flex flex-col"
@@ -145,15 +167,21 @@ export default function AdvertisementAllList() {
                                             ? "bg-yellow-100 text-yellow-700"
                                             : ad.status === "APPROVED"
                                                 ? "bg-green-100 text-green-600"
-                                                : ad.status === "DRAFT"
-                                                    ? "bg-gray-200 text-gray-600"
-                                                    : "bg-red-100 text-red-500"
+                                                : ad.status === "ACTIVE"
+                                                    ? "bg-blue-100 text-blue-600"
+                                                    : ad.status === "INACTIVE"
+                                                        ? "bg-gray-200 text-gray-600"
+                                                        : ad.status === "DRAFT"
+                                                            ? "bg-slate-200 text-slate-600"
+                                                            : "bg-red-100 text-red-500"
                                         }`}
                                 >
                                     {ad.status === "PENDING" ? "Đang chờ duyệt"
                                         : ad.status === "APPROVED" ? "Đã duyệt"
-                                            : ad.status === "DRAFT" ? "Nháp"
-                                                : "Bị từ chối"}
+                                            : ad.status === "ACTIVE" ? "Đang hoạt động"
+                                                : ad.status === "INACTIVE" ? "Không hoạt động"
+                                                    : ad.status === "DRAFT" ? "Nháp"
+                                                        : "Bị từ chối"}
                                 </span>
 
                                 {/* TITLE */}

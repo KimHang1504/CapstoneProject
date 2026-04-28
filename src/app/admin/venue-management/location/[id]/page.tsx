@@ -248,8 +248,8 @@ export default async function VenueDetailPage({ params }: Props) {
                                     <div className="text-sm text-gray-700">
                                         <p className="text-xs text-gray-500">Khoảng giá</p>
                                         <p>
-                                            {venue.priceMin != null && venue.priceMax != null
-                                                ? `${venue.priceMin.toLocaleString('vi-VN')} - ${venue.priceMax.toLocaleString('vi-VN')}`
+                                            {venue.priceMin != null && venue.priceMax != null && venue.priceMin > 0 && venue.priceMax > 0
+                                                ? `${venue.priceMin.toLocaleString('vi-VN')} - ${venue.priceMax.toLocaleString('vi-VN')} đ`
                                                 : "Chưa cập nhật"}
                                         </p>
                                     </div>
