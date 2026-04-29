@@ -30,7 +30,7 @@ export type VenueFormData = {
   fullPageMenuImage: (File | string)[]
 
   selectedMoods: number[]
-  selectedStyles: number[]
+  selectedStyles: number | null
 
   // For edit mode - existing URLs
   existingCoverUrl?: string | null
@@ -154,15 +154,24 @@ export default function Info({ formData, setFormData }: Props) {
   }, [])
 
   function toggleItem(
-    list: number[],
+    list: number[] | number | null,
     id: number,
     key: "selectedMoods" | "selectedStyles"
   ) {
+    if (key === "selectedStyles") {
+      setFormData(prev => ({
+        ...prev,
+        selectedStyles: prev.selectedStyles === id ? null : id,
+      }));
+      return;
+    }
+
+    // moods giữ nguyên multi-select
     setFormData(prev => ({
       ...prev,
-      [key]: list.includes(id)
-        ? list.filter(i => i !== id)
-        : [...list, id],
+      selectedMoods: (prev.selectedMoods as number[]).includes(id)
+        ? (prev.selectedMoods as number[]).filter(i => i !== id)
+        : [...(prev.selectedMoods as number[]), id],
     }));
   }
 
@@ -194,6 +203,7 @@ export default function Info({ formData, setFormData }: Props) {
 
                 setFormData(prev => ({ ...prev, name: value }));
 
+                // nếu đã blur rồi thì mới validate lại
                 if (touched.name) {
                   const err = validateName(value);
                   setErrors(prev => ({ ...prev, name: err }));
@@ -412,8 +422,7 @@ export default function Info({ formData, setFormData }: Props) {
 
           <div className="flex flex-wrap gap-2">
             {styles.map(style => {
-              const active = formData.selectedStyles.includes(style.id);
-
+              const active = formData.selectedStyles === style.id;
               return (
                 <div key={style.id} className="relative group">
                   <button
