@@ -199,7 +199,7 @@ export default function AdvertisementDetailPage() {
                                 onClick={handleEdit}
                                 className={`${baseBtn}
     bg-gray-100 text-gray-700 border border-gray-200
-    hover:bg-gray-200 hover:shadow-sm`}
+    hover:bg-gray-200 hover:shadow-sm cursor-pointer`}
                             >
                                 <Pencil size={18} />
                                 Chỉnh sửa
@@ -210,7 +210,7 @@ export default function AdvertisementDetailPage() {
                                 onClick={handleSubmit}
                                 className={`${baseBtn}
     bg-linear-to-r from-violet-500 to-purple-500 text-white
-    hover:shadow-md hover:scale-[1.02] active:scale-[0.98]`}
+    hover:shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer`}
                             >
                                 <Send size={18} />
                                 Gửi duyệt

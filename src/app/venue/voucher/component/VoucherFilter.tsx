@@ -82,8 +82,8 @@ export default function VoucherFilter({
 
       {/* Filter Button */}
       <button
-        onClick={() => onFilter(filters)} // 🔥 đảm bảo dùng đúng state
-        className="flex items-center justify-center gap-2 px-5 py-2.5 
+        onClick={() => onFilter(filters)} 
+        className="flex items-center justify-center gap-2 px-5 py-2.5 cursor-pointer
                    rounded-xl text-sm font-semibold text-white
                    bg-linear-to-r from-[#8093F1] to-pink-400
                    hover:from-[#6f82e8] hover:to-pink-500
@@ -106,7 +106,7 @@ export default function VoucherFilter({
           setFilters(newFilters);
           onFilter(newFilters); // 🔥 FIX CHÍNH: dùng state mới
         }}
-        className="px-5 py-2.5 text-sm font-medium
+        className="px-5 py-2.5 text-sm font-medium cursor-pointer
                    rounded-xl border border-purple-200
                    text-purple-500 bg-white/70 backdrop-blur
                    hover:bg-purple-50 hover:border-purple-300

@@ -21,11 +21,10 @@ import BackButton from "@/components/BackButton";
 
 type Props = {
     params: Promise<{ id: number }>;
-    searchParams?: Promise<{ lt?: string }>;
 };
-export default async function VenueDetailPage({ params, searchParams }: Props) {
+
+export default async function VenueDetailPage({ params }: Props) {
     const { id } = await params;
-    const resolvedSearchParams = searchParams ? await searchParams : undefined;
 
     const res = await getPendingVenueDetail(id);
     const data = res.data;
@@ -33,15 +32,6 @@ export default async function VenueDetailPage({ params, searchParams }: Props) {
     const venue = data.venue;
     const owner = data.venueOwner;
     let listLocationTags = data.locationTags ?? [];
-    let queryLocationTags = [] as typeof listLocationTags;
-
-    if (resolvedSearchParams?.lt) {
-        try {
-            queryLocationTags = JSON.parse(decodeURIComponent(resolvedSearchParams.lt));
-        } catch {
-            queryLocationTags = [];
-        }
-    }
 
     try {
         const searchKeyword = venue?.name ?? String(id);
@@ -52,21 +42,9 @@ export default async function VenueDetailPage({ params, searchParams }: Props) {
         listLocationTags = [];
     }
 
-    if (resolvedSearchParams?.lt) {
-        const decoded = decodeURIComponent(resolvedSearchParams.lt);
-        console.log("decoded lt:", decoded);
-
-        try {
-            console.log("parsed lt:", JSON.parse(decoded));
-        } catch (e) {
-            console.log("parse failed");
-        }
-    }
-    const sourceLocationTags = queryLocationTags.length > 0
-        ? queryLocationTags
-        : venue?.locationTags?.length
-            ? venue.locationTags
-            : (data.locationTags?.length ? data.locationTags : listLocationTags);
+    const sourceLocationTags = venue?.locationTags?.length
+        ? venue.locationTags
+        : (data.locationTags?.length ? data.locationTags : listLocationTags);
     const moods = Array.from(
         new Map(
             sourceLocationTags
@@ -269,7 +247,11 @@ export default async function VenueDetailPage({ params, searchParams }: Props) {
                                     <CircleDollarSign size={16} className="text-emerald-600 mt-0.5" />
                                     <div className="text-sm text-gray-700">
                                         <p className="text-xs text-gray-500">Khoảng giá</p>
-                                        <p>{venue.priceMin ?? "-"} - {venue.priceMax ?? "-"}</p>
+                                        <p>
+                                            {venue.priceMin != null && venue.priceMax != null && venue.priceMin > 0 && venue.priceMax > 0
+                                                ? `${venue.priceMin.toLocaleString('vi-VN')} - ${venue.priceMax.toLocaleString('vi-VN')} đ`
+                                                : "Chưa cập nhật"}
+                                        </p>
                                     </div>
                                 </div>
 

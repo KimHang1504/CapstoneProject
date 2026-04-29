@@ -32,7 +32,7 @@ const getRoleLabel = (role?: string) => {
     case 'MEMBER':
       return 'Thành viên';
     case 'VENUEOWNER':
-      return 'Chủ sân';
+      return 'Chủ địa điểm';
     default:
       return role || '---';
   }

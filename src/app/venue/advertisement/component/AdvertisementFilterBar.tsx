@@ -117,7 +117,7 @@ export default function AdvertisementFilterBar({
         {/* Search Button */}
         <button
           onClick={handleSearch}
-          className="flex items-center gap-2 px-4 py-2.5 
+          className="flex items-center gap-2 px-4 py-2.5  cursor-pointer
                      rounded-xl text-sm font-semibold text-white
                      bg-linear-to-r from-[#8093F1] to-pink-400
                      hover:from-[#6f82e8] hover:to-pink-500
@@ -131,7 +131,7 @@ export default function AdvertisementFilterBar({
         {/* Reset Button */}
         <button
           onClick={handleReset}
-          className="px-4 py-2.5 text-sm font-medium
+          className="px-4 py-2.5 text-sm font-medium cursor-pointer
                      rounded-xl border border-purple-200
                      text-purple-500 bg-white/70 backdrop-blur
                      hover:bg-purple-50 hover:border-purple-300

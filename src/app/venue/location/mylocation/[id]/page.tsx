@@ -311,7 +311,7 @@ export default function LocationDetailPage() {
                         {/* EDIT */}
                         <button
                             onClick={handleEdit}
-                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+                            className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium cursor-pointer
                              bg-gray-100 text-gray-700 border border-gray-200
                              hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
                         >
@@ -487,7 +487,7 @@ export default function LocationDetailPage() {
                                         {canEditOpeningHours && (
                                             <button
                                                 onClick={() => setShowOpeningHoursModal(true)}
-                                                className="flex items-center gap-2 px-3 py-1.5 text-sm bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 transition"
+                                                className="flex cursor-pointer items-center gap-2 px-3 py-1.5 text-sm bg-violet-100 text-violet-700 rounded-lg hover:bg-violet-200 transition"
                                             >
                                                 <Edit2 size={16} />
                                                 Cập nhật
@@ -540,7 +540,7 @@ export default function LocationDetailPage() {
                                 ) : (
                                     <div className="text-sm text-gray-400 flex items-center gap-2">
                                         <span>Chưa chọn tâm trạng</span>
-                                        <button onClick={handleEdit} className="text-violet-500 hover:underline">
+                                        <button onClick={handleEdit} className="cursor-pointer text-violet-500 hover:underline">
                                             Cập nhật ngay
                                         </button>
                                     </div>
@@ -570,7 +570,7 @@ export default function LocationDetailPage() {
                                 ) : (
                                     <div className="text-sm text-gray-400 flex items-center gap-2">
                                         <span>Chưa có tag</span>
-                                        <button onClick={handleEdit} className="text-violet-500 hover:underline">
+                                        <button onClick={handleEdit} className="cursor-pointer text-violet-500 hover:underline">
                                             Cập nhật ngay
                                         </button>
                                     </div>
@@ -682,7 +682,7 @@ export default function LocationDetailPage() {
                                     setOpenMissingCitizenPopup(false);
                                     window.dispatchEvent(new CustomEvent("openProfileModal"));
                                 }}
-                                className="rounded-xl bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
+                                className="rounded-xl cursor-pointer bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700"
                             >
                                 Cập nhật ngay
                             </button>

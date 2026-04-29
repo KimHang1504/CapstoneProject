@@ -56,9 +56,14 @@ export default function VoucherPage() {
     <div className="px-8 py-4 min-h-screen space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between w-full">
-        <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
-          Quản lí voucher
-        </h2>
+        <div>
+          <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+            Quản lí voucher
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Đang chờ duyệt: <span className="font-semibold text-yellow-600">{vouchers.length}</span>
+          </p>
+        </div>
 
         <Link
           href="/admin/voucher-management/voucher/all"

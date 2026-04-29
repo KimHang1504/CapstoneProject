@@ -71,7 +71,7 @@ export default function SubscriptionTransactionPage() {
               <button
                 key={f.value}
                 onClick={() => setStatusFilter(f.value)}
-                className={`px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${statusFilter === f.value
+                className={`px-3 sm:px-4 cursor-pointer py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${statusFilter === f.value
                   ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
                   : "bg-white text-gray-500 border border-violet-100 hover:border-violet-300"
                   }`}
@@ -197,11 +197,11 @@ export default function SubscriptionTransactionPage() {
             <p className="text-xs sm:text-sm text-gray-500 order-2 sm:order-1">
               Hiển thị {((currentPage - 1) * ITEMS_PER_PAGE) + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, filtered.length)} trong tổng số {filtered.length} kết quả
             </p>
-            <div className="flex items-center gap-2 order-1 sm:order-2">
+            <div className="flex cursor-pointer items-center gap-2 order-1 sm:order-2">
               <button
                 onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-2 sm:px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                className="px-2 sm:px-3 py-2 rounded-lg cursor-pointer border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -219,7 +219,7 @@ export default function SubscriptionTransactionPage() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`w-8 h-8 sm:w-9 sm:h-9 rounded-lg text-xs sm:text-sm font-medium transition-all ${currentPage === page
+                        className={`w-8 h-8 sm:w-9 sm:h-9 cursor-pointer rounded-lg text-xs sm:text-sm font-medium transition-all ${currentPage === page
                           ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-md"
                           : "text-gray-700 hover:bg-violet-50 border border-violet-100"
                           }`}
@@ -241,7 +241,7 @@ export default function SubscriptionTransactionPage() {
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-2 sm:px-3 py-2 rounded-lg border border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
+                className="px-2 sm:px-3 py-2 rounded-lg border cursor-pointer border-violet-200 text-sm font-medium text-gray-700 hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
