@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { MapPin, Megaphone, CalendarDays, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getMappingLabel } from "@/app/admin/mapping";
 
 
 export default function AdvertisementList() {
@@ -180,8 +181,8 @@ export default function AdvertisementList() {
 
                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
-                <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur">
-                  {ad.placementType}
+                <span>
+                  {getMappingLabel("adPlacementType", ad.placementType)}
                 </span>
 
                 <span
@@ -219,8 +220,8 @@ export default function AdvertisementList() {
                     <Megaphone className="w-4 h-4 text-pink-400 group-hover:scale-110 transition" />
                     Vị trí
                   </span>
-                  <span className="font-medium text-pink-500">
-                    {ad.placementType}
+                  <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur">
+                    {getMappingLabel("adPlacementType", ad.placementType)}
                   </span>
                 </div>
 

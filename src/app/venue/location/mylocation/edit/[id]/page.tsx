@@ -48,7 +48,7 @@ export default function EditPage() {
           priceMin: data.priceMin,
           priceMax: data.priceMax,
           selectedMoods: moodIds,
-          selectedStyles: styleIds,
+          selectedStyles: styleIds?.[0] ?? null,
 
           // FILE mới = rỗng
           coverImage: null,

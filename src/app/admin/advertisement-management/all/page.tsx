@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BackButton from "@/components/BackButton";
 import StatusDropdown from "../components/StatusDropdown";
+import { getMappingLabel } from "@/app/admin/mapping";
 
 export default function AdvertisementAllList() {
     const [data, setData] = useState<Advertisement[]>([]);
@@ -156,9 +157,9 @@ export default function AdvertisementAllList() {
                                 <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
 
                                 {/* TYPE */}
-                                <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2 py-1 rounded-full">
-                                    {ad.placementType}
-                                </span>
+                                {/* <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2 py-1 rounded-full">
+                                    {getMappingLabel("adPlacementType", ad.placementType)}
+                                </span> */}
 
                                 {/* STATUS */}
                                 <span
@@ -210,7 +211,7 @@ export default function AdvertisementAllList() {
                                         Vị trí
                                     </span>
                                     <span className="text-pink-500 font-medium">
-                                        {ad.placementType}
+                                        {getMappingLabel("adPlacementType", ad.placementType)}
                                     </span>
                                 </div>
 

@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
 import { updateOpeningHours } from '@/api/venue/location/api';
+import { TimePicker } from 'antd';
 import { toast } from 'sonner';
 import { OpeningHour } from '@/api/venue/location/type';
 import { useEffect } from 'react';
+import dayjs from 'dayjs';
 
 type OpeningHoursModalProps = {
   locationId: number;
@@ -112,22 +114,39 @@ export default function OpeningHoursModal({ locationId, openingHours, onClose, o
                     </td>
 
                     <td className="p-3 text-center">
-                      <input
-                        type="time"
-                        disabled={schedule.isClosed}
-                        value={schedule.openTime}
-                        onChange={(e) => updateDay(day.value, 'openTime', e.target.value)}
-                        className="border border-gray-300 rounded-lg px-2 py-1 disabled:bg-gray-100"
+                      <TimePicker
+                        format="HH:mm"
+                        changeOnScroll
+                        needConfirm={false}
+                        defaultValue={dayjs(schedule.openTime, 'HH:mm')}
+                        onCalendarChange={(value) => {
+                          if (!value || Array.isArray(value)) return;
+
+                          updateDay(
+                            day.value,
+                            'openTime',
+                            value.format('HH:mm')
+                          );
+                        }}
+                        showNow={false}
                       />
                     </td>
 
                     <td className="p-3 text-center">
-                      <input
-                        type="time"
-                        disabled={schedule.isClosed}
-                        value={schedule.closeTime}
-                        onChange={(e) => updateDay(day.value, 'closeTime', e.target.value)}
-                        className="border border-gray-300 rounded-lg px-2 py-1 disabled:bg-gray-100"
+                      <TimePicker
+                        format="HH:mm"
+                        changeOnScroll
+                        needConfirm={false}
+                        defaultValue={dayjs(schedule.closeTime, 'HH:mm')}
+                        onCalendarChange={(value) => {
+                          if (!value || Array.isArray(value)) return;
+                          updateDay(
+                            day.value,
+                            'closeTime',
+                            value.format('HH:mm')
+                          );
+                        }}
+                        showNow={false}
                       />
                     </td>
                   </tr>
