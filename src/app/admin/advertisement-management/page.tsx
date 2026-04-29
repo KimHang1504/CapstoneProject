@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { MapPin, Megaphone, CalendarDays, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { getMappingLabel } from "@/app/admin/mapping";
 
 
 export default function AdvertisementList() {
@@ -115,9 +116,14 @@ export default function AdvertisementList() {
   return (
     <div className="px-8 py-4">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-        <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
-          Quản lý quảng cáo
-        </h2>
+        <div>
+          <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+            Quản lý quảng cáo
+          </h2>
+          <p className="text-sm text-gray-600 mt-1">
+            Đang chờ duyệt: <span className="font-semibold text-yellow-600">{data.length}</span>
+          </p>
+        </div>
         <Link
           href="/admin/advertisement-management/all"
           className="inline-flex items-center gap-2 text-sm bg-linear-to-r from-violet-500 to-pink-500 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition"
@@ -175,8 +181,8 @@ export default function AdvertisementList() {
 
                 <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-transparent" />
 
-                <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur">
-                  {ad.placementType}
+                <span>
+                  {getMappingLabel("adPlacementType", ad.placementType)}
                 </span>
 
                 <span
@@ -214,8 +220,8 @@ export default function AdvertisementList() {
                     <Megaphone className="w-4 h-4 text-pink-400 group-hover:scale-110 transition" />
                     Vị trí
                   </span>
-                  <span className="font-medium text-pink-500">
-                    {ad.placementType}
+                  <span className="absolute top-3 left-3 bg-white/90 text-violet-600 text-[10px] font-bold px-2.5 py-1 rounded-full backdrop-blur">
+                    {getMappingLabel("adPlacementType", ad.placementType)}
                   </span>
                 </div>
 

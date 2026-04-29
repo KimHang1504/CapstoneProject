@@ -51,12 +51,12 @@ export const adminSidebarConfig: SidebarConfig = {
     // Marketing & khuyến mãi
     {
       label: 'Duyệt quảng cáo',
-      href: '/admin/advertisement-management',
+      href: '/admin/advertisement-management/all',
       icon: 'Megaphone',
     },
     {
       label: 'Duyệt voucher',
-      href: '/admin/voucher-management',
+      href: '/admin/voucher-management/voucher/all',
       icon: 'Tag',
     },
 
@@ -84,7 +84,7 @@ export const adminSidebarConfig: SidebarConfig = {
       icon: 'Flag',
     },
     {
-      label: 'AI Moderation',
+      label: 'Kiểm duyệt AI',
       href: '/admin/moderation-management',
       icon: 'Bot',
     },

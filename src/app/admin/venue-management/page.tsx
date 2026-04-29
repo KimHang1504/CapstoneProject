@@ -238,12 +238,7 @@ export default function MyLocationPage() {
                                                         {/* Title and Status */}
                                                         <div className="flex items-start justify-between gap-2 mb-1">
                                                             <Link
-                                                                href={{
-                                                                    pathname: `/admin/venue-management/location/${loc.id}`,
-                                                                    query: {
-                                                                        lt: encodeURIComponent(JSON.stringify(loc.locationTags ?? [])),
-                                                                    },
-                                                                }}
+                                                                href={`/admin/venue-management/location/${loc.id}`}
                                                             >
                                                                 <h3 className="font-semibold text-lg text-slate-800 hover:text-violet-600 transition-colors line-clamp-1">
                                                                     {loc.name}
@@ -328,21 +323,20 @@ export default function MyLocationPage() {
                                                             )}
 
                                                             {/* Price Range */}
-                                                            {loc.priceMin && loc.priceMax && (
+                                                            {loc.priceMin != null && loc.priceMax != null && loc.priceMin > 0 && loc.priceMax > 0 ? (
                                                                 <span className="text-slate-700 font-medium">
                                                                     {loc.priceMin.toLocaleString('vi-VN')} - {loc.priceMax.toLocaleString('vi-VN')} đ
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-slate-500 text-sm italic">
+                                                                    Chưa cập nhật giá
                                                                 </span>
                                                             )}
                                                         </div>
                                                     </div>
 
                                                     <Link
-                                                        href={{
-                                                            pathname: `/admin/venue-management/location/${loc.id}`,
-                                                            query: {
-                                                                lt: encodeURIComponent(JSON.stringify(loc.locationTags ?? [])),
-                                                            },
-                                                        }}
+                                                        href={`/admin/venue-management/location/${loc.id}`}
                                                         className="flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-violet-600 hover:bg-violet-200 transition-colors shrink-0"
                                                     >
                                                         <ChevronRight className="w-4 h-4" />

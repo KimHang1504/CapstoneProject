@@ -305,7 +305,7 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
         }
       }}
     >
-      <div className="bg-white w-full max-w-lg rounded-2xl shadow-xl overflow-hidden">
+      <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-hidden rounded-2xl shadow-xl flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <div className="flex items-center gap-2">
             <Wallet size={20} className="text-emerald-600" />
@@ -320,7 +320,7 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
         </div>
 
         {!topup ? (
-          <div className="p-6 space-y-4">
+          <div className="flex-1 overflow-hidden p-6 space-y-4">
             <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-sm text-emerald-800">
               Số dư hiện tại: <span className="font-semibold">{(walletBalance ?? 0).toLocaleString("vi-VN")} ₫</span>
             </div>
@@ -372,10 +372,10 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
             {paymentStatus === "PENDING" && topup && (
               <>
                 {topup.qrCodeUrl ? (
-                  <div className="border border-gray-200 rounded-2xl p-4">
+                  <div className="border border-gray-200 rounded-2xl p-4 ">
                     <div className="bg-white rounded-xl overflow-hidden border border-gray-100">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={topup.qrCodeUrl} alt="VietQR" className="w-full h-auto" />
+                      <img src={topup.qrCodeUrl} alt="VietQR" className="w-full max-h-[240px] object-contain" />
                     </div>
                     <p className="text-xs text-gray-500 mt-2 text-center">
                       Quét mã để chuyển khoản đúng nội dung

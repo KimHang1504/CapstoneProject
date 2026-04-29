@@ -269,7 +269,7 @@ export default function EditProfileModal({
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200 text-white"
+              className="p-2 hover:bg-white/20 cursor-pointer rounded-xl transition-all duration-200 text-white"
               disabled={isSubmitting}
             >
               <X className="w-6 h-6" />
@@ -283,7 +283,7 @@ export default function EditProfileModal({
         <div className="flex border-b border-gray-200 bg-gray-50">
           <button
             onClick={() => setActiveTab('profile')}
-            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 ${activeTab === 'profile'
+            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === 'profile'
                 ? 'text-purple-600 border-b-2 border-purple-600 bg-white'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
               }`}
@@ -293,7 +293,7 @@ export default function EditProfileModal({
           </button>
           <button
             onClick={() => setActiveTab('password')}
-            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${activeTab === 'password'
+            className={`flex-1 px-6 py-4 cursor-pointer text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${activeTab === 'password'
                 ? 'text-purple-600 border-b-2 border-purple-600 bg-white'
                 : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
               }`}
@@ -586,7 +586,7 @@ export default function EditProfileModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-white hover:border-gray-400 transition-all duration-200"
+            className="flex-1 px-6 py-3 border-2 cursor-pointer border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-white hover:border-gray-400 transition-all duration-200"
             disabled={isSubmitting}
           >
             Hủy bỏ
@@ -594,7 +594,7 @@ export default function EditProfileModal({
           <button
             type="submit"
             onClick={activeTab === 'profile' ? handleSubmit : handleChangePassword}
-            className="flex-1 px-6 py-3 bg-linear-to-r from-purple-500 via-pink-500 to-purple-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+            className="flex-1 px-6 py-3 cursor-pointer bg-purple-500 bg-size-200 bg-pos-0 hover:bg-pos-100 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
             disabled={isSubmitting || (activeTab === 'profile' && !userProfile.venueOwnerProfile)}
           >
             {isSubmitting ? (

@@ -25,7 +25,7 @@ export default function AIModerationPage() {
 
         {/* HEADER */}
         <h1 className="text-2xl font-semibold text-slate-800">
-          AI Moderation
+          Kiểm duyệt AI
         </h1>
 
         {/* TABS */}

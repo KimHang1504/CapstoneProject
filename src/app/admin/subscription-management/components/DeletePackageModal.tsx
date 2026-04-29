@@ -46,10 +46,6 @@ export default function DeletePackageModal({ package: pkg, loading = false, onCl
             <h3 className="text-sm font-semibold text-slate-800">Thông tin gói sẽ xóa:</h3>
             <div className="space-y-1.5">
               <div className="flex justify-between text-sm">
-                <span className="text-slate-600">ID:</span>
-                <span className="font-semibold text-slate-800">#{pkg.id}</span>
-              </div>
-              <div className="flex justify-between text-sm">
                 <span className="text-slate-600">Tên gói:</span>
                 <span className="font-semibold text-slate-800">{pkg.packageName}</span>
               </div>

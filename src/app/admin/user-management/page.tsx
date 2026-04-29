@@ -58,7 +58,7 @@ export default function UserManagementPage() {
             ADMIN: 'Quản trị viên',
             STAFF: 'Nhân viên',
             MEMBER: 'Thành viên',
-            VENUEOWNER: 'Chủ venue',
+            VENUEOWNER: 'Chủ địa điểm',
         };
         return roleMap[role] || role;
     };

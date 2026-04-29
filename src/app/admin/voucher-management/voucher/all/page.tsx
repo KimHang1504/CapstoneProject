@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import VoucherCard from "../../components/VoucherCard";
 import VoucherSkeleton from "../../components/VoucherSkeleton";
 import VoucherPagination from "../../components/VoucherPagination";
+import StatusDropdown from "../../components/StatusDropdown";
 
 export default function VoucherPage() {
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
@@ -19,6 +20,8 @@ export default function VoucherPage() {
   const [page, setPage] = useState(1);
   const pageSize = 5;
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
 
   const fetchData = async () => {
     setLoading(true);
@@ -36,11 +39,24 @@ export default function VoucherPage() {
 
     setVouchers(data.items);
     setTotalPages(data.totalPages);
+    setTotalItems(data.totalCount);
     setLoading(false);
+  };
+
+  const fetchPendingCount = async () => {
+    const res = await getAllVouchers({
+      PageNumber: 1,
+      PageSize: 1,
+      SortBy: "createdAt",
+      SortDirection: "desc",
+      Status: "PENDING",
+    });
+    setPendingCount(res.data.totalCount);
   };
 
   useEffect(() => {
     fetchData();
+    fetchPendingCount();
   }, [page, keyword, status]);
 
   useEffect(() => {
@@ -61,19 +77,14 @@ export default function VoucherPage() {
       <BackButton />
 
       {/* Header */}
-      {/* <div className="flex gap-5 jusstify-between w-full">
-        <h2 className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
-          Quản lí voucher
+      <div className="mb-4">
+        <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
+          Tất cả voucher
         </h2>
-
-        <Link
-          href="/admin/voucher-management/all"
-          className="inline-flex items-center gap-2 text-sm bg-gradient-to-r from-violet-500 to-pink-500 text-white px-4 py-2 rounded-full shadow hover:opacity-90 transition"
-        >
-          <Plus size={18} />
-          Xem tất cả voucher
-        </Link>
-      </div> */}
+        <p className="text-sm text-gray-600 mt-1">
+          Đang chờ duyệt: <span className="font-semibold text-yellow-600">{pendingCount}</span> / Tổng số: <span className="font-semibold">{totalItems}</span>
+        </p>
+      </div>
 
       <div className="flex flex-col md:flex-row gap-3 items-center justify-between">
 
@@ -87,18 +98,7 @@ export default function VoucherPage() {
         />
 
         {/* Status Filter */}
-        <select
-          value={status || ""}
-          onChange={(e) => setStatus(e.target.value || undefined)}
-          className="px-4 py-2 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-400"
-        >
-          <option value="">Tất cả trạng thái</option>
-          <option value="PENDING">Đang chờ duyệt</option>
-          <option value="APPROVED">Đã duyệt</option>
-          <option value="REJECTED">Từ chối</option>
-          <option value="ACTIVE">Hoạt động</option>
-          <option value="ENDED">Kết thúc</option>
-        </select>
+        <StatusDropdown value={status} onChange={setStatus} />
 
       </div>
 

@@ -132,14 +132,14 @@ export default function WalletPage() {
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               onClick={() => setShowTopup(true)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 sm:px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
+              className="flex-1 cursor-pointer sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 sm:px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
             >
               <QrCode size={16} />
               Nạp tiền
             </button>
             <button
               onClick={() => setShowWithdraw(true)}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-4 sm:px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
+              className="flex-1 cursor-pointer sm:flex-none flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-4 sm:px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
             >
               <ArrowDownCircle size={16} />
               Rút tiền
@@ -154,7 +154,7 @@ export default function WalletPage() {
               setActiveTab('transactions');
               setCurrentPage(1);
             }}
-            className={`px-4 py-2.5 text-sm font-medium transition relative ${activeTab === 'transactions'
+            className={`px-4 py-2.5 text-sm cursor-pointer font-medium transition relative ${activeTab === 'transactions'
                 ? 'text-violet-600'
                 : 'text-gray-500 hover:text-gray-700'
               }`}
@@ -166,7 +166,7 @@ export default function WalletPage() {
           </button>
           <button
             onClick={() => setActiveTab('withdraws')}
-            className={`px-4 py-2.5 text-sm font-medium transition relative ${activeTab === 'withdraws'
+            className={`px-4 py-2.5 text-sm cursor-pointer font-medium transition relative ${activeTab === 'withdraws'
                 ? 'text-violet-600'
                 : 'text-gray-500 hover:text-gray-700'
               }`}
@@ -203,7 +203,7 @@ export default function WalletPage() {
                   <button
                     ref={filterButtonRef}
                     onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                    className="flex items-center gap-2 pl-3 pr-3 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white transition"
+                    className="flex cursor-pointer items-center gap-2 pl-3 pr-3 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent bg-white transition"
                   >
                     <Filter size={18} className="text-gray-400" />
                     <span className="text-gray-700">
@@ -239,7 +239,7 @@ export default function WalletPage() {
                               setFilterType(option.value);
                               setShowFilterDropdown(false);
                             }}
-                            className={`w-full text-left px-4 py-2 text-sm hover:bg-violet-50 transition ${
+                            className={`w-full cursor-pointer text-left px-4 py-2 text-sm hover:bg-violet-50 transition ${
                               filterType === option.value ? 'bg-violet-50 text-violet-600 font-medium' : 'text-gray-700'
                             }`}
                           >
@@ -347,7 +347,7 @@ export default function WalletPage() {
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={!transactionData.hasPreviousPage}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                        className="flex cursor-pointer items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
                       >
                         <ChevronLeft size={16} />
                         Trước
@@ -355,7 +355,7 @@ export default function WalletPage() {
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={!transactionData.hasNextPage}
-                        className="flex items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                        className="flex cursor-pointer items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
                       >
                         Sau
                         <ChevronRight size={16} />
