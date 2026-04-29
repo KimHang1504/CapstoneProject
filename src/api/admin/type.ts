@@ -36,6 +36,17 @@ export interface DashboardRequest {
   Month?: number;
 }
 
+// Voucher Commission Revenue
+export interface CommissionRevenueItem {
+  label: string;
+  revenue: number;
+  count: number;
+}
+
+export interface CommissionRevenueResponse {
+  items: CommissionRevenueItem[];
+}
+
 //Venue management
 export interface Venue {
   id: number;

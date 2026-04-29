@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementDetail, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementDetail, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CommissionRevenueResponse, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
 
 //Dashboard
 export const getDashboardStats = (request: DashboardRequest) => {
@@ -209,6 +209,17 @@ export const approveVoucher = (id: number) => {
 
 export const rejectVoucher = (id: number, rejectReason: string) => {
     return apiClient.post(`/api/admin-vouchers/${id}/reject`, { rejectReason });
+}
+
+export const getAdminVoucherCommissionRevenue = (
+    fromDate: string,
+    toDate: string,
+    groupBy: 'day' | 'month' | 'year'
+) => {
+    return apiClient.get<ApiResponse<CommissionRevenueResponse>>(
+        `/api/admin-vouchers/commission-revenue`,
+        { params: { FromDate: fromDate, ToDate: toDate, GroupBy: groupBy } }
+    );
 }
 
 //Report management
