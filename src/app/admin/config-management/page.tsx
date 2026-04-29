@@ -89,7 +89,7 @@ export default function SettingsPage() {
                     <button
                         onClick={fetchConfigs}
                         disabled={loading}
-                        className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                        className="group px-4 py-2.5 cursor-pointer bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                         <span className="text-sm font-medium">Tải lại</span>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
                                                     <button
                                                         onClick={() => handleSave(config)}
                                                         disabled={isSaving}
-                                                        className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-sm"
+                                                        className="px-3 py-2 cursor-pointer bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1.5 shadow-sm"
                                                     >
                                                         {isSaving ? (
                                                             <Spinner />
@@ -171,7 +171,7 @@ export default function SettingsPage() {
 
                                                     <button
                                                         onClick={() => setEditingKey(null)}
-                                                        className="p-2 border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+                                                        className="p-2 cursor-pointer border border-slate-300 rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
                                                     >
                                                         <X className="w-4 h-4" />
                                                     </button>
@@ -179,7 +179,7 @@ export default function SettingsPage() {
                                             ) : (
                                                 <button
                                                     onClick={() => handleEdit(config)}
-                                                    className="px-3 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors flex items-center gap-1.5"
+                                                    className="px-3 py-2 cursor-pointer border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors flex items-center gap-1.5"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
                                                     <span className="text-sm font-medium">Sửa</span>

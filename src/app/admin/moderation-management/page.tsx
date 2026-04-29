@@ -38,7 +38,7 @@ export default function AIModerationPage() {
               <button
                 key={t.key}
                 onClick={() => setTab(t.key as TabType)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
+                className={`flex cursor-pointer items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${
                   active
                     ? "bg-blue-600 text-white shadow"
                     : "text-slate-600 hover:bg-slate-100"

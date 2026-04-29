@@ -333,7 +333,7 @@ export default function AdvertisementForm({
             type="button"
             onClick={handleGenerateContent}
             disabled={isGeneratingContent || !form.title.trim()}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-lg hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+            className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-linear-to-r from-purple-500 to-indigo-600 text-white text-xs font-medium rounded-lg hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
           >
             {isGeneratingContent ? (
               <>
@@ -394,7 +394,7 @@ export default function AdvertisementForm({
               type="button"
               onClick={() => document.getElementById('banner-file-input')?.click()}
               disabled={isUploadingBanner}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-500 to-cyan-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+              className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-linear-to-r from-blue-500 to-cyan-600 text-white text-xs font-medium rounded-lg hover:from-blue-600 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
             >
               {isUploadingBanner ? (
                 <>
@@ -412,7 +412,7 @@ export default function AdvertisementForm({
               type="button"
               onClick={handleGenerateImage}
               disabled={isGeneratingImage || !form.title.trim()}
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-linear-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+              className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 bg-linear-to-r from-pink-500 to-rose-600 text-white text-xs font-medium rounded-lg hover:from-pink-600 hover:to-rose-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
             >
               {isGeneratingImage ? (
                 <>
@@ -479,7 +479,7 @@ export default function AdvertisementForm({
                     moodTypeId: mood.id,
                   }))
                 }
-                className={`px-4 py-2 rounded-full text-sm font-medium border transition-all
+                className={`px-4 py-2 cursor-pointer rounded-full text-sm font-medium border transition-all
             ${isSelected
                     ? "bg-violet-600 text-white border-violet-600 shadow-sm"
                     : "bg-white text-gray-700 border-violet-200 hover:border-violet-400 hover:text-violet-600"

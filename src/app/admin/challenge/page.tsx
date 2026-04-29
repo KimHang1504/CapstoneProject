@@ -245,7 +245,7 @@ const handleDelete = (id: number) => {
           <button
             disabled={page === 1}
             onClick={() => setPage(p => p - 1)}
-            className="p-2 rounded-lg border disabled:opacity-40"
+            className="p-2 cursor-pointer rounded-lg border disabled:opacity-40"
           >
 
             <ChevronLeft size={18} />
@@ -259,7 +259,7 @@ const handleDelete = (id: number) => {
           <button
             disabled={page === totalPages}
             onClick={() => setPage(p => p + 1)}
-            className="p-2 rounded-lg border disabled:opacity-40"
+            className="p-2 cursor-pointer rounded-lg border disabled:opacity-40"
           >
 
             <ChevronRight size={18} />

@@ -154,7 +154,7 @@ export default function PackagesClient() {
                                                 setSelectedQuantity(1);
                                                 setOpenDurationModal(true);
                                             }}
-                                            className="flex items-center gap-2 w-fit px-7 py-3 bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+                                            className="flex cursor-pointer items-center gap-2 w-fit px-7 py-3 bg-linear-to-r from-violet-500 to-purple-600 hover:from-violet-600 hover:to-purple-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
                                         >
                                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
@@ -239,7 +239,7 @@ export default function PackagesClient() {
                                         <button
                                             type="button"
                                             onClick={() => setSelectedQuantity((prev) => Math.max(MIN_QTY, prev - 1))}
-                                            className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                            className="px-4 py-2 cursor-pointer text-violet-700 hover:bg-violet-50 transition"
                                         >
                                             -
                                         </button>
@@ -263,7 +263,7 @@ export default function PackagesClient() {
                                         <button
                                             type="button"
                                             onClick={() => setSelectedQuantity((prev) => Math.min(MAX_QTY, prev + 1))}
-                                            className="px-4 py-2 text-violet-700 hover:bg-violet-50 transition"
+                                            className="px-4 py-2 cursor-pointer text-violet-700 hover:bg-violet-50 transition"
                                         >
                                             +
                                         </button>
@@ -286,7 +286,7 @@ export default function PackagesClient() {
                         <div className="flex gap-3 px-6 pb-6">
                             <button
                                 onClick={() => setOpenDurationModal(false)}
-                                className="flex-1 py-3 border-2 border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition"
+                                className="flex-1 py-3 border-2 cursor-pointer border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition"
                             >
                                 Hủy
                             </button>
@@ -296,7 +296,7 @@ export default function PackagesClient() {
                                     setOpenDurationModal(false);
                                     setOpenVenueModal(true);
                                 }}
-                                className="flex-1 py-3 bg-linear-to-r from-violet-500 to-purple-600 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-sm"
+                                className="flex-1 py-3 cursor-pointer bg-linear-to-r from-violet-500 to-purple-600 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-sm"
                             >
                                 Tiếp tục
                             </button>
@@ -320,7 +320,7 @@ export default function PackagesClient() {
                     <div className="bg-white rounded-3xl max-w-md w-full p-8 relative animate-in fade-in zoom-in duration-200">
                         <button
                             onClick={() => setShowPaymentModal(false)}
-                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+                            className="absolute top-4 right-4 cursor-pointer text-gray-400 hover:text-gray-600 transition"
                         >
                             <X size={24} />
                         </button>
@@ -337,7 +337,7 @@ export default function PackagesClient() {
                             <button
                                 onClick={() => handlePaymentMethod('WALLET')}
                                 disabled={isProcessing}
-                                className="w-full flex items-center gap-4 p-5 border-2 border-purple-200 rounded-2xl hover:border-purple-400 hover:bg-purple-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full cursor-pointer flex items-center gap-4 p-5 border-2 border-purple-200 rounded-2xl hover:border-purple-400 hover:bg-purple-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <div className="w-14 h-14 bg-linear-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                                     <Wallet className="text-white" size={28} />
@@ -354,7 +354,7 @@ export default function PackagesClient() {
                             <button
                                 onClick={() => handlePaymentMethod('VIETQR')}
                                 disabled={isProcessing}
-                                className="w-full flex items-center gap-4 p-5 border-2 border-blue-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full cursor-pointer flex items-center gap-4 p-5 border-2 border-blue-200 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <div className="w-14 h-14 bg-linear-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition">
                                     <QrCode className="text-white" size={28} />

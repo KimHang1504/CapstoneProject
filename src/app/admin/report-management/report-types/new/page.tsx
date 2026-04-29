@@ -94,7 +94,7 @@ export default function CreateReportTypePage() {
                     <div className="flex justify-end gap-3 pt-4">
                         <button
                             onClick={() => router.back()}
-                            className="px-6 py-3 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
+                            className="px-6 py-3 border cursor-pointer border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
                         >
                             Hủy
                         </button>
@@ -102,7 +102,7 @@ export default function CreateReportTypePage() {
                         <button
                             onClick={handleSubmit}
                             disabled={loading}
-                            className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 transition font-medium"
+                            className="flex items-center gap-2 px-6 py-3 cursor-pointer bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg disabled:opacity-50 transition font-medium"
                         >
                             <FileText size={18} />
                             {loading ? "Đang tạo..." : "Tạo loại báo cáo"}

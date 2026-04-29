@@ -83,7 +83,7 @@ export default function PostModeration() {
 
         <button
           onClick={fetchData}
-          className="flex items-center gap-2 px-3 py-2 border rounded-lg bg-white hover:bg-slate-50"
+          className="flex items-center cursor-pointer gap-2 px-3 py-2 border rounded-lg bg-white hover:bg-slate-50"
         >
           <RefreshCw className={`w-4 h-4 ${loading && "animate-spin"}`} />
           Tải lại
@@ -130,7 +130,7 @@ export default function PostModeration() {
             <button
               onClick={() => setPage(1)}
               disabled={page === 1}
-              className="p-2 border rounded-lg disabled:opacity-40"
+              className="p-2 cursor-pointer border rounded-lg disabled:opacity-40"
             >
               <ChevronsLeft className="w-4 h-4" />
             </button>
@@ -138,7 +138,7 @@ export default function PostModeration() {
             <button
               onClick={() => setPage(page - 1)}
               disabled={page === 1}
-              className="p-2 border rounded-lg disabled:opacity-40"
+              className="p-2 cursor-pointer border rounded-lg disabled:opacity-40"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -150,7 +150,7 @@ export default function PostModeration() {
             <button
               onClick={() => setPage(page + 1)}
               disabled={page === totalPages}
-              className="p-2 border rounded-lg disabled:opacity-40"
+              className="p-2 cursor-pointer border rounded-lg disabled:opacity-40"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -158,7 +158,7 @@ export default function PostModeration() {
             <button
               onClick={() => setPage(totalPages)}
               disabled={page === totalPages}
-              className="p-2 border rounded-lg disabled:opacity-40"
+              className="p-2 cursor-pointer border rounded-lg disabled:opacity-40"
             >
               <ChevronsRight className="w-4 h-4" />
             </button>

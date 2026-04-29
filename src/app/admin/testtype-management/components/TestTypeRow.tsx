@@ -66,7 +66,7 @@ export default function TestTypeRow({
           <button
             onClick={() => onStartEdit(item)}
             disabled={isCreating || editingId !== null}
-            className="group inline-flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-violet-500 to-purple-500 text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            className="group inline-flex cursor-pointer items-center gap-1.5 px-3 py-2 bg-linear-to-r from-violet-500 to-purple-500 text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
             <Edit2 className="w-3.5 h-3.5" />
             <span>Sửa</span>

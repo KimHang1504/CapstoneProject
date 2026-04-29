@@ -128,7 +128,7 @@ export default function ReportDetailPage() {
 
         <button
           onClick={() => router.back()}
-          className="px-4 py-2 rounded-lg border hover:bg-gray-100 transition cursor-pointer"
+          className="px-4 py-2 cursor-pointer rounded-lg border hover:bg-gray-100 transition cursor-pointer"
         >
           ← Trở lại
         </button>

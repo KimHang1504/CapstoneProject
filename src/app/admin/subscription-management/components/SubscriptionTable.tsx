@@ -144,7 +144,7 @@ export default function SubscriptionTable() {
           <button
             onClick={fetchData}
             disabled={loading}
-            className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm flex items-center gap-2"
+            className="px-4 py-2 cursor-pointer bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 shadow-sm flex items-center gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Tải lại
@@ -160,7 +160,7 @@ export default function SubscriptionTable() {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="min-w-50 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
+              className="min-w-50 cursor-pointer px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-gray-50 transition-colors flex items-center justify-between"
             >
               <span className="text-gray-700">
                 {typeFilter === "" ? "Tất cả" : getTypeLabel(typeFilter)}
@@ -184,7 +184,7 @@ export default function SubscriptionTable() {
                         setTypeFilter(option.value as PackageType | "");
                         setDropdownOpen(false);
                       }}
-                      className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 ${typeFilter === option.value ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                      className={`w-full cursor-pointer px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 ${typeFilter === option.value ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
                         }`}
                     >
                       <Icon className="w-4 h-4" />
@@ -200,7 +200,7 @@ export default function SubscriptionTable() {
           {typeFilter && (
             <button
               onClick={() => setTypeFilter("")}
-              className="text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
+              className="cursor-pointer text-sm text-gray-600 hover:text-gray-900 flex items-center gap-1 px-2 py-1 rounded hover:bg-gray-100 transition-colors"
             >
               <X className="w-4 h-4" />
               Xóa lọc
@@ -295,7 +295,7 @@ export default function SubscriptionTable() {
                             aria-checked={pkg.isActive}
                             disabled={!pkg.isActive || actionLoading === pkg.id}
                             onClick={() => openDeactivateModal(pkg)}
-                            className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${pkg.isActive ? "bg-green-500" : "bg-slate-300"} disabled:cursor-not-allowed disabled:opacity-70`}
+                            className={`relative cursor-pointer inline-flex h-6 w-11 items-center rounded-full transition-colors ${pkg.isActive ? "bg-green-500" : "bg-slate-300"} disabled:cursor-not-allowed disabled:opacity-70`}
                             title={pkg.isActive ? "Ngưng hoạt động gói" : "Gói đã ngưng hoạt động"}
                           >
                             <span
@@ -317,7 +317,7 @@ export default function SubscriptionTable() {
                           <button
                             onClick={() => openEditModal(pkg)}
                             disabled={actionLoading === pkg.id}
-                            className="px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center gap-1"
+                            className="cursor-pointer px-3 py-1.5 text-xs font-medium bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors flex items-center gap-1"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                             Sửa

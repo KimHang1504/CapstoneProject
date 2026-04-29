@@ -40,7 +40,7 @@ export default function PaymentSuccessPage() {
         {/* Button */}
         <button
           onClick={handleBackToLocations}
-          className="w-full bg-violet-400 text-white py-3 rounded-full font-semibold hover:bg-violet-700 transition"
+          className="w-full bg-violet-400 cursor-pointer text-white py-3 rounded-full font-semibold hover:bg-violet-700 transition"
         >
           Quay về danh sách
         </button>

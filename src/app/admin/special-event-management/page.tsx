@@ -221,7 +221,7 @@ export default function SpecialEventListPage() {
                         <button
                             disabled={page === 1}
                             onClick={() => setPage(p => p - 1)}
-                            className="p-2 rounded-lg border disabled:opacity-40"
+                            className="p-2 cursor-pointer rounded-lg border disabled:opacity-40"
                         >
                             <ChevronLeft size={18} />
                         </button>
@@ -233,7 +233,7 @@ export default function SpecialEventListPage() {
                         <button
                             disabled={page === totalPages}
                             onClick={() => setPage(p => p + 1)}
-                            className="p-2 rounded-lg border disabled:opacity-40"
+                            className="p-2 cursor-pointer rounded-lg border disabled:opacity-40"
                         >
                             <ChevronRight size={18} />
                         </button>
