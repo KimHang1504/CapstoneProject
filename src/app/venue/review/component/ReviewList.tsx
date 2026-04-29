@@ -170,21 +170,6 @@ export default function ReviewList({
 
                             {review.coupleMoodSnapshot && (
                                 <div className="mt-2 flex flex-wrap gap-1.5">
-                                    {review.coupleMoodSnapshot.split(',').map((mood, index) => (
-                                        <span 
-                                            key={index}
-                                            className="inline-flex items-center gap-1
-                                                px-3 py-1 text-xs font-medium
-                                                rounded-full
-                                                bg-gradient-to-r from-purple-50 to-pink-50
-                                                text-purple-700
-                                                border border-purple-200
-                                                shadow-sm
-                                            "
-                                        >
-                                            {mood.trim()}
-                                        </span>
-                                    ))}
                                 </div>
                             )}
 
@@ -201,17 +186,6 @@ export default function ReviewList({
                                     <ThumbsUp size={13} />
                                     {review.likeCount}
                                 </span>
-
-                                {review.isMatched && (
-                                    <span className="text-green-600 bg-green-50 px-2 py-0.5 rounded-full">
-                                        Mood phù hợp
-                                    </span>
-                                )}
-                                {!review.isMatched && (
-                                    <span className="text-red-600 bg-red-50 px-2 py-0.5 rounded-full">
-                                        Mood không phù hợp
-                                    </span>
-                                )}
 
                                 <button
                                     onClick={() =>

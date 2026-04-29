@@ -11,7 +11,7 @@ export default function Statistic({ summary }: Props) {
   console.log("SUMMARY", summary)
   console.log("RATINGS", summary?.ratings)
   return (
-    <div className="grid md:grid-cols-4 gap-6">
+    <div className="grid md:grid-cols-3 gap-6">
 
       {/* Tổng đánh giá */}
       <div className="bg-white p-6 border-r border-gray-200">
@@ -30,32 +30,10 @@ export default function Statistic({ summary }: Props) {
         </p>
         <p className="text-3xl font-semibold tracking-tight">
           {summary.averageRating.toFixed(1)}
+          <span className="text-lg font-normal text-gray-400"> / 5</span>
         </p>
       </div>
 
-      {/* Mood Match */}
-      <div className="bg-white p-6 border-r border-gray-200">
-        <p className="text-sm text-gray-500 mb-2">
-          Tỉ lệ khách hàng cảm thấy phù hợp
-        </p>
-        <div className="flex items-baseline gap-2 mb-3">
-          <p className="text-3xl font-semibold tracking-tight">
-            {summary.moodMatchPercentage}%
-          </p>
-          <span className="text-sm text-gray-400">
-            ({summary.matchedReviewsCount} phù hợp)
-          </span>
-        </div>
-
-        <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
-          <div
-            className="h-2 rounded-full bg-pink-400 transition-all duration-500"
-            style={{
-              width: `${summary.moodMatchPercentage}%`,
-            }}
-          />
-        </div>
-      </div>
       {/* Rating Breakdown */}
       <div className="space-y-3">
         {[5, 4, 3, 2, 1].map((star) => {
