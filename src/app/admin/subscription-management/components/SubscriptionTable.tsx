@@ -125,7 +125,7 @@ export default function SubscriptionTable() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
               <Package className="w-6 h-6 text-gray-700" />
-              Quản lý gói subscription
+              Quản lý gói đăng kí
             </h1>
             <p className="text-sm text-gray-600 mt-1">
               Tổng số: {data.length} gói

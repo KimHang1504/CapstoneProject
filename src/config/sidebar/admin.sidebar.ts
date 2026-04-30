@@ -55,14 +55,14 @@ export const adminSidebarConfig: SidebarConfig = {
       icon: 'Megaphone',
     },
     {
-      label: 'Duyệt voucher',
+      label: 'Quản lí voucher',
       href: '/admin/voucher-management/voucher/all',
       icon: 'Tag',
     },
 
     // Tài chính
     {
-      label: 'Quản lý subscription',
+      label: 'Quản lý gói',
       href: '/admin/subscription-management',
       icon: 'Package',
     },
@@ -79,7 +79,7 @@ export const adminSidebarConfig: SidebarConfig = {
 
     // Quản trị & hệ thống
     {
-      label: 'Quản lý report',
+      label: 'Quản lý báo cáo',
       href: '/admin/report-management',
       icon: 'Flag',
     },

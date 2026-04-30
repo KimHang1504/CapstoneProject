@@ -3,24 +3,24 @@ import { getReports } from "@/api/admin/api";
 import { Report } from "@/api/admin/type";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { 
-  RefreshCw, 
-  ChevronDown, 
-  X, 
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Flag,
-  User,
-  CheckCircle,
-  Clock,
-  XCircle,
-  FileText,
-  MessageSquare,
-  Star,
-  MapPin
+import {
+    RefreshCw,
+    ChevronDown,
+    X,
+    Search,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Flag,
+    User,
+    CheckCircle,
+    Clock,
+    XCircle,
+    FileText,
+    MessageSquare,
+    Star,
+    MapPin
 } from "lucide-react";
 
 const PAGE_SIZE = 5;
@@ -122,7 +122,7 @@ export default function ReportPage() {
                 {/* FILTER CARD */}
                 <div className="">
                     <div className="flex gap-3 flex-wrap items-center">
-                        
+
                         {/* SEARCH */}
                         <div className="relative flex-1 min-w-[250px]">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
@@ -150,9 +150,9 @@ export default function ReportPage() {
                                 className="min-w-37.5 cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700">
-                                    {status === "" ? "Tất cả trạng thái" : 
-                                     status === "PENDING" ? "Chờ xử lý" :
-                                     status === "APPROVED" ? "Đã duyệt" : "Từ chối"}
+                                    {status === "" ? "Tất cả trạng thái" :
+                                        status === "PENDING" ? "Chờ xử lý" :
+                                            status === "APPROVED" ? "Đã duyệt" : "Từ chối"}
                                 </span>
                                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${statusDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -174,9 +174,8 @@ export default function ReportPage() {
                                                     setStatus(option.value as Report["status"] | "");
                                                     setStatusDropdownOpen(false);
                                                 }}
-                                                className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
-                                                    status === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                                                }`}
+                                                className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${status === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                    }`}
                                             >
                                                 {Icon && <Icon className="w-4 h-4" />}
                                                 {option.label}
@@ -194,7 +193,12 @@ export default function ReportPage() {
                                 className="min-w-[150px] cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700">
-                                    {targetType === "" ? "Tất cả loại" : targetType}
+                                    {targetType === "" ? "Tất cả loại" :
+                                        targetType === "POST" ? "Bài viết" :
+                                            targetType === "COMMENT" ? "Bình luận" :
+                                                targetType === "REVIEW" ? "Đánh giá" :
+                                                    targetType === "USER" ? "Người dùng" :
+                                                        targetType === "VENUE" ? "Địa điểm" : targetType}
                                 </span>
                                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${targetTypeDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -218,9 +222,8 @@ export default function ReportPage() {
                                                     setTargetType(option.value as Report["targetType"] | "");
                                                     setTargetTypeDropdownOpen(false);
                                                 }}
-                                                className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
-                                                    targetType === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                                                }`}
+                                                className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${targetType === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                    }`}
                                             >
                                                 {Icon && <Icon className="w-4 h-4" />}
                                                 {option.label}
@@ -348,7 +351,7 @@ export default function ReportPage() {
                                 >
                                     <ChevronLeft className="w-4 h-4 text-slate-600" />
                                 </button>
-                                
+
                                 <div className="flex items-center gap-1">
                                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                                         let pageNum;
@@ -361,16 +364,15 @@ export default function ReportPage() {
                                         } else {
                                             pageNum = page - 2 + i;
                                         }
-                                        
+
                                         return (
                                             <button
                                                 key={pageNum}
                                                 onClick={() => setPage(pageNum)}
-                                                className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                                                    page === pageNum
-                                                        ? "bg-purple-600 text-white shadow-md"
-                                                        : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
-                                                }`}
+                                                className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${page === pageNum
+                                                    ? "bg-purple-600 text-white shadow-md"
+                                                    : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
+                                                    }`}
                                             >
                                                 {pageNum}
                                             </button>

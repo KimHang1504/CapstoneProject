@@ -38,9 +38,12 @@ export default function VenueSnapshot({ snapshot }: any) {
 
       {/* Footer */}
       <div className="flex justify-between text-xs text-gray-400">
-        <span>Status: {data.Status}</span>
+        <span>Trạng thái: {data.status == "PENDING" ? "Đang chờ duyệt" :
+          data.status == "ACTIVE" ? "Đang hoạt động" :
+            "Đã ẩn"}
+        </span>
         <span>
-          Snapshot at: {new Date(snapshot.capturedAt).toLocaleString()}
+          Ghi nhận lúc: {new Date(snapshot.capturedAt).toLocaleString()}
         </span>
       </div>
     </div>

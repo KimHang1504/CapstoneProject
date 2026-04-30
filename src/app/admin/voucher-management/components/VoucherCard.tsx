@@ -1,5 +1,5 @@
 import { Voucher } from "@/api/admin/type";
-import { AlignLeft, CalendarDays, Coins, Hash } from "lucide-react";
+import { AlignLeft, CalendarDays, Coins, Hash, ListFilterIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function VoucherCard({ voucher }: { voucher: Voucher }) {
@@ -26,7 +26,7 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
     <div className="group flex gap-5 rounded-2xl p-5 bg-white border border-violet-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
 
       {/* Image */}
-      <div className="w-32 h-32 shrink-0 rounded-xl overflow-hidden bg-gray-100">
+      <div className="w-42 h-42 shrink-0 rounded-xl overflow-hidden bg-gray-100">
         {voucher.imageUrl ? (
           <img
             src={voucher.imageUrl}
@@ -72,7 +72,7 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
         <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
           <Hash className="w-4 h-4 text-pink-400" />
           <span>
-            Code:{" "}
+            Mã:{" "}
             <span className="font-medium text-gray-700">
               {voucher.code}
             </span>
@@ -96,18 +96,24 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
             {voucher.startDate
               ? new Date(voucher.startDate).toLocaleDateString("vi-VN")
               : "Chưa đặt"}
+            {" "}→{" "}
+            {voucher.endDate
+              ? new Date(voucher.endDate).toLocaleDateString("vi-VN")
+              : "Chưa đặt"}
           </span>
         </div>
 
+        <div className="flex items-center gap-2 mt-1 text-sm">
+          <div className="text-pink-500 font-medium flex items-center gap-2">
+            <ListFilterIcon className="w-4 h-4" /> Số lượng: {voucher.remainingQuantity}/{voucher.quantity}
+          </div>
+        </div>
+
         {/* Footer */}
-        <div className="flex justify-between items-center mt-3 text-sm">
+        <div className="flex justify-between items-center mt-1 text-sm">
           <div className="flex items-center gap-2 text-violet-600 font-medium">
             <Coins className="w-4 h-4" />
             {voucher.voucherPrice.toLocaleString("vi-VN")} đ
-          </div>
-
-          <div className="text-pink-500 font-medium">
-            {voucher.remainingQuantity}/{voucher.quantity}
           </div>
         </div>
 

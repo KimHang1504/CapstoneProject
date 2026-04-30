@@ -74,12 +74,11 @@ export default function VoucherPage() {
 
   return (
     <div className="px-8 py-4 min-h-screen space-y-6">
-      <BackButton />
 
       {/* Header */}
       <div className="mb-4">
         <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
-          Tất cả voucher
+          Quản lí voucher
         </h2>
         <p className="text-sm text-gray-600 mt-1">
           Đang chờ duyệt: <span className="font-semibold text-yellow-600">{pendingCount}</span> / Tổng số: <span className="font-semibold">{totalItems}</span>
@@ -123,7 +122,7 @@ export default function VoucherPage() {
             </svg>
 
             <p className="text-gray-600 font-medium">
-              Không có yêu cầu voucher nào
+              Không có voucher nào
             </p>
           </div>
         ) : (

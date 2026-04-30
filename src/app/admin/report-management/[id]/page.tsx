@@ -122,7 +122,7 @@ export default function ReportDetailPage() {
             Chi tiết báo cáo #{report.id}
           </h1>
           <p className="text-gray-500 text-sm mt-1">
-            Review và xử lý các báo cáo vi phạm từ người dùng
+            Kiểm tra và xử lý các báo cáo vi phạm từ người dùng
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export default function ReportDetailPage() {
 
         <div className="p-6 border-b border-gray-300 flex justify-between items-center">
           <div>
-            <p className="text-sm text-gray-400">Report ID</p>
+            <p className="text-sm text-gray-400">ID Báo cáo</p>
             <p className="text-xl font-semibold">#{report.id}</p>
           </div>
 
@@ -185,7 +185,7 @@ export default function ReportDetailPage() {
             <EvidenceSnapshotView snapshot={report.evidenceSnapshot} />
           ) : (
             <div className="text-gray-400 text-sm italic">
-              Không có dữ liệu snapshot
+              Không có dữ liệu được ghi nhận
             </div>
           )}
         </div>
