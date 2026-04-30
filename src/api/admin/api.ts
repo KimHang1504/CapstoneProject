@@ -160,10 +160,10 @@ export const rejectPendingAdvertisements = (body: AdvertisementRejectRequest) =>
     return apiClient.post<ApiResponse<void>>("/api/Advertisement/reject", body);
 }
 
-export const getAllAdvertisements = () => {
+export const getAllAdvertisements = (status?: string) => {
     return apiClient.get<ApiResponse<Advertisement[]>>("/api/Advertisement/all", {
         params: {
-            status: "APPROVED"
+            status: status || undefined
         }
     });
 }

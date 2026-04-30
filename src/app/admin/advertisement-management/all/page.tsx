@@ -24,7 +24,6 @@ import { getMappingLabel } from "@/app/admin/mapping";
 
 export default function AdvertisementAllList() {
     const [data, setData] = useState<Advertisement[]>([]);
-    const [filteredData, setFilteredData] = useState<Advertisement[]>([]);
     const [loading, setLoading] = useState(true);
     const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
 
@@ -38,13 +37,12 @@ export default function AdvertisementAllList() {
 
     const router = useRouter();
 
-    const fetchData = async () => {
+    const fetchData = async (status?: string) => {
         try {
             setLoading(true);
-            const res = await getAllAdvertisements();
+            const res = await getAllAdvertisements(status);
             if (res.code === 200) {
                 setData(res.data);
-                setFilteredData(res.data);
             }
         } finally {
             setLoading(false);
@@ -52,16 +50,8 @@ export default function AdvertisementAllList() {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
-
-    useEffect(() => {
-        if (statusFilter) {
-            setFilteredData(data.filter(ad => ad.status === statusFilter));
-        } else {
-            setFilteredData(data);
-        }
-    }, [statusFilter, data]);
+        fetchData(statusFilter);
+    }, [statusFilter]);
 
     // ✅ ACCEPT
     const handleAccept = (id: number) => {
@@ -76,7 +66,7 @@ export default function AdvertisementAllList() {
                     const res = await acceptPendingAdvertisements(body);
                     if (res.code === 200) {
                         toast.success("Đã duyệt");
-                        fetchData();
+                        fetchData(statusFilter);
                     } else {
                         toast.error(res.message);
                     }
@@ -106,7 +96,7 @@ export default function AdvertisementAllList() {
 
         if (res.code === 200) {
             toast.success("Đã từ chối");
-            fetchData();
+            fetchData(statusFilter);
         }
 
         setOpen(false);
@@ -140,7 +130,7 @@ export default function AdvertisementAllList() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredData.map((ad) => (
+                    {data.map((ad) => (
                         <div
                             key={ad.id}
                             className="group bg-white rounded-2xl overflow-hidden border border-violet-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition flex flex-col"
