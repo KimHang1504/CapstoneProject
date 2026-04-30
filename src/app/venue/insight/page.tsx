@@ -97,7 +97,7 @@ export default function InsightPage() {
         const res = await getVenueOwnerSubscriptionInfo();
         if (res.code === 200 && res.data) {
           const { venueInsightAccess } = res.data;
-          
+
           // Nếu không có quyền truy cập hoặc hết hạn (0 ngày)
           if (!venueInsightAccess?.hasAccess || (venueInsightAccess.daysRemaining !== null && venueInsightAccess.daysRemaining <= 0)) {
             setSubscriptionMessage('Gói VENUE_INSIGHT của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng.');
@@ -136,9 +136,9 @@ export default function InsightPage() {
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!isCheckingAccess && !showSubscriptionModal) {
-      fetchInsight(timeframe); 
+      fetchInsight(timeframe);
     }
   }, [timeframe, isCheckingAccess, showSubscriptionModal]);
 
@@ -177,269 +177,307 @@ export default function InsightPage() {
 
         {/* Header + Timeframe */}
         {!isCheckingAccess && !showSubscriptionModal && (
-        <>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h1 className="text-xl font-bold text-gray-900">Insight</h1>
-            {inner && (
-              <p className="text-xs text-gray-400 mt-0.5">
-                Cập nhật lúc {new Date(inner.generatedAt).toLocaleString('vi-VN')}
-              </p>
-            )}
-          </div>
-          <div className="flex gap-2 flex-wrap">
-            {TIMEFRAME_OPTIONS.map(opt => (
-              <button
-                key={opt.value}
-                onClick={() => setTimeframe(opt.value)}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition
-                ${timeframe === opt.value
-                    ? 'bg-violet-600 text-white shadow-sm'
-                    : 'bg-white border border-gray-200 text-gray-600 hover:border-violet-300'}`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {loading ? (
-          <InsightSkeleton />
-        ) : inner && trend ? (
           <>
-            {/* Stats Overview */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="bg-gradient-to-br from-violet-50 to-white rounded-xl p-4 border border-violet-100">
-                <div className="flex items-center gap-2 mb-1">
-                  <Search size={16} className="text-violet-600" />
-                  <span className="text-xs text-gray-500">Tìm kiếm</span>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {inner.topSearches.reduce((sum, s) => sum + s.count, 0)}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-pink-50 to-white rounded-xl p-4 border border-pink-100">
-                <div className="flex items-center gap-2 mb-1">
-                  <Smile size={16} className="text-pink-600" />
-                  <span className="text-xs text-gray-500">Tâm trạng</span>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {inner.hotMoods.reduce((sum, m) => sum + m.count, 0)}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-4 border border-emerald-100">
-                <div className="flex items-center gap-2 mb-1">
-                  <CheckCircle size={16} className="text-emerald-600" />
-                  <span className="text-xs text-gray-500">Check-in</span>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {inner.favoritesAndInteractions.totalCheckIns}
-                </p>
-              </div>
-              <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl p-4 border border-sky-100">
-                <div className="flex items-center gap-2 mb-1">
-                  <BarChart2 size={16} className="text-sky-600" />
-                  <span className="text-xs text-gray-500">Danh mục</span>
-                </div>
-                <p className="text-2xl font-bold text-gray-900">
-                  {inner.favoritesAndInteractions.topVenueCategories.length}
-                </p>
-              </div>
-            </div>
-
-            {/* AI Analysis */}
-            <div className="bg-gradient-to-r from-purple-50 to-violet-50 rounded-xl border border-purple-200 p-3 shadow-sm">
-              <div className="flex items-center gap-2 mb-2">
-                <Sparkles size={14} className="text-purple-600" />
-                <h3 className="text-sm font-semibold text-gray-800">AI Phân tích</h3>
-                <span className="ml-auto text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded font-medium">
-                  AI
-                </span>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                <div className="space-y-1">
-                  <p className="font-medium text-gray-700 flex items-center gap-1">
-                    <Lightbulb size={12} className="text-violet-600" />
-                    Đề xuất chiến lược
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h1 className="text-xl font-bold text-gray-900">Insight</h1>
+                {inner && (
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Cập nhật lúc {new Date(inner.generatedAt).toLocaleString('vi-VN')}
                   </p>
-                  <ul className="space-y-0.5 text-gray-600">
-                    {trend?.businessStrategy.recommendations.slice(0, 2).map((r: string, i: number) => (
-                      <li key={i} className="flex gap-1.5 leading-snug">
-                        <span className="text-violet-500 shrink-0">•</span>
-                        <span className="line-clamp-2">{r}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="space-y-1">
-                  <p className="font-medium text-gray-700 flex items-center gap-1">
-                    <MapPin size={12} className="text-emerald-600" />
-                    Cơ hội phát triển
-                  </p>
-                  <ul className="space-y-0.5 text-gray-600">
-                    {trend?.businessStrategy.opportunities.slice(0, 2).map((o: string, i: number) => (
-                      <li key={i} className="flex gap-1.5 leading-snug">
-                        <span className="text-emerald-500 shrink-0">•</span>
-                        <span className="line-clamp-2">{o}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                )}
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {TIMEFRAME_OPTIONS.map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setTimeframe(opt.value)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition
+                ${timeframe === opt.value
+                        ? 'bg-violet-600 text-white shadow-sm'
+                        : 'bg-white border border-gray-200 text-gray-600 hover:border-violet-300'}`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Main Charts Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-              {/* Top Searches */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                <SectionTitle icon={Search}>Từ khóa tìm kiếm</SectionTitle>
-                <div className="h-56">
-                  {inner.topSearches.length === 0 ? (
-                    <div className="h-56 flex items-center justify-center text-sm text-gray-500 text-center px-4">
-                      {trend.searchTrends.summary}
+            {loading ? (
+              <InsightSkeleton />
+            ) : inner && trend ? (
+              <>
+                {/* Stats Overview */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="bg-gradient-to-br from-violet-50 to-white rounded-xl p-4 border border-violet-100">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Search size={16} className="text-violet-600" />
+                      <span className="text-xs text-gray-500">Tìm kiếm</span>
                     </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={inner.topSearches.slice(0, 5)} layout="vertical" margin={{ left: 10, right: 10 }}>
-                        <XAxis type="number" tick={{ fontSize: 11 }} />
-                        <YAxis dataKey="keyword" type="category" width={80} tick={{ fontSize: 11 }} />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </div>
-
-              {/* Hot Moods */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                <SectionTitle icon={Smile}>Tâm trạng nổi bật</SectionTitle>
-                <div className="h-56">
-                  {inner.hotMoods.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                      <Smile size={28} className="text-gray-300 mb-2" />
-                      <p className="text-sm text-gray-500">
-                        Không có dữ liệu tâm trạng
-                      </p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {inner.topSearches.reduce((sum, s) => sum + s.count, 0)}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-pink-50 to-white rounded-xl p-4 border border-pink-100">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Smile size={16} className="text-pink-600" />
+                      <span className="text-xs text-gray-500">Tâm trạng</span>
                     </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={inner.hotMoods}
-                          dataKey="count"
-                          nameKey="moodName"
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={40}
-                          outerRadius={70}
-                          paddingAngle={2}
-                        >
-                          {inner.hotMoods.map((entry: HotMood, index: number) => (
-                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip content={<CustomTooltip />} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-2 justify-center mt-2">
-                  {inner.hotMoods.map((mood: HotMood, i: number) => (
-                    <div key={mood.moodTypeId} className="flex items-center gap-1">
-                      <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
-                      <span className="text-xs text-gray-600">{mood.moodName}</span>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {inner.hotMoods.reduce((sum, m) => sum + m.count, 0)}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-4 border border-emerald-100">
+                    <div className="flex items-center gap-2 mb-1">
+                      <CheckCircle size={16} className="text-emerald-600" />
+                      <span className="text-xs text-gray-500">Check-in</span>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Top Check-in */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                <SectionTitle icon={CheckCircle}>Top Check-in</SectionTitle>
-                <div className="h-56">
-                  {inner.favoritesAndInteractions.topVenueCategories.length === 0 ? (
-                    <div className="h-64 flex items-center justify-center text-sm text-gray-500 text-center px-4">
-                      {trend.venuePreferences.userBehavior}
+                    <p className="text-2xl font-bold text-gray-900">
+                      {inner.favoritesAndInteractions.totalCheckIns}
+                    </p>
+                  </div>
+                  <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl p-4 border border-sky-100">
+                    <div className="flex items-center gap-2 mb-1">
+                      <BarChart2 size={16} className="text-sky-600" />
+                      <span className="text-xs text-gray-500">Danh mục</span>
                     </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={inner.favoritesAndInteractions.topCheckInVenues.slice(0, 5)}>
-                        <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
-                        <YAxis tick={{ fontSize: 11 }} />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Bar dataKey="checkInCount" fill="#10b981" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Mood Trends + Categories */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-              {/* Mood Trends - Line Chart */}
-              {inner.moodTrendsByMonth.length > 0 && (
-                <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                  <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng</SectionTitle>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <LineChart data={inner.moodTrendsByMonth}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="monthName" tick={{ fontSize: 11 }} />
-                        <YAxis tick={{ fontSize: 11 }} />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend wrapperStyle={{ fontSize: '11px' }} />
-                        {inner.moodTrendsByMonth[0]?.moods.slice(0, 4).map((mood: { moodName: string }, idx: number) => (
-                          <Line
-                            key={mood.moodName}
-                            type="monotone"
-                            dataKey={(data: MoodTrend) => data.moods.find(m => m.moodName === mood.moodName)?.count || 0}
-                            name={mood.moodName}
-                            stroke={CHART_COLORS[idx % CHART_COLORS.length]}
-                            strokeWidth={2}
-                            dot={{ r: 4 }}
-                            activeDot={{ r: 6 }}
-                          />
-                        ))}
-                      </LineChart>
-                    </ResponsiveContainer>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {inner.favoritesAndInteractions.topVenueCategories.length}
+                    </p>
                   </div>
                 </div>
-              )}
 
-              {/* Top Categories */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                <SectionTitle icon={BarChart2}>Danh mục yêu thích</SectionTitle>
-                <div className="h-64">
-                  {inner.favoritesAndInteractions.topVenueCategories.length === 0 ? (
-                    <div className="h-full flex flex-col items-center justify-center text-center px-4">
-                      <BarChart2 size={28} className="text-gray-300 mb-2" />
-                      <p className="text-sm text-gray-500">
-                        Chưa có dữ liệu danh mục
-                      </p>
+                {/* AI Analysis */}
+                <div className="relative overflow-hidden rounded-2xl p-[1px] bg-gradient-to-r from-violet-500 via-purple-500 to-indigo-500 shadow-lg">
+
+                  {/* glow effect */}
+                  <div className="absolute inset-0 opacity-30 blur-xl bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400" />
+
+                  <div className="relative bg-white/95 backdrop-blur rounded-2xl p-5">
+
+                    {/* Header */}
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-violet-500 to-indigo-500 flex items-center justify-center shadow-md">
+                        <Sparkles size={18} className="text-white" />
+                      </div>
+
+                      <div className="flex-1">
+                        <p className="text-[10px] uppercase tracking-widest text-violet-500 font-semibold">
+                          AI SUMMARY
+                        </p>
+                        <h3 className="text-base font-bold text-gray-900 leading-tight">
+                          Tổng quan & đề xuất chiến lược
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-0.5">
+                          Insight quan trọng giúp tối ưu hiệu quả kinh doanh
+                        </p>
+                      </div>
+
+                      <span className="text-[10px] bg-gradient-to-r from-violet-500 to-indigo-500 text-white px-2 py-1 rounded-full font-semibold shadow">
+                        AI
+                      </span>
                     </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={inner.favoritesAndInteractions.topVenueCategories.slice(0, 6)}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                        <XAxis dataKey="category" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
-                        <YAxis tick={{ fontSize: 11 }} />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Legend wrapperStyle={{ fontSize: '11px' }} />
-                        <Bar dataKey="totalInteractions" name="Tương tác" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
-                        <Bar dataKey="uniqueUsers" name="Người dùng" fill="#ec4899" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  )}
+
+                    {/* Content */}
+                    <div className="grid md:grid-cols-2 gap-4 text-sm">
+
+                      {/* Strategy */}
+                      <div className="bg-violet-50 rounded-xl p-3 border border-violet-200">
+                        <p className="font-semibold text-violet-700 flex items-center gap-2 mb-2">
+                          <Lightbulb size={14} />
+                          Chiến lược đề xuất
+                        </p>
+
+                        <ul className="space-y-2 text-gray-800 text-xs">
+                          {trend?.businessStrategy.recommendations.slice(0, 2).map((r: string, i: number) => (
+                            <li key={i} className="flex gap-2">
+                              <span className="mt-1 w-2 h-2 bg-violet-500 rounded-full shrink-0" />
+                              <span className="line-clamp-2">{r}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Opportunities */}
+                      <div className="bg-emerald-50 rounded-xl p-3 border border-emerald-200">
+                        <p className="font-semibold text-emerald-700 flex items-center gap-2 mb-2">
+                          <MapPin size={14} />
+                          Cơ hội phát triển
+                        </p>
+
+                        <ul className="space-y-2 text-gray-800 text-xs">
+                          {trend?.businessStrategy.opportunities.slice(0, 2).map((o: string, i: number) => (
+                            <li key={i} className="flex gap-2">
+                              <span className="mt-1 w-2 h-2 bg-emerald-500 rounded-full shrink-0" />
+                              <span className="line-clamp-2">{o}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                    </div>
+
+                    {/* Footer */}
+                    <div className="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                      <span>Phân tích tự động từ dữ liệu hệ thống</span>
+                      <span className="text-violet-600 font-semibold">AI Insight</span>
+                    </div>
+
+                  </div>
                 </div>
-              </div>
-            </div>
+
+                {/* Main Charts Grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
+                  {/* Top Searches */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <SectionTitle icon={Search}>Từ khóa tìm kiếm</SectionTitle>
+                    <div className="h-56">
+                      {inner.topSearches.length === 0 ? (
+                        <div className="h-56 flex items-center justify-center text-sm text-gray-500 text-center px-4">
+                          {trend.searchTrends.summary}
+                        </div>
+                      ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={inner.topSearches.slice(0, 5)} layout="vertical" margin={{ left: 10, right: 10 }}>
+                            <XAxis type="number" tick={{ fontSize: 11 }} />
+                            <YAxis dataKey="keyword" type="category" width={80} tick={{ fontSize: 11 }} />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Hot Moods */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <SectionTitle icon={Smile}>Tâm trạng nổi bật</SectionTitle>
+                    <div className="h-56">
+                      {inner.hotMoods.length === 0 ? (
+                        <div className="h-full flex flex-col items-center justify-center text-center px-4">
+                          <Smile size={28} className="text-gray-300 mb-2" />
+                          <p className="text-sm text-gray-500">
+                            Không có dữ liệu tâm trạng
+                          </p>
+                        </div>
+                      ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={inner.hotMoods}
+                              dataKey="count"
+                              nameKey="moodName"
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={40}
+                              outerRadius={70}
+                              paddingAngle={2}
+                            >
+                              {inner.hotMoods.map((entry: HotMood, index: number) => (
+                                <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip content={<CustomTooltip />} />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      )}
+                    </div>
+                    <div className="flex flex-wrap gap-2 justify-center mt-2">
+                      {inner.hotMoods.map((mood: HotMood, i: number) => (
+                        <div key={mood.moodTypeId} className="flex items-center gap-1">
+                          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
+                          <span className="text-xs text-gray-600">{mood.moodName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Top Check-in */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <SectionTitle icon={CheckCircle}>Top Check-in</SectionTitle>
+                    <div className="h-56">
+                      {inner.favoritesAndInteractions.topVenueCategories.length === 0 ? (
+                        <div className="h-64 flex items-center justify-center text-sm text-gray-500 text-center px-4">
+                          {trend.venuePreferences.userBehavior}
+                        </div>
+                      ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={inner.favoritesAndInteractions.topCheckInVenues.slice(0, 5)}>
+                            <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
+                            <YAxis tick={{ fontSize: 11 }} />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Bar dataKey="checkInCount" fill="#10b981" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Mood Trends + Categories */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+                  {/* Mood Trends - Line Chart */}
+                  {inner.moodTrendsByMonth.length > 0 && (
+                    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                      <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng</SectionTitle>
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <LineChart data={inner.moodTrendsByMonth}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="monthName" tick={{ fontSize: 11 }} />
+                            <YAxis tick={{ fontSize: 11 }} />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Legend wrapperStyle={{ fontSize: '11px' }} />
+                            {inner.moodTrendsByMonth[0]?.moods.slice(0, 4).map((mood: { moodName: string }, idx: number) => (
+                              <Line
+                                key={mood.moodName}
+                                type="monotone"
+                                dataKey={(data: MoodTrend) => data.moods.find(m => m.moodName === mood.moodName)?.count || 0}
+                                name={mood.moodName}
+                                stroke={CHART_COLORS[idx % CHART_COLORS.length]}
+                                strokeWidth={2}
+                                dot={{ r: 4 }}
+                                activeDot={{ r: 6 }}
+                              />
+                            ))}
+                          </LineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Top Categories */}
+                  <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+                    <SectionTitle icon={BarChart2}>Danh mục yêu thích</SectionTitle>
+                    <div className="h-64">
+                      {inner.favoritesAndInteractions.topVenueCategories.length === 0 ? (
+                        <div className="h-full flex flex-col items-center justify-center text-center px-4">
+                          <BarChart2 size={28} className="text-gray-300 mb-2" />
+                          <p className="text-sm text-gray-500">
+                            Chưa có dữ liệu danh mục
+                          </p>
+                        </div>
+                      ) : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={inner.favoritesAndInteractions.topVenueCategories.slice(0, 6)}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="category" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
+                            <YAxis tick={{ fontSize: 11 }} />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Legend wrapperStyle={{ fontSize: '11px' }} />
+                            <Bar dataKey="totalInteractions" name="Tương tác" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="uniqueUsers" name="Người dùng" fill="#ec4899" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </>
+            ) : null}
           </>
-        ) : null}
-        </>
         )}
       </div>
     </>

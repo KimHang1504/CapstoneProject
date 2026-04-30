@@ -50,7 +50,7 @@ export default function StatusDropdown({ value, onChange }: StatusDropdownProps)
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white hover:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition min-w-[200px]"
+        className="flex cursor-pointer items-center justify-between gap-2 px-4 py-2 rounded-xl border border-gray-200 bg-white hover:border-pink-300 focus:outline-none focus:ring-2 focus:ring-pink-400 transition min-w-[200px]"
       >
         <span className="text-sm text-gray-700">{displayLabel}</span>
         <ChevronDown
@@ -68,7 +68,7 @@ export default function StatusDropdown({ value, onChange }: StatusDropdownProps)
                 key={option.value}
                 type="button"
                 onClick={() => handleSelect(option.value)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 text-sm text-left hover:bg-pink-50 transition ${
+                className={`w-full cursor-pointer flex items-center justify-between px-4 py-2.5 text-sm text-left hover:bg-pink-50 transition ${
                   isSelected ? "bg-pink-50 text-pink-600 font-medium" : "text-gray-700"
                 }`}
               >

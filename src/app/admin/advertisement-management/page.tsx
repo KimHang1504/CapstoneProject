@@ -241,14 +241,14 @@ export default function AdvertisementList() {
               <div className="p-4 flex gap-2">
                 <button
                   onClick={() => handleReject(ad.id)}
-                  className="flex-1 border border-pink-400 text-pink-500 hover:bg-pink-50 py-2 rounded-lg text-sm font-medium transition"
+                  className="flex-1 border cursor-pointer border-pink-400 text-pink-500 hover:bg-pink-50 py-2 rounded-lg text-sm font-medium transition"
                 >
                   Từ chối
                 </button>
 
                 <button
                   onClick={() => handleAccept(ad.id)}
-                  className="flex-1 bg-linear-to-r from-violet-500 to-pink-500 hover:opacity-90 text-white py-2 rounded-lg text-sm font-medium transition"
+                  className="flex-1 cursor-pointer bg-linear-to-r from-violet-500 to-pink-500 hover:opacity-90 text-white py-2 rounded-lg text-sm font-medium transition"
                 >
                   Chấp nhận
                 </button>
@@ -268,7 +268,7 @@ export default function AdvertisementList() {
                       setSelectedHistory(ad.rejectionHistory);
                       setHistoryOpen(true);
                     }}
-                    className="mt-2 text-xs text-gray-500 hover:text-pink-500 underline"
+                    className="mt-2 text-xs cursor-pointer text-gray-500 hover:text-pink-500 underline"
                   >
                     Xem lịch sử từ chối ({ad.rejectionHistory.length})
                   </button>
@@ -306,14 +306,14 @@ export default function AdvertisementList() {
                   setReason("");
                   setSelectedId(null);
                 }}
-                className="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50"
+                className="px-4 py-2 cursor-pointer text-sm rounded-lg border hover:bg-gray-50"
               >
                 Hủy
               </button>
 
               <button
                 onClick={confirmReject}
-                className="px-4 py-2 text-sm rounded-lg bg-blue-500 text-white hover:opacity-90"
+                className="px-4 py-2 cursor-pointer text-sm rounded-lg bg-blue-500 text-white hover:opacity-90"
               >
                 Xác nhận từ chối
               </button>
@@ -392,7 +392,7 @@ export default function AdvertisementList() {
                   setHistoryOpen(false);
                   setSelectedHistory([]);
                 }}
-                className="px-4 py-2 text-sm rounded-lg border hover:bg-gray-50"
+                className="px-4 py-2 cursor-pointer text-sm rounded-lg border hover:bg-gray-50"
               >
                 Đóng
               </button>

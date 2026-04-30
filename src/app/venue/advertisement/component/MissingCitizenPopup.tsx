@@ -28,7 +28,7 @@ export default function MissingCitizenPopup({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700"
+            className="rounded-xl cursor-pointer border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700"
           >
             Để sau
           </button>

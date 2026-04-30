@@ -157,9 +157,6 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                                 >
                                                     {item.voucherTitle}
                                                 </Link>
-                                                <div className="text-xs text-slate-400">
-                                                    VoucherItemId: {item.voucherItemId}
-                                                </div>
                                             </td>
 
                                             <td className="px-5 py-4 font-medium text-slate-700">

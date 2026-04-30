@@ -221,7 +221,7 @@ export default function AdvertisementDetailPage() {
                             isDeleted ? (
                                 <button
                                     onClick={handleResume}
-                                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+                                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium cursor-pointer
                 bg-emerald-100 text-emerald-700 border border-emerald-200
                 hover:bg-emerald-200 transition-all duration-200"
                                 >
@@ -231,7 +231,7 @@ export default function AdvertisementDetailPage() {
                             ) : (
                                 <button
                                     onClick={handlePause}
-                                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
+                                    className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium cursor-pointer
                 bg-amber-100 text-amber-700 border border-amber-200
                 hover:bg-amber-200 transition-all duration-200"
                                 >
@@ -274,8 +274,8 @@ export default function AdvertisementDetailPage() {
                     {/* Prev / Next */}
                     {images.length > 1 && (
                         <>
-                            <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full p-3 shadow-lg transition-all duration-200 border border-white/30">❮</button>
-                            <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full p-3 shadow-lg transition-all duration-200 border border-white/30">❯</button>
+                            <button onClick={prevImage} className="absolute left-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full p-3 shadow-lg transition-all duration-200 border border-white/30">❮</button>
+                            <button onClick={nextImage} className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer bg-white/20 hover:bg-white/40 backdrop-blur-md text-white rounded-full p-3 shadow-lg transition-all duration-200 border border-white/30">❯</button>
                             {/* Dot indicators */}
                             <div className="absolute top-4 left-1/2 -translate-x-1/2 flex gap-1.5">
                                 {images.map((_, i) => (
@@ -307,7 +307,7 @@ export default function AdvertisementDetailPage() {
                             {isOverflowing && (
                                 <button
                                     onClick={(e) => { e.stopPropagation(); setShowFullContent(prev => !prev); }}
-                                    className="text-xs text-white/70 underline mt-1"
+                                    className="text-xs text-white/70 underline mt-1 cursor-pointer"
                                 >
                                     {showFullContent ? "Thu gọn" : "Đọc thêm"}
                                 </button>
@@ -334,7 +334,7 @@ export default function AdvertisementDetailPage() {
                     >
                         <button
                             onClick={() => setIsLightboxOpen(false)}
-                            className="absolute top-5 right-5 text-white p-2 rounded-full hover:bg-white/20 transition"
+                            className="absolute top-5 right-5 text-white p-2 rounded-full hover:bg-white/20 transition cursor-pointer"
                         >
                             <X size={24} />
                         </button>
@@ -342,11 +342,11 @@ export default function AdvertisementDetailPage() {
                             <>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); prevImage(); }}
-                                    className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition"
+                                    className="absolute left-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition cursor-pointer"
                                 >❮</button>
                                 <button
                                     onClick={(e) => { e.stopPropagation(); nextImage(); }}
-                                    className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition"
+                                    className="absolute right-6 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white rounded-full p-3 transition cursor-pointer"
                                 >❯</button>
                             </>
                         )}

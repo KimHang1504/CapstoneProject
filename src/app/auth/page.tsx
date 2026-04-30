@@ -329,7 +329,7 @@ export default function LoginPage() {
                                         setForgotPasswordModalOpen(true);
                                         setForgotPasswordEmail(email);
                                     }}
-                                    className="text-sm text-[#8093F1] hover:text-[#6b7dd4] font-medium transition-colors"
+                                    className="text-sm cursor-pointer text-[#8093F1] hover:text-[#6b7dd4] font-medium transition-colors"
                                 >
                                     Quên mật khẩu?
                                 </button>
@@ -401,7 +401,7 @@ export default function LoginPage() {
                                 </div>
                                 <button
                                     onClick={() => setForgotPasswordModalOpen(false)}
-                                    className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200 text-white"
+                                    className="p-2 hover:bg-white/20 cursor-pointer rounded-xl transition-all duration-200 text-white"
                                     disabled={isSendingEmail}
                                 >
                                     <X className="w-6 h-6" />
@@ -440,14 +440,14 @@ export default function LoginPage() {
                                 <button
                                     type="button"
                                     onClick={() => setForgotPasswordModalOpen(false)}
-                                    className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                                    className="flex-1 px-6 py-3 border-2 cursor-pointer border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
                                     disabled={isSendingEmail}
                                 >
                                     Hủy bỏ
                                 </button>
                                 <button
                                     type="submit"
-                                    className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                                    className="flex-1 px-6 py-3 cursor-pointer bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                                     disabled={isSendingEmail}
                                 >
                                     {isSendingEmail ? (
@@ -497,7 +497,7 @@ export default function LoginPage() {
                                         setNewPassword("");
                                         setConfirmPassword("");
                                     }}
-                                    className="p-2 hover:bg-white/20 rounded-xl transition-all duration-200 text-white"
+                                    className="p-2 hover:bg-white/20 cursor-pointer rounded-xl transition-all duration-200 text-white"
                                     disabled={isVerifyingOtp || isResettingPassword}
                                 >
                                     <X className="w-6 h-6" />
@@ -551,7 +551,7 @@ export default function LoginPage() {
                                             type="button"
                                             onClick={handleResendOtp}
                                             disabled={isSendingEmail || isVerifyingOtp}
-                                            className="text-xs text-purple-600 hover:text-purple-700 font-medium disabled:opacity-50"
+                                            className="text-xs cursor-pointer text-purple-600 hover:text-purple-700 font-medium disabled:opacity-50"
                                         >
                                             {isSendingEmail ? "Đang gửi..." : "Gửi lại OTP"}
                                         </button>
@@ -566,14 +566,14 @@ export default function LoginPage() {
                                             setOtpModalOpen(false);
                                             setForgotPasswordModalOpen(true);
                                         }}
-                                        className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                                        className="flex-1 px-6 py-3 border-2 cursor-pointer border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
                                         disabled={isVerifyingOtp}
                                     >
                                         Quay lại
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                                        className="flex-1 px-6 py-3 cursor-pointer bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                                         disabled={isVerifyingOtp}
                                     >
                                         {isVerifyingOtp ? (
@@ -660,14 +660,14 @@ export default function LoginPage() {
                                             setNewPassword("");
                                             setConfirmPassword("");
                                         }}
-                                        className="flex-1 px-6 py-3 border-2 border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
+                                        className="flex-1 px-6 py-3 border-2 cursor-pointer border-gray-300 rounded-xl font-semibold text-gray-700 hover:bg-gray-50 hover:border-gray-400 transition-all duration-200"
                                         disabled={isResettingPassword}
                                     >
                                         Quay lại
                                     </button>
                                     <button
                                         type="submit"
-                                        className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                                        className="flex-1 px-6 py-3 cursor-pointer bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 text-white rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                                         disabled={isResettingPassword}
                                     >
                                         {isResettingPassword ? (

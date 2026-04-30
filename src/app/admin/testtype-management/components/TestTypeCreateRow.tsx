@@ -62,7 +62,7 @@ export default function TestTypeCreateRow({
           <button
             onClick={onSaveCreate}
             disabled={savingCreate}
-            className="group inline-flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+            className="group cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 bg-linear-to-r from-violet-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
           >
             {savingCreate ? (
               <>
@@ -80,7 +80,7 @@ export default function TestTypeCreateRow({
           <button
             onClick={onCancelCreate}
             disabled={savingCreate}
-            className="group inline-flex items-center gap-1.5 px-3 py-2 border border-slate-300 bg-white text-slate-700 text-sm font-medium rounded-lg hover:bg-violet-50 hover:border-violet-300 transition-all duration-200 disabled:opacity-50"
+            className="group cursor-pointer inline-flex items-center gap-1.5 px-3 py-2 border border-slate-300 bg-white text-slate-700 text-sm font-medium rounded-lg hover:bg-violet-50 hover:border-violet-300 transition-all duration-200 disabled:opacity-50"
           >
             <X className="w-3.5 h-3.5" />
             <span>Hủy</span>

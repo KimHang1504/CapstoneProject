@@ -89,7 +89,7 @@ export default function TestTypeVersionList({
                                                 type="button"
                                                 onClick={() => !isCurrent && onActivate(version.version)}
                                                 disabled={isActivating || isCurrent}
-                                                className={`inline-flex h-10 items-center justify-center rounded-xl px-4 text-sm font-medium shadow-sm transition
+                                                className={`inline-flex cursor-pointer h-10 items-center justify-center rounded-xl px-4 text-sm font-medium shadow-sm transition
                                                         ${isCurrent
                                                         ? "bg-green-600 text-white cursor-default"
                                                         : "bg-blue-600 text-white hover:bg-blue-700"

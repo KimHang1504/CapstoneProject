@@ -227,14 +227,14 @@ export default function CreateEventPage() {
             <button
               type="button"
               onClick={() => router.back()}
-              className="px-6 py-3 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
+              className="px-6 py-3 cursor-pointer border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
             >
               Hủy
             </button>
 
             <button
               type="submit"
-              className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-medium"
+              className="flex items-center cursor-pointer gap-2 px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-medium"
             >
               <Calendar size={18} />
               Tạo sự kiện

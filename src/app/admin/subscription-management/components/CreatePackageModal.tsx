@@ -116,7 +116,7 @@ export default function CreatePackageModal({ onClose, onSuccess }: CreatePackage
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-slate-100 cursor-pointer rounded-lg transition-colors"
             >
               <X className="w-5 h-5 text-slate-500" />
             </button>
@@ -156,7 +156,7 @@ export default function CreatePackageModal({ onClose, onSuccess }: CreatePackage
                     key={option.value}
                     type="button"
                     onClick={() => setFormData({ ...formData, type: option.value as PackageType })}
-                    className={`flex flex-col items-center gap-2 px-4 py-3 border-2 rounded-xl transition-all duration-200 ${
+                    className={`flex flex-col items-center gap-2 px-4 py-3 border-2 rounded-xl transition-all duration-200 cursor-pointer ${
                       formData.type === option.value
                         ? 'border-blue-500 bg-blue-50 text-blue-700'
                         : 'border-slate-300 hover:border-slate-400 text-slate-700'
@@ -249,14 +249,14 @@ export default function CreatePackageModal({ onClose, onSuccess }: CreatePackage
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
+            className="px-4 py-2.5 cursor-pointer text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
           >
             Hủy
           </button>
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
+            className="px-4 py-2.5 cursor-pointer text-sm font-medium bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             {loading ? "Đang tạo..." : "Tạo gói"}
