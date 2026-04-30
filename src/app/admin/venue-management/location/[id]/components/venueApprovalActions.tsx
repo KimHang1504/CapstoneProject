@@ -9,12 +9,27 @@ import {
 } from "@/api/admin/api";
 import { VenueApprovalRequest } from "@/api/admin/type";
 import { toast } from "sonner";
+import { Mail, Phone, User } from "lucide-react";
 
-export default function VenueApprovalActions({ id, status }: { id: number; status: string }) {
+type ActionType = "ACTIVE" | "DRAFTED" | "INACTIVE" | null;
+
+export default function VenueApprovalActions({
+  id,
+  status,
+  owner,
+}: {
+  id: number;
+  status: string;
+  owner: {
+    businessName: string;
+    phoneNumber: string;
+    email: string;
+  };
+}) {
   const router = useRouter();
 
   const [open, setOpen] = useState(false);
-  const [action, setAction] = useState<"ACTIVE" | "DRAFTED" | "INACTIVE" | null>(null);
+  const [action, setAction] = useState<ActionType>(null);
   const [reason, setReason] = useState("");
 
   const handleSubmitApproval = () => {
@@ -28,23 +43,21 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
               status: "ACTIVE",
               reason: null,
             };
+
             await acceptAndRejectVenue(body);
-            void refreshVenueLocationSearchIndexes().catch((refreshError) => {
-              console.error("Background venue search refresh failed:", refreshError);
-            });
+
+            void refreshVenueLocationSearchIndexes().catch(console.error);
+
             toast.success("Đã chấp nhận địa điểm");
             router.push("/admin/venue-management");
           } catch (error) {
-            console.error(error);
-            const errorMessage = error instanceof Error ? error.message : "Thao tác thất bại";
-            toast.error(errorMessage);
+            toast.error(
+              error instanceof Error ? error.message : "Thao tác thất bại"
+            );
           }
         },
       },
-      cancel: {
-        label: "Hủy",
-        onClick: () => { },
-      },
+      cancel: { label: "Hủy", onClick: () => { } },
     });
   };
 
@@ -52,130 +65,150 @@ export default function VenueApprovalActions({ id, status }: { id: number; statu
     if (!action) return;
 
     const message =
-      action === "ACTIVE"
-        ? "Bạn có chắc muốn chấp nhận địa điểm này?"
-        : action === "INACTIVE"
-          ? "Bạn có chắc muốn dừng hoạt động của địa điểm này?"
-          : "Bạn có chắc muốn từ chối địa điểm này?";
+      action === "INACTIVE"
+        ? "Bạn có chắc muốn dừng hoạt động của địa điểm này?"
+        : "Bạn có chắc muốn từ chối địa điểm này?";
 
     toast(message, {
       action: {
-        label: action === "ACTIVE" ? "Chấp nhận" : action === "INACTIVE" ? "Dừng hoạt động" : "Từ chối",
+        label: action === "INACTIVE" ? "Dừng" : "Từ chối",
         onClick: async () => {
           try {
             if (action === "INACTIVE") {
               await updateVenueStatusToInactive(Number(id), reason);
-              void refreshVenueLocationSearchIndexes().catch((refreshError) => {
-                console.error("Background venue search refresh failed:", refreshError);
-              });
-            } else if (action === "DRAFTED") {
+              void refreshVenueLocationSearchIndexes().catch(console.error);
+            }
+
+            if (action === "DRAFTED") {
               if (!reason) {
                 toast.error("Vui lòng nhập lý do từ chối");
                 return;
               }
+
               const body: VenueApprovalRequest = {
                 venueId: Number(id),
-                status: action as 'DRAFTED',
-                reason: reason,
+                status: "DRAFTED",
+                reason,
               };
+
               await acceptAndRejectVenue(body);
             }
-            const successMessages: Record<string, string> = {
-              DRAFTED: "Đã từ chối địa điểm",
-              INACTIVE: "Đã dừng hoạt động địa điểm",
-            };
 
-            toast.success(successMessages[action] || "Thao tác thành công");
+            toast.success(
+              action === "INACTIVE"
+                ? "Đã dừng hoạt động địa điểm"
+                : "Đã từ chối địa điểm"
+            );
+
             router.push("/admin/venue-management");
           } catch (error) {
-            console.error(error);
-            const errorMessage = error instanceof Error ? error.message : "Thao tác thất bại";
-            toast.error(errorMessage);
+            toast.error(
+              error instanceof Error ? error.message : "Thao tác thất bại"
+            );
           }
         },
       },
-      cancel: {
-        label: "Hủy",
-        onClick: () => { },
-      },
+      cancel: { label: "Hủy", onClick: () => { } },
     });
   };
 
   return (
     <>
-      <div className="bg-white rounded-xl shadow p-6 flex flex-col gap-4">
-        <p className="text-gray-700 font-medium">
-          {status === "PENDING"
-            ? "Bạn có chấp nhận đơn đăng kí địa điểm này không?"
-            : "Quản lý hoạt động của địa điểm"}
-        </p>
+      {/* FUSED ADMIN PANEL */}
+      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm p-5 space-y-5">
 
-        <div className="flex gap-4 justify-start">
-          {status === "PENDING" ? (
-            <>
+        {/* HEADER */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-gray-800">
+            Quản trị địa điểm cho:
+          </h2>
+        </div>
+
+        {/* OWNER (compact + contextual) */}
+        <div className="bg-gray-50 rounded-xl p-3">
+          <div className="flex items-center gap-2 text-xs text-gray-500 py-3">
+            <User size={14} />
+            Chủ địa điểm là
+            <p className="text-sm font-medium text-gray-900">
+              {owner.businessName}
+            </p>
+          </div>
+
+
+          <div className="text-xs text-gray-500 flex gap-2 py-3"><Phone size={14} />Liên hệ: {owner.phoneNumber}</div>
+          <div className="text-xs text-gray-500 flex gap-2 py-3"><Mail size={14} />Email: {owner.email}</div>
+        </div>
+
+        <div className="h-px bg-gray-100" />
+
+        {/* ACTIONS */}
+        <div className="space-y-2">
+          <p className="text-xs text-gray-500">Hành động</p>
+
+          {status === "PENDING" && (
+            <div className="flex gap-2">
               <button
                 onClick={() => {
                   setAction("DRAFTED");
                   setOpen(true);
                 }}
-                className="px-6 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 cursor-pointer"
+                className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 text-sm"
               >
                 Từ chối
               </button>
 
               <button
-                onClick={() => {
-                  handleSubmitApproval();
-                }}
-                className="px-6 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 cursor-pointer"
+                onClick={handleSubmitApproval}
+                className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 text-sm"
               >
                 Chấp nhận
               </button>
-            </>
-          ) : status === "ACTIVE" ? (
+            </div>
+          )}
+
+          {status === "ACTIVE" && (
             <button
               onClick={() => {
                 setAction("INACTIVE");
                 setOpen(true);
               }}
-              className="px-6 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 cursor-pointer"
+              className="w-full cursor-pointer px-3 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 text-sm"
             >
               Dừng hoạt động
             </button>
-          ) : null}
+          )}
         </div>
       </div>
 
+      {/* MODAL */}
       {open && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-xl w-100 space-y-4">
-            <h2 className="text-lg font-semibold">
-              {action === "ACTIVE"
-                ? "Lý do chấp nhận"
-                : action === "INACTIVE"
-                  ? "Lý do dừng hoạt động"
-                  : "Lý do từ chối"}
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-5">
+            <h2 className="text-lg font-semibold text-center text-gray-800">
+              {action === "INACTIVE"
+                ? "Lý do dừng hoạt động"
+                : "Lý do từ chối"}
             </h2>
 
             <textarea
-              className="w-full border rounded-lg p-2"
+              className="w-full border rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               rows={4}
               placeholder="Nhập lý do..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
             />
 
-            <div className="flex justify-end gap-3">
+            <div className="flex justify-center gap-3 pt-2">
               <button
                 onClick={() => setOpen(false)}
-                className="px-4 py-2 border rounded-lg"
+                className="cursor-pointer px-5 py-2 rounded-xl border hover:bg-gray-50 transition"
               >
                 Hủy
               </button>
 
               <button
                 onClick={handleSubmit}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg"
+                className="cursor-pointer px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
               >
                 Xác nhận
               </button>

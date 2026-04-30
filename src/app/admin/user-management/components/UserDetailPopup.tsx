@@ -74,7 +74,7 @@ export default function UserDetailPopup({
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-4 top-4 rounded-full p-2 text-gray-500 hover:bg-gray-100"
+          className="absolute cursor-pointer right-4 top-4 rounded-full p-2 text-gray-500 hover:bg-gray-100"
         >
           <X size={18} />
         </button>
@@ -124,7 +124,7 @@ export default function UserDetailPopup({
                     </span>
 
                     <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${
+                      className={`rounded-full px-3 py-1 text-xs font-medium cursor-pointer ${
                         user.isActive
                           ? 'bg-green-50 text-green-600 border border-green-100'
                           : 'bg-rose-50 text-rose-500 border border-rose-100'
@@ -152,7 +152,7 @@ export default function UserDetailPopup({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl bg-fuchsia-100 px-4 py-2 text-sm font-medium text-fuchsia-700 hover:bg-fuchsia-200"
+            className="rounded-xl cursor-pointer bg-fuchsia-100 px-4 py-2 text-sm font-medium text-fuchsia-700 hover:bg-fuchsia-200"
           >
             Đóng
           </button>

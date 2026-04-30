@@ -126,14 +126,14 @@ export default function SelectVenueModal({ selectedIds, onConfirm, onClose }: Pr
                 <div className="flex gap-3 px-6 py-5 border-t border-violet-50 shrink-0">
                     <button
                         onClick={onClose}
-                        className="flex-1 py-3 border-2 border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition"
+                        className="flex-1 py-3 border-2 cursor-pointer border-gray-200 text-gray-600 font-medium rounded-xl hover:bg-gray-50 transition"
                     >
                         Hủy
                     </button>
                     <button
                         disabled={tempSelected.length === 0}
                         onClick={confirm}
-                        className="flex-1 py-3 bg-gradient-to-r from-violet-500 to-purple-600 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-sm"
+                        className="flex-1 py-3 cursor-pointer bg-gradient-to-r from-violet-500 to-purple-600 text-white font-semibold rounded-xl disabled:opacity-40 disabled:cursor-not-allowed hover:from-violet-600 hover:to-purple-700 transition-all duration-200 shadow-sm"
                     >
                         Thanh toán
                     </button>

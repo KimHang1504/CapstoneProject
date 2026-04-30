@@ -80,7 +80,7 @@ export default function UpdateReportTypePage() {
 
         <button
           onClick={() => router.back()}
-          className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+          className="px-4 py-2 cursor-pointer border rounded-lg hover:bg-gray-100"
         >
           ← Trở lại
         </button>
@@ -133,7 +133,7 @@ export default function UpdateReportTypePage() {
         <div className="flex justify-end gap-3">
           <button
             onClick={() => router.back()}
-            className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+            className="px-4 py-2 cursor-pointer border rounded-lg hover:bg-gray-100"
           >
             Hủy
           </button>
@@ -141,7 +141,7 @@ export default function UpdateReportTypePage() {
           <button
             onClick={handleUpdate}
             disabled={saving}
-            className="px-5 py-2 bg-[#B388EB] text-white rounded-lg hover:opacity-90 disabled:opacity-50"
+            className="px-5 py-2 cursor-pointer bg-[#B388EB] text-white rounded-lg hover:opacity-90 disabled:opacity-50"
           >
             {saving ? "Đang lưu..." : "Cập nhật"}
           </button>

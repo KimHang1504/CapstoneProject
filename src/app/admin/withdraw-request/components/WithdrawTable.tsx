@@ -204,7 +204,7 @@ export default function WithdrawPage() {
           <button
             onClick={fetchData}
             disabled={loading}
-            className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+            className="group px-4 py-2.5 cursor-pointer bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
             <span className="text-sm font-medium">Tải lại</span>
@@ -221,7 +221,7 @@ export default function WithdrawPage() {
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="min-w-[180px] px-4 py-2.5 border border-purple-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                className="min-w-[180px] px-4 py-2.5 cursor-pointer border border-purple-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
               >
                 <span className="text-slate-700">
                   {status === "" ? "Tất cả" : 
@@ -252,7 +252,7 @@ export default function WithdrawPage() {
                           setPageNumber(1);
                           setDropdownOpen(false);
                         }}
-                        className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
+                        className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
                           status === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
                         }`}
                       >
@@ -272,7 +272,7 @@ export default function WithdrawPage() {
                   setStatus("");
                   setPageNumber(1);
                 }}
-                className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
+                className="text-sm cursor-pointer text-slate-500 hover:text-slate-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
               >
                 <X className="w-4 h-4" />
                 Xóa bộ lọc
@@ -374,7 +374,7 @@ export default function WithdrawPage() {
                             <button
                               onClick={() => handleApprove(item.id)}
                               disabled={actionLoading === item.id}
-                              className="group px-3 py-1.5 text-xs font-medium bg-emerald-400 text-white rounded-lg hover:from-emerald-600 hover:to-green-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
+                              className="group px-3 py-1.5 cursor-pointer text-xs font-medium bg-emerald-400 text-white rounded-lg hover:from-emerald-600 hover:to-green-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
                             >
                               <CheckCircle className="w-3.5 h-3.5" />
                               {actionLoading === item.id ? "..." : "Duyệt"}
@@ -382,7 +382,7 @@ export default function WithdrawPage() {
                             <button
                               onClick={() => openRejectModal(item.id)}
                               disabled={actionLoading === item.id}
-                              className="group px-3 py-1.5 text-xs font-medium bg-rose-400 text-white rounded-lg hover:from-rose-600 hover:to-red-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
+                              className="group px-3 py-1.5 cursor-pointer text-xs font-medium bg-rose-400 text-white rounded-lg hover:from-rose-600 hover:to-red-700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
                             >
                               <XCircle className="w-3.5 h-3.5" />
                               Từ chối
@@ -393,7 +393,7 @@ export default function WithdrawPage() {
                           <button
                             onClick={() => openCompleteModal(item.id)}
                             disabled={actionLoading === item.id}
-                            className="group px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple -700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
+                            className="group px-3 py-1.5 cursor-pointer text-xs font-medium bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg hover:from-purple-600 hover:to-purple -700 disabled:opacity-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-1.5"
                           >
                             <Check className="w-3.5 h-3.5" />
                             {actionLoading === item.id ? "..." : "Hoàn thành"}
@@ -448,7 +448,7 @@ export default function WithdrawPage() {
                 <button
                   onClick={() => setPageNumber(1)}
                   disabled={pageNumber === 1}
-                  className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                  className="p-2 text-sm cursor-pointer border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                   title="Trang đầu"
                 >
                   <ChevronsLeft className="w-4 h-4 text-slate-600" />
@@ -456,7 +456,7 @@ export default function WithdrawPage() {
                 <button
                   onClick={() => setPageNumber(prev => Math.max(1, prev - 1))}
                   disabled={pageNumber === 1}
-                  className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                  className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                   title="Trang trước"
                 >
                   <ChevronLeft className="w-4 h-4 text-slate-600" />
@@ -479,7 +479,7 @@ export default function WithdrawPage() {
                       <button
                         key={pageNum}
                         onClick={() => setPageNumber(pageNum)}
-                        className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                        className={`min-w-[36px] cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                           pageNumber === pageNum
                             ? "bg-purple-600 text-white shadow-md"
                             : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
@@ -494,7 +494,7 @@ export default function WithdrawPage() {
                 <button
                   onClick={() => setPageNumber(prev => Math.min(totalPages, prev + 1))}
                   disabled={pageNumber === totalPages}
-                  className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                  className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                   title="Trang sau"
                 >
                   <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -502,7 +502,7 @@ export default function WithdrawPage() {
                 <button
                   onClick={() => setPageNumber(totalPages)}
                   disabled={pageNumber === totalPages}
-                  className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                  className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                   title="Trang cuối"
                 >
                   <ChevronsRight className="w-4 h-4 text-slate-600" />
@@ -543,14 +543,14 @@ export default function WithdrawPage() {
                   setSelectedRejectId(null);
                   setRejectReason("");
                 }}
-                className="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
+                className="px-4 py-2.5 cursor-pointer text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
               >
                 Hủy
               </button>
               <button
                 onClick={handleReject}
                 disabled={actionLoading === selectedRejectId || !rejectReason.trim()}
-                className="px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-xl hover:from-rose-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
+                className="px-4 py-2.5 cursor-pointer text-sm font-medium bg-gradient-to-r from-rose-500 to-red-600 text-white rounded-xl hover:from-rose-600 hover:to-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
               >
                 <XCircle className="w-4 h-4" />
                 {actionLoading === selectedRejectId ? "Đang xử lý..." : "Xác nhận từ chối"}
@@ -593,7 +593,7 @@ export default function WithdrawPage() {
                         setProofImage(null);
                         setProofImagePreview(null);
                       }}
-                      className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition-colors"
+                      className="absolute top-2 right-2 p-2 cursor-pointer bg-red-500 text-white rounded-full hover:bg-red-600 shadow-lg transition-colors"
                     >
                       <X className="w-4 h-4" />
                     </button>
@@ -625,14 +625,14 @@ export default function WithdrawPage() {
                   setProofImage(null);
                   setProofImagePreview(null);
                 }}
-                className="px-4 py-2.5 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
+                className="px-4 py-2.5 text-sm cursor-pointer font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
               >
                 Hủy
               </button>
               <button
                 onClick={handleComplete}
                 disabled={uploadLoading || actionLoading === selectedCompleteId || !proofImage}
-                className="px-4 py-2.5 text-sm font-medium bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
+                className="px-4 py-2.5 text-sm cursor-pointer font-medium bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2"
               >
                 <CheckCircle className="w-4 h-4" />
                 {uploadLoading || actionLoading === selectedCompleteId
@@ -652,7 +652,7 @@ export default function WithdrawPage() {
           <div className="relative max-w-4xl max-h-[90vh] animate-in zoom-in-95 duration-200">
             <button
               onClick={() => setPreviewImageUrl(null)}
-              className="absolute -top-12 right-0 p-2 bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-sm"
+              className="absolute -top-12 right-0 p-2 cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-full transition-colors backdrop-blur-sm"
             >
               <X className="w-6 h-6" />
             </button>
@@ -670,7 +670,7 @@ export default function WithdrawPage() {
               href={previewImageUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="absolute -bottom-12 left-1/2 -translate-x-1/2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm flex items-center gap-2 text-sm"
+              className="absolute -bottom-12 left-1/2 -translate-x-1/2 px-4 py-2 cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-lg transition-colors backdrop-blur-sm flex items-center gap-2 text-sm"
               onClick={(e) => e.stopPropagation()}
             >
               <ImageIcon className="w-4 h-4" />

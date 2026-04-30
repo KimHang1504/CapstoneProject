@@ -42,8 +42,10 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     fullPageMenuImage: [],
 
     selectedMoods: Array.from(new Set(initialData?.selectedMoods || [])),
-    selectedStyles: Array.from(new Set(initialData?.selectedStyles || [])),
-
+    selectedStyles:
+      Array.isArray(initialData?.selectedStyles)
+        ? initialData.selectedStyles[0] ?? null
+        : null,
     existingCoverUrl: initialData?.existingCoverUrl || "",
     existingInteriorUrls: initialData?.existingInteriorUrls || [],
     existingMenuUrls: initialData?.existingMenuUrls || [],
@@ -80,8 +82,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       }
 
       const hasMood = formData.selectedMoods.length > 0;
-      const hasStyle = formData.selectedStyles.length > 0;
-
+      const hasStyle = formData.selectedStyles !== null;
       if ((hasMood && !hasStyle) || (!hasMood && hasStyle)) {
         toast.error("Vui lòng chọn đầy đủ cả Tâm trạng và Tính cách");
         return;
@@ -219,8 +220,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       //   return;
       // }
       const hasMood = formData.selectedMoods.length > 0;
-      const hasStyle = formData.selectedStyles.length > 0;
-
+      const hasStyle = formData.selectedStyles !== null;
       // Nếu có 1 mà thiếu 1 → lỗi
       if ((hasMood && !hasStyle) || (!hasMood && hasStyle)) {
         toast.error("Vui lòng chọn đầy đủ cả Tâm trạng và Tính cách");
@@ -232,20 +232,15 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
         return;
       }
 
-      const venueTags = Array.from(
-        new Map(
-          formData.selectedMoods.flatMap(moodId =>
-            formData.selectedStyles.map(styleId => {
-              const tag = {
-                coupleMoodTypeId: moodId,
-                couplePersonalityTypeId: styleId,
-              };
+      const venueTags =
+        formData.selectedMoods.flatMap(moodId => {
+          if (!formData.selectedStyles) return [];
 
-              return [`${tag.coupleMoodTypeId}-${tag.couplePersonalityTypeId}`, tag] as const;
-            })
-          )
-        ).values()
-      );
+          return [{
+            coupleMoodTypeId: moodId,
+            couplePersonalityTypeId: formData.selectedStyles,
+          }];
+        });
 
 
       const payload = {
@@ -293,7 +288,7 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      
+
       {/* Progress Steps */}
       <div className="mb-6">
         <div className="flex items-center justify-center gap-2">

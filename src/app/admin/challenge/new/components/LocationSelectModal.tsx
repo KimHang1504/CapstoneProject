@@ -67,7 +67,7 @@ export default function LocationSelectModal({ open, onClose, onConfirm }: Props)
             Chọn địa điểm
           </h2>
 
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg p-1 transition">
+          <button onClick={onClose} className="text-gray-500 cursor-pointer hover:text-gray-700 hover:bg-gray-100 rounded-lg p-1 transition">
             <X size={24} />
           </button>
 
@@ -116,7 +116,7 @@ export default function LocationSelectModal({ open, onClose, onConfirm }: Props)
                     {v.name}
 
                     <button
-                      className="text-red-500 hover:text-red-700 ml-1"
+                      className="text-red-500 cursor-pointer hover:text-red-700 ml-1"
                       onClick={() => handleRemove(v.id)}
                     >
                       <X size={16} />
@@ -184,7 +184,7 @@ export default function LocationSelectModal({ open, onClose, onConfirm }: Props)
                     <button
                       onClick={() => handleAdd(location)}
                       disabled={isSelected}
-                      className={`w-full py-2 rounded-lg text-xs font-medium flex items-center justify-center gap-1 transition ${isSelected ? 'bg-violet-100 text-violet-600 cursor-not-allowed' : 'bg-linear-to-r from-violet-500 to-purple-600 text-white hover:shadow-md'}`}
+                      className={`w-full py-2 cursor-pointer rounded-lg text-xs font-medium flex items-center justify-center gap-1 transition ${isSelected ? 'bg-violet-100 text-violet-600 cursor-not-allowed' : 'bg-linear-to-r from-violet-500 to-purple-600 text-white hover:shadow-md'}`}
                     >
                       {isSelected ? (
                         <>✓ Đã chọn</>
@@ -214,7 +214,7 @@ export default function LocationSelectModal({ open, onClose, onConfirm }: Props)
 
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-violet-200 text-violet-600 rounded-lg hover:bg-violet-50 transition font-medium text-sm"
+            className="px-4 py-2 border cursor-pointer border-violet-200 text-violet-600 rounded-lg hover:bg-violet-50 transition font-medium text-sm"
           >
             Huỷ
           </button>
@@ -222,7 +222,7 @@ export default function LocationSelectModal({ open, onClose, onConfirm }: Props)
           <button
             onClick={handleConfirm}
             disabled={selected.length === 0}
-            className="px-4 py-2 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:shadow-lg disabled:opacity-50 transition font-medium text-sm"
+            className="px-4 py-2 cursor-pointer bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:shadow-lg disabled:opacity-50 transition font-medium text-sm"
           >
             Thêm {selected.length > 0 ? `(${selected.length})` : ''}
           </button>

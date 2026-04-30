@@ -111,7 +111,7 @@ export default function TransactionPage() {
                     <button
                         onClick={fetchData}
                         disabled={loading}
-                        className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                        className="group px-4 py-2.5 cursor-pointer bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                         <span className="text-sm font-medium">Tải lại</span>
@@ -135,7 +135,7 @@ export default function TransactionPage() {
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                    className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
@@ -146,7 +146,7 @@ export default function TransactionPage() {
                         <div className="relative" ref={statusDropdownRef}>
                             <button
                                 onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-                                className="min-w-[150px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                                className="min-w-[150px] cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700">
                                     {status === "" ? "Tất cả trạng thái" : status}
@@ -170,7 +170,7 @@ export default function TransactionPage() {
                                                 setStatus(option.value as TransactionStatus | "");
                                                 setStatusDropdownOpen(false);
                                             }}
-                                            className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors ${
+                                            className={`w-full px-4 py-2.5 cursor-pointer text-left text-sm hover:bg-slate-50 transition-colors ${
                                                 status === option.value ? 'bg-purple-50 text-purple-700' : 'text-slate-700'
                                             }`}
                                         >
@@ -185,7 +185,7 @@ export default function TransactionPage() {
                         <div className="relative" ref={typeDropdownRef}>
                             <button
                                 onClick={() => setTypeDropdownOpen(!typeDropdownOpen)}
-                                className="min-w-[180px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                                className="min-w-[180px] cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700 truncate">
                                     {type === "" ? "Tất cả loại" : type}
@@ -210,7 +210,7 @@ export default function TransactionPage() {
                                                 setType(option.value as TransactionType | "");
                                                 setTypeDropdownOpen(false);
                                             }}
-                                            className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors ${
+                                            className={`w-full px-4 py-2.5 cursor-pointer text-left text-sm hover:bg-slate-50 transition-colors ${
                                                 type === option.value ? 'bg-purple-50 text-purple-700' : 'text-slate-700'
                                             }`}
                                         >
@@ -232,7 +232,7 @@ export default function TransactionPage() {
                                     setSearchQuery("");
                                     setPage(1);
                                 }}
-                                className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
+                                className="text-sm cursor-pointer text-slate-500 hover:text-slate-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
                             >
                                 <X className="w-4 h-4" />
                                 Xóa bộ lọc
@@ -343,7 +343,7 @@ export default function TransactionPage() {
                                 <button
                                     onClick={() => setPage(1)}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang đầu"
                                 >
                                     <ChevronsLeft className="w-4 h-4 text-slate-600" />
@@ -351,7 +351,7 @@ export default function TransactionPage() {
                                 <button
                                     onClick={() => setPage(page - 1)}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang trước"
                                 >
                                     <ChevronLeft className="w-4 h-4 text-slate-600" />
@@ -374,7 +374,7 @@ export default function TransactionPage() {
                                             <button
                                                 key={pageNum}
                                                 onClick={() => setPage(pageNum)}
-                                                className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
+                                                className={`min-w-[36px] cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                                                     page === pageNum
                                                         ? "bg-purple-600 text-white shadow-md"
                                                         : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
@@ -389,7 +389,7 @@ export default function TransactionPage() {
                                 <button
                                     onClick={() => setPage(page + 1)}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang sau"
                                 >
                                     <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -397,7 +397,7 @@ export default function TransactionPage() {
                                 <button
                                     onClick={() => setPage(totalPages)}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang cuối"
                                 >
                                     <ChevronsRight className="w-4 h-4 text-slate-600" />

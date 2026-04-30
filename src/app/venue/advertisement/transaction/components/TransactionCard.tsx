@@ -63,10 +63,6 @@ const formatRange = (start?: string | null, end?: string | null) => {
 };
 
 const getAmountDisplay = (status: string, amount: number) => {
-  if (status === 'PAYMENT_FAILED' || status === 'CANCELLED') {
-    return '0 ₫';
-  }
-
   const sign = status === 'REFUNDED' ? '+' : '-';
 
   return `${sign}${amount.toLocaleString('vi-VN')} ₫`;
@@ -156,14 +152,16 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
               </div>
             </div>
             <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
-              <p className={`text-xl sm:text-lg font-bold ${item.status === 'REFUNDED'
-                  ? 'text-sky-500'
-                  : item.status === 'COMPLETED'
-                    ? 'text-emerald-600'
-                    : 'text-gray-700'
-                }`}>
-                {getAmountDisplay(item.status, item.payment.amount)}
-              </p>
+              {item.payment.amount > 0 && (
+                <p className={`text-xl sm:text-lg font-bold ${item.status === 'REFUNDED'
+                    ? 'text-sky-500'
+                    : item.status === 'COMPLETED'
+                      ? 'text-emerald-600'
+                      : 'text-gray-700'
+                  }`}>
+                  {getAmountDisplay(item.status, item.payment.amount)}
+                </p>
+              )}
             </div>
           </div>
 
@@ -190,7 +188,7 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
         <>
           <button
             onClick={() => setExpanded(v => !v)}
-            className="w-full flex items-center justify-between px-4 py-2 border-t border-gray-50 text-xs text-gray-400 hover:bg-gray-50 transition"
+            className="w-full flex items-center cursor-pointer justify-between px-4 py-2 border-t border-gray-50 text-xs text-gray-400 hover:bg-gray-50 transition"
           >
             <span className="flex items-center gap-1">
               <MapPin size={11} />{item.venueLocationAds.length} địa điểm áp dụng
@@ -208,7 +206,6 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
                       {new Date(v.startDate).toLocaleDateString('vi-VN')} → {new Date(v.endDate).toLocaleDateString('vi-VN')}
                     </span>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-600 w-fit">{v.status}</span>
                 </div>
               ))}
               {ad.targetUrl && (

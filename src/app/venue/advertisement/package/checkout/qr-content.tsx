@@ -210,7 +210,7 @@ export default function QRContent() {
 
                                 <button
                                     onClick={handleCancel}
-                                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-all duration-200 group"
+                                    className="w-full cursor-pointer flex items-center justify-center gap-2 py-2.5 rounded-lg bg-gray-100 text-gray-700 text-sm font-semibold hover:bg-gray-200 transition-all duration-200 group"
                                 >
                                     <X size={14} className="group-hover:rotate-90 transition-transform duration-200" />
                                     Hủy thanh toán
@@ -242,7 +242,7 @@ export default function QRContent() {
                                     setShowLeavePopup(false);
                                     window.history.pushState(null, "", window.location.href);
                                 }}
-                                className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+                                className="px-4 py-2 cursor-pointer rounded-lg bg-gray-100 hover:bg-gray-200"
                             >
                                 Ở lại
                             </button>
@@ -261,7 +261,7 @@ export default function QRContent() {
                                         toast.error("Không thể huỷ thanh toán");
                                     }
                                 }}
-                                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                                className="px-4 py-2 cursor-pointer rounded-lg bg-red-500 text-white hover:bg-red-600"
                             >
                                 Rời khỏi
                             </button>

@@ -26,7 +26,7 @@ const getMoodLabel = (mood: string) => {
 // Map placement types to Vietnamese
 const getPlacementLabel = (type: string) => {
   const typeMap: Record<string, string> = {
-    'HOME_BANNER': 'Banner trang chủ',
+    'HOME_BANNER': 'Banner đầu trang',
     'POPUP': 'Popup',
   };
   return typeMap[type] || type;

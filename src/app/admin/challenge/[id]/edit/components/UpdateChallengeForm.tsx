@@ -485,7 +485,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                                                                 })
                                                                 setSelectedLocations(selectedLocations.filter(v => v.id !== location.id))
                                                             }}
-                                                            className="text-red-500 hover:text-red-700 shrink-0"
+                                                            className="text-red-500 hover:text-red-700 shrink-0 cursor-pointer"
                                                         >
                                                             <X size={18} />
                                                         </button>
@@ -542,7 +542,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                                                             hash_tags: newTags
                                                         });
                                                     }}
-                                                    className="px-3 py-3 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition"
+                                                    className="px-3 py-3 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-xl transition cursor-pointer"
                                                 >
                                                     <X size={18} />
                                                 </button>
@@ -558,7 +558,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                                                 hash_tags: [...ruleData.hash_tags, ""]
                                             })
                                         }
-                                        className="flex items-center gap-2 px-4 py-2 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium text-sm"
+                                        className="flex items-center cursor-pointer gap-2 px-4 py-2 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium text-sm"
                                     >
                                         <Plus size={16} />
                                         Thêm hashtag
@@ -573,14 +573,14 @@ export default function UpdateChallengeForm({ challenge }: any) {
                         <button
                             type="button"
                             onClick={() => router.back()}
-                            className="px-6 py-3 border border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
+                            className="px-6 py-3 border cursor-pointer border-violet-200 text-violet-600 rounded-xl hover:bg-violet-50 transition font-medium"
                         >
                             Hủy
                         </button>
 
                         <button
                             type="submit"
-                            className="flex items-center gap-2 px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-medium"
+                            className="flex items-center gap-2 cursor-pointer px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-medium"
                         >
                             <Trophy size={18} />
                             Cập nhật

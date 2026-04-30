@@ -268,7 +268,7 @@ export default function StaffRedeemContent() {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => setActiveTab("scan")}
-                      className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === "scan"
+                      className={`flex items-center cursor-pointer justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === "scan"
                         ? "bg-linear-to-r from-purple-500 to-pink-500 text-white shadow-sm"
                         : "text-gray-600 hover:bg-white"
                         }`}
@@ -279,7 +279,7 @@ export default function StaffRedeemContent() {
 
                     <button
                       onClick={() => setActiveTab("input")}
-                      className={`flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === "input"
+                      className={`flex items-center cursor-pointer justify-center gap-2 rounded-xl px-4 py-3 text-sm font-medium transition-all ${activeTab === "input"
                         ? "bg-linear-to-r from-purple-500 to-pink-500 text-white shadow-sm"
                         : "text-gray-600 hover:bg-white"
                         }`}

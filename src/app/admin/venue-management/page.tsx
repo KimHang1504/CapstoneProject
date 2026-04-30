@@ -141,7 +141,7 @@ export default function MyLocationPage() {
                             <button
                                 onClick={fetchData}
                                 disabled={loading}
-                                className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                                className="group px-4 py-2.5 cursor-pointer bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
                             >
                                 <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                                 <span className="text-sm font-medium">Tải lại</span>
@@ -166,7 +166,7 @@ export default function MyLocationPage() {
                                                 setSearchInput("");
                                                 setPage(1);
                                             }}
-                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                            className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                                         >
                                             <X className="w-4 h-4" />
                                         </button>
@@ -176,7 +176,7 @@ export default function MyLocationPage() {
                                 <button
                                     type="button"
                                     onClick={() => setPage(1)}
-                                    className="px-6 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md"
+                                    className="px-6 py-2.5 cursor-pointer bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md"
                                 >
                                     <span className="text-sm font-medium">Tìm kiếm</span>
                                 </button>
@@ -373,7 +373,7 @@ export default function MyLocationPage() {
                                         <button
                                             onClick={() => setPage(1)}
                                             disabled={page === 1}
-                                            className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                            className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                             title="Trang đầu"
                                         >
                                             <ChevronsLeft className="w-4 h-4 text-slate-600" />
@@ -381,7 +381,7 @@ export default function MyLocationPage() {
                                         <button
                                             onClick={() => setPage(p => Math.max(1, p - 1))}
                                             disabled={page === 1}
-                                            className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                            className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                             title="Trang trước"
                                         >
                                             <ChevronLeft className="w-4 h-4 text-slate-600" />
@@ -404,7 +404,7 @@ export default function MyLocationPage() {
                                                     <button
                                                         key={pageNum}
                                                         onClick={() => setPage(pageNum)}
-                                                        className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${page === pageNum
+                                                        className={`min-w-[36px] cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${page === pageNum
                                                             ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-md"
                                                             : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
                                                             }`}
@@ -418,7 +418,7 @@ export default function MyLocationPage() {
                                         <button
                                             onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                                             disabled={page === totalPages}
-                                            className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                            className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                             title="Trang sau"
                                         >
                                             <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -426,7 +426,7 @@ export default function MyLocationPage() {
                                         <button
                                             onClick={() => setPage(totalPages)}
                                             disabled={page === totalPages}
-                                            className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                            className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                             title="Trang cuối"
                                         >
                                             <ChevronsRight className="w-4 h-4 text-slate-600" />

@@ -30,6 +30,17 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("PENDING");
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [amountValidation, setAmountValidation] = useState<AmountValidationState>("EMPTY");
+  const [amountValue, setAmountValue] = useState<number>(0); // value thật
+
+  const formatCurrency = (value: string) => {
+    const number = value.replace(/\D/g, "");
+    if (!number) return "";
+    return Number(number).toLocaleString("vi-VN");
+  };
+
+  const parseCurrency = (value: string) => {
+    return Number(value.replace(/\D/g, ""));
+  };
 
   const transactionId = topup?.transactionId;
 
@@ -98,8 +109,12 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
   };
 
   const handleAmountInputChange = (value: string) => {
-    setAmountInput(value);
-    setAmountValidation(validateAmountInput(value));
+    const rawNumber = parseCurrency(value);
+
+    setAmountValue(rawNumber);
+    setAmountInput(formatCurrency(value));
+
+    setAmountValidation(validateAmountInput(String(rawNumber)));
   };
 
   useEffect(() => {
@@ -233,8 +248,7 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
   const handleCreateTopup = async () => {
     try {
       setCreating(true);
-      const amount = Number(amountInput);
-
+      const amount = amountValue;
       if (!Number.isFinite(amount) || amount < MIN_TOPUP_AMOUNT) {
         toast.error(`Số tiền nạp tối thiểu là ${MIN_TOPUP_AMOUNT.toLocaleString("vi-VN")} VND`);
         return;
@@ -329,13 +343,14 @@ export default function TopupModal({ onClose, onSuccess }: Props) {
               <label className="text-sm font-medium text-gray-700 block mb-1.5">Số tiền nạp</label>
               <div className="relative">
                 <input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
                   placeholder="Nhập số tiền nạp"
                   className="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-12 focus:outline-none focus:ring-2 focus:ring-emerald-400 text-gray-900"
                   value={amountInput}
+                  onChange={(e) => handleAmountInputChange(e.target.value)}
                   min={MIN_TOPUP_AMOUNT}
                   max={MAX_TOPUP_AMOUNT}
-                  onChange={(e) => handleAmountInputChange(e.target.value)}
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">₫</span>
               </div>

@@ -67,7 +67,7 @@ export default function StatusToggleButton({
             disabled={loading}
             title={user.isActive ? 'Click để khóa tài khoản' : 'Click để kích hoạt tài khoản'}
             className={`
-        relative w-23 h-9 rounded-full border-2 transition-all duration-300 shadow-sm
+        relative w-23 h-9 rounded-full border-2 transition-all duration-300 shadow-sm cursor-pointer
         disabled:opacity-60 disabled:cursor-not-allowed
         ${user.isActive
                     ? 'border-pink-300 bg-pink-50 hover:bg-pink-100 hover:border-pink-400'
@@ -98,7 +98,7 @@ export default function StatusToggleButton({
                         : 'justify-end pr-3 text-purple-600'}
         `}
             >
-                {loading ? '...' : user.isActive ? 'ON' : 'OFF'}
+                {loading ? '...' : user.isActive ? 'MỞ' : 'TẮT'}
             </span>
         </button>
     );
