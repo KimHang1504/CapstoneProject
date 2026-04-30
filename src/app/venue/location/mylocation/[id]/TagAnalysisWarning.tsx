@@ -131,11 +131,7 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
 
                 {isExpanded && (
                     <div className="mt-3 pt-3 border-t border-gray-200 space-y-2.5">
-                        {analysis.totalReviews > 0 && (
-                            <p className="text-xs text-gray-500">
-                               Có {analysis.totalReviews} đánh giá và độ phù hợp là {analysis.overallMatchRate}%.
-                            </p>
-                        )}
+
 
                         {analysis.tagAnalysis
                             .filter(tag => tag.status === 'POOR' || tag.status === 'WARNING')

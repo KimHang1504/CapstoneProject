@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
   Star, Ticket,
   TrendingUp, ChevronLeft, ChevronRight,
-  BarChart2, Megaphone, ChevronDown, Check
+  BarChart2, Megaphone, Calendar
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -18,6 +18,132 @@ import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 
 // const CHART_COLORS = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#f43f5e'];
 const ITEMS_PER_PAGE = 5;
+
+const WEEKDAYS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
+const MONTHS_VI = ['Th.1','Th.2','Th.3','Th.4','Th.5','Th.6','Th.7','Th.8','Th.9','Th.10','Th.11','Th.12'];
+
+function MiniDatePicker({
+  value,
+  onChange,
+  min,
+  max,
+  label,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+  min?: string;
+  max?: string;
+  label: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [viewYear, setViewYear] = useState(() => value ? parseInt(value.slice(0, 4)) : new Date().getFullYear());
+  const [viewMonth, setViewMonth] = useState(() => value ? parseInt(value.slice(5, 7)) - 1 : new Date().getMonth());
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Close on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const selected = value ? new Date(value + 'T00:00:00') : null;
+  const minDate = min ? new Date(min + 'T00:00:00') : null;
+  const maxDate = max ? new Date(max + 'T00:00:00') : null;
+
+  const firstDay = new Date(viewYear, viewMonth, 1).getDay();
+  const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
+
+  const prevMonth = () => {
+    if (viewMonth === 0) { setViewMonth(11); setViewYear(y => y - 1); }
+    else setViewMonth(m => m - 1);
+  };
+  const nextMonth = () => {
+    if (viewMonth === 11) { setViewMonth(0); setViewYear(y => y + 1); }
+    else setViewMonth(m => m + 1);
+  };
+
+  const selectDay = (day: number) => {
+    const d = new Date(viewYear, viewMonth, day);
+    const str = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    onChange(str);
+    setOpen(false);
+  };
+
+  const isDisabled = (day: number) => {
+    const d = new Date(viewYear, viewMonth, day);
+    if (minDate && d < minDate) return true;
+    if (maxDate && d > maxDate) return true;
+    return false;
+  };
+
+  const isSelected = (day: number) => {
+    if (!selected) return false;
+    return selected.getFullYear() === viewYear && selected.getMonth() === viewMonth && selected.getDate() === day;
+  };
+
+  const displayValue = selected
+    ? `${String(selected.getDate()).padStart(2, '0')}/${String(selected.getMonth() + 1).padStart(2, '0')}/${selected.getFullYear()}`
+    : label;
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-1.5 text-[11px] border border-gray-200 rounded-lg px-2.5 py-1.5 text-gray-600 hover:bg-gray-50 hover:border-violet-300 transition focus:outline-none focus:ring-1 focus:ring-violet-400 bg-white whitespace-nowrap"
+      >
+        <Calendar size={12} className="text-violet-400 shrink-0" />
+        {displayValue}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-1.5 bg-white border border-gray-200 rounded-xl shadow-xl z-30 p-3 w-[220px]">
+          {/* Header: prev / month+year / next */}
+          <div className="flex items-center justify-between mb-2">
+            <button onClick={prevMonth} className="p-1 rounded-lg hover:bg-gray-100 transition">
+              <ChevronLeft size={13} className="text-gray-500" />
+            </button>
+            <span className="text-[11px] font-semibold text-gray-700">
+              {MONTHS_VI[viewMonth]} {viewYear}
+            </span>
+            <button onClick={nextMonth} className="p-1 rounded-lg hover:bg-gray-100 transition">
+              <ChevronRight size={13} className="text-gray-500" />
+            </button>
+          </div>
+
+          {/* Weekday headers */}
+          <div className="grid grid-cols-7 mb-1">
+            {WEEKDAYS.map(d => (
+              <div key={d} className="text-center text-[9px] font-medium text-gray-400 py-0.5">{d}</div>
+            ))}
+          </div>
+
+          {/* Day grid */}
+          <div className="grid grid-cols-7 gap-y-0.5">
+            {Array.from({ length: firstDay }).map((_, i) => <div key={`e${i}`} />)}
+            {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => (
+              <button
+                key={day}
+                disabled={isDisabled(day)}
+                onClick={() => selectDay(day)}
+                className={`
+                  text-[11px] h-7 w-full rounded-lg transition font-medium
+                  ${isSelected(day) ? 'bg-violet-500 text-white' : ''}
+                  ${!isSelected(day) && !isDisabled(day) ? 'hover:bg-violet-50 text-gray-700' : ''}
+                  ${isDisabled(day) ? 'text-gray-300 cursor-not-allowed' : ''}
+                `}
+              >
+                {day}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 function StatCard({
   label, value, icon: Icon, color
@@ -118,11 +244,9 @@ export default function VenueDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [revenueItems, setRevenueItems] = useState<RevenueItem[]>([]);
-  const [revenueGroupBy, setRevenueGroupBy] = useState<'day' | 'month' | 'year'>('month');
-  const [revenueYear, setRevenueYear] = useState(new Date().getFullYear());
-  const [revenueYearOpen, setRevenueYearOpen] = useState(false);
+  const [revenueFromDate, setRevenueFromDate] = useState(`${new Date().getFullYear()}-01-01`);
+  const [revenueToDate, setRevenueToDate] = useState(`${new Date().getFullYear()}-12-31`);
   const [revenueLoading, setRevenueLoading] = useState(false);
-  const YEAR_OPTIONS = [2024, 2025, 2026];
 
   useEffect(() => {
     getVenueOwnerDashboardOverview()
@@ -132,13 +256,11 @@ export default function VenueDashboardPage() {
 
   useEffect(() => {
     setRevenueLoading(true);
-    const from = `${revenueYear}-01-01`;
-    const to = `${revenueYear}-12-31`;
-    getVenueSettlementRevenue(from, to, revenueGroupBy)
+    getVenueSettlementRevenue(revenueFromDate, revenueToDate, 'day')
       .then(res => setRevenueItems(res.data?.items ?? []))
       .catch(() => setRevenueItems([]))
       .finally(() => setRevenueLoading(false));
-  }, [revenueGroupBy, revenueYear]);
+  }, [revenueFromDate, revenueToDate]);
 
   console.log("Dashboard render", { data, loading });
 
@@ -242,43 +364,23 @@ export default function VenueDashboardPage() {
 
       {/* Revenue Chart */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
           <SectionTitle icon={TrendingUp}>Doanh thu từ hoa hồng Voucher</SectionTitle>
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <button
-                onClick={() => setRevenueYearOpen(o => !o)}
-                className="flex items-center gap-1.5 text-xs border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 hover:bg-gray-50 transition focus:outline-none focus:ring-1 focus:ring-violet-400"
-              >
-                {revenueYear}
-                <ChevronDown size={12} className={`transition-transform ${revenueYearOpen ? 'rotate-180' : ''}`} />
-              </button>
-              {revenueYearOpen && (
-                <div className="absolute right-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-20 overflow-hidden min-w-[80px]">
-                  {YEAR_OPTIONS.map(y => (
-                    <button
-                      key={y}
-                      onClick={() => { setRevenueYear(y); setRevenueYearOpen(false); }}
-                      className="flex items-center justify-between w-full px-3 py-2 text-xs hover:bg-violet-50 text-gray-700 transition"
-                    >
-                      {y}
-                      {y === revenueYear && <Check size={11} className="text-violet-500" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="flex rounded-lg border border-gray-200 overflow-hidden text-xs">
-              {(['day', 'month', 'year'] as const).map(g => (
-                <button
-                  key={g}
-                  onClick={() => setRevenueGroupBy(g)}
-                  className={`px-3 py-1 transition ${revenueGroupBy === g ? 'bg-violet-500 text-white' : 'text-gray-500 hover:bg-gray-50'}`}
-                >
-                  {g === 'day' ? 'Ngày' : g === 'month' ? 'Tháng' : 'Năm'}
-                </button>
-              ))}
-            </div>
+          {/* Date range — compact row */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            <MiniDatePicker
+              value={revenueFromDate}
+              max={revenueToDate}
+              onChange={setRevenueFromDate}
+              label="Từ ngày"
+            />
+            <span className="text-gray-300 text-xs">→</span>
+            <MiniDatePicker
+              value={revenueToDate}
+              min={revenueFromDate}
+              onChange={setRevenueToDate}
+              label="Đến ngày"
+            />
           </div>
         </div>
         <div className="grid grid-cols-2 gap-3 mb-4">
