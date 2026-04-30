@@ -1,4 +1,4 @@
-import { AlignLeft, ArrowLeft, CalendarDays, Coins, Hash, MapPin, Percent } from "lucide-react";
+import { AlignLeft, ArrowLeft, CalendarDays, Coins, Hash, ListFilterIcon, MapPin, Percent } from "lucide-react";
 import Link from "next/link";
 import { Voucher, VoucherStatus } from "@/api/admin/type";
 import { getVoucherDetail } from "@/api/admin/api";
@@ -82,7 +82,7 @@ export default async function VoucherDetailPage({ params }: Props) {
 
                 <div className="flex items-center gap-2 text-sm text-gray-500">
                     <Hash className="w-4 h-4 text-pink-400" />
-                    Code:
+                    Mã:
                     <span className="font-medium text-gray-700">
                         {voucher.code}
                     </span>
@@ -131,7 +131,10 @@ export default async function VoucherDetailPage({ params }: Props) {
                     </div>
 
                     <div className="flex items-center justify-between bg-pink-50 px-4 py-3 rounded-xl">
-                        <span className="text-gray-500">Số lượng</span>
+                        <span className="flex items-center gap-2 text-gray-500">
+                            <ListFilterIcon className="w-4 h-4 text-gray-400" />
+                            Số lượng
+                        </span>
 
                         <span className="font-semibold text-violet-600">
                             {voucher.remainingQuantity}/{voucher.quantity}

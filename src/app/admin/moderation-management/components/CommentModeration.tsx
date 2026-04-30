@@ -86,7 +86,7 @@ export default function CommentModeration() {
 
         <button
           onClick={fetchData}
-          className="flex items-center gap-2 px-3 py-2 border rounded-lg bg-white hover:bg-slate-50"
+          className="flex items-center gap-2 cursor-pointer px-3 py-2 border rounded-lg bg-white hover:bg-slate-50"
         >
           <RefreshCw className={`w-4 h-4 ${loading && "animate-spin"}`} />
           Tải lại
@@ -120,21 +120,21 @@ export default function CommentModeration() {
           </div>
 
           <div className="flex items-center gap-2">
-            <button onClick={() => setPage(1)} disabled={page === 1} className="p-2 border rounded">
+            <button onClick={() => setPage(1)} disabled={page === 1} className="p-2 cursor-pointer border rounded">
               <ChevronsLeft className="w-4 h-4" />
             </button>
 
-            <button onClick={() => setPage(page - 1)} disabled={page === 1} className="p-2 border rounded">
+            <button onClick={() => setPage(page - 1)} disabled={page === 1} className="p-2 cursor-pointer border rounded">
               <ChevronLeft className="w-4 h-4" />
             </button>
 
             <span>{page}/{totalPages}</span>
 
-            <button onClick={() => setPage(page + 1)} disabled={page === totalPages} className="p-2 border rounded">
+            <button onClick={() => setPage(page + 1)} disabled={page === totalPages} className="p-2 cursor-pointer border rounded">
               <ChevronRight className="w-4 h-4" />
             </button>
 
-            <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="p-2 border rounded">
+            <button onClick={() => setPage(totalPages)} disabled={page === totalPages} className="p-2 cursor-pointer border rounded">
               <ChevronsRight className="w-4 h-4" />
             </button>
           </div>

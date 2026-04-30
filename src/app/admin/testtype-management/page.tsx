@@ -262,7 +262,7 @@ export default function TestTypePage() {
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+              className="group cursor-pointer px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-lg hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
               <span className="text-sm font-medium">Tải lại</span>
@@ -271,7 +271,7 @@ export default function TestTypePage() {
             <button
               onClick={handleCreateRow}
               disabled={isCreating || editingId !== null}
-              className="px-4 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center gap-2"
+              className="cursor-pointer px-4 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               <span className="text-sm font-medium">Tạo mới</span>

@@ -176,13 +176,13 @@ export default function ConfirmClient() {
               <div className="space-y-3">
                 <button
                   onClick={handleConfirm}
-                  className="w-full py-4 bg-linear-to-r from-purple-500 to-purple-600 text-white rounded-2xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
+                  className="w-full cursor-pointer py-4 bg-linear-to-r from-purple-500 to-purple-600 text-white rounded-2xl font-semibold hover:from-purple-600 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
                 >
                   Xác nhận thanh toán
                 </button>
                 <button
                   onClick={() => router.back()}
-                  className="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-all duration-200"
+                  className="w-full py-4 cursor-pointer bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-all duration-200"
                 >
                   Hủy
                 </button>
@@ -237,7 +237,7 @@ export default function ConfirmClient() {
             {status === "error" && (
               <button
                 onClick={() => router.back()}
-                className="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-all duration-200"
+                className="w-full py-4 cursor-pointer bg-gray-100 text-gray-700 rounded-2xl font-semibold hover:bg-gray-200 transition-all duration-200"
               >
                 Quay lại
               </button>

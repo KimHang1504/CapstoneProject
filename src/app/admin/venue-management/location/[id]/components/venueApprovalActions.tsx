@@ -152,14 +152,14 @@ export default function VenueApprovalActions({
                   setAction("DRAFTED");
                   setOpen(true);
                 }}
-                className="flex-1 px-3 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 text-sm"
+                className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 text-sm"
               >
                 Từ chối
               </button>
 
               <button
                 onClick={handleSubmitApproval}
-                className="flex-1 px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 text-sm"
+                className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 text-sm"
               >
                 Chấp nhận
               </button>
@@ -172,7 +172,7 @@ export default function VenueApprovalActions({
                 setAction("INACTIVE");
                 setOpen(true);
               }}
-              className="w-full px-3 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 text-sm"
+              className="w-full cursor-pointer px-3 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 text-sm"
             >
               Dừng hoạt động
             </button>
@@ -201,14 +201,14 @@ export default function VenueApprovalActions({
             <div className="flex justify-center gap-3 pt-2">
               <button
                 onClick={() => setOpen(false)}
-                className="px-5 py-2 rounded-xl border hover:bg-gray-50 transition"
+                className="cursor-pointer px-5 py-2 rounded-xl border hover:bg-gray-50 transition"
               >
                 Hủy
               </button>
 
               <button
                 onClick={handleSubmit}
-                className="px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
+                className="cursor-pointer px-5 py-2 rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition"
               >
                 Xác nhận
               </button>

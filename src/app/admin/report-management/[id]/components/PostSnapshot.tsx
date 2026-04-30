@@ -6,7 +6,7 @@ export default function PostSnapshot({ snapshot }: any) {
 
       {/* Author + CreatedAt */}
       <div className="flex justify-between text-sm text-gray-500">
-        <span>User ID: {data.AuthorId}</span>
+        <span>ID người dùng: {data.AuthorId}</span>
         <span>{new Date(data.CreatedAt).toLocaleString()}</span>
       </div>
 
@@ -50,9 +50,13 @@ export default function PostSnapshot({ snapshot }: any) {
 
       {/* Footer */}
       <div className="flex justify-between text-xs text-gray-400">
-        <span>Status: {data.Status}</span>
+        <span>Trạng thái: {data.Status == "PUBLISHED" ? "Công khai" :
+          data.status == "PENDING" ? "Chưa công khai" :
+            data.status == "FLAGGED" ? "Bị gắn cờ" :
+              "Đã ẩn"}
+        </span>
         <span>
-          Snapshot at: {new Date(snapshot.capturedAt).toLocaleString()}
+          Ghi nhận lúc: {new Date(snapshot.capturedAt).toLocaleString()}
         </span>
       </div>
     </div>

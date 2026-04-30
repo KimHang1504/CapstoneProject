@@ -16,6 +16,12 @@ export default function ChallengeListPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
+  const statusMap = {
+    INACTIVE: { label: "Không hoạt động", color: "bg-amber-100 text-amber-700" },
+    ACTIVE: { label: "Đang hoạt động", color: "bg-emerald-100 text-emerald-700" },
+    ENDED: { label: "Đã kết thúc", color: "bg-slate-100 text-slate-700" },
+  };
+
   useEffect(() => {
 
     setLoading(true);
@@ -31,31 +37,31 @@ export default function ChallengeListPage() {
 
   }, [page]);
 
-const handleDelete = (id: number) => {
-  toast("Bạn có chắc muốn xóa challenge này không?", {
-    action: {
-      label: "Xóa",
-      onClick: async () => {
-        try {
-          await deleteChallenge(id);
+  const handleDelete = (id: number) => {
+    toast("Bạn có chắc muốn xóa thử thách này không?", {
+      action: {
+        label: "Xóa",
+        onClick: async () => {
+          try {
+            await deleteChallenge(id);
 
-          const res = await getAllChallenges(page, 10);
-          setData(res.data.items);
-          setTotalPages(res.data.totalPages);
+            const res = await getAllChallenges(page, 10);
+            setData(res.data.items);
+            setTotalPages(res.data.totalPages);
 
-          toast.success("Đã xóa challenge");
-        } catch (error) {
-          console.error(error);
-          toast.error("Xóa challenge thất bại");
-        }
+            toast.success("Đã xóa thử thách");
+          } catch (error) {
+            console.error(error);
+            toast.error("Xóa thử thách thất bại");
+          }
+        },
       },
-    },
-    cancel: {
-      label: "Hủy",
-      onClick: () => {},
-    },
-  });
-};
+      cancel: {
+        label: "Hủy",
+        onClick: () => { },
+      },
+    });
+  };
 
   const challenges = useMemo(() => {
 
@@ -86,7 +92,7 @@ const handleDelete = (id: number) => {
           <input
             value={keyword}
             onChange={e => setKeyword(e.target.value)}
-            placeholder="Tìm kiếm challenge"
+            placeholder="Tìm kiếm thử thách"
             className="w-full bg-transparent outline-none text-sm"
           />
 
@@ -97,7 +103,7 @@ const handleDelete = (id: number) => {
             className="inline-flex items-center gap-2 text-sm bg-violet-600 text-white px-4 py-2 rounded-full shadow hover:bg-violet-700 transition"
           >
             <Star size={18} />
-            Tạo Challenge mới
+            Tạo thử thách mới
           </Link>
         </div>
 
@@ -147,13 +153,21 @@ const handleDelete = (id: number) => {
               {/* CONTENT */}
               <div className="flex-1 pr-10">
 
-                <Link href={`/admin/challenge/${challenge.id}`}>
+                <div className="flex items-center gap-2">
+                  <Link href={`/admin/challenge/${challenge.id}`}>
+                    <h3 className="font-semibold text-lg text-gray-900">
+                      {challenge.title}
+                    </h3>
+                  </Link>
 
-                  <h3 className="font-semibold text-lg text-gray-900">
-                    {challenge.title}
-                  </h3>
-
-                </Link>
+                  {/* STATUS BADGE */}
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full font-medium ${statusMap[challenge.status as keyof typeof statusMap]?.color
+                      }`}
+                  >
+                    {statusMap[challenge.status as keyof typeof statusMap]?.label}
+                  </span>
+                </div>
 
                 <p className="text-sm text-gray-500 mt-1 line-clamp-2">
                   {challenge.description}
@@ -162,17 +176,25 @@ const handleDelete = (id: number) => {
                 <div className="flex gap-4 text-sm mt-2">
 
                   <span className="text-violet-600 font-medium flex gap-2 items-center">
-                    <Target size={20} /> Goal: {challenge.targetGoal}
+                    <Target size={20} /> Mục tiêu: {challenge.targetGoal}
                   </span>
 
                   <span className="text-green-600 font-medium flex gap-2 items-center">
-                    <Trophy size={20} /> {challenge.rewardPoints} points
+                    <Trophy size={20} /> {challenge.rewardPoints} Điểm thưởng
                   </span>
 
                 </div>
 
                 <p className="text-sm text-gray-500 mt-1">
-                  {formatDate(challenge.startDate)} → {formatDate(challenge.endDate)}
+                  {
+                    challenge.startDate && challenge.endDate
+                      ? `Thời gian: ${formatDate(challenge.startDate)} → ${formatDate(challenge.endDate)}`
+                      : challenge.startDate
+                        ? `Bắt đầu từ: ${formatDate(challenge.startDate)}`
+                        : challenge.endDate
+                          ? `Kết thúc vào: ${formatDate(challenge.endDate)}`
+                          : "Không giới hạn thời gian"
+                  }
                 </p>
 
               </div>
@@ -225,7 +247,7 @@ const handleDelete = (id: number) => {
             </svg>
 
             <p className="text-gray-600 font-medium">
-              Không có challenge
+              Không có challenge nào
             </p>
 
             <p className="text-sm text-gray-400">
@@ -245,7 +267,7 @@ const handleDelete = (id: number) => {
           <button
             disabled={page === 1}
             onClick={() => setPage(p => p - 1)}
-            className="p-2 rounded-lg border disabled:opacity-40"
+            className="p-2 cursor-pointer rounded-lg border disabled:opacity-40"
           >
 
             <ChevronLeft size={18} />
@@ -253,13 +275,13 @@ const handleDelete = (id: number) => {
           </button>
 
           <span className="text-sm text-gray-600">
-            Page {page} / {totalPages}
+            Trang {page} / {totalPages}
           </span>
 
           <button
             disabled={page === totalPages}
             onClick={() => setPage(p => p + 1)}
-            className="p-2 rounded-lg border disabled:opacity-40"
+            className="p-2 cursor-pointer rounded-lg border disabled:opacity-40"
           >
 
             <ChevronRight size={18} />

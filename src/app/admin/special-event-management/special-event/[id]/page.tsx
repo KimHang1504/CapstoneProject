@@ -31,7 +31,7 @@ export default async function EventDetailPage({ params }: Props) {
         <div className="max-w-5xl mx-auto p-6 space-y-6">
             <div className="flex justify-between">
                 <BackButton />
-                <button className="ml-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                <button className="ml-4 cursor-pointer px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                     <Link href={`/admin/special-event-management/special-event/${id}/edit`}>
                         Chỉnh sửa
                     </Link>

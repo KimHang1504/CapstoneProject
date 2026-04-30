@@ -3,24 +3,24 @@ import { getReports } from "@/api/admin/api";
 import { Report } from "@/api/admin/type";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
-import { 
-  RefreshCw, 
-  ChevronDown, 
-  X, 
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Flag,
-  User,
-  CheckCircle,
-  Clock,
-  XCircle,
-  FileText,
-  MessageSquare,
-  Star,
-  MapPin
+import {
+    RefreshCw,
+    ChevronDown,
+    X,
+    Search,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Flag,
+    User,
+    CheckCircle,
+    Clock,
+    XCircle,
+    FileText,
+    MessageSquare,
+    Star,
+    MapPin
 } from "lucide-react";
 
 const PAGE_SIZE = 5;
@@ -102,7 +102,7 @@ export default function ReportPage() {
                     <div className="flex gap-3">
                         <button
                             onClick={() => router.push("/admin/report-management/report-types")}
-                            className="px-4 py-2.5 border border-purple-600 text-purple-600 rounded-xl hover:bg-purple-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2 text-sm font-medium"
+                            className="px-4 py-2.5 cursor-pointer border border-purple-600 text-purple-600 rounded-xl hover:bg-purple-50 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2 text-sm font-medium"
                         >
                             <FileText className="w-4 h-4" />
                             Loại báo cáo
@@ -111,7 +111,7 @@ export default function ReportPage() {
                         <button
                             onClick={fetchReports}
                             disabled={loading}
-                            className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                            className="group px-4 py-2.5 cursor-pointer bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                             <span className="text-sm font-medium">Tải lại</span>
@@ -122,7 +122,7 @@ export default function ReportPage() {
                 {/* FILTER CARD */}
                 <div className="">
                     <div className="flex gap-3 flex-wrap items-center">
-                        
+
                         {/* SEARCH */}
                         <div className="relative flex-1 min-w-[250px]">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
@@ -136,7 +136,7 @@ export default function ReportPage() {
                             {searchQuery && (
                                 <button
                                     onClick={() => setSearchQuery("")}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600"
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-purple-600 cursor-pointer"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
@@ -147,12 +147,12 @@ export default function ReportPage() {
                         <div className="relative" ref={statusDropdownRef}>
                             <button
                                 onClick={() => setStatusDropdownOpen(!statusDropdownOpen)}
-                                className="min-w-37.5 px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                                className="min-w-37.5 cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700">
-                                    {status === "" ? "Tất cả trạng thái" : 
-                                     status === "PENDING" ? "Chờ xử lý" :
-                                     status === "APPROVED" ? "Đã duyệt" : "Từ chối"}
+                                    {status === "" ? "Tất cả trạng thái" :
+                                        status === "PENDING" ? "Chờ xử lý" :
+                                            status === "APPROVED" ? "Đã duyệt" : "Từ chối"}
                                 </span>
                                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${statusDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -174,9 +174,8 @@ export default function ReportPage() {
                                                     setStatus(option.value as Report["status"] | "");
                                                     setStatusDropdownOpen(false);
                                                 }}
-                                                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
-                                                    status === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                                                }`}
+                                                className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${status === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                    }`}
                                             >
                                                 {Icon && <Icon className="w-4 h-4" />}
                                                 {option.label}
@@ -191,10 +190,15 @@ export default function ReportPage() {
                         <div className="relative" ref={targetTypeDropdownRef}>
                             <button
                                 onClick={() => setTargetTypeDropdownOpen(!targetTypeDropdownOpen)}
-                                className="min-w-[150px] px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
+                                className="min-w-[150px] cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700">
-                                    {targetType === "" ? "Tất cả loại" : targetType}
+                                    {targetType === "" ? "Tất cả loại" :
+                                        targetType === "POST" ? "Bài viết" :
+                                            targetType === "COMMENT" ? "Bình luận" :
+                                                targetType === "REVIEW" ? "Đánh giá" :
+                                                    targetType === "USER" ? "Người dùng" :
+                                                        targetType === "VENUE" ? "Địa điểm" : targetType}
                                 </span>
                                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${targetTypeDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -218,9 +222,8 @@ export default function ReportPage() {
                                                     setTargetType(option.value as Report["targetType"] | "");
                                                     setTargetTypeDropdownOpen(false);
                                                 }}
-                                                className={`w-full px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${
-                                                    targetType === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
-                                                }`}
+                                                className={`w-full cursor-pointer px-4 py-2.5 text-left text-sm hover:bg-slate-50 transition-colors flex items-center gap-2 ${targetType === option.value ? 'bg-blue-50 text-blue-700' : 'text-slate-700'
+                                                    }`}
                                             >
                                                 {Icon && <Icon className="w-4 h-4" />}
                                                 {option.label}
@@ -239,7 +242,7 @@ export default function ReportPage() {
                                     setSearchQuery("");
                                     setPage(1);
                                 }}
-                                className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
+                                className="text-sm cursor-pointer text-slate-500 hover:text-slate-700 flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-slate-100 transition-colors"
                             >
                                 <X className="w-4 h-4" />
                                 Xóa bộ lọc
@@ -335,7 +338,7 @@ export default function ReportPage() {
                                 <button
                                     onClick={() => setPage(1)}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang đầu"
                                 >
                                     <ChevronsLeft className="w-4 h-4 text-slate-600" />
@@ -343,12 +346,12 @@ export default function ReportPage() {
                                 <button
                                     onClick={() => setPage(page - 1)}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 text-sm border cursor-pointer border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang trước"
                                 >
                                     <ChevronLeft className="w-4 h-4 text-slate-600" />
                                 </button>
-                                
+
                                 <div className="flex items-center gap-1">
                                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                                         let pageNum;
@@ -361,16 +364,15 @@ export default function ReportPage() {
                                         } else {
                                             pageNum = page - 2 + i;
                                         }
-                                        
+
                                         return (
                                             <button
                                                 key={pageNum}
                                                 onClick={() => setPage(pageNum)}
-                                                className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                                                    page === pageNum
-                                                        ? "bg-purple-600 text-white shadow-md"
-                                                        : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
-                                                }`}
+                                                className={`min-w-[36px] px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${page === pageNum
+                                                    ? "bg-purple-600 text-white shadow-md"
+                                                    : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
+                                                    }`}
                                             >
                                                 {pageNum}
                                             </button>
@@ -381,7 +383,7 @@ export default function ReportPage() {
                                 <button
                                     onClick={() => setPage(page + 1)}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 cursor-pointer text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang sau"
                                 >
                                     <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -389,7 +391,7 @@ export default function ReportPage() {
                                 <button
                                     onClick={() => setPage(totalPages)}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 cursor-pointer text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang cuối"
                                 >
                                     <ChevronsRight className="w-4 h-4 text-slate-600" />

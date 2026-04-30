@@ -6,6 +6,7 @@ import { Wallet, WithdrawRequest, PaginatedTransactionResponse } from "@/api/ven
 import WithdrawModal from "@/app/venue/wallet/components/WithdrawModal";
 import TopupModal from "@/app/venue/wallet/components/TopupModal";
 import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight, QrCode, Search, Filter, ChevronDown } from "lucide-react";
+import { getMappingLabel } from "@/app/venue/mapping";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   APPROVED: { label: "Đã duyệt", cls: "bg-emerald-100 text-emerald-600" },
@@ -155,8 +156,8 @@ export default function WalletPage() {
               setCurrentPage(1);
             }}
             className={`px-4 py-2.5 text-sm cursor-pointer font-medium transition relative ${activeTab === 'transactions'
-                ? 'text-violet-600'
-                : 'text-gray-500 hover:text-gray-700'
+              ? 'text-violet-600'
+              : 'text-gray-500 hover:text-gray-700'
               }`}
           >
             Biến động số dư
@@ -167,8 +168,8 @@ export default function WalletPage() {
           <button
             onClick={() => setActiveTab('withdraws')}
             className={`px-4 py-2.5 text-sm cursor-pointer font-medium transition relative ${activeTab === 'withdraws'
-                ? 'text-violet-600'
-                : 'text-gray-500 hover:text-gray-700'
+              ? 'text-violet-600'
+              : 'text-gray-500 hover:text-gray-700'
               }`}
           >
             Lịch sử rút tiền
@@ -183,7 +184,7 @@ export default function WalletPage() {
           <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b border-gray-100">
               <h2 className="font-semibold text-gray-800 mb-4">Biến động số dư</h2>
-              
+
               {/* Search and Filter Row */}
               <div className="flex items-center gap-3">
                 {/* Search Input */}
@@ -214,11 +215,11 @@ export default function WalletPage() {
 
                   {showFilterDropdown && (
                     <>
-                      <div 
-                        className="fixed inset-0 z-40" 
+                      <div
+                        className="fixed inset-0 z-40"
                         onClick={() => setShowFilterDropdown(false)}
                       />
-                      <div 
+                      <div
                         className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
                         style={{
                           top: `${dropdownPosition.top}px`,
@@ -239,9 +240,8 @@ export default function WalletPage() {
                               setFilterType(option.value);
                               setShowFilterDropdown(false);
                             }}
-                            className={`w-full cursor-pointer text-left px-4 py-2 text-sm hover:bg-violet-50 transition ${
-                              filterType === option.value ? 'bg-violet-50 text-violet-600 font-medium' : 'text-gray-700'
-                            }`}
+                            className={`w-full cursor-pointer text-left px-4 py-2 text-sm hover:bg-violet-50 transition ${filterType === option.value ? 'bg-violet-50 text-violet-600 font-medium' : 'text-gray-700'
+                              }`}
                           >
                             {option.label}
                           </button>
@@ -281,40 +281,40 @@ export default function WalletPage() {
                       return true;
                     })
                     .map((item) => {
-                    const isIncoming = item.direction === 'IN';
-                    return (
-                      <div key={item.transactionId} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-violet-50/40 transition">
-                        <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isIncoming ? 'bg-emerald-100' : 'bg-rose-100'
-                          }`}>
-                          {isIncoming ? (
-                            <ArrowDownRight size={18} className="text-emerald-600" />
-                          ) : (
-                            <ArrowUpRight size={18} className="text-rose-600" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-900 text-sm">
-                            {TRANSACTION_TYPE_MAP[item.transactionType] || item.transactionType}
-                          </p>
-                          <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
-                            {item.description}
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {new Date(item.createdAt).toLocaleString("vi-VN")}
-                          </p>
-                        </div>
-                        <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
-                          <p className={`font-bold text-base ${isIncoming ? 'text-emerald-600' : 'text-rose-600'
+                      const isIncoming = item.direction === 'IN';
+                      return (
+                        <div key={item.transactionId} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-violet-50/40 transition">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isIncoming ? 'bg-emerald-100' : 'bg-rose-100'
                             }`}>
-                            {isIncoming ? '+' : '-'}{Math.abs(item.balanceChange).toLocaleString("vi-VN")} ₫
-                          </p>
-                          <p className="text-xs text-gray-400 mt-1">
-                            {item.paymentMethod}
-                          </p>
+                            {isIncoming ? (
+                              <ArrowDownRight size={18} className="text-emerald-600" />
+                            ) : (
+                              <ArrowUpRight size={18} className="text-rose-600" />
+                            )}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-gray-900 text-sm">
+                              {TRANSACTION_TYPE_MAP[item.transactionType] || item.transactionType}
+                            </p>
+                            <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
+                              {item.description}
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {new Date(item.createdAt).toLocaleString("vi-VN")}
+                            </p>
+                          </div>
+                          <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
+                            <p className={`font-bold text-base ${isIncoming ? 'text-emerald-600' : 'text-rose-600'
+                              }`}>
+                              {isIncoming ? '+' : '-'}{Math.abs(item.balanceChange).toLocaleString("vi-VN")} ₫
+                            </p>
+                            <p className="text-xs text-gray-400 mt-1">
+                              {getMappingLabel("paymentMethod", item.paymentMethod)}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
                 </div>
 
                 {/* No results message */}
@@ -328,11 +328,11 @@ export default function WalletPage() {
                   }
                   return true;
                 }).length === 0 && (
-                  <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
-                    <Search size={36} className="opacity-30" />
-                    <p className="text-sm">Không tìm thấy giao dịch phù hợp</p>
-                  </div>
-                )}
+                    <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
+                      <Search size={36} className="opacity-30" />
+                      <p className="text-sm">Không tìm thấy giao dịch phù hợp</p>
+                    </div>
+                  )}
 
                 {/* Pagination */}
                 {transactionData.totalPages > 1 && (
@@ -391,7 +391,7 @@ export default function WalletPage() {
                       <div className="flex flex-col sm:flex-row items-start gap-3 sm:gap-4">
                         {/* Icon */}
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${item.status === 'APPROVED' ? 'bg-emerald-100' :
-                            item.status === 'REJECTED' ? 'bg-rose-100' : 'bg-violet-100'
+                          item.status === 'REJECTED' ? 'bg-rose-100' : 'bg-violet-100'
                           }`}>
                           <ArrowDownCircle size={18} className={
                             item.status === 'APPROVED' ? 'text-emerald-500' :

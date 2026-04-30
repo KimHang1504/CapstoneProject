@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { Settings } from "lucide-react";
 
 type Item = {
     title: string;
@@ -146,8 +147,8 @@ export default function AdminHome() {
                     shadow-md hover:shadow-xl hover:-translate-y-1 transition"
                 >
                     <div>
-                        <h2 className="text-lg font-semibold">
-                            Cấu hình hệ thống
+                        <h2 className="text-lg font-semibold flex items-center gap-2">
+                            <Settings /> Cấu hình hệ thống
                         </h2>
                         <p className="text-sm text-purple-100">
                             Thiết lập thông số và quyền truy cập
@@ -158,7 +159,7 @@ export default function AdminHome() {
                         onClick={() => router.push("/admin/config-management")}
                         className="bg-white cursor-pointer text-purple-600 px-4 py-2 rounded-full hover:bg-purple-100 transition"
                     >
-                        Setup
+                        Chỉnh sửa cấu hình
                     </button>
                 </div>
 

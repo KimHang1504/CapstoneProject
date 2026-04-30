@@ -114,7 +114,7 @@ export default function UserManagementPage() {
                     <button
                         onClick={() => fetchUsers(page)}
                         disabled={loading}
-                        className="group px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2 font-semibold"
+                        className="group px-5 py-2.5 cursor-pointer bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2 font-semibold"
                     >
                         <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                         <span className="text-sm">Tải lại</span>
@@ -141,7 +141,7 @@ export default function UserManagementPage() {
                                         setSearchTerm("");
                                         setPage(1);
                                     }}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                                    className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
                                 >
                                     <X className="w-4 h-4" />
                                 </button>
@@ -150,7 +150,7 @@ export default function UserManagementPage() {
 
                         <button
                             onClick={handleSearch}
-                            className="px-6 py-2.5 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md font-semibold flex items-center gap-2"
+                            className="px-6 py-2.5 cursor-pointer bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 shadow-md font-semibold flex items-center gap-2"
                         >
                             <Search size={16} />
                             <span className="text-sm">Tìm kiếm</span>
@@ -246,7 +246,7 @@ export default function UserManagementPage() {
                                                 <div className="flex justify-center">
                                                     <button
                                                         onClick={() => openDetailModal(user)}
-                                                        className="p-2 hover:bg-violet-100/40 text-violet-600 rounded-lg transition-all duration-200 hover:shadow-md"
+                                                        className="p-2 cursor-pointer hover:bg-violet-100/40 text-violet-600 rounded-lg transition-all duration-200 hover:shadow-md"
                                                         title="Xem chi tiết"
                                                     >
                                                         <Eye className="w-5 h-5" />
@@ -275,7 +275,7 @@ export default function UserManagementPage() {
                                 <button
                                     onClick={() => setPage(1)}
                                     disabled={page === 1}
-                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
+                                    className="p-2.5 text-sm border cursor-pointer border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang đầu"
                                 >
                                     <ChevronsLeft className="w-4 h-4 text-violet-600" />
@@ -283,7 +283,7 @@ export default function UserManagementPage() {
                                 <button
                                     onClick={() => setPage((p) => Math.max(1, p - 1))}
                                     disabled={page === 1}
-                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
+                                    className="p-2.5 text-sm border cursor-pointer border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang trước"
                                 >
                                     <ChevronLeft className="w-4 h-4 text-violet-600" />
@@ -306,7 +306,7 @@ export default function UserManagementPage() {
                                             <button
                                                 key={pageNum}
                                                 onClick={() => setPage(pageNum)}
-                                                className={`min-w-9 px-3 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
+                                                className={`min-w-9 cursor-pointer px-3 py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 ${
                                                     page === pageNum
                                                         ? "bg-linear-to-r from-violet-600 to-purple-600 text-white shadow-lg"
                                                         : "border border-slate-200 text-violet-600 hover:bg-violet-50 hover:border-violet-200 hover:shadow-md"
@@ -321,7 +321,7 @@ export default function UserManagementPage() {
                                 <button
                                     onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                                     disabled={page === totalPages}
-                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
+                                    className="p-2.5 text-sm border cursor-pointer border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang sau"
                                 >
                                     <ChevronRight className="w-4 h-4 text-violet-600" />
@@ -329,7 +329,7 @@ export default function UserManagementPage() {
                                 <button
                                     onClick={() => setPage(totalPages)}
                                     disabled={page === totalPages}
-                                    className="p-2.5 text-sm border border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
+                                    className="p-2.5 text-sm border cursor-pointer border-slate-200 rounded-lg hover:bg-violet-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-violet-200 hover:shadow-md"
                                     title="Trang cuối"
                                 >
                                     <ChevronsRight className="w-4 h-4 text-violet-600" />

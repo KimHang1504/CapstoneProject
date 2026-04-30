@@ -33,10 +33,10 @@ export default function ChallengeGuidePage() {
       {/* HEADER */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold">
-          🎯 Hướng dẫn tạo Challenge
+          🎯 Hướng dẫn tạo thử thách
         </h1>
         <p className="text-gray-500">
-          Tài liệu này giúp bạn hiểu cách tạo và cấu hình một challenge trong hệ thống.
+          Tài liệu này giúp bạn hiểu cách tạo và cấu hình một thử thách trong hệ thống.
         </p>
       </div>
 

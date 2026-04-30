@@ -91,7 +91,7 @@ export function PostCardModeration({ post, onApprove, onReject }: any) {
 
         <button
           onClick={onApprove}
-          className="flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
+          className="flex cursor-pointer items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100"
         >
           <CheckCircle className="w-4 h-4" />
           Cho qua
@@ -99,7 +99,7 @@ export function PostCardModeration({ post, onApprove, onReject }: any) {
 
         <button
           onClick={onReject}
-          className="flex items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+          className="flex cursor-pointer items-center justify-center gap-1 px-3 py-2 text-xs font-medium rounded-lg bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
         >
           <XCircle className="w-4 h-4" />
           Chặn

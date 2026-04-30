@@ -12,9 +12,9 @@ export default function VoucherPagination({
             <button
                 disabled={page === 1}
                 onClick={() => setPage(page - 1)}
-                className="px-4 py-2 rounded-lg border border-violet-200 text-violet-600 hover:bg-violet-50 disabled:opacity-40"
+                className="px-4 py-2 cursor-pointer rounded-lg border border-violet-200 text-violet-600 hover:bg-violet-50 disabled:opacity-40"
             >
-                Prev
+                Trang trước
             </button>
 
             <span className="px-4 py-2 font-medium text-violet-600">
@@ -24,9 +24,9 @@ export default function VoucherPagination({
             <button
                 disabled={page === totalPages}
                 onClick={() => setPage(page + 1)}
-                className="px-4 py-2 rounded-lg border border-violet-200 text-violet-600 hover:bg-violet-50 disabled:opacity-40"
+                className="px-4 py-2 cursor-pointer rounded-lg border border-violet-200 text-violet-600 hover:bg-violet-50 disabled:opacity-40"
             >
-                Next
+                Trang sau
             </button>
         </div>
     );

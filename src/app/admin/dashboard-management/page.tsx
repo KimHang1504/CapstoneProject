@@ -148,9 +148,9 @@ export default function Dashboard() {
                   setMonth(new Date().getMonth() + 1);
                   setYear(new Date().getFullYear());
                 }}
-                className="text-sm font-medium px-4 py-2 rounded-lg border border-purple-200 bg-gray-100 text-purple-600 hover:bg-purple-50 active:scale-95 transition"
+                className="text-sm cursor-pointer font-medium px-4 py-2 rounded-lg border border-purple-200 bg-gray-100 text-purple-600 hover:bg-purple-50 active:scale-95 transition"
               >
-                Reset
+                Cài lại
               </button>
             </div>
           </div>

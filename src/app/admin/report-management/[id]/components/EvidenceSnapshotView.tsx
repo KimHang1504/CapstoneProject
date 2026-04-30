@@ -13,7 +13,7 @@ export default function EvidenceSnapshotView({
   if (!snapshot?.data) {
     return (
       <div className="text-gray-400 text-sm italic">
-        Không có dữ liệu snapshot
+        Không có dữ liệu được ghi nhận
       </div>
     );
   }

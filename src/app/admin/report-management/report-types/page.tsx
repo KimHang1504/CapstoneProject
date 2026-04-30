@@ -161,17 +161,17 @@ export default function ReportTypePage() {
             {/* PAGINATION */}
             <div className="flex justify-center mt-6 gap-2">
                 <button
-                    className="px-3 py-1 border rounded-lg hover:bg-gray-100"
+                    className="px-3 py-1 cursor-pointer border rounded-lg hover:bg-gray-100"
                     disabled={page === 1}
                     onClick={() => setPage(page - 1)}
                 >
-                    Prev
+                    Trang trước
                 </button>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                     <button
                         key={p}
-                        className={`px-3 py-1 rounded-lg border ${page === p
+                        className={`px-3 py-1 cursor-pointer rounded-lg border ${page === p
                             ? "bg-[#B388EB] text-white border-[#B388EB]"
                             : "hover:bg-gray-100"
                             }`}
@@ -182,11 +182,11 @@ export default function ReportTypePage() {
                 ))}
 
                 <button
-                    className="px-3 py-1 border rounded-lg hover:bg-gray-100"
+                    className="px-3 py-1 border cursor-pointer rounded-lg hover:bg-gray-100"
                     disabled={page === totalPages}
                     onClick={() => setPage(page + 1)}
                 >
-                    Next
+                    Trang sau
                 </button>
             </div>
         </div>

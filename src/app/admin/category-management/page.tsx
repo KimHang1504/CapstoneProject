@@ -124,7 +124,7 @@ export default function CategoryManagementPage() {
                             Quản lý danh mục
                         </h1>
                         <p className="text-sm text-slate-500 mt-1.5">
-                            {categories.length} danh mục
+                            Trang này bao gồm {categories.length} danh mục
                         </p>
                     </div>
 
@@ -132,14 +132,14 @@ export default function CategoryManagementPage() {
                         <button
                             onClick={() => fetchCategories(page)}
                             disabled={loading}
-                            className="group px-4 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
+                            className="group px-4 py-2.5 bg-white cursor-pointer border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
                         >
                             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
                             <span className="text-sm font-medium">Tải lại</span>
                         </button>
                         <button
                             onClick={openAddModal}
-                            className="px-4 py-2.5 bg-linear-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 flex items-center gap-2 shadow-md"
+                            className="px-4 py-2.5 cursor-pointer bg-linear-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 flex items-center gap-2 shadow-md"
                         >
                             <Plus className="w-4 h-4" />
                             <span className="text-sm font-medium">Thêm mới</span>
@@ -161,7 +161,7 @@ export default function CategoryManagementPage() {
                         {searchTerm && (
                             <button
                                 onClick={() => setSearchTerm("")}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                                className="absolute cursor-pointer right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
                             >
                                 <X className="w-4 h-4" />
                             </button>
@@ -221,14 +221,14 @@ export default function CategoryManagementPage() {
                                                 <div className="flex justify-center gap-2">
                                                     <button
                                                         onClick={() => openEditModal(category)}
-                                                        className="p-2 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors duration-200"
+                                                        className="p-2 cursor-pointer hover:bg-blue-100 text-blue-600 rounded-lg transition-colors duration-200"
                                                         title="Chỉnh sửa"
                                                     >
                                                         <Edit2 className="w-4 h-4" />
                                                     </button>
                                                     <button
                                                         onClick={() => handleDelete(category.id)}
-                                                        className="p-2 hover:bg-red-100 text-red-600 rounded-lg transition-colors duration-200"
+                                                        className="p-2 cursor-pointer hover:bg-red-100 text-red-600 rounded-lg transition-colors duration-200"
                                                         title="Xóa"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
@@ -257,7 +257,7 @@ export default function CategoryManagementPage() {
                                 <button
                                     onClick={() => setPage(1)}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 cursor-pointer text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang đầu"
                                 >
                                     <ChevronsLeft className="w-4 h-4 text-slate-600" />
@@ -265,7 +265,7 @@ export default function CategoryManagementPage() {
                                 <button
                                     onClick={() => setPage(Math.max(1, page - 1))}
                                     disabled={page === 1}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 cursor-pointer text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang trước"
                                 >
                                     <ChevronLeft className="w-4 h-4 text-slate-600" />
@@ -303,7 +303,7 @@ export default function CategoryManagementPage() {
                                 <button
                                     onClick={() => setPage(Math.min(totalPages, page + 1))}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 cursor-pointer text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang sau"
                                 >
                                     <ChevronRight className="w-4 h-4 text-slate-600" />
@@ -311,7 +311,7 @@ export default function CategoryManagementPage() {
                                 <button
                                     onClick={() => setPage(totalPages)}
                                     disabled={page === totalPages}
-                                    className="p-2 text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
+                                    className="p-2 cursor-pointer text-sm border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:border-slate-400"
                                     title="Trang cuối"
                                 >
                                     <ChevronsRight className="w-4 h-4 text-slate-600" />
@@ -331,7 +331,7 @@ export default function CategoryManagementPage() {
                             </h2>
                             <button
                                 onClick={closeModal}
-                                className="p-1.5 hover:bg-slate-100 rounded-lg transition-colors duration-200"
+                                className="p-1.5 cursor-pointer hover:bg-slate-100 rounded-lg transition-colors duration-200"
                             >
                                 <X className="w-5 h-5 text-slate-500" />
                             </button>
@@ -375,14 +375,14 @@ export default function CategoryManagementPage() {
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    className="px-4 py-2.5 border border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
+                                    className="px-4 py-2.5 border cursor-pointer border-slate-300 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-all duration-200"
                                 >
                                     Hủy
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={isSubmitting}
-                                    className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 shadow-md"
+                                    className="px-4 py-2.5 bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-600 text-white rounded-xl text-sm font-medium hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2 shadow-md"
                                 >
                                     {isSubmitting && <Loader className="w-4 h-4 animate-spin" />}
                                     {editingCategory ? 'Cập nhật' : 'Tạo mới'}
