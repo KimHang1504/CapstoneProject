@@ -9,7 +9,6 @@ import { Receipt } from 'lucide-react';
 const STATUS_OPTIONS = [
   { value: 'all',       label: 'Tất cả' },
   { value: 'COMPLETED', label: STATUS_LABEL.COMPLETED },
-  // { value: 'PENDING',   label: STATUS_LABEL.PENDING },
   { value: 'REFUNDED',  label: STATUS_LABEL.REFUNDED },
   { value: 'PAYMENT_FAILED',    label: STATUS_LABEL.PAYMENT_FAILED },
   { value: 'CANCELLED', label: STATUS_LABEL.CANCELLED },

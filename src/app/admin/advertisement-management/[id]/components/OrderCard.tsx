@@ -1,5 +1,6 @@
 import { Receipt, DollarSign } from "lucide-react";
-import { StatusBadge } from "./StatusBadge";
+import { getMappingLabel, getStatusStyle } from "@/app/admin/mapping";
+
 
 export function OrderCard({ orders }: any) {
   return (
@@ -29,15 +30,32 @@ export function OrderCard({ orders }: any) {
           >
             <div className="flex justify-between items-start mb-3">
               <div className="flex-1">
-                <p className="font-semibold text-slate-800 mb-1">{o.packageName}</p>
-                <div className="flex items-center gap-1.5 text-green-600">
-                  <DollarSign className="w-4 h-4" />
-                  <span className="text-lg font-bold">
-                    {o.pricePaid?.toLocaleString('vi-VN')} đ
-                  </span>
+                <p className="font-semibold text-slate-800 mb-1">{getMappingLabel("adPackageName", o.packageName)}</p>
+                {o.pricePaid != null && (
+                  <div className="flex items-center gap-1.5 text-green-600">
+                    <DollarSign className="w-4 h-4" />
+
+                    <span className="text-lg font-bold">
+                      {o.pricePaid.toLocaleString("vi-VN")} đ
+                    </span>
+                  </div>
+                )}
+                <div>
+                    Ngày tạo:{o.createdAt && new Date(o.createdAt).toLocaleDateString("vi-VN", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "2-digit",
+                    })} 
                 </div>
               </div>
-              <StatusBadge status={o.status} />
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+                  "adsOrderStatus",
+                  o.status
+                )}`}
+              >
+                {getMappingLabel("adsOrderStatus", o.status)}
+              </span>
             </div>
           </div>
         ))}
