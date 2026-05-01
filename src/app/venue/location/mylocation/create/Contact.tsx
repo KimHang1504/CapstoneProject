@@ -183,25 +183,28 @@ export default function Contact({ formData, setFormData }: Props) {
 
       const { displayName } = await reverseGeocode(lat, lon)
 
+      const clean = (str: string) =>
+        str
+          .replace(/\b\d{5,6}\b/g, "") // postcode
+          .replace(/\b(Việt Nam|Vietnam)\b/gi, "") // country
+          .replace(/\s*,\s*,/g, ",")
+          .replace(/,\s*$/, "")
+          .replace(/\s+/g, " ")
+          .trim()
+
       setFormData((prev) => ({
         ...prev,
-        address: displayName,
+        address: clean(displayName), // ✅ FIX HERE
         latitude: lat,
         longitude: lon,
       }))
     } catch {
       setMapError("Không lấy được địa chỉ từ vị trí này")
-      // Vẫn lưu tọa độ dù không lấy được địa chỉ
-      setFormData((prev) => ({
-        ...prev,
-        latitude: lat,
-        longitude: lon,
-      }))
     } finally {
       setIsMapLoading(false)
     }
   }
-  
+
 
   return (
     <div className="flex justify-center">

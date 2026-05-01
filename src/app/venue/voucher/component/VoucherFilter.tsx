@@ -81,13 +81,15 @@ export default function VoucherFilter({ filters, setFilters, onFilter }: Props) 
         </button>
 
         {statusOpen && (
-          <div className="absolute left-0 mt-1.5 bg-white border border-purple-100 rounded-xl shadow-lg z-30 overflow-hidden min-w-full">
+          <div className="absolute left-0 mt-1.5 bg-white border border-purple-100 rounded-xl shadow-lg z-30 overflow-hidden min-w-50">
             {STATUS_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => {
-                  setFilters({ ...filters, status: opt.value });
+                  const newFilters = { ...filters, status: opt.value };
+                  setFilters(newFilters);
                   setStatusOpen(false);
+                  onFilter(newFilters);
                 }}
                 className={`flex items-center justify-between w-full px-4 py-2.5 text-sm text-left transition
                   ${opt.value === filters.status

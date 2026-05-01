@@ -7,7 +7,7 @@ type Props = {
 };
 
 const formatCurrency = (value: number) =>
-  `${new Intl.NumberFormat("vi-VN").format(value)} đ`;
+  value ? `${new Intl.NumberFormat("vi-VN").format(value)} đ` : "--";
 
 const formatDateTime = (value: string | null) => {
   if (!value) return "--";
@@ -21,27 +21,25 @@ const formatDateTime = (value: string | null) => {
 const getStatusMeta = (status: string) => {
   switch (status) {
     case "PENDING":
-      return {
-        label: "Chờ đối soát",
-        className: "border border-violet-200 bg-violet-50 text-violet-700",
-      };
+      return { label: "Chờ đối soát", color: "violet" };
     case "PAID":
-      return {
-        label: "Đã thanh toán",
-        className: "border border-pink-200 bg-pink-50 text-pink-700",
-      };
+      return { label: "Đã thanh toán", color: "emerald" };
     case "CANCELLED":
-      return {
-        label: "Đã huỷ",
-        className: "border border-rose-200 bg-rose-50 text-rose-700",
-      };
+      return { label: "Đã huỷ", color: "rose" };
     default:
-      return {
-        label: status,
-        className: "border border-slate-200 bg-slate-50 text-slate-700",
-      };
+      return { label: status, color: "slate" };
   }
 };
+
+function Operator({ symbol }: { symbol: string }) {
+  return (
+    <div className="flex items-center justify-center">
+      <span className="text-slate-400 text-base md:text-lg font-semibold">
+        {symbol}
+      </span>
+    </div>
+  );
+}
 
 export default async function Page({ params }: Props) {
   const { id } = await params;
@@ -49,72 +47,115 @@ export default async function Page({ params }: Props) {
   const data = await getSettlementDetail(Number(id));
   const statusMeta = getStatusMeta(data.status);
 
+  console.log("Settlement Detail:", data);
+
   return (
-    <div className="p-6">
+    <div className="p-6 space-y-6">
+
       {/* HEADER */}
-      <div>
-        <h1 className="bg-linear-to-r from-violet-600 via-fuchsia-500 to-pink-500 bg-clip-text text-2xl font-bold text-transparent">
-          Chi tiết đối soát #{data.settlementId}
-        </h1>
-        <p className="mt-1 text-sm text-slate-500">
-          Thông tin chi tiết giao dịch voucher
-        </p>
-      </div>
-
-      {/* CARD */}
-      <div className="rounded-3xl border border-violet-100 bg-white p-6 shadow-[0_10px_40px_rgba(168,85,247,0.08)] space-y-6">
-        
-        {/* TOP */}
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-sm text-slate-500">Voucher</p>
-            <p className="text-lg font-semibold text-slate-900">
-              {data.voucherTitle}
-            </p>
-          </div>
-
-          <span
-            className={`rounded-full px-4 py-1 text-sm font-semibold ${statusMeta.className}`}
-          >
-            {statusMeta.label}
-          </span>
-        </div>
-
-        {/* GRID */}
-        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
-          <Info label="Mã voucher item" value={data.voucherItemCode} />
-          <Info label="Voucher Item ID" value={String(data.voucherItemId)} />
-          <Info label="Khách hàng" value={data.memberName} />
-
-          <Info label="Tổng tiền" value={formatCurrency(data.grossAmount)} />
-          <Info label="Hoa hồng" value={formatCurrency(data.commissionAmount)} />
-          <Info
-            label="Thực nhận"
-            value={formatCurrency(data.netAmount)}
-            highlight
-          />
-
-          <Info label="Used at" value={formatDateTime(data.usedAt)} />
-          <Info label="Available at" value={formatDateTime(data.availableAt)} />
-          <Info label="Paid at" value={formatDateTime(data.paidAt)} />
-
-          <Info label="Created at" value={formatDateTime(data.createdAt)} />
-          <Info label="Updated at" value={formatDateTime(data.updatedAt)} />
-        </div>
-
-        {/* NOTE */}
-        <div className="rounded-2xl border border-violet-100 bg-violet-50/40 p-4">
-          <p className="text-sm font-medium text-slate-600 mb-1">Ghi chú</p>
-          <p className="text-sm text-slate-700">
-            {data.note || "--"}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900">
+            Đối soát cho {data.voucherTitle}
+          </h1>
+          <p className="text-sm text-slate-500">
+            #{data.settlementId}
           </p>
         </div>
+
+        <StatusBadge meta={statusMeta} />
+      </div>
+
+      {/* MAIN */}
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+        {/* LEFT */}
+        <div className="xl:col-span-2 space-y-6">
+
+          {/* GENERAL */}
+          <Card title="Thông tin chung">
+            <Row label="Mã voucher" value={data.voucherItemCode} />
+            <Row label="Tên thành viên đổi" value={data.memberName || "--"} />
+          </Card>
+
+          {/* FINANCE */}
+          <div className="grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-3">
+
+            <FinanceCard
+              label="Tổng tiền"
+              value={formatCurrency(data.grossAmount)}
+            />
+
+            <Operator symbol="−" />
+
+            <FinanceCard
+              label="Hoa hồng"
+              value={formatCurrency(data.commissionAmount)}
+            />
+
+            <Operator symbol="=" />
+
+            <FinanceCard
+              label="Thực nhận"
+              value={formatCurrency(data.netAmount)}
+              highlight
+            />
+          </div>
+
+        </div>
+
+        {/* RIGHT - TIMELINE */}
+        <div className="relative">
+          <div className="absolute left-3 top-0 bottom-0 w-px bg-slate-200" />
+
+          <div className="space-y-6">
+            <TimelineItem label="Tạo" value={formatDateTime(data.createdAt)} />
+            <TimelineItem label="Sử dụng" value={formatDateTime(data.usedAt)} />
+            <TimelineItem label="Khả dụng" value={formatDateTime(data.availableAt)} />
+            <TimelineItem label="Thanh toán" value={formatDateTime(data.paidAt)} />
+            <TimelineItem label="Cập nhật" value={formatDateTime(data.updatedAt)} />
+          </div>
+        </div>
+      </div>
+
+      {/* NOTE */}
+      <div className="rounded-2xl border border-purple-300 bg-purple-100 p-4">
+        <p className="text-xs uppercase text-slate-500 mb-1">Ghi chú</p>
+        <p className="text-sm text-slate-700">
+          {data.note || "--"}
+        </p>
       </div>
     </div>
   );
 }
 
-function Info({
+/* ================= COMPONENTS ================= */
+
+function Card({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="rounded-2xl border border-purple-300 bg-white p-5 space-y-4">
+      <p className="text-sm font-semibold text-slate-800">{title}</p>
+      {children}
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between text-sm">
+      <span className="text-slate-500">{label}</span>
+      <span className="font-medium text-slate-900">{value}</span>
+    </div>
+  );
+}
+
+function FinanceCard({
   label,
   value,
   highlight,
@@ -124,17 +165,47 @@ function Info({
   highlight?: boolean;
 }) {
   return (
-    <div>
+    <div
+      className={`rounded-2xl p-4 border ${highlight
+        ? "bg-violet-50 border-violet-200"
+        : "bg-white border-slate-200"
+        }`}
+    >
       <p className="text-xs text-slate-500 mb-1">{label}</p>
       <p
-        className={`text-sm ${
-          highlight
-            ? "font-semibold text-violet-700"
-            : "font-medium text-slate-800"
-        }`}
+        className={`text-lg font-semibold ${highlight ? "text-violet-700" : "text-slate-900"
+          }`}
       >
         {value}
       </p>
     </div>
+  );
+}
+
+function TimelineItem({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex gap-3 items-start">
+      <div className="w-6 flex justify-center">
+        <div className="w-2 h-2 mt-2 rounded-full bg-slate-400" />
+      </div>
+      <div>
+        <p className="text-xs text-slate-500">{label}</p>
+        <p className="text-sm font-medium text-slate-900">{value}</p>
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ meta }: any) {
+  return (
+    <span className={`px-3 py-1 rounded-full text-xs font-semibold bg-${meta.color}-100 text-${meta.color}-700`}>
+      {meta.label}
+    </span>
   );
 }

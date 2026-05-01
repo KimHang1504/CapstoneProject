@@ -4,6 +4,23 @@ import { useState } from 'react';
 import { AdsOrderTransaction, PLACEMENT_LABEL } from '@/api/venue/advertisement/type';
 import ImageWithFallback from '@/components/ImageWithFallback';
 import { CreditCard, Calendar, MapPin, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
+
+const formatDate = (date?: string | null) => {
+  if (!date) return "—";
+  return dayjs.utc(date).local().format("DD/MM/YYYY");
+};
+
+const formatRange = (start?: string | null, end?: string | null) => {
+  const s = formatDate(start);
+  const e = formatDate(end);
+
+  if (start && end) return `${s} → ${e}`;
+  return s || e;
+};
 
 export const STATUS_STYLE: Record<string, string> = {
   COMPLETED: 'bg-emerald-100 text-emerald-600',
@@ -52,15 +69,15 @@ const formatDateTime = (date?: string | null) => {
   }).format(new Date(date));
 };
 
-const formatRange = (start?: string | null, end?: string | null) => {
-  if (!start && !end) return '—';
+// const formatRange = (start?: string | null, end?: string | null) => {
+//   if (!start && !end) return '—';
 
-  const s = formatDateTime(start);
-  const e = formatDateTime(end);
+//   const s = formatDateTime(start);
+//   const e = formatDateTime(end);
 
-  if (start && end) return `${s} → ${e}`;
-  return s || e;
-};
+//   if (start && end) return `${s} → ${e}`;
+//   return s || e;
+// };
 
 const getAmountDisplay = (status: string, amount: number) => {
   const sign = status === 'REFUNDED' ? '+' : '-';
@@ -103,8 +120,6 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
     item.package.durationDays
   );
 
-
-
   return (
     <div className="bg-white rounded-2xl border border-violet-100 shadow-sm overflow-hidden hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
       <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4">
@@ -126,12 +141,10 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
                 <span className="text-xs px-2 py-0.5 rounded-full bg-violet-100 text-violet-600 font-medium">
                   {PLACEMENT_LABEL[item.package.placementType as keyof typeof PLACEMENT_LABEL] ?? item.package.placementType}
                 </span>
-                <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${AD_STATUS_STYLE[ad.status] ?? 'bg-gray-100 text-gray-500'}`}>
+                {/* <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${AD_STATUS_STYLE[ad.status] ?? 'bg-gray-100 text-gray-500'}`}>
                   QC: {AD_STATUS_LABEL[ad.status] ?? ad.status}
-                </span>
-                <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${STATUS_STYLE[item.status] ?? 'bg-gray-100 text-gray-500'}`}>
-                  {STATUS_LABEL[item.status] ?? item.status}
-                </span>
+                </span> */}
+
               </div>
               <div className="mt-1 flex items-center gap-2 flex-wrap text-xs">
 
@@ -154,10 +167,10 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
             <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
               {item.payment.amount > 0 && (
                 <p className={`text-xl sm:text-lg font-bold ${item.status === 'REFUNDED'
-                    ? 'text-sky-500'
-                    : item.status === 'COMPLETED'
-                      ? 'text-emerald-600'
-                      : 'text-gray-700'
+                  ? 'text-sky-500'
+                  : item.status === 'COMPLETED'
+                    ? 'text-emerald-600'
+                    : 'text-gray-700'
                   }`}>
                   {getAmountDisplay(item.status, item.payment.amount)}
                 </p>
@@ -176,7 +189,9 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
             <span>
               {item.package.name} x {quantity} · {item.package.durationDays * quantity} ngày
             </span>
-            <span className="hidden sm:inline">Đơn #{item.id}</span>
+            <span className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${STATUS_STYLE[item.status] ?? 'bg-gray-100 text-gray-500'}`}>
+              {STATUS_LABEL[item.status] ?? item.status}
+            </span>
           </div>
         </div>
 

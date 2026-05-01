@@ -32,22 +32,22 @@ const getStatusMeta = (status: SettlementItem["status"]) => {
         case "PENDING":
             return {
                 label: "Chờ đối soát",
-                className: "border border-violet-200 bg-violet-50 text-violet-700",
+                className: "bg-violet-50 text-violet-700 border-violet-200",
             };
         case "PAID":
             return {
                 label: "Đã thanh toán",
-                className: "border border-pink-200 bg-pink-50 text-pink-700",
+                className: "bg-green-50 text-green-700 border-green-200",
             };
         case "CANCELLED":
             return {
                 label: "Đã huỷ",
-                className: "border border-rose-200 bg-rose-50 text-rose-700",
+                className: "bg-red-50 text-red-700 border-red-200",
             };
         default:
             return {
                 label: status,
-                className: "border border-slate-200 bg-slate-50 text-slate-700",
+                className: "bg-slate-50 text-slate-700 border-slate-200",
             };
     }
 };
@@ -118,8 +118,8 @@ export default async function SettlementListSection({ searchParams }: Props) {
                         <table className="min-w-275 w-full">
                             <thead className="bg-linear-to-r from-violet-50 to-pink-50">
                                 <tr className="text-left text-sm text-slate-600">
-                                    <th className="px-5 py-4 font-semibold">Mã voucher item</th>
-                                    <th className="px-5 py-4 font-semibold">Voucher</th>
+                                    <th className="px-5 py-4 font-semibold">Mã</th>
+                                    <th className="px-5 py-4 font-semibold">Tên</th>
                                     <th className="px-5 py-4 font-semibold">Tổng tiền</th>
                                     <th className="px-5 py-4 font-semibold">Hoa hồng</th>
                                     <th className="px-5 py-4 font-semibold">Thực nhận</th>
@@ -127,7 +127,6 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                     <th className="px-5 py-4 font-semibold">Đã dùng lúc</th>
                                     <th className="px-5 py-4 font-semibold">Có thể đối soát</th>
                                     <th className="px-5 py-4 font-semibold">Đã thanh toán</th>
-                                    <th className="px-5 py-4 font-semibold">Ghi chú</th>
                                 </tr>
                             </thead>
 
@@ -171,28 +170,43 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                                 {formatCurrency(item.netAmount)}
                                             </td>
 
-                                            <td className="px-5 py-4">
+                                            <td className="px-5 py-4 min-w-45">
                                                 <span
-                                                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusMeta.className}`}
+                                                    className={`
+                                                                inline-flex items-center justify-center
+                                                                rounded-full px-3 py-1 text-xs font-semibold
+                                                                whitespace-nowrap
+                                                                border
+                                                                ${statusMeta.className}
+                                                            `}
                                                 >
                                                     {statusMeta.label}
                                                 </span>
                                             </td>
 
                                             <td className="px-5 py-4 text-slate-600">
-                                                {formatDateTime(item.usedAt)}
+                                                {item.usedAt
+                                                    ? formatDateTime(item.usedAt)
+                                                    : <span className="text-slate-400 text-xs">Chưa dùng</span>
+                                                }
                                             </td>
 
                                             <td className="px-5 py-4 text-slate-600">
-                                                {formatDateTime(item.availableAt)}
+                                                {item.availableAt
+                                                    ? formatDateTime(item.availableAt)
+                                                    : <span className="text-slate-400 text-xs">Chưa khả dụng</span>
+                                                }
                                             </td>
 
                                             <td className="px-5 py-4 text-slate-600">
-                                                {formatDateTime(item.paidAt)}
-                                            </td>
-
-                                            <td className="max-w-65 px-5 py-4 text-slate-500">
-                                                <div className="line-clamp-2">{item.note || "--"}</div>
+                                                {item.paidAt
+                                                    ? formatDateTime(item.paidAt)
+                                                    : (
+                                                        <span className="inline-flex items-center px-2 py-1 text-xs text-rose-600">
+                                                            Đã hủy
+                                                        </span>
+                                                    )
+                                                }
                                             </td>
                                         </tr>
                                     );

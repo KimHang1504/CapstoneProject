@@ -18,7 +18,8 @@ export default async function SettlementSummary() {
             count: s.pendingCount,
             icon: Wallet,
             note: "giao dịch đang chờ",
-            accent: "from-violet-500 to-fuchsia-500",
+
+            accent: "bg-violet-500",
             text: "text-violet-700",
             dot: "bg-violet-500",
         },
@@ -28,9 +29,10 @@ export default async function SettlementSummary() {
             count: s.paidCount,
             icon: CircleCheckBig,
             note: "giao dịch hoàn tất",
-            accent: "from-pink-500 to-rose-500",
-            text: "text-pink-700",
-            dot: "bg-pink-500",
+
+            accent: "bg-green-500",
+            text: "text-green-700",
+            dot: "bg-green-500",
         },
         {
             label: "Đã huỷ",
@@ -38,9 +40,9 @@ export default async function SettlementSummary() {
             count: s.cancelledCount,
             icon: CircleX,
             note: "giao dịch đã huỷ",
-            accent: "from-rose-500 to-violet-500",
-            text: "text-rose-700",
-            dot: "bg-rose-500",
+            accent: "bg-red-500",
+            text: "text-red-700",
+            dot: "bg-red-500",
         },
     ];
 
@@ -67,7 +69,7 @@ export default async function SettlementSummary() {
                         >
                             <div className="    flex items-center justify-between">
                                 <div className={`h-1.5 w-14 rounded-full bg-linear-to-r ${item.accent}`} />
-                                <div className="rounded-2xl border border-white/70 bg-white/70 p-3">
+                                <div className="rounded-2xl border border-white/70 bg-white/70">
                                     <Icon className={`h-5 w-5 ${item.text}`} />
                                 </div>
                             </div>

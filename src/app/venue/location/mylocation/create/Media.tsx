@@ -3,6 +3,7 @@
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info"
 import Image from "next/image"
 import { Upload, Image as ImageIcon, FileImage, FileCheck, X } from "lucide-react"
+import { useState } from "react"
 
 type Props = {
     formData: VenueFormData
@@ -96,6 +97,8 @@ export default function Media({ formData, setFormData }: Props) {
         })
     }
 
+    const [previewZoom, setPreviewZoom] = useState<string | null>(null)
+
     console.log('render media', { coverPreview, interiorPreview, menuPreview })
     return (
         <div className="flex justify-center">
@@ -139,13 +142,17 @@ export default function Media({ formData, setFormData }: Props) {
                                     alt="cover-preview"
                                     width={128}
                                     height={80}
-                                    className="h-20 w-32 rounded-xl object-cover border border-gray-200"
+                                    className="h-20 w-32 rounded-xl object-cover border border-gray-200 cursor-zoom-in"
                                     unoptimized
+                                    onClick={() => setPreviewZoom(getPreviewUrl(coverPreview))}
                                 />
 
                                 <button
                                     type="button"
-                                    onClick={removeCover}
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        removeCover()
+                                    }}
                                     className="absolute cursor-pointer right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white text-xs hover:bg-black/80 transition-all"
                                 >
                                     <X className="w-3 h-3" />
@@ -192,8 +199,9 @@ export default function Media({ formData, setFormData }: Props) {
                                             alt={`interior-${i}`}
                                             width={56}
                                             height={56}
-                                            className="h-14 w-14 rounded-lg object-cover border border-gray-200"
+                                            className="h-14 w-14 rounded-lg object-cover border border-gray-200 cursor-zoom-in"
                                             unoptimized
+                                            onClick={() => setPreviewZoom(getPreviewUrl(file))}
                                         />
 
                                         <button
@@ -249,6 +257,7 @@ export default function Media({ formData, setFormData }: Props) {
                                             height={56}
                                             className="h-14 w-14 rounded-lg object-cover border border-gray-200"
                                             unoptimized
+                                            onClick={() => setPreviewZoom(getPreviewUrl(file))}
                                         />
 
                                         <button
@@ -319,6 +328,7 @@ export default function Media({ formData, setFormData }: Props) {
                                         height={60}
                                         className="rounded-lg object-cover h-16 border border-gray-200"
                                         unoptimized
+                                        onClick={() => setPreviewZoom(getPreviewUrl(businessLicensePreview))}
                                     />
                                 )}
 
@@ -336,6 +346,25 @@ export default function Media({ formData, setFormData }: Props) {
 
                 </div>
             </div>
+            {previewZoom && (
+                <div
+                    className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+                    onClick={() => setPreviewZoom(null)}
+                >
+                    <img
+                        src={previewZoom}
+                        className="max-h-[90%] max-w-[90%] rounded-xl shadow-lg"
+                    />
+
+                    {/* nút đóng */}
+                    <button
+                        className="absolute top-4 right-4 text-white text-2xl"
+                        onClick={() => setPreviewZoom(null)}
+                    >
+                        ✕
+                    </button>
+                </div>
+            )}
         </div>
     )
 }

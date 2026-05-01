@@ -392,7 +392,7 @@ export default function VenueDashboardPage() {
           </div>
           <div className="bg-pink-50 rounded-lg p-3">
             <p className="text-[11px] text-gray-500">Số giao dịch</p>
-            <p className="text-lg font-bold text-pink-600">{totalCount} GD</p>
+            <p className="text-lg font-bold text-pink-600">{totalCount}</p>
           </div>
         </div>
         <div className="h-64 relative">

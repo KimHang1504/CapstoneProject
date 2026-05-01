@@ -58,6 +58,21 @@ export default function HistoryExchange({ voucherId }: Props) {
     return phone;
   };
 
+  const getUsedAtText = (item: VoucherExchangeItem) => {
+    if (item.usedAt) {
+      return new Date(item.usedAt).toLocaleString("vi-VN");
+    }
+
+    switch (item.status) {
+      case "ACQUIRED":
+        return "Chưa sử dụng";
+      case "EXPIRED":
+        return "Không sử dụng";
+      default:
+        return "—";
+    }
+  };
+
   if (loading) return <p className="p-6">Đang tải lịch sử đổi voucher...</p>;
 
   if (items.length === 0) {
@@ -130,9 +145,7 @@ export default function HistoryExchange({ voucherId }: Props) {
 
               {/* USED AT */}
               <td className="border p-2">
-                {item.usedAt
-                  ? new Date(item.usedAt).toLocaleString("vi-VN")
-                  : "-"}
+                {getUsedAtText(item)}
               </td>
 
             </tr>

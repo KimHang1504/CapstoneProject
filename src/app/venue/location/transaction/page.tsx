@@ -52,9 +52,8 @@ export default function SubscriptionTransactionPage() {
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-4 sm:p-6 lg:p-8">
       <div className="w-full space-y-5">
         <div>
-          <p className="text-xs font-semibold text-violet-500 uppercase tracking-widest mb-1">Subscription</p>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Lịch sử đăng ký gói</h1>
-          <p className="text-sm text-gray-400 mt-1">Toàn bộ gói subscription bạn đã mua</p>
+          <p className="text-sm text-gray-400 mt-1">Toàn bộ gói đăng ký bạn đã mua</p>
         </div>
 
 
