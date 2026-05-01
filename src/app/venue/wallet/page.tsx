@@ -9,10 +9,13 @@ import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, Hi
 import { getMappingLabel } from "@/app/venue/mapping";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
-  APPROVED: { label: "Đã duyệt", cls: "bg-emerald-100 text-emerald-600" },
   PENDING: { label: "Đang chờ", cls: "bg-amber-100 text-amber-600" },
   REJECTED: { label: "Từ chối", cls: "bg-rose-100 text-rose-500" },
+  COMPLETED: { label: "Hoàn thành", cls: "bg-green-100 text-green-600" },
+  APPROVED: { label: "Đã duyệt", cls: "bg-emerald-100 text-emerald-600" },
+  CANCELLED: { label: "Đã huỷ", cls: "bg-gray-100 text-gray-500" },
 };
+
 
 const TRANSACTION_TYPE_MAP: Record<string, string> = {
   ADS_ORDER: "Quảng cáo",

@@ -56,8 +56,7 @@ export default function AdTransactionPage() {
 
         {/* Header */}
         <div>
-          <p className="text-xs font-semibold text-violet-500 uppercase tracking-widest mb-1">ADVERTISEMENT</p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Lịch sử giao dịch</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Lịch sử giao dịch quảng cáo</h1>
           <p className="text-sm text-gray-400 mt-1">Các đơn hàng quảng cáo của bạn</p>
         </div>
 

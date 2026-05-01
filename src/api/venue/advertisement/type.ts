@@ -62,6 +62,7 @@ export interface Advertisement {
     bannerUrl: string;
     targetUrl: string;
     placementType: PlacementType | null;
+    moodTypeId: number;
     status: AdvertisementStatus;
     rejectionHistory: RejectionHistory[];
     desiredStartDate: string | null;

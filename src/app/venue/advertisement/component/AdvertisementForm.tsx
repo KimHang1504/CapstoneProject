@@ -221,18 +221,26 @@ export default function AdvertisementForm({
     }
   };
 
+  const FIELD_LABELS: Record<string, string> = {
+    title: "Mục đích quảng cáo",
+    content: "Nội dung",
+    bannerUrl: "Banner",
+    targetUrl: "Đường dẫn khi bấm",
+    moodTypeId: "Tâm trạng",
+    desiredStartDate: "Ngày bắt đầu",
+  };
+
   const handleSubmit = async () => {
     const missingFields: string[] = [];
 
-    if (!form.title.trim()) missingFields.push("Mục đích quảng cáo");
-    if (!form.content.trim()) missingFields.push("Nội dung");
-    if (!form.bannerUrl.trim()) missingFields.push("Banner");
-    if (!form.targetUrl.trim()) missingFields.push("Link khi click");
-    if (!form.moodTypeId) missingFields.push("Mood type");
-    if (!desiredStartDate) missingFields.push("Ngày bắt đầu");
+    if (!form.title.trim()) missingFields.push("title");
+    if (!form.bannerUrl.trim()) missingFields.push("bannerUrl");
+    if (!form.moodTypeId) missingFields.push("moodTypeId");
+    if (!desiredStartDate) missingFields.push("desiredStartDate");
 
     if (missingFields.length > 0) {
-      toast.error(`Vui lòng điền: ${missingFields.join(", ")}`);
+      const fieldNames = missingFields.map(f => FIELD_LABELS[f]);
+      toast.error(`Vui lòng điền: ${fieldNames.join(", ")}`);
       return;
     }
 
@@ -368,7 +376,7 @@ export default function AdvertisementForm({
 
       {/* Target URL */}
       <FieldWrapper>
-        <label className={labelClass}>Link khi click</label>
+        <label className={labelClass}>Đường dẫn khi bấm</label>
         <div className="relative mt-2">
           <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-violet-400">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -532,7 +540,7 @@ export default function AdvertisementForm({
           <svg className="w-4 h-4 shrink-0 mt-0.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
-          <span>Quảng cáo cần ít nhất <span className="font-semibold text-gray-700">72h</span> để admin duyệt. Vui lòng lên lịch trước khoảng thời gian này.</span>
+          <span>Quảng cáo cần ít nhất <span className="font-semibold text-gray-700">3 ngày</span> để admin duyệt. Vui lòng lên lịch trước khoảng thời gian này.</span>
         </p>
       </FieldWrapper>
 

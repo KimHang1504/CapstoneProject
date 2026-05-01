@@ -38,6 +38,8 @@ export default function LocationDetailPage() {
     const [openMissingCitizenPopup, setOpenMissingCitizenPopup] = useState(false);
 
 
+    const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
     const getOpenStatus = (today: OpeningHour | null): OpenStatus => {
         if (!today) return 'CLOSED_ALL_DAY';
 
@@ -168,6 +170,8 @@ export default function LocationDetailPage() {
         fetchLatLon();
     }, [location?.address]);
 
+
+
     if (isLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center text-gray-500">
@@ -196,6 +200,9 @@ export default function LocationDetailPage() {
         ...(location.interiorImage || [])
     ]
 
+    const lat = location.latitude;
+    const lon = location.longitude;
+    const mapUrl = `https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+7c3aed(${lon},${lat})/${lon},${lat},15/800x300?access_token=${token}`;
 
 
     const images = allImages.length > 0 ? allImages : ['https://i.pinimg.com/736x/36/21/a9/3621a941262c3977faff6f9a47943eee.jpg']
@@ -582,18 +589,22 @@ export default function LocationDetailPage() {
                             <p className="font-semibold mb-2">Địa điểm</p>
                             <p className="text-sm text-green-700 italic "><MapPin className="inline mr-1" />{location.address}</p>
 
-                            {mapLoading && (
-                                <div className="mt-3 h-60 w-full rounded-xl bg-gray-100 flex items-center justify-center text-sm text-gray-500">
-                                    Đang tải bản đồ...
+                            {lat && lon ? (
+                                <a
+                                    href={`https://www.google.com/maps?q=${lat},${lon}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    <img
+                                        src={`https://api.mapbox.com/styles/v1/mapbox/streets-v12/static/pin-s+7c3aed(${lon},${lat})/${lon},${lat},15/800x300?access_token=${token}`}
+                                        alt="map preview"
+                                        className="mt-3 w-full h-60 object-cover rounded-xl cursor-pointer hover:opacity-90"
+                                    />
+                                </a>
+                            ) : (
+                                <div className="mt-3 h-60 flex items-center justify-center text-gray-400">
+                                    Không có tọa độ
                                 </div>
-                            )}
-
-                            {!mapLoading && latLon && (
-                                <iframe
-                                    className="mt-3 w-full h-60 rounded-xl"
-                                    loading="lazy"
-                                    src={`https://www.openstreetmap.org/export/embed.html?marker=${latLon.lat},${latLon.lon}&zoom=17`}
-                                />
                             )}
                         </div>
                     </div>
@@ -636,12 +647,12 @@ export default function LocationDetailPage() {
                 )}
 
                 <div>
-                        <ReviewSection
-                            venueId={location.id}
-                            venueName={location.name}
-                            venueDescription={location.description}
-                            canInteractReview={canInteractReview}
-                        />
+                    <ReviewSection
+                        venueId={location.id}
+                        venueName={location.name}
+                        venueDescription={location.description}
+                        canInteractReview={canInteractReview}
+                    />
                 </div>
 
 
