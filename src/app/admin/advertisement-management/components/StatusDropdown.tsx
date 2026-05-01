@@ -20,7 +20,6 @@ const statusOptions: StatusOption[] = [
   { value: "REJECTED", label: "Bị từ chối" },
   { value: "ACTIVE", label: "Đang hoạt động" },
   { value: "INACTIVE", label: "Không hoạt động" },
-  { value: "DRAFT", label: "Nháp" },
 ];
 
 export default function StatusDropdown({ value, onChange }: StatusDropdownProps) {

@@ -10,14 +10,14 @@ export default function UserSnapshot({ snapshot }: any) {
           {data.FullName}
         </h3>
         <span className="text-xs text-gray-400">
-          User ID: {data.UserId}
+          ID người dùng: {data.UserId}
         </span>
       </div>
 
       {/* Info */}
       <div className="text-sm text-gray-600 space-y-1">
-        <p><strong>Gender:</strong> {data.Gender}</p>
-        <p><strong>Relationship:</strong> {data.RelationshipStatus}</p>
+        <p><strong>Giới tính:</strong> {data.Gender}</p>
+        <p><strong>Tình trạng mối quan hệ:</strong> {data.RelationshipStatus}</p>
       </div>
 
       {/* Bio */}
@@ -27,9 +27,9 @@ export default function UserSnapshot({ snapshot }: any) {
 
       {/* Footer */}
       <div className="flex justify-between text-xs text-gray-400">
-        <span>Created: {new Date(data.CreatedAt).toLocaleDateString()}</span>
+        <span>Ngày tạo: {new Date(data.CreatedAt).toLocaleDateString()}</span>
         <span>
-          Snapshot at: {new Date(snapshot.capturedAt).toLocaleString()}
+          Ghi nhận lúc: {new Date(snapshot.capturedAt).toLocaleString()}
         </span>
       </div>
     </div>

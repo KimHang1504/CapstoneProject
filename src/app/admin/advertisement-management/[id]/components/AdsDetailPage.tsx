@@ -81,7 +81,7 @@ export default function AdsDetailPage({ data }: { data: AdvertisementDetail }) {
                             {getMoodLabel(data.moodTypeName)}
                         </span>
                         <span className="px-3 py-1.5 text-sm font-medium rounded-full bg-white/20 backdrop-blur-md border border-white/30">
-                            {getPlacementLabel(data.placementType)}
+                            {getPlacementLabel(data.placementType) || 'Không xác định'}
                         </span>
                     </div>
                 </div>

@@ -165,7 +165,7 @@ export default function ReportTypePage() {
                     disabled={page === 1}
                     onClick={() => setPage(page - 1)}
                 >
-                    Prev
+                    Trang trước
                 </button>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -186,7 +186,7 @@ export default function ReportTypePage() {
                     disabled={page === totalPages}
                     onClick={() => setPage(page + 1)}
                 >
-                    Next
+                    Trang sau
                 </button>
             </div>
         </div>

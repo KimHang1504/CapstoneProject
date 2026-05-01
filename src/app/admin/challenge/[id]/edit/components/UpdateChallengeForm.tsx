@@ -253,10 +253,10 @@ export default function UpdateChallengeForm({ challenge }: any) {
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-800">
-                            Cập nhật Challenge
+                            Cập nhật thử thách
                         </h1>
                         <p className="text-gray-500 text-sm mt-1">
-                            Chỉnh sửa thông tin và quy tắc challenge
+                            Chỉnh sửa thông tin và quy tắc thử thách
                         </p>
                     </div>
 
@@ -281,7 +281,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                         <h2 className="text-lg font-semibold text-gray-800">Thông tin cơ bản</h2>
 
                         <FieldWrapper>
-                            <label className={labelClass}>Tiêu đề Challenge</label>
+                            <label className={labelClass}>Tiêu đề thử thách</label>
                             <input
                                 name="title"
                                 value={form.title}
@@ -293,7 +293,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                         </FieldWrapper>
 
                         <FieldWrapper>
-                            <label className={labelClass}>Mô tả Challenge</label>
+                            <label className={labelClass}>Mô tả thử thách</label>
                             <textarea
                                 name="description"
                                 value={form.description}
@@ -309,7 +309,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                     <div className="bg-white rounded-2xl shadow p-8 space-y-7">
                         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                             <Target size={20} />
-                            Mục tiêu Challenge
+                            Mục tiêu thử thách
                         </h2>
 
                         <div className="grid grid-cols-2 gap-6">
@@ -380,7 +380,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                     <div className="bg-white rounded-2xl shadow p-8 space-y-7">
                         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                             <Calendar size={20} />
-                            Thời gian Challenge
+                            Thời gian thử thách
                         </h2>
 
                         <div className="grid grid-cols-2 gap-6">
@@ -413,7 +413,7 @@ export default function UpdateChallengeForm({ challenge }: any) {
                     {/* RULES SECTION */}
                     {showRuleData && (
                         <div className="bg-white rounded-2xl shadow p-8 space-y-7">
-                            <h2 className="text-lg font-semibold text-gray-800">Quy tắc Challenge</h2>
+                            <h2 className="text-lg font-semibold text-gray-800">Quy tắc thử thách</h2>
 
                             {showHasImage && (
                                 <label className="flex items-center gap-3 p-4 rounded-xl border border-violet-200 bg-violet-50/50 cursor-pointer hover:bg-violet-50 transition">

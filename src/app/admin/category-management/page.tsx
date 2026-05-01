@@ -124,7 +124,7 @@ export default function CategoryManagementPage() {
                             Quản lý danh mục
                         </h1>
                         <p className="text-sm text-slate-500 mt-1.5">
-                            {categories.length} danh mục
+                            Trang này bao gồm {categories.length} danh mục
                         </p>
                     </div>
 

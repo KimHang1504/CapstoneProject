@@ -37,9 +37,9 @@ export default function UpdateStatus({ challengeId, currentStatus }: Props) {
                 onChange={(e) => setStatus(e.target.value)}
                 className="border rounded-lg px-3 py-2 text-sm"
             >
-                <option value="INACTIVE">INACTIVE</option>
-                <option value="ACTIVE">ACTIVE</option>
-                <option value="ENDED">ENDED</option>
+                <option value="INACTIVE">Tạm dừng</option>
+                <option value="ACTIVE">Kích hoạt</option>
+                <option value="ENDED">Kết thúc</option>
             </select>
 
             <button

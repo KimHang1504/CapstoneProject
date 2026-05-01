@@ -106,7 +106,6 @@ export default function AdvertisementAllList() {
 
     return (
         <div className="px-8 py-4">
-            <BackButton />
             <div className="mb-6">
                 <h2 className="text-2xl font-bold bg-linear-to-r from-violet-600 to-pink-500 bg-clip-text text-transparent">
                     Tất cả quảng cáo
