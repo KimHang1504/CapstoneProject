@@ -175,6 +175,28 @@ export default function Info({ formData, setFormData }: Props) {
     }));
   }
 
+  function toPascalCase(text: string) {
+    return text
+      .toLowerCase()
+      .split(" ")
+      .filter(Boolean)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
+  const [priceMinInput, setPriceMinInput] = useState("");
+  const [priceMaxInput, setPriceMaxInput] = useState("");
+
+  const formatCurrency = (value: string) => {
+    const number = value.replace(/\D/g, "");
+    if (!number) return "";
+    return Number(number).toLocaleString("vi-VN");
+  };
+
+  const parseCurrency = (value: string) => {
+    return Number(value.replace(/\D/g, ""));
+  };
+
   return (
     <div className="flex items-center justify-center">
       <div className="w-full max-w-3xl px-4 py-4">
@@ -291,23 +313,23 @@ export default function Info({ formData, setFormData }: Props) {
                 ₫
               </span>
               <input
-                type="number"
-                min={0}
-                max={100000000}
-                value={formData.priceMin ?? ""}
+                type="text"
+                inputMode="numeric"
+                value={priceMinInput}
                 onChange={(e) => {
-                  const value = e.target.value === "" ? null : Number(e.target.value);
+                  const raw = e.target.value;
 
-                  const newMin = value;
-                  const newMax = formData.priceMax;
+                  const number = parseCurrency(raw);
+
+                  setPriceMinInput(formatCurrency(raw));
 
                   setFormData(prev => ({
                     ...prev,
-                    priceMin: newMin,
+                    priceMin: number === 0 ? null : number,
                   }));
 
                   if (touched.priceMin || touched.priceMax) {
-                    validatePrice(newMin, newMax);
+                    validatePrice(number === 0 ? null : number, formData.priceMax);
                   }
                 }}
                 onBlur={handlePriceMinBlur}
@@ -328,23 +350,23 @@ export default function Info({ formData, setFormData }: Props) {
                 ₫
               </span>
               <input
-                type="number"
-                min={0}
-                max={100000000}
-                value={formData.priceMax ?? ""}
+                type="text"
+                inputMode="numeric"
+                value={priceMaxInput}
                 onChange={(e) => {
-                  const value = e.target.value === "" ? null : Number(e.target.value);
+                  const raw = e.target.value;
 
-                  const newMax = value;
-                  const newMin = formData.priceMin;
+                  const number = parseCurrency(raw);
+
+                  setPriceMaxInput(formatCurrency(raw));
 
                   setFormData(prev => ({
                     ...prev,
-                    priceMax: newMax,
+                    priceMax: number === 0 ? null : number,
                   }));
 
                   if (touched.priceMin || touched.priceMax) {
-                    validatePrice(newMin, newMax);
+                    validatePrice(formData.priceMin, number === 0 ? null : number);
                   }
                 }}
                 onBlur={handlePriceMaxBlur}
@@ -394,14 +416,14 @@ export default function Info({ formData, setFormData }: Props) {
                         : "bg-white border border-[#E4D7FF] text-gray-700 hover:border-purple-400 hover:shadow-md hover:scale-102"
                       }`}
                   >
-                    {mood.name.toLowerCase()}
+                    {toPascalCase(mood.name)}
                     <InfoCircle size={12} className={`transition-opacity ${active ? 'opacity-80' : 'opacity-40'}`} />
                   </button>
 
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
                     <div className="relative bg-linear-to-br from-purple-600 via-purple-700 to-purple-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-purple-500/30 backdrop-blur-sm min-w-50 max-w-70">
-                      <p className="font-semibold mb-1 text-purple-100">{mood.name}</p>
+                      <p className="font-semibold mb-1 text-purple-100">{toPascalCase(mood.name)}</p>
                       <p className="text-purple-50/90 leading-relaxed text-[11px]">{mood.description}</p>
                       {/* Arrow */}
                       <div className="absolute top-full left-1/2 -translate-x-1/2">
@@ -440,14 +462,14 @@ export default function Info({ formData, setFormData }: Props) {
                         : "bg-white border border-[#E4D7FF] text-gray-700 hover:border-indigo-400 hover:shadow-md hover:scale-102"
                       }`}
                   >
-                    {style.name.toLowerCase()}
+                    {toPascalCase(style.name)}
                     <InfoCircle size={12} className={`transition-opacity ${active ? 'opacity-80' : 'opacity-40'}`} />
                   </button>
 
                   {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-out z-50 pointer-events-none">
                     <div className="relative bg-linear-to-br from-indigo-600 via-indigo-700 to-indigo-800 text-white text-xs rounded-lg px-3.5 py-2.5 shadow-xl border border-indigo-500/30 backdrop-blur-sm min-w-50 max-w-70">
-                      <p className="font-semibold mb-1 text-indigo-100">{style.name}</p>
+                      <p className="font-semibold mb-1 text-indigo-100">{toPascalCase(style.name)}</p>
                       <p className="text-indigo-50/90 leading-relaxed text-[11px]">{style.description}</p>
                       {/* Arrow */}
                       <div className="absolute top-full left-1/2 -translate-x-1/2">

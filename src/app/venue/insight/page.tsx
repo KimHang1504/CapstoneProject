@@ -15,6 +15,7 @@ import SubscriptionExpiredModal from '@/components/SubscriptionExpiredModal';
 import InsightSkeleton from "@/components/skeleton/InsightSkeleton";
 import VenueInsightExpiryBadge from '@/components/VenueInsightExpiryBanner';
 import { getVenueOwnerSubscriptionInfo } from '@/api/venue/dashboard/api';
+import Image from 'next/image';
 
 const TIMEFRAME_OPTIONS: { value: Timeframe; label: string }[] = [
   { value: 'all', label: 'Tất cả' },
@@ -263,19 +264,24 @@ export default function InsightPage() {
 
                       <div className="flex-1">
                         <p className="text-[10px] uppercase tracking-widest text-violet-500 font-semibold">
-                          AI SUMMARY
+                          TÓM TẮT BẰNG AI
                         </p>
                         <h3 className="text-base font-bold text-gray-900 leading-tight">
                           Tổng quan & đề xuất chiến lược
                         </h3>
                         <p className="text-xs text-gray-500 mt-0.5">
-                          Insight quan trọng giúp tối ưu hiệu quả kinh doanh
+                          Phân tích quan trọng giúp tối ưu hiệu quả kinh doanh
                         </p>
                       </div>
 
-                      <span className="text-[10px] bg-gradient-to-r from-violet-500 to-indigo-500 text-white px-2 py-1 rounded-full font-semibold shadow">
-                        AI
-                      </span>
+                        <Image
+                          src="/AI.jpg"
+                          alt="AI"
+                          width={50}
+                          height={50}
+                          className="rounded-xl"
+                        />
+                    
                     </div>
 
                     {/* Content */}

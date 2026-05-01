@@ -230,6 +230,7 @@ export default function AdvertisementForm({
     desiredStartDate: "Ngày bắt đầu",
   };
 
+
   const handleSubmit = async () => {
     const missingFields: string[] = [];
 
@@ -239,14 +240,17 @@ export default function AdvertisementForm({
     if (!desiredStartDate) missingFields.push("desiredStartDate");
 
     if (missingFields.length > 0) {
-      const fieldNames = missingFields.map(f => FIELD_LABELS[f]);
+      const fieldNames = missingFields.map((f) => FIELD_LABELS[f]);
       toast.error(`Vui lòng điền: ${fieldNames.join(", ")}`);
       return;
     }
 
-    // Validate date
-    if (!validateDate(desiredStartDate)) {
-      toast.error(dateError);
+    // ===== DATE VALIDATION (FIX BUG TRIỆT ĐỂ) =====
+    const dateValidationError = validateDate(desiredStartDate);
+
+    if (dateValidationError) {
+      setDateError(dateValidationError);
+      toast.error(dateValidationError);
       return;
     }
 
@@ -255,8 +259,6 @@ export default function AdvertisementForm({
       moodTypeId: Number(form.moodTypeId),
       desiredStartDate: desiredStartDate?.toISOString() ?? null,
     };
-
-
 
     // Placement is derived from package when submitting with payment in create flow.
     if (isCreateMode) {
@@ -282,28 +284,23 @@ export default function AdvertisementForm({
     return minDate;
   };
 
-  const validateDate = (date: Date | null) => {
-    if (!date) {
-      setDateError("");
-      return true;
-    }
+  const validateDate = (date: Date | null): string => {
+    if (!date) return "";
 
     const now = new Date();
     now.setHours(0, 0, 0, 0);
+
     const minDate = getMinDate();
 
     if (date < now) {
-      setDateError("Ngày bắt đầu không được là quá khứ");
-      return false;
+      return "Ngày bắt đầu không được là quá khứ";
     }
 
     if (date < minDate) {
-      setDateError("Ngày bắt đầu phải sau ít nhất 3 ngày");
-      return false;
+      return "Ngày bắt đầu phải sau ít nhất 3 ngày";
     }
 
-    setDateError("");
-    return true;
+    return "";
   };
 
   return (

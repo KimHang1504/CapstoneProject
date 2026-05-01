@@ -445,7 +445,7 @@ export default function AdvertisementDetailPage() {
                         <div className="bg-linear-to-r from-violet-500 to-purple-600 px-6 py-4 flex items-center justify-between">
                             <div className="flex items-center gap-2.5">
                                 <MapPin size={17} className="text-white" />
-                                <p className="font-semibold text-white text-sm">Địa điểm đang chạy quảng cáo</p>
+                                <p className="font-semibold text-white text-sm">Địa điểm đang áp dụng quảng cáo</p>
                             </div>
                             <span className="bg-white/25 text-white text-xs font-bold px-2.5 py-1 rounded-full">
                                 {ad.venueLocationAds.length}
