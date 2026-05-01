@@ -78,7 +78,7 @@ export default function VoucherItemsPage() {
                     <thead className="bg-gray-100">
                         <tr>
                             <th className="p-3 text-left">ID</th>
-                            <th className="p-3 text-left">Mã code</th>
+                            <th className="p-3 text-left">Mã voucher</th>
                             <th className="p-3 text-left">
                                 <div className="flex items-center gap-2">
                                     Trạng thái

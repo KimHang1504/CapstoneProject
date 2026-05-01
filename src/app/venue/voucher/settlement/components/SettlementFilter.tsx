@@ -46,7 +46,7 @@ function CustomDropdown<T extends string>({
             <button
                 type="button"
                 onClick={() => setOpen((o) => !o)}
-                className="flex items-center gap-2 h-11 w-full rounded-2xl border border-violet-100 bg-white px-4 text-sm
+                className="flex items-center gap-2 h-11 w-full rounded-md border border-violet-100 bg-white px-4 text-sm
                            hover:border-violet-300 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200
                            transition cursor-pointer text-slate-700 whitespace-nowrap"
             >
@@ -58,7 +58,7 @@ function CustomDropdown<T extends string>({
             </button>
 
             {open && (
-                <div className="absolute left-0 mt-1.5 bg-white border border-violet-100 rounded-2xl shadow-lg z-30 overflow-hidden min-w-full">
+                <div className="absolute left-0 mt-1.5 bg-white border border-violet-100 rounded-md shadow-lg z-30 overflow-hidden min-w-full">
                     {options.map((opt) => (
                         <button
                             key={opt.value}
@@ -155,7 +155,7 @@ function MiniDatePicker({
             <button
                 type="button"
                 onClick={() => setOpen((o) => !o)}
-                className="flex items-center gap-2 h-11 w-full rounded-2xl border border-violet-100 bg-white px-4 text-sm
+                className="flex items-center gap-2 h-11 w-full rounded-md border border-violet-100 bg-white px-4 text-sm
                            hover:border-violet-300 focus:outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200
                            transition cursor-pointer text-slate-700 whitespace-nowrap"
             >
@@ -168,7 +168,7 @@ function MiniDatePicker({
             </button>
 
             {open && (
-                <div className="absolute left-0 mt-1.5 bg-white border border-violet-100 rounded-2xl shadow-xl z-30 p-3 w-[220px]">
+                <div className="absolute left-0 mt-1.5 bg-white border border-violet-100 rounded-md shadow-xl z-30 p-3 w-[220px]">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-2">
                         <button type="button" onClick={prevMonth} className="p-1 rounded-lg hover:bg-violet-50 transition">
@@ -254,7 +254,7 @@ export default function SettlementFilter({ defaultValues }: Props) {
     const resetFilter = () => router.push(pathname);
 
     return (
-        <div className="rounded-3xl border border-violet-100 bg-linear-to-br from-violet-50 via-white to-pink-50 p-5 shadow-[0_10px_40px_rgba(168,85,247,0.08)]">
+        <div className="py-4 shadow-[0_10px_40px_rgba(168,85,247,0.08)]">
             <div className="mb-4 flex items-center gap-2">
                 <div className="rounded-xl bg-violet-100 p-2 text-violet-600">
                     <Funnel className="h-4 w-4" />
@@ -299,7 +299,7 @@ export default function SettlementFilter({ defaultValues }: Props) {
                 <button
                     type="button"
                     onClick={applyFilter}
-                    className="inline-flex cursor-pointer h-11 items-center justify-center gap-2 rounded-2xl bg-linear-to-r from-violet-600 to-pink-500 px-5 font-medium text-white shadow-lg shadow-pink-200 transition hover:opacity-95"
+                    className="inline-flex cursor-pointer h-11 items-center justify-center gap-2 rounded-md bg-purple-500 px-5 font-medium text-white transition hover:opacity-95"
                 >
                     <Search className="h-4 w-4" />
                     Áp dụng
@@ -309,7 +309,7 @@ export default function SettlementFilter({ defaultValues }: Props) {
                 <button
                     type="button"
                     onClick={resetFilter}
-                    className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-2xl border border-violet-200 bg-white px-5 font-medium text-slate-700 transition hover:bg-violet-50"
+                    className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-violet-200 bg-white px-5 font-medium text-slate-700 transition hover:bg-violet-50"
                 >
                     <RotateCcw className="h-4 w-4" />
                     Reset
