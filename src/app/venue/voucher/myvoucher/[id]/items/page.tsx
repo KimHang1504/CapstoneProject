@@ -248,7 +248,7 @@ export default function VoucherItemsPage() {
                                 <td className="p-3">
                                     {item.expiredAt
                                         ? new Date(item.expiredAt).toLocaleDateString("vi-VN")
-                                        : "-"}
+                                        : "Không xác định"}
                                 </td>
 
                                 <td className="p-3">

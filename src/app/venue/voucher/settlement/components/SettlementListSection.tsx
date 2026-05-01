@@ -118,8 +118,8 @@ export default async function SettlementListSection({ searchParams }: Props) {
                         <table className="min-w-275 w-full">
                             <thead className="bg-linear-to-r from-violet-50 to-pink-50">
                                 <tr className="text-left text-sm text-slate-600">
-                                    <th className="px-5 py-4 font-semibold">Mã voucher item</th>
-                                    <th className="px-5 py-4 font-semibold">Voucher</th>
+                                    <th className="px-5 py-4 font-semibold">Mã</th>
+                                    <th className="px-5 py-4 font-semibold">Tên</th>
                                     <th className="px-5 py-4 font-semibold">Tổng tiền</th>
                                     <th className="px-5 py-4 font-semibold">Hoa hồng</th>
                                     <th className="px-5 py-4 font-semibold">Thực nhận</th>
@@ -127,7 +127,6 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                     <th className="px-5 py-4 font-semibold">Đã dùng lúc</th>
                                     <th className="px-5 py-4 font-semibold">Có thể đối soát</th>
                                     <th className="px-5 py-4 font-semibold">Đã thanh toán</th>
-                                    <th className="px-5 py-4 font-semibold">Ghi chú</th>
                                 </tr>
                             </thead>
 
@@ -189,10 +188,6 @@ export default async function SettlementListSection({ searchParams }: Props) {
 
                                             <td className="px-5 py-4 text-slate-600">
                                                 {formatDateTime(item.paidAt)}
-                                            </td>
-
-                                            <td className="max-w-65 px-5 py-4 text-slate-500">
-                                                <div className="line-clamp-2">{item.note || "--"}</div>
                                             </td>
                                         </tr>
                                     );

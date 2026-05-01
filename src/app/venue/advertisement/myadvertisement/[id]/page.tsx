@@ -108,7 +108,37 @@ export default function AdvertisementDetailPage() {
         });
     }
 
+    const FIELD_LABELS: Record<string, string> = {
+        title: "Mục đích quảng cáo",
+        content: "Nội dung",
+        bannerUrl: "Banner",
+        targetUrl: "Link khi click",
+        moodTypeId: "Tính cách",
+        desiredStartDate: "Ngày bắt đầu",
+    };
+
+    function getMissingFields(ad: Advertisement) {
+        const missing: string[] = [];
+
+        if (!ad.title?.trim()) missing.push("title");
+        if (!ad.content?.trim()) missing.push("content");
+        if (!ad.bannerUrl?.trim()) missing.push("bannerUrl");
+        if (!ad.targetUrl?.trim()) missing.push("targetUrl");
+        if (!ad.moodTypeId) missing.push("moodTypeId");
+        if (!ad.desiredStartDate) missing.push("desiredStartDate");
+
+        return missing;
+    }
+
     const handleSubmit = () => {
+
+        const missingFields = getMissingFields(ad);
+
+        if (missingFields.length > 0) {
+            const fieldNames = missingFields.map(f => FIELD_LABELS[f]);
+            toast.error(`Vui lòng điền: ${fieldNames.join(", ")}`);
+            return;
+        }
         const { missingCitizenId } = checkVenueOwnerVerification(userProfile);
 
         if (missingCitizenId) {
@@ -118,9 +148,13 @@ export default function AdvertisementDetailPage() {
 
         if (ad.desiredStartDate) {
             const startDate = new Date(ad.desiredStartDate);
-            const now = new Date();
+            const MIN_DAYS_AHEAD = 3;
 
-            const minDate = new Date(now.getTime() + MIN_HOURS_AHEAD * 60 * 60 * 1000);
+            const now = new Date();
+            const minDate = new Date();
+
+            minDate.setDate(now.getDate() + MIN_DAYS_AHEAD);
+            minDate.setHours(0, 0, 0, 0); // reset về đầu ngày
 
             if (startDate < now) {
                 toast.error("Ngày bắt đầu không được là quá khứ");
@@ -128,12 +162,8 @@ export default function AdvertisementDetailPage() {
             }
 
             if (startDate < minDate) {
-                const hoursRemaining = Math.ceil(
-                    (minDate.getTime() - now.getTime()) / (60 * 60 * 1000)
-                );
-
                 toast.error(
-                    `Quảng cáo cần ít nhất ${hoursRemaining} giờ để admin duyệt. Vui lòng chọn lại thời gian.`
+                    `Quảng cáo cần đặt trước ít nhất ${MIN_DAYS_AHEAD} ngày. Vui lòng chọn lại thời gian.`
                 );
                 return;
             }

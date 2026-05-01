@@ -91,8 +91,8 @@ export default function PackagesClient() {
 
     function getPreviewImage(placement: string) {
         switch (placement) {
-            case "POPUP": return "/popup.jpg";
-            case "HOME_BANNER": return "/homebanner.jpg";
+            case "POPUP": return "/popupads.png";
+            case "HOME_BANNER": return "/bannerads.png";
             default: return "/banner.png";
         }
     }

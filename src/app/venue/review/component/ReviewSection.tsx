@@ -75,7 +75,7 @@ export default function ReviewSection({ venueId, venueName, venueDescription, ca
                         }`}
                 >
                     <MessageSquareText size={16} />
-                    Reviews
+                    Đánh giá
                 </button>
                 <button
                     onClick={() => setActiveTab("improve")}

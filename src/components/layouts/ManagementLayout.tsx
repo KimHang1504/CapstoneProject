@@ -369,10 +369,10 @@ export default function ManagementLayout({
             <div className="flex items-center justify-between">
               {/* Left side - Title */}
               <div className="min-w-0">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-linear-to-r from-indigo-50 to-violet-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-2">
+                {/* <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-linear-to-r from-indigo-50 to-violet-50 border border-indigo-100 text-indigo-700 text-xs font-semibold mb-2">
                   <HeaderIcon className="w-3.5 h-3.5" />
                   <span>{headerBadge}</span>
-                </div>
+                </div> */}
                 <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-tight">
                   {dashboardTitle}
                 </h1>
