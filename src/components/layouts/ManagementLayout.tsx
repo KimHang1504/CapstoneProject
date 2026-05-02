@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarConfig, IconName } from '@/types/sidebar';
 import { useState, useEffect } from 'react';
+import { formatVietnamPhone } from '@/utils/formatPhone';
 import {
   Menu,
   X,
@@ -471,7 +472,7 @@ export default function ManagementLayout({
                             <div>
                               <p className="text-gray-500 text-xs">Số điện thoại</p>
                               <p className="text-gray-700 font-medium">
-                                {userProfile?.phoneNumber || 'Chưa cập nhật'}
+                                {formatVietnamPhone(userProfile?.phoneNumber)}
                               </p>
                             </div>
                           </div>

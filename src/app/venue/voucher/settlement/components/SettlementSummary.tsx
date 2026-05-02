@@ -4,9 +4,7 @@ import {
     CircleX,
 } from "lucide-react";
 import { getSettlementSummary } from "@/api/venue/settlement/api";
-
-const formatCurrency = (value: number) =>
-    new Intl.NumberFormat("vi-VN").format(value);
+import { formatCurrency } from "@/utils/formatCurrency";
 
 export default async function SettlementSummary() {
     const s = await getSettlementSummary();
@@ -14,7 +12,7 @@ export default async function SettlementSummary() {
     const amountCards = [
         {
             label: "Chờ đối soát",
-            value: `${formatCurrency(s.pendingAmount)} đ`,
+            value: formatCurrency(s.pendingAmount),
             count: s.pendingCount,
             icon: Wallet,
             note: "giao dịch đang chờ",
@@ -25,7 +23,7 @@ export default async function SettlementSummary() {
         },
         {
             label: "Đã thanh toán",
-            value: `${formatCurrency(s.paidAmount)} đ`,
+            value: formatCurrency(s.paidAmount),
             count: s.paidCount,
             icon: CircleCheckBig,
             note: "giao dịch hoàn tất",
@@ -36,7 +34,7 @@ export default async function SettlementSummary() {
         },
         {
             label: "Đã huỷ",
-            value: `${formatCurrency(s.cancelledAmount)} đ`,
+            value: formatCurrency(s.cancelledAmount),
             count: s.cancelledCount,
             icon: CircleX,
             note: "giao dịch đã huỷ",

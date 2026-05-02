@@ -76,12 +76,11 @@ export default function RedeemVoucherPage() {
         <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-4 sm:p-6 lg:p-8">
             <div className="w-full space-y-6">
                 {/* Header */}
-                <div className="bg-white rounded-2xl shadow-sm p-4 sm:p-6 border border-gray-100">
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-
+                <div className="bg-white rounded-2xl shadow-sm p-3 sm:p-4 border border-gray-100">
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                         <div>
-                            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Sử dụng Voucher</h1>
-                            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">Quét hoặc nhập mã để xác nhận</p>
+                            <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Sử dụng Voucher</h1>
+                            <p className="text-xs text-gray-500 mt-0.5">Quét hoặc nhập mã để xác nhận</p>
                         </div>
                     </div>
                 </div>
