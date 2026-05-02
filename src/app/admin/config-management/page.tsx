@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { getConfigs, updateConfig } from "@/api/admin/api";
 import { Config } from "@/api/admin/type";
 import { toast } from "sonner";
-import { Settings, RefreshCw, Edit2, Save, X, Percent, DollarSign, Hash, AlertTriangle, TrendingUp, BarChart3 } from "lucide-react";
+import { Settings, RefreshCw, Edit2, Save, X, Percent, DollarSign, Hash, AlertTriangle, TrendingUp, BarChart3, ChevronDown } from "lucide-react";
 
 export default function SettingsPage() {
     const [configs, setConfigs] = useState<Config[]>([]);
@@ -13,6 +13,7 @@ export default function SettingsPage() {
     const [editingKey, setEditingKey] = useState<string | null>(null);
     const [value, setValue] = useState("");
     const [savingKey, setSavingKey] = useState<string | null>(null);
+    const [expandedKeys, setExpandedKeys] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         fetchConfigs();
@@ -105,6 +106,19 @@ export default function SettingsPage() {
                         : configs.map((config) => {
                             const isEditing = editingKey === config.configKey;
                             const isSaving = savingKey === config.configKey;
+                            const isExpanded = expandedKeys.has(config.configKey);
+
+                            const toggleExpand = () => {
+                                setExpandedKeys(prev => {
+                                    const next = new Set(prev);
+                                    if (next.has(config.configKey)) {
+                                        next.delete(config.configKey);
+                                    } else {
+                                        next.add(config.configKey);
+                                    }
+                                    return next;
+                                });
+                            };
 
                             return (
                                 <div
@@ -123,9 +137,14 @@ export default function SettingsPage() {
                                             </div>
 
                                             <div className="flex items-center gap-3 ml-7">
-                                                <span className="text-xs font-medium text-slate-500 uppercase tracking-wide">
-                                                    {formatConfigKey(config.configKey)}
-                                                </span>
+                                                {/* Configuration Toggle */}
+                                                <button
+                                                    onClick={toggleExpand}
+                                                    className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors cursor-pointer"
+                                                >
+                                                    <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`} />
+                                                    <span className="font-medium">Cấu hình</span>
+                                                </button>
                                                 
                                                 <div className="h-3 w-px bg-slate-200"></div>
                                                 
@@ -144,11 +163,30 @@ export default function SettingsPage() {
                                                     </div>
                                                 ) : (
                                                     <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm font-bold">
-                                                        {config.configValue}
-                                                        <span className="text-xs font-medium">{getUnit(config.configKey)}</span>
+                                                        {config.configKey.includes("MIN_REVIEWS")
+                                                            ? formatDisplayValue(config.configKey, config.configValue)
+                                                            : (
+                                                                <>
+                                                                    {config.configValue}
+                                                                    <span className="text-xs font-medium">{getUnit(config.configKey)}</span>
+                                                                </>
+                                                            )
+                                                        }
                                                     </span>
                                                 )}
                                             </div>
+                                            
+                                            {/* Expanded Config Key */}
+                                            {isExpanded && (
+                                                <div className="mt-3 ml-7 pl-5 border-l-2 border-slate-200 animate-in slide-in-from-top-2 duration-200">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-xs text-slate-500 font-medium">Key cấu hình:</span>
+                                                        <code className="text-xs font-mono font-semibold text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                                                            {config.configKey}
+                                                        </code>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="flex gap-2 flex-shrink-0">
@@ -199,12 +237,20 @@ export default function SettingsPage() {
 
 function getUnit(key: string) {
     if (key.includes("PERCENT")) return "%";
+    if (key.includes("THRESHOLD")) return "%";
     if (key.includes("MONEY")) return "VND";
+    if (key.includes("RADIUS_M")) return "m";
+    if (key.includes("SECONDS")) return "giây";
+    if (key.includes("MIN_REVIEWS")) return "đánh giá";
     return "";
 }
 
-function formatConfigKey(key: string) {
-    return key.replaceAll("_", " ");
+function formatDisplayValue(key: string, value: string) {
+    if (key.includes("MIN_REVIEWS")) {
+        const num = Number(value);
+        return `${num} đánh giá`;
+    }
+    return value;
 }
 
 function getConfigIcon(key: string) {
