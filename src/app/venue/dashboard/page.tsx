@@ -17,7 +17,7 @@ import { VenueOwnerDashboardOverview, VenuePerformance, RecentAdvertisement, Rev
 import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 
 // const CHART_COLORS = ['#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#0ea5e9', '#f43f5e'];
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 6;
 
 const WEEKDAYS = ['CN', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7'];
 const MONTHS_VI = ['Th.1','Th.2','Th.3','Th.4','Th.5','Th.6','Th.7','Th.8','Th.9','Th.10','Th.11','Th.12'];
@@ -696,7 +696,7 @@ export default function VenueDashboardPage() {
         </div>
 
         {/* Right Column - Venues List */}
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
 
           {/* Top Venue - Larger */}
           {data.topPerformingVenue && (
@@ -737,7 +737,7 @@ export default function VenueDashboardPage() {
           )}
 
           {/* Venues List with Pagination */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm h-109.5 flex flex-col">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex-1 flex flex-col">
             <div className="p-3 border-b border-gray-100">
               <SectionTitle icon={BarChart2}>Địa điểm ({data.venues.length})</SectionTitle>
             </div>
