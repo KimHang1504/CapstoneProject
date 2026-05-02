@@ -509,7 +509,7 @@ export default function ManagementLayout({
                             <span>Chỉnh sửa hồ sơ</span>
                           </button>
                         )}
-                        {(userProfile?.role === 'ADMIN' || userProfile?.role === 'STAFF') && (
+                        {userProfile?.role === 'ADMIN' && (
                           <button
                             onClick={() => {
                               setShowProfileMenu(false);
