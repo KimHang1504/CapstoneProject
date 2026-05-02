@@ -16,7 +16,7 @@ export default async function VenueLayout({
     role = token ? getUserFromToken(token).role : null;
   } catch { }
 
-   const hideSidebar = role === 'STAFF';
+  const hideSidebar = role === 'STAFF';
 
   return (
     <ManagementLayout sidebarConfig={venueSidebarConfig} title="Bảng điều khiển của chủ địa điểm" hideSidebar={hideSidebar}>
