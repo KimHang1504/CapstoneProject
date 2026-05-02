@@ -43,8 +43,9 @@ export default function UpdateStatus({ challengeId, currentStatus }: Props) {
                 value={status}
                 onChange={setStatus}
                 options={STATUS_OPTIONS}
+                placeholder="Chọn trạng thái"
+                className="min-w-[160px]"
             />
-
             <button
                 onClick={handleUpdate}
                 disabled={loading}
