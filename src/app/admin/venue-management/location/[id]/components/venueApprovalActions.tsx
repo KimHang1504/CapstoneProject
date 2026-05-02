@@ -138,46 +138,49 @@ export default function VenueApprovalActions({
           <div className="text-xs text-gray-500 flex gap-2 py-3"><Phone size={14} />Liên hệ: {owner.phoneNumber}</div>
           <div className="text-xs text-gray-500 flex gap-2 py-3"><Mail size={14} />Email: {owner.email}</div>
         </div>
+        {status !== "INACTIVE" && (
+          <>
+            <div className="h-px bg-gray-100" />
 
-        <div className="h-px bg-gray-100" />
+            {/* ACTIONS */}
+            <div className="space-y-2">
+              <p className="text-xs text-gray-500">Hành động</p>
 
-        {/* ACTIONS */}
-        <div className="space-y-2">
-          <p className="text-xs text-gray-500">Hành động</p>
+              {status === "PENDING" && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setAction("DRAFTED");
+                      setOpen(true);
+                    }}
+                    className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 text-sm"
+                  >
+                    Từ chối
+                  </button>
 
-          {status === "PENDING" && (
-            <div className="flex gap-2">
-              <button
-                onClick={() => {
-                  setAction("DRAFTED");
-                  setOpen(true);
-                }}
-                className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 text-sm"
-              >
-                Từ chối
-              </button>
+                  <button
+                    onClick={handleSubmitApproval}
+                    className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 text-sm"
+                  >
+                    Chấp nhận
+                  </button>
+                </div>
+              )}
 
-              <button
-                onClick={handleSubmitApproval}
-                className="flex-1 cursor-pointer px-3 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600 text-sm"
-              >
-                Chấp nhận
-              </button>
+              {status === "ACTIVE" && (
+                <button
+                  onClick={() => {
+                    setAction("INACTIVE");
+                    setOpen(true);
+                  }}
+                  className="w-full cursor-pointer px-3 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 text-sm"
+                >
+                  Dừng hoạt động
+                </button>
+              )}
             </div>
-          )}
-
-          {status === "ACTIVE" && (
-            <button
-              onClick={() => {
-                setAction("INACTIVE");
-                setOpen(true);
-              }}
-              className="w-full cursor-pointer px-3 py-2 rounded-xl bg-orange-500 text-white hover:bg-orange-600 text-sm"
-            >
-              Dừng hoạt động
-            </button>
-          )}
-        </div>
+          </>
+        )}
       </div>
 
       {/* MODAL */}
