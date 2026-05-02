@@ -6,18 +6,18 @@ import { getTransactions } from "@/api/admin/api";
 import { TypeBadge } from "./components/TypeBadge";
 import { StatusBadge } from "./components/StatusBadge";
 import { Transaction, TransactionStatus, TransactionType } from "@/api/admin/type";
-import { 
-  RefreshCw, 
-  ChevronDown, 
-  X, 
-  Search,
-  ChevronLeft,
-  ChevronRight,
-  ChevronsLeft,
-  ChevronsRight,
-  Receipt,
-  User,
-  Mail
+import {
+    RefreshCw,
+    ChevronDown,
+    X,
+    Search,
+    ChevronLeft,
+    ChevronRight,
+    ChevronsLeft,
+    ChevronsRight,
+    Receipt,
+    User,
+    Mail
 } from "lucide-react";
 
 const PAGE_SIZE = 5;
@@ -34,10 +34,10 @@ export default function TransactionPage() {
     const [type, setType] = useState<TransactionType | "">("");
     const [userId, setUserId] = useState("");
     const [searchQuery, setSearchQuery] = useState("");
-    
+
     const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
     const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
-    
+
     const statusDropdownRef = useRef<HTMLDivElement>(null);
     const typeDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -92,6 +92,23 @@ export default function TransactionPage() {
         );
     });
 
+    const statusLabelMap: Record<string, string> = {
+        "": "Tất cả trạng thái",
+        SUCCESS: "Thành công",
+        CANCELLED: "Đã hủy",
+        EXPIRED: "Hết hạn",
+        FAILED: "Thất bại",
+    };
+
+    const typeLabelMap: Record<string, string> = {
+        "": "Tất cả loại",
+        WALLET_TOPUP: "Nạp ví",
+        MEMBER_SUBSCRIPTION: "Gói thành viên",
+        MONEY_TO_POINT: "Đổi điểm",
+        ADS_ORDER: "Quảng cáo",
+        VENUE_SUBSCRIPTION: "Gói địa điểm",
+    };
+
     return (
         <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50/30 to-slate-50">
             <div className="max-w-7xl mx-auto p-6 space-y-5">
@@ -121,7 +138,7 @@ export default function TransactionPage() {
                 {/* FILTER */}
                 <div className="">
                     <div className="flex gap-3 flex-wrap items-center">
-                        
+
                         {/* SEARCH */}
                         <div className="relative flex-1 min-w-[250px]">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-purple-400" />
@@ -149,19 +166,23 @@ export default function TransactionPage() {
                                 className="min-w-[150px] cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700">
-                                    {status === "" ? "Tất cả trạng thái" : status}
+                                    {statusLabelMap[status] ?? "Tất cả trạng thái"}
                                 </span>
-                                <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${statusDropdownOpen ? 'rotate-180' : ''}`} />
+
+                                <ChevronDown
+                                    className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${statusDropdownOpen ? "rotate-180" : ""
+                                        }`}
+                                />
                             </button>
 
                             {statusDropdownOpen && (
                                 <div className="absolute top-full left-0 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg z-10 overflow-hidden">
                                     {[
                                         { value: "", label: "Tất cả trạng thái" },
-                                        { value: "SUCCESS", label: "SUCCESS" },
-                                        { value: "PENDING", label: "PENDING" },
-                                        { value: "CANCELLED", label: "CANCELLED" },
-                                        { value: "EXPIRED", label: "EXPIRED" },
+                                        { value: "SUCCESS", label: "Thành công" },
+                                        { value: "CANCELLED", label: "Đã hủy" },
+                                        { value: "EXPIRED", label: "Hết hạn" },
+                                        { value: "FAILED", label: "Thất bại" },
                                     ].map((option) => (
                                         <button
                                             key={option.value}
@@ -170,9 +191,10 @@ export default function TransactionPage() {
                                                 setStatus(option.value as TransactionStatus | "");
                                                 setStatusDropdownOpen(false);
                                             }}
-                                            className={`w-full px-4 py-2.5 cursor-pointer text-left text-sm hover:bg-slate-50 transition-colors ${
-                                                status === option.value ? 'bg-purple-50 text-purple-700' : 'text-slate-700'
-                                            }`}
+                                            className={`w-full px-4 py-2.5 cursor-pointer text-left text-sm hover:bg-slate-50 transition-colors ${status === option.value
+                                                ? "bg-purple-50 text-purple-700"
+                                                : "text-slate-700"
+                                                }`}
                                         >
                                             {option.label}
                                         </button>
@@ -188,7 +210,7 @@ export default function TransactionPage() {
                                 className="min-w-[180px] cursor-pointer px-4 py-2.5 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-purple-500 focus:border-transparent bg-white hover:bg-slate-50 transition-all duration-200 flex items-center justify-between shadow-sm"
                             >
                                 <span className="text-slate-700 truncate">
-                                    {type === "" ? "Tất cả loại" : type}
+                                    {typeLabelMap[type] ?? "Tất cả loại"}
                                 </span>
                                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${typeDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -197,11 +219,11 @@ export default function TransactionPage() {
                                 <div className="absolute top-full left-0 mt-2 w-full bg-white border border-slate-200 rounded-xl shadow-lg z-10 overflow-hidden max-h-60 overflow-y-auto">
                                     {[
                                         { value: "", label: "Tất cả loại" },
-                                        { value: "WALLET_TOPUP", label: "WALLET_TOPUP" },
-                                        { value: "MEMBER_SUBSCRIPTION", label: "MEMBER_SUBSCRIPTION" },
-                                        { value: "MONEY_TO_POINT", label: "MONEY_TO_POINT" },
-                                        { value: "ADS_ORDER", label: "ADS_ORDER" },
-                                        { value: "VENUE_SUBSCRIPTION", label: "VENUE_SUBSCRIPTION" },
+                                        { value: "WALLET_TOPUP", label: "Nạp ví" },
+                                        { value: "MEMBER_SUBSCRIPTION", label: "Gói thành viên" },
+                                        { value: "MONEY_TO_POINT", label: "Đổi điểm" },
+                                        { value: "ADS_ORDER", label: "Quảng cáo" },
+                                        { value: "VENUE_SUBSCRIPTION", label: "Gói địa điểm" },
                                     ].map((option) => (
                                         <button
                                             key={option.value}
@@ -210,9 +232,10 @@ export default function TransactionPage() {
                                                 setType(option.value as TransactionType | "");
                                                 setTypeDropdownOpen(false);
                                             }}
-                                            className={`w-full px-4 py-2.5 cursor-pointer text-left text-sm hover:bg-slate-50 transition-colors ${
-                                                type === option.value ? 'bg-purple-50 text-purple-700' : 'text-slate-700'
-                                            }`}
+                                            className={`w-full px-4 py-2.5 cursor-pointer text-left text-sm hover:bg-slate-50 transition-colors ${type === option.value
+                                                    ? "bg-purple-50 text-purple-700"
+                                                    : "text-slate-700"
+                                                }`}
                                         >
                                             {option.label}
                                         </button>
@@ -221,7 +244,7 @@ export default function TransactionPage() {
                             )}
                         </div>
 
-                     
+
 
                         {(status || type || userId || searchQuery) && (
                             <button
@@ -356,7 +379,7 @@ export default function TransactionPage() {
                                 >
                                     <ChevronLeft className="w-4 h-4 text-slate-600" />
                                 </button>
-                                
+
                                 <div className="flex items-center gap-1">
                                     {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
                                         let pageNum;
@@ -369,16 +392,15 @@ export default function TransactionPage() {
                                         } else {
                                             pageNum = page - 2 + i;
                                         }
-                                        
+
                                         return (
                                             <button
                                                 key={pageNum}
                                                 onClick={() => setPage(pageNum)}
-                                                className={`min-w-[36px] cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
-                                                    page === pageNum
-                                                        ? "bg-purple-600 text-white shadow-md"
-                                                        : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
-                                                }`}
+                                                className={`min-w-[36px] cursor-pointer px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${page === pageNum
+                                                    ? "bg-purple-600 text-white shadow-md"
+                                                    : "border border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-400"
+                                                    }`}
                                             >
                                                 {pageNum}
                                             </button>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { updateStatusChallenge } from "@/api/admin/api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { CustomDropdown } from "@/components/CustomDropdown";
 
 type Props = {
     challengeId: number;
@@ -30,17 +31,19 @@ export default function UpdateStatus({ challengeId, currentStatus }: Props) {
         }
     };
 
+    const STATUS_OPTIONS = [
+        { label: "Tạm dừng", value: "INACTIVE" },
+        { label: "Kích hoạt", value: "ACTIVE" },
+        { label: "Kết thúc", value: "ENDED" },
+    ];
+
     return (
         <div className="flex items-center gap-3">
-            <select
+            <CustomDropdown
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                className="border rounded-lg px-3 py-2 text-sm"
-            >
-                <option value="INACTIVE">Tạm dừng</option>
-                <option value="ACTIVE">Kích hoạt</option>
-                <option value="ENDED">Kết thúc</option>
-            </select>
+                onChange={setStatus}
+                options={STATUS_OPTIONS}
+            />
 
             <button
                 onClick={handleUpdate}

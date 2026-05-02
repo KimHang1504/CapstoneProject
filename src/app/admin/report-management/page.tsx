@@ -85,6 +85,27 @@ export default function ReportPage() {
         );
     });
 
+    function ReportTypeStatusBadge({ status }: { status: string }) {
+        const config: Record<string, { label: string; color: string }> = {
+            ACTIVE: {
+                label: "Hoạt động",
+                color: "bg-green-50 text-green-700 border-green-200"
+            },
+            INACTIVE: {
+                label: "Ngưng hoạt động",
+                color: "bg-gray-50 text-gray-600 border-gray-200"
+            }
+        };
+
+        const style = config[status] || config.INACTIVE;
+
+        return (
+            <span className={`inline-flex px-3 py-1.5 rounded-lg text-xs font-semibold border ${style.color}`}>
+                {style.label}
+            </span>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-slate-50">
             <div className="max-w-7xl mx-auto p-6 space-y-5">

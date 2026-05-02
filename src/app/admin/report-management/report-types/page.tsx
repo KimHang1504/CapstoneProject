@@ -202,7 +202,7 @@ function StatusBadge({ active }: { active: boolean }) {
                 : "bg-gray-100 text-gray-500"
                 }`}
         >
-            {active ? "ACTIVE" : "INACTIVE"}
+            {active ? "Hoạt động" : "Ngưng hoạt động"}
         </span>
     );
 }
