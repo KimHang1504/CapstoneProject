@@ -44,7 +44,8 @@ type ManagementLayoutProps = {
   children: React.ReactNode;
   sidebarConfig: SidebarConfig;
   title?: string;
-   hideSidebar?: boolean;
+  hideSidebar?: boolean;
+  hideHeader?: boolean;
 };
 
 // Icon mapper
@@ -83,6 +84,7 @@ export default function ManagementLayout({
   sidebarConfig,
   title,
   hideSidebar = false,
+  hideHeader = false,
 }: ManagementLayoutProps) {
   const pathname = usePathname();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -365,6 +367,7 @@ export default function ManagementLayout({
       {/* Main Content */}
       <main className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Header */}
+        {!hideHeader && (
         <header className="bg-white border-b border-purple-100">
           <div className="px-8 py-4">
             <div className="flex items-center justify-between">
@@ -533,6 +536,7 @@ export default function ManagementLayout({
             </div>
           </div>
         </header>
+        )}
 
         {/* Content */}
 
