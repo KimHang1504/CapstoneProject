@@ -18,6 +18,7 @@ import { createChallenge } from "@/api/admin/api";
 import BackButton from "@/components/BackButton";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { CustomDropdown } from "@/components/CustomDropdown";
 
 const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1";
 
@@ -161,7 +162,7 @@ export default function CreateChallengePage() {
 
             console.log(payload);
             await createChallenge(payload);
-            toast.success("Tạo challenge thành công");
+            toast.success("Tạo thử thách thành công");
             router.push("/admin/challenge");
         } catch (error) {
             console.error(error);
@@ -173,7 +174,8 @@ export default function CreateChallengePage() {
         };
     }
 
-    const showRuleData = form.triggerEvent !== "CHECKIN";
+    // const showRuleData = form.triggerEvent !== "CHECKIN";
+
 
     const showHasImage =
         form.triggerEvent === "POST" ||
@@ -186,16 +188,20 @@ export default function CreateChallengePage() {
         form.triggerEvent === "REVIEW" &&
         form.goalMetric === "UNIQUE_LIST";
 
+    const showRuleData =
+        form.triggerEvent &&
+        (showHasImage || showHashTag || showVenueId);
+
     return (
         <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50/40 to-violet-50/30 p-6">
             <div className="max-w-4xl mx-auto space-y-6">
                 <div className="flex items-center justify-between">
                     <div>
                         <h1 className="text-3xl font-bold text-gray-800">
-                            Tạo Challenge
+                            Tạo Thử Thách
                         </h1>
                         <p className="text-gray-500 text-sm mt-1">
-                            Tạo challenge mới để thu hút người dùng
+                            Tạo thử thách mới để thu hút người dùng
                         </p>
                     </div>
                     <BackButton />
@@ -208,7 +214,7 @@ export default function CreateChallengePage() {
                         <h2 className="text-lg font-semibold text-gray-800">Thông tin cơ bản</h2>
 
                         <FieldWrapper>
-                            <label className={labelClass}>Tiêu đề Challenge</label>
+                            <label className={labelClass}>Tiêu đề Thử Thách</label>
                             <input
                                 name="title"
                                 value={form.title}
@@ -220,12 +226,12 @@ export default function CreateChallengePage() {
                         </FieldWrapper>
 
                         <FieldWrapper>
-                            <label className={labelClass}>Mô tả Challenge</label>
+                            <label className={labelClass}>Mô tả Thử Thách</label>
                             <textarea
                                 name="description"
                                 value={form.description}
                                 onChange={handleChange}
-                                placeholder="Mô tả chi tiết về challenge này..."
+                                placeholder="Mô tả chi tiết về thử thách này..."
                                 rows={4}
                                 className={`${inputClass} resize-none`}
                             />
@@ -236,42 +242,46 @@ export default function CreateChallengePage() {
                     <div className="bg-white rounded-2xl shadow p-8 space-y-7">
                         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                             <Target size={20} />
-                            Mục tiêu Challenge
+                            Mục tiêu Thử Thách
                         </h2>
 
                         <FieldWrapper>
                             <label className={labelClass}>Loại sự kiện</label>
-                            <select
-                                name="triggerEvent"
+                            <CustomDropdown
                                 value={form.triggerEvent}
-                                onChange={handleChange}
-                                className={inputClass}
-                                required
-                            >
-                                <option value="">Chọn loại sự kiện</option>
-                                <option value="POST">BÀI ĐĂNG</option>
-                                <option value="REVIEW">ĐÁNH GIÁ</option>
-                                <option value="CHECKIN">CHECK-IN</option>
-                            </select>
+                                onChange={(v) =>
+                                    handleChange({
+                                        target: { name: "triggerEvent", value: v }
+                                    })
+                                }
+                                placeholder="Chọn loại sự kiện"
+                                className="w-full mt-2"
+                                options={[
+                                    { label: "BÀI ĐĂNG", value: "POST" },
+                                    { label: "ĐÁNH GIÁ", value: "REVIEW" },
+                                    { label: "CHECK-IN", value: "CHECKIN" },
+                                ]}
+                            />
                         </FieldWrapper>
 
                         <FieldWrapper>
                             <label className={labelClass}>Chỉ số mục tiêu</label>
-                            <select
-                                name="goalMetric"
+                            <CustomDropdown
                                 value={form.goalMetric}
-                                onChange={handleChange}
-                                className={inputClass}
-                                disabled={!form.triggerEvent || goalMetricOptions[form.triggerEvent]?.length === 1}
-                                required
-                            >
-                                <option value="">Chọn chỉ số mục tiêu</option>
-                                {goalMetricOptions[form.triggerEvent]?.map((metric) => (
-                                    <option key={metric} value={metric}>
-                                        {goalMetricLabel[metric]}
-                                    </option>
-                                ))}
-                            </select>
+                                onChange={(v) =>
+                                    handleChange({
+                                        target: { name: "goalMetric", value: v }
+                                    })
+                                }
+                                placeholder="Chọn chỉ số mục tiêu"
+                                className="w-full mt-2"
+                                options={
+                                    goalMetricOptions[form.triggerEvent]?.map((metric) => ({
+                                        label: goalMetricLabel[metric],
+                                        value: metric,
+                                    })) || []
+                                }
+                            />
                         </FieldWrapper>
 
                         <div className="grid grid-cols-2 gap-6">
@@ -307,7 +317,7 @@ export default function CreateChallengePage() {
                     <div className="bg-white rounded-2xl shadow p-8 space-y-7">
                         <h2 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                             <Calendar size={20} />
-                            Thời gian Challenge
+                            Thời gian Thử Thách
                         </h2>
 
                         <div className="grid grid-cols-2 gap-6">
@@ -340,7 +350,7 @@ export default function CreateChallengePage() {
                     {/* RULES SECTION */}
                     {showRuleData && (
                         <div className="bg-white rounded-2xl shadow p-8 space-y-7">
-                            <h2 className="text-lg font-semibold text-gray-800">Quy tắc Challenge</h2>
+                            <h2 className="text-lg font-semibold text-gray-800">Quy tắc Thử Thách</h2>
 
                             {showHasImage && (
                                 <label className="flex items-center gap-3 p-4 rounded-xl border border-violet-200 bg-violet-50/50 cursor-pointer hover:bg-violet-50 transition">
@@ -510,7 +520,7 @@ export default function CreateChallengePage() {
                             className="flex items-center gap-2 cursor-pointer px-6 py-3 bg-linear-to-r from-violet-600 to-purple-600 text-white rounded-xl hover:shadow-lg transition font-medium"
                         >
                             <Trophy size={18} />
-                            Tạo Challenge
+                            Tạo Thử thách
                         </button>
                     </div>
 

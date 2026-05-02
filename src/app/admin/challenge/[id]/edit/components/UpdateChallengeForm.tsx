@@ -18,6 +18,7 @@ import UpdateStatus from "./UpdateStatus";
 import LocationSelectModal from "../../../new/components/LocationSelectModal";
 import { Location } from "@/api/admin/type";
 import Image from "next/image";
+import { CustomDropdown } from "@/components/CustomDropdown";
 
 const labelClass = "block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1";
 
@@ -315,35 +316,40 @@ export default function UpdateChallengeForm({ challenge }: any) {
                         <div className="grid grid-cols-2 gap-6">
                             <FieldWrapper>
                                 <label className={labelClass}>Loại sự kiện</label>
-                                <select
-                                    name="triggerEvent"
+                                <CustomDropdown
                                     value={form.triggerEvent}
-                                    onChange={handleChange}
-                                    className={inputClass}
-                                    required
-                                >
-                                    <option value="POST">BÀI ĐĂNG</option>
-                                    <option value="REVIEW">ĐÁNH GIÁ</option>
-                                    <option value="CHECKIN">CHECK-IN</option>
-                                </select>
+                                    onChange={(v) =>
+                                        handleChange({
+                                            target: { name: "triggerEvent", value: v }
+                                        })
+                                    }
+                                    className="w-full mt-2"
+                                    options={[
+                                        { label: "BÀI ĐĂNG", value: "POST" },
+                                        { label: "ĐÁNH GIÁ", value: "REVIEW" },
+                                        { label: "CHECK-IN", value: "CHECKIN" },
+                                    ]}
+                                />
                             </FieldWrapper>
 
                             <FieldWrapper>
                                 <label className={labelClass}>Chỉ số mục tiêu</label>
-                                <select
-                                    name="goalMetric"
+                                <CustomDropdown
                                     value={form.goalMetric}
-                                    onChange={handleChange}
-                                    className={inputClass}
-                                    required
-                                >
-                                    <option value="">Chọn chỉ số mục tiêu</option>
-                                    {goalMetricOptions[form.triggerEvent]?.map((metric) => (
-                                        <option key={metric} value={metric}>
-                                            {metric}
-                                        </option>
-                                    ))}
-                                </select>
+                                    onChange={(v) =>
+                                        handleChange({
+                                            target: { name: "goalMetric", value: v }
+                                        })
+                                    }
+                                    className="w-full mt-2"
+                                    options={[
+                                        { label: "Chọn chỉ số mục tiêu", value: "", disabled: true },
+                                        ...(goalMetricOptions[form.triggerEvent]?.map((metric) => ({
+                                            label: metric,
+                                            value: metric,
+                                        })) || [])
+                                    ]}
+                                />
                             </FieldWrapper>
                         </div>
 
