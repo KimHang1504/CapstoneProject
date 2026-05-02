@@ -49,7 +49,7 @@ export default function VenueInsightExpiryBadge() {
                 Tính năng chưa được kích hoạt
               </p>
               <p className="text-xs text-gray-600">
-                Vui lòng mua gói subscription để sử dụng VENUE_INSIGHT.
+                Vui lòng mua gói subscription để sử dụng tính năng chiến lược tăng trưởng.
               </p>
             </div>
           </div>
@@ -118,7 +118,7 @@ export default function VenueInsightExpiryBadge() {
           <div className="flex items-center gap-2 pb-2 border-b border-gray-100">
             <Calendar size={14} className="text-violet-600" />
             <p className="text-sm font-semibold text-gray-900">
-              Hạn sử dụng VENUE_INSIGHT
+              Gói chiến lược tăng trưởng
             </p>
           </div>
 
