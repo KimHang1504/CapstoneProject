@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import { getWalletBalance, getWithdrawRequests, getTransactionHistory } from "@/api/venue/wallet/api";
-import { Wallet, WithdrawRequest, PaginatedTransactionResponse } from "@/api/venue/wallet/type";
+import { Wallet, WithdrawRequest, WalletTransaction } from "@/api/venue/wallet/type";
 import WithdrawModal from "@/app/venue/wallet/components/WithdrawModal";
 import TopupModal from "@/app/venue/wallet/components/TopupModal";
 import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight, QrCode, Search, Filter, ChevronDown } from "lucide-react";
@@ -16,26 +16,27 @@ const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   CANCELLED: { label: "Đã huỷ", cls: "bg-gray-100 text-gray-500" },
 };
 
-
 const TRANSACTION_TYPE_MAP: Record<string, string> = {
-  ADS_ORDER: "Quảng cáo",
-  VENUE_SUBSCRIPTION: "Đăng ký địa điểm",
-  REFUND: "Hoàn tiền",
-  DEPOSIT: "Nạp tiền",
-  WITHDRAW: "Rút tiền",
+  ADS_ORDER: "Thanh toán quảng cáo",
+  VENUE_SUBSCRIPTION: "Thanh toán gói địa điểm",
+  WALLET_TOPUP: "Nạp tiền ví",
+  VENUE_SETTLEMENT_PAYOUT: "Thanh toán doanh thu",
 };
+
+const PAGE_SIZE = 10;
+const FETCH_PAGE_SIZE = 100; // max allowed by BE
 
 export default function WalletPage() {
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [withdraws, setWithdraws] = useState<WithdrawRequest[]>([]);
-  const [transactionData, setTransactionData] = useState<PaginatedTransactionResponse | null>(null);
+  // allTransactions holds every transaction fetched from BE
+  const [allTransactions, setAllTransactions] = useState<WalletTransaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingTransactions, setLoadingTransactions] = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
   const [showTopup, setShowTopup] = useState(false);
   const [activeTab, setActiveTab] = useState<'transactions' | 'withdraws'>('transactions');
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState<string>('ALL');
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
@@ -43,12 +44,6 @@ export default function WalletPage() {
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, right: 0 });
 
   useEffect(() => { loadWallet(); }, []);
-
-  useEffect(() => {
-    if (activeTab === 'transactions') {
-      loadTransactions(currentPage);
-    }
-  }, [currentPage, activeTab]);
 
   useEffect(() => {
     if (showFilterDropdown && filterButtonRef.current) {
@@ -60,6 +55,30 @@ export default function WalletPage() {
     }
   }, [showFilterDropdown]);
 
+  // Fetch ALL transactions from BE (handles multiple pages if needed)
+  const loadAllTransactions = async () => {
+    setLoadingTransactions(true);
+    try {
+      const first = await getTransactionHistory(1, FETCH_PAGE_SIZE);
+      let items = [...first.items];
+
+      if (first.totalPages > 1) {
+        const rest = await Promise.all(
+          Array.from({ length: first.totalPages - 1 }, (_, i) =>
+            getTransactionHistory(i + 2, FETCH_PAGE_SIZE)
+          )
+        );
+        rest.forEach((r) => items.push(...r.items));
+      }
+
+      setAllTransactions(items);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingTransactions(false);
+    }
+  };
+
   const loadWallet = async () => {
     try {
       setLoading(true);
@@ -69,10 +88,7 @@ export default function WalletPage() {
       ]);
       setWallet(walletData);
       setWithdraws(withdrawData);
-
-      // Load first page of transactions
-      const transactionResponse = await getTransactionHistory(1, pageSize);
-      setTransactionData(transactionResponse);
+      await loadAllTransactions();
     } catch (err) {
       console.error(err);
     } finally {
@@ -80,22 +96,42 @@ export default function WalletPage() {
     }
   };
 
-  const loadTransactions = async (page: number) => {
-    try {
-      setLoadingTransactions(true);
-      const response = await getTransactionHistory(page, pageSize);
-      setTransactionData(response);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoadingTransactions(false);
-    }
-  };
+  // Client-side filter + search
+  const filteredTransactions = useMemo(() => {
+    return allTransactions.filter((item) => {
+      if (filterType === 'REFUND') {
+        if (item.paymentMethod !== 'REFUND') return false;
+      } else if (filterType !== 'ALL') {
+        // Exclude refund transactions when filtering by a specific type
+        if (item.paymentMethod === 'REFUND') return false;
+        if (item.transactionType !== filterType) return false;
+      }
+      if (searchQuery.trim()) {
+        const q = searchQuery.toLowerCase();
+        const matchDesc = item.description?.toLowerCase().includes(q);
+        const matchType = TRANSACTION_TYPE_MAP[item.transactionType]?.toLowerCase().includes(q);
+        return matchDesc || matchType;
+      }
+      return true;
+    });
+  }, [allTransactions, filterType, searchQuery]);
+
+  // Client-side pagination
+  const totalPages = Math.max(1, Math.ceil(filteredTransactions.length / PAGE_SIZE));
+  const pagedTransactions = filteredTransactions.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  );
 
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Reset to page 1 when filter/search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterType, searchQuery]);
 
   if (loading) {
     return (
@@ -130,7 +166,7 @@ export default function WalletPage() {
           <div className="flex items-center gap-2 text-gray-600">
             <History size={16} />
             <span className="text-sm">
-              {transactionData?.totalCount || 0} giao dịch
+              {allTransactions.length} giao dịch
             </span>
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -211,7 +247,9 @@ export default function WalletPage() {
                   >
                     <Filter size={18} className="text-gray-400" />
                     <span className="text-gray-700">
-                      {filterType === 'ALL' ? 'Tất cả loại' : TRANSACTION_TYPE_MAP[filterType]}
+                      {filterType === 'ALL'
+                        ? 'Tất cả loại'
+                        : TRANSACTION_TYPE_MAP[filterType] ?? filterType}
                     </span>
                     <ChevronDown size={16} className={`text-gray-400 transition-transform ${showFilterDropdown ? 'rotate-180' : ''}`} />
                   </button>
@@ -223,7 +261,7 @@ export default function WalletPage() {
                         onClick={() => setShowFilterDropdown(false)}
                       />
                       <div
-                        className="fixed w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
+                        className="fixed w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50 py-1"
                         style={{
                           top: `${dropdownPosition.top}px`,
                           right: `${dropdownPosition.right}px`
@@ -231,11 +269,11 @@ export default function WalletPage() {
                       >
                         {[
                           { value: 'ALL', label: 'Tất cả loại' },
-                          { value: 'ADS_ORDER', label: 'Quảng cáo' },
-                          { value: 'VENUE_SUBSCRIPTION', label: 'Đăng ký địa điểm' },
+                          { value: 'ADS_ORDER', label: 'Thanh toán quảng cáo' },
+                          { value: 'VENUE_SUBSCRIPTION', label: 'Thanh toán gói địa điểm' },
+                          { value: 'WALLET_TOPUP', label: 'Nạp tiền ví' },
+                          { value: 'VENUE_SETTLEMENT_PAYOUT', label: 'Thanh toán doanh thu' },
                           { value: 'REFUND', label: 'Hoàn tiền' },
-                          { value: 'DEPOSIT', label: 'Nạp tiền' },
-                          { value: 'WITHDRAW', label: 'Rút tiền' },
                         ].map((option) => (
                           <button
                             key={option.value}
@@ -260,7 +298,7 @@ export default function WalletPage() {
               <div className="flex items-center justify-center py-14">
                 <div className="w-8 h-8 border-4 border-violet-200 border-t-violet-600 rounded-full animate-spin" />
               </div>
-            ) : !transactionData || transactionData.items.length === 0 ? (
+            ) : allTransactions.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
                 <History size={36} className="opacity-30" />
                 <p className="text-sm">Chưa có giao dịch nào</p>
@@ -268,22 +306,12 @@ export default function WalletPage() {
             ) : (
               <>
                 <div className="divide-y divide-gray-50">
-                  {transactionData.items
-                    .filter((item) => {
-                      // Filter by transaction type
-                      if (filterType !== 'ALL' && item.transactionType !== filterType) {
-                        return false;
-                      }
-                      // Filter by search query
-                      if (searchQuery.trim()) {
-                        const query = searchQuery.toLowerCase();
-                        const matchesDescription = item.description.toLowerCase().includes(query);
-                        const matchesType = TRANSACTION_TYPE_MAP[item.transactionType]?.toLowerCase().includes(query);
-                        return matchesDescription || matchesType;
-                      }
-                      return true;
-                    })
-                    .map((item) => {
+                  {pagedTransactions.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
+                      <Search size={36} className="opacity-30" />
+                      <p className="text-sm">Không tìm thấy giao dịch phù hợp</p>
+                    </div>
+                  ) : pagedTransactions.map((item) => {
                       const isIncoming = item.direction === 'IN';
                       return (
                         <div key={item.transactionId} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 hover:bg-violet-50/40 transition">
@@ -297,7 +325,9 @@ export default function WalletPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-gray-900 text-sm">
-                              {TRANSACTION_TYPE_MAP[item.transactionType] || item.transactionType}
+                              {item.paymentMethod === 'REFUND'
+                                ? 'Hoàn tiền'
+                                : TRANSACTION_TYPE_MAP[item.transactionType] || item.transactionType}
                             </p>
                             <p className="text-xs text-gray-500 line-clamp-2 mt-0.5">
                               {item.description}
@@ -320,36 +350,19 @@ export default function WalletPage() {
                     })}
                 </div>
 
-                {/* No results message */}
-                {transactionData.items.filter((item) => {
-                  if (filterType !== 'ALL' && item.transactionType !== filterType) return false;
-                  if (searchQuery.trim()) {
-                    const query = searchQuery.toLowerCase();
-                    const matchesDescription = item.description.toLowerCase().includes(query);
-                    const matchesType = TRANSACTION_TYPE_MAP[item.transactionType]?.toLowerCase().includes(query);
-                    return matchesDescription || matchesType;
-                  }
-                  return true;
-                }).length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-14 text-gray-400 gap-2">
-                      <Search size={36} className="opacity-30" />
-                      <p className="text-sm">Không tìm thấy giao dịch phù hợp</p>
-                    </div>
-                  )}
-
                 {/* Pagination */}
-                {transactionData.totalPages > 1 && (
+                {totalPages > 1 && (
                   <div className="px-4 sm:px-5 py-4 border-t border-gray-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <p className="text-xs sm:text-sm text-gray-500">
-                      Trang {transactionData.pageNumber} / {transactionData.totalPages}
+                      Trang {currentPage} / {totalPages}
                       <span className="ml-2 text-gray-400">
-                        ({transactionData.totalCount} giao dịch)
+                        ({filteredTransactions.length} giao dịch)
                       </span>
                     </p>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={!transactionData.hasPreviousPage}
+                        disabled={currentPage <= 1}
                         className="flex cursor-pointer items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
                       >
                         <ChevronLeft size={16} />
@@ -357,7 +370,7 @@ export default function WalletPage() {
                       </button>
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={!transactionData.hasNextPage}
+                        disabled={currentPage >= totalPages}
                         className="flex cursor-pointer items-center gap-1 px-3 py-1.5 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
                       >
                         Sau
