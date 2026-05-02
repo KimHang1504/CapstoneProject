@@ -11,7 +11,7 @@
   import toast from 'react-hot-toast';
   import Image from 'next/image';
   import { getPaymentStatus, cancelPayment, getPaymentQrInfo } from '@/api/venue/payment/api';
-
+  import { formatCurrency, formatCurrencyVND } from '@/utils/formatCurrency';
   import { PaymentQrInfo } from '@/api/venue/payment/type';
 
   interface SubscriptionExpiredModalProps {
@@ -144,9 +144,10 @@
       // Parse "Insufficient wallet balance. Available: 3,420 VND, Required: 4,000 VND"
       const balanceMatch = errorMessage.match(/Available:\s*([\d,]+)\s*VND.*Required:\s*([\d,]+)\s*VND/i);
       if (balanceMatch) {
-        const available = balanceMatch[1];
-        const required = balanceMatch[2];
-        return `Số dư ví không đủ. Bạn có ${available} VND, cần ${required} VND. Vui lòng nạp thêm ${(parseInt(required.replace(/,/g, '')) - parseInt(available.replace(/,/g, ''))).toLocaleString('vi-VN')} VND.`;
+        const available = parseInt(balanceMatch[1].replace(/,/g, ''));
+        const required = parseInt(balanceMatch[2].replace(/,/g, ''));
+        const needed = required - available;
+        return `Số dư ví không đủ. Bạn có ${formatCurrencyVND(available)}, cần ${formatCurrencyVND(required)}. Vui lòng nạp thêm ${formatCurrencyVND(needed)}.`;
       }
 
       // Parse other common errors
@@ -365,7 +366,7 @@
                       <div className="pt-4 sm:pt-5 border-t border-gray-200">
                         <div className="flex items-baseline justify-center gap-1 mb-3 sm:mb-4">
                           <span className="text-3xl sm:text-4xl font-bold text-gray-900">
-                            {pkg.price.toLocaleString('vi-VN')}
+                            {formatCurrency(pkg.price, { showSymbol: false })}
                           </span>
                           <span className="text-base sm:text-lg font-medium text-gray-500">VND</span>
                         </div>
@@ -408,7 +409,7 @@
                   <span className="text-gray-700 font-medium">{selectedPackage.packageName}</span>
                   <span className="text-gray-400">•</span>
                   <span className="text-xl font-bold text-gray-900">
-                    {selectedPackage.price.toLocaleString('vi-VN')} VND
+                    {formatCurrencyVND(selectedPackage.price)}
                   </span>
                 </div>
               </div>
@@ -490,7 +491,7 @@
                   <div className="flex justify-between items-center pt-2">
                     <span className="text-gray-900 font-medium">Tổng thanh toán</span>
                     <span className="text-2xl font-bold text-purple-600">
-                      {selectedPackage.price.toLocaleString('vi-VN')} VND
+                      {formatCurrencyVND(selectedPackage.price)}
                     </span>
                   </div>
                 </div>
@@ -655,7 +656,7 @@
                   <div className="bg-purple-600 rounded-lg p-4 text-white">
                     <div className="text-sm mb-1 opacity-90">Số tiền thanh toán</div>
                     <div className="text-3xl font-bold">
-                      {qrPayment.amount.toLocaleString('vi-VN')} VND
+                      {formatCurrencyVND(qrPayment.amount)}
                     </div>
                   </div>
                   

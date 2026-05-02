@@ -38,6 +38,9 @@ const BAR_COLORS = [
 const CHART_COLORS = [
   '#8b5cf6', '#ec4899', '#0ea5e9',
   '#10b981', '#f59e0b', '#f43f5e',
+  '#6366f1', '#8b5cf6', '#d946ef',
+  '#06b6d4', '#14b8a6', '#84cc16',
+  '#eab308', '#f97316', '#ef4444',
 ];
 
 function SectionTitle({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) {
@@ -101,7 +104,7 @@ export default function InsightPage() {
 
           // Nếu không có quyền truy cập hoặc hết hạn (0 ngày)
           if (!venueInsightAccess?.hasAccess || (venueInsightAccess.daysRemaining !== null && venueInsightAccess.daysRemaining <= 0)) {
-            setSubscriptionMessage('Gói VENUE_INSIGHT của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng.');
+            setSubscriptionMessage('Gói chiến lược tăng trưởng của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng.');
             setShowSubscriptionModal(true);
           }
         }
@@ -369,31 +372,25 @@ export default function InsightPage() {
                         </div>
                       ) : (
                         <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={inner.hotMoods}
-                              dataKey="count"
-                              nameKey="moodName"
-                              cx="50%"
-                              cy="50%"
-                              innerRadius={40}
-                              outerRadius={70}
-                              paddingAngle={2}
-                            >
+                          <BarChart data={inner.hotMoods}>
+                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                            <XAxis dataKey="moodName" tick={false} />
+                            <YAxis tick={{ fontSize: 11 }} />
+                            <Tooltip content={<CustomTooltip />} />
+                            <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                               {inner.hotMoods.map((entry: HotMood, index: number) => (
                                 <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                               ))}
-                            </Pie>
-                            <Tooltip content={<CustomTooltip />} />
-                          </PieChart>
+                            </Bar>
+                          </BarChart>
                         </ResponsiveContainer>
                       )}
                     </div>
-                    <div className="flex flex-wrap gap-2 justify-center mt-2">
+                    <div className="flex flex-wrap gap-2 justify-center mt-2 max-h-20 overflow-y-auto">
                       {inner.hotMoods.map((mood: HotMood, i: number) => (
                         <div key={mood.moodTypeId} className="flex items-center gap-1">
                           <div className="w-2 h-2 rounded-full" style={{ backgroundColor: CHART_COLORS[i % CHART_COLORS.length] }} />
-                          <span className="text-xs text-gray-600">{mood.moodName}</span>
+                          <span className="text-xs text-gray-600">{mood.moodName} ({mood.percentage}%)</span>
                         </div>
                       ))}
                     </div>

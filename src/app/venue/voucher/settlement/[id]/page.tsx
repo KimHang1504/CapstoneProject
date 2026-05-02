@@ -1,13 +1,11 @@
 import { getSettlementDetail } from "@/api/venue/settlement/api";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 type Props = {
   params: Promise<{
     id: string;
   }>;
 };
-
-const formatCurrency = (value: number) =>
-  value ? `${new Intl.NumberFormat("vi-VN").format(value)} đ` : "--";
 
 const formatDateTime = (value: string | null) => {
   if (!value) return "--";

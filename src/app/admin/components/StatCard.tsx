@@ -21,7 +21,7 @@ export default function StatCard({ title, value, icon, color }: Props) {
       />
 
       {/* noise */}
-      <div className="absolute inset-0 opacity-[0.03] bg-[url('/noise.png')]" />
+      <div className="absolute inset-0 opacity-[0.03]" />
 
       <div className="relative flex items-center justify-between">
 

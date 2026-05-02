@@ -19,6 +19,7 @@ import { toast } from 'sonner';
 import { checkVenueOwnerVerification, getLocationSubmitErrors } from '@/app/venue/location/utils/venue-location-submit';
 import { getLocationStatusUI } from '@/app/venue/location/locationStatusUI';
 import TagAnalysisWarning from './TagAnalysisWarning';
+import { formatVietnamPhone } from '@/utils/formatPhone';
 
 export default function LocationDetailPage() {
     type OpenStatus = 'CLOSED_ALL_DAY' | 'OPEN_NOW' | 'CLOSED_NOW';
@@ -620,7 +621,7 @@ export default function LocationDetailPage() {
                         <div className="flex gap-3 items-center bg-white rounded-2xl p-4">
                             <Phone />
                             <FieldDisplay value={location.phoneNumber} label="số điện thoại" onEdit={handleEdit}>
-                                <p className="text-sm text-gray-700">{location.phoneNumber}</p>
+                                <p className="text-sm text-gray-700">{formatVietnamPhone(location.phoneNumber)}</p>
                             </FieldDisplay>
                         </div>
 

@@ -50,22 +50,6 @@ export default function UpdateChallengeForm({ challenge }: any) {
         REVIEW: ["COUNT", "UNIQUE_LIST"]
     };
 
-    const statusConfig =
-        challenge.status === "ACTIVE"
-            ? {
-                label: "Đang hoạt động",
-                className: "bg-emerald-100 text-emerald-700"
-            }
-            : challenge.status === "INACTIVE"
-                ? {
-                    label: "Không hoạt động",
-                    className: "bg-amber-100 text-amber-700"
-                }
-                : {
-                    label: "Đã kết thúc",
-                    className: "bg-slate-100 text-slate-700"
-                };
-
     const [form, setForm] = useState({
         title: "",
         description: "",
@@ -261,18 +245,10 @@ export default function UpdateChallengeForm({ challenge }: any) {
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-3">
-                        <div>
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${statusConfig.className}`}>
-                                {statusConfig.label}
-                            </span>
-                        </div>
-
-                        <UpdateStatus
-                            challengeId={challenge.id}
-                            currentStatus={challenge.status}
-                        />
-                    </div>
+                    <UpdateStatus
+                        challengeId={challenge.id}
+                        currentStatus={challenge.status}
+                    />
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -325,9 +301,9 @@ export default function UpdateChallengeForm({ challenge }: any) {
                                     }
                                     className="w-full mt-2"
                                     options={[
-                                        { label: "BÀI ĐĂNG", value: "POST" },
-                                        { label: "ĐÁNH GIÁ", value: "REVIEW" },
-                                        { label: "CHECK-IN", value: "CHECKIN" },
+                                        { label: "Đăng bài", value: "POST" },
+                                        { label: "Đánh giá", value: "REVIEW" },
+                                        { label: "Check-in", value: "CHECKIN" },
                                     ]}
                                 />
                             </FieldWrapper>
@@ -344,10 +320,17 @@ export default function UpdateChallengeForm({ challenge }: any) {
                                     className="w-full mt-2"
                                     options={[
                                         { label: "Chọn chỉ số mục tiêu", value: "", disabled: true },
-                                        ...(goalMetricOptions[form.triggerEvent]?.map((metric) => ({
-                                            label: metric,
-                                            value: metric,
-                                        })) || [])
+                                        ...(goalMetricOptions[form.triggerEvent]?.map((metric) => {
+                                            const metricLabels: Record<string, string> = {
+                                                'COUNT': 'Số lượng',
+                                                'UNIQUE_LIST': 'Danh sách chỉ định',
+                                                'STREAK': 'Chuỗi liên tiếp',
+                                            };
+                                            return {
+                                                label: metricLabels[metric] || metric,
+                                                value: metric,
+                                            };
+                                        }) || [])
                                     ]}
                                 />
                             </FieldWrapper>

@@ -71,3 +71,9 @@ export const updateOpeningHours = (payload: UpdateOpeningHoursRequest) => {
 
 
 
+
+export const deleteDraftVenue = async (venueId: number): Promise<ApiResponse<{ venueId: number }>> => {
+  return apiClient.delete<ApiResponse<{ venueId: number }>>(
+    `/api/VenueLocation/draft/${venueId}`
+  );
+};

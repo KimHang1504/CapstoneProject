@@ -77,6 +77,31 @@ export default async function VenueDetailPage({ params }: Props) {
         );
     }
 
+    const renderField = (value?: string | null) => {
+        if (!value || value.trim() === "") {
+            return <span className="italic text-gray-400">Chưa cập nhật</span>;
+        }
+        return value;
+    };
+
+    const renderImages = (images?: string[] | null, label?: string) => {
+        if (!images || images.length === 0) {
+            return (
+                <div className="col-span-full flex items-center justify-center h-32 text-sm text-gray-400 italic">
+                    {label || "Chưa có hình ảnh"}
+                </div>
+            );
+        }
+
+        return images.map((img: string) => (
+            <div
+                key={img}
+                className="border border-gray-200 rounded-lg bg-gray-50 p-2"
+            >
+                <ImagePreview src={img} alt={label || "Image"} />
+            </div>
+        ));
+    };
     return (
         <div className="bg-gray-50 min-h-screen">
             <div className="max-w-6xl mx-auto p-6 space-y-6">
@@ -100,18 +125,22 @@ export default async function VenueDetailPage({ params }: Props) {
                         <div className="grid grid-cols-12 gap-6 items-start">
 
                             {/* COVER (bé lại) */}
-                            {venue.coverImage && venue.coverImage.length > 0 && (
-                                <div className="col-span-5">
-                                    <div className="rounded-xl overflow-hidden h-40">
+                            <div className="col-span-5">
+                                <div className="rounded-xl overflow-hidden h-40 flex items-center justify-center bg-gray-50">
+                                    {venue.coverImage && venue.coverImage.length > 0 ? (
                                         <ImagePreview
                                             src={venue.coverImage[0]}
                                             alt="Ảnh bìa"
                                             width={800}
                                             height={220}
                                         />
-                                    </div>
+                                    ) : (
+                                        <span className="text-sm text-gray-400 italic">
+                                            Chưa có ảnh bìa
+                                        </span>
+                                    )}
                                 </div>
-                            )}
+                            </div>
 
                             {/* INFO (name + address + status) */}
                             <div className="col-span-7 flex flex-col justify-between h-full">
@@ -238,79 +267,19 @@ export default async function VenueDetailPage({ params }: Props) {
                                 ].map((item) => (
                                     <div
                                         key={item.label}
-                                        className="border border-gray-200 rounded-lg bg-gray-50 p-2"
+                                        className="border border-gray-200 rounded-lg bg-gray-50 p-2 flex items-center justify-center"
                                     >
-                                        <ImagePreview src={item.src} alt={item.label} />
-
-                                        <p className="text-xs text-gray-500 mt-2 text-center">
-                                            {item.label}
-                                        </p>
+                                        {item.src ? (
+                                            <ImagePreview src={item.src} alt={item.label} />
+                                        ) : (
+                                            <span className="text-xs text-gray-400 italic">
+                                                Chưa cập nhật
+                                            </span>
+                                        )}
                                     </div>
                                 ))}
                             </div>
                         </section>
-
-                        {/* MOOD */}
-                        {/* <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
-                            <div className="flex items-center gap-2">
-                                <Tag size={16} className="text-violet-500" />
-                                <h2 className="text-sm font-semibold text-gray-800">
-                                    Mood & Personality
-                                </h2>
-                            </div>
-
-                            <div>
-                                <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1.5">
-                                    <Sparkles size={14} className="text-sky-500" />
-                                    Mood
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                    {finalMoods.length > 0 ? (
-                                        finalMoods.map((m) => (
-                                            <div key={m.id} className="group relative inline-block">
-                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 text-sky-700 px-3 py-1 text-xs font-medium border border-sky-200">
-                                                    {m.name}
-                                                    <Info size={12} className="opacity-80" />
-                                                </span>
-
-                                                <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
-                                                    {m.description || "Chưa có mô tả cho mood này"}
-                                                    <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <span className="text-xs text-gray-400">Chưa có Mood</span>
-                                    )}
-                                </div>
-                            </div>
-
-                            <div>
-                                <p className="text-xs font-medium text-gray-500 mb-2 flex items-center gap-1.5">
-                                    <HeartHandshake size={14} className="text-fuchsia-500" />
-                                    Personality
-                                </p>
-                                <div className="flex flex-wrap gap-2">
-                                    {finalPersonalities.length > 0 ? (
-                                        finalPersonalities.map((p) => (
-                                            <div key={p.id} className="group relative inline-block">
-                                                <span className="inline-flex items-center gap-1.5 rounded-full bg-fuchsia-100 text-fuchsia-700 px-3 py-1 text-xs font-medium border border-fuchsia-200">
-                                                    {p.name}
-                                                    <Info size={12} className="opacity-80" />
-                                                </span>
-
-                                                <div className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 w-64 -translate-x-1/2 rounded-lg bg-slate-900 px-3 py-2 text-xs text-white opacity-0 shadow-lg transition-opacity duration-150 group-hover:opacity-100">
-                                                    {p.description || "Chưa có mô tả cho personality này"}
-                                                    <div className="absolute left-1/2 top-full -translate-x-1/2 border-4 border-transparent border-t-slate-900" />
-                                                </div>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <span className="text-xs text-gray-400">Chưa có Personality</span>
-                                    )}
-                                </div>
-                            </div>
-                        </section> */}
 
                         {/* INFO */}
                         <section className="bg-white border border-gray-200 rounded-xl p-5 space-y-4">
@@ -323,7 +292,7 @@ export default async function VenueDetailPage({ params }: Props) {
                                     <Phone size={16} className="text-blue-600 mt-0.5" />
                                     <div className="text-sm text-gray-700">
                                         <p className="text-xs text-gray-500">Số điện thoại</p>
-                                        <p>{venue.phoneNumber || "—"}</p>
+                                        <p>{renderField(venue.phoneNumber)}</p>
                                     </div>
                                 </div>
 
@@ -331,7 +300,7 @@ export default async function VenueDetailPage({ params }: Props) {
                                     <Mail size={16} className="text-indigo-600 mt-0.5" />
                                     <div className="text-sm text-gray-700">
                                         <p className="text-xs text-gray-500">Email</p>
-                                        <p>{venue.email || "—"}</p>
+                                        <p>{renderField(venue.email)}</p>
                                     </div>
                                 </div>
 
@@ -339,7 +308,7 @@ export default async function VenueDetailPage({ params }: Props) {
                                     <Globe size={16} className="text-purple-600 mt-0.5" />
                                     <div className="text-sm text-gray-700">
                                         <p className="text-xs text-gray-500">Website</p>
-                                        <p className="break-all">{venue.websiteUrl || "—"}</p>
+                                        <p className="break-all">{renderField(venue.websiteUrl)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -354,24 +323,15 @@ export default async function VenueDetailPage({ params }: Props) {
                         </section>
 
                         {/* MENU */}
-                        {venue.fullPageMenuImage && venue.fullPageMenuImage.length > 0 && (
-                            <section className="bg-white border border-gray-200 rounded-xl p-5">
-                                <h2 className="text-sm font-semibold text-gray-800 mb-4">
-                                    Menu
-                                </h2>
+                        <section className="bg-white border border-gray-200 rounded-xl p-5">
+                            <h2 className="text-sm font-semibold text-gray-800 mb-4">
+                                Menu
+                            </h2>
 
-                                <div className="grid grid-cols-2 gap-4">
-                                    {venue.fullPageMenuImage.map((img: string) => (
-                                        <div
-                                            key={img}
-                                            className="border border-gray-200 rounded-lg bg-gray-50 p-2"
-                                        >
-                                            <ImagePreview src={img} alt="Menu Image" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </section>
-                        )}
+                            <div className="grid grid-cols-2 gap-4">
+                                {renderImages(venue.fullPageMenuImage, "Chưa có menu")}
+                            </div>
+                        </section>
 
                         {/* INTERIOR */}
                         <section className="bg-white border border-gray-200 rounded-xl p-5">
@@ -380,14 +340,7 @@ export default async function VenueDetailPage({ params }: Props) {
                             </h2>
 
                             <div className="grid grid-cols-3 gap-3">
-                                {venue.interiorImage?.map((img: string) => (
-                                    <div
-                                        key={img}
-                                        className="border border-gray-200 rounded-lg bg-gray-50 p-1"
-                                    >
-                                        <ImagePreview src={img} alt="Interior Image" />
-                                    </div>
-                                ))}
+                                {renderImages(venue.interiorImage, "Chưa có ảnh nội thất")}
                             </div>
                         </section>
                     </div>

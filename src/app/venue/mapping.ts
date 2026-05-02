@@ -3,6 +3,7 @@ export const MAPPING = {
         REFUND: "Hoàn tiền",
         WALLET: "Ví",
         VIETQR: "VietQR",
+        SYSTEM: "Hệ thống tự động",
     },
         adsOrderStatus: {
         COMPLETED: "Thành công",
