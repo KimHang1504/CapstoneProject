@@ -1,4 +1,5 @@
 import { getChallengeDetail } from "@/api/admin/api";
+import { getVenueDetail } from "@/api/admin/location/api";
 import BackButton from "@/components/BackButton";
 import {
     Calendar,
@@ -26,8 +27,42 @@ export default async function ChallengeDetailPage({ params }: Props) {
 
     const challenge = res.data;
 
+    // Fetch venue names if venue_id exists in ruleData
+    const venueNames: Record<number, string> = {};
+    if (challenge.ruleData?.venue_id) {
+        await Promise.all(
+            challenge.ruleData.venue_id.map(async (venueId: number) => {
+                try {
+                    const venueRes = await getVenueDetail(venueId);
+                    venueNames[venueId] = venueRes.data.name;
+                } catch (error) {
+                    console.error(`Failed to fetch venue ${venueId}:`, error);
+                    venueNames[venueId] = `Địa điểm ${venueId}`;
+                }
+            })
+        );
+    }
+
     const formatDate = (date: string | null) =>
         date ? new Date(date).toLocaleDateString("vi-VN") : "Không giới hạn";
+
+    const formatTriggerEvent = (event: string) => {
+        const eventMap: Record<string, string> = {
+            'POST': 'Đăng bài',
+            'CHECKIN': 'Check-in',
+            'REVIEW': 'Đánh giá',
+        };
+        return eventMap[event] || event;
+    };
+
+    const formatGoalMetric = (metric: string) => {
+        const metricMap: Record<string, string> = {
+            'COUNT': 'Số lượng',
+            'UNIQUE_LIST': 'Danh sách chỉ định',
+            'STREAK': 'Chuỗi liên tiếp',
+        };
+        return metricMap[metric] || metric;
+    };
 
     const statusConfig =
         challenge.status === "ACTIVE"
@@ -161,7 +196,7 @@ export default async function ChallengeDetailPage({ params }: Props) {
                         </p>
 
                         <p className="font-medium text-gray-800">
-                            {challenge.triggerEvent}
+                            {formatTriggerEvent(challenge.triggerEvent)}
                         </p>
                     </div>
 
@@ -171,7 +206,7 @@ export default async function ChallengeDetailPage({ params }: Props) {
                         </p>
 
                         <p className="font-medium text-gray-800">
-                            {challenge.goalMetric}
+                            {formatGoalMetric(challenge.goalMetric)}
                         </p>
                     </div>
 
@@ -212,7 +247,7 @@ export default async function ChallengeDetailPage({ params }: Props) {
                                 className="flex items-center gap-1 bg-orange-50 text-orange-700 px-3 py-1 rounded-full text-xs font-medium"
                             >
                                 <MapPin size={14} />
-                                Venue {id}
+                                {venueNames[id] || `Địa điểm ${id}`}
                             </span>
                         ))}
 
