@@ -1,17 +1,18 @@
 'use client';
 
 import { useEffect, useMemo, useState, useRef } from 'react';
-import { CalendarDays, ChevronRight, MapPin, Plus, Search } from 'lucide-react';
+import { CalendarDays, ChevronRight, MapPin, Plus, Search, Trash2, AlertTriangle, X } from 'lucide-react';
 import Link from 'next/link';
 import ImageWithFallback from '@/components/ImageWithFallback';
 
-import { getMyVenueLocations } from '@/api/venue/location/api';
+import { getMyVenueLocations, deleteDraftVenue } from '@/api/venue/location/api';
 import { MyVenueLocation } from '@/api/venue/location/type';
 import { resolveLocationStatus } from '@/app/venue/location/resolver';
 import { locationStatusMeta } from "@/app/venue/location/locationStatusMeta";
 import Loading from '@/components/Loading';
 import LocationCardSkeleton from '@/components/skeleton/LocationCardSkeleton';
 import SidebarLocationSkeleton from '@/components/skeleton/SidebarLocationSkeleton';
+import { toast } from 'sonner';
 
 
 type StatusFilter = 'all' | 'ACTIVE' | 'INACTIVE' | 'CLOSED' | 'EXPIRED' | 'PENDING' | 'DRAFTED';
@@ -21,6 +22,8 @@ export default function MyLocationPage() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [data, setData] = useState<MyVenueLocation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deleteModal, setDeleteModal] = useState<{ show: boolean; venue: MyVenueLocation | null }>({ show: false, venue: null });
+  const [deleting, setDeleting] = useState(false);
 
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -143,6 +146,34 @@ export default function MyLocationPage() {
     setSearchKeyword('');
   };
 
+  const handleDeleteClick = (venue: MyVenueLocation) => {
+    setDeleteModal({ show: true, venue });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteModal.venue) return;
+
+    setDeleting(true);
+    try {
+      await deleteDraftVenue(deleteModal.venue.id);
+      toast.success('Xóa địa điểm nháp thành công');
+      
+      const newData = await getMyVenueLocations();
+      setData(newData);
+      
+      setDeleteModal({ show: false, venue: null });
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      toast.error(error.response?.data?.message || 'Không thể xóa địa điểm này');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteModal({ show: false, venue: null });
+  };
+
 
   const isSearching = searchKeyword.trim().length > 0;
   const isEmpty = locations.length === 0;
@@ -246,12 +277,27 @@ export default function MyLocationPage() {
                         </div>
                       </div>
 
-                      <Link href={`/venue/location/mylocation/${loc.id}`} className="absolute bottom-4 right-4">
-                        <div className="flex items-center justify-center w-9 h-9 rounded-full bg-violet-100 text-violet-600 
-                    group-hover:bg-violet-600 group-hover:text-white transition">
-                          <ChevronRight size={18} />
-                        </div>
-                      </Link>
+                      <div className="absolute bottom-4 right-4 flex items-center gap-2">
+                        {loc.status === 'DRAFTED' && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDeleteClick(loc);
+                            }}
+                            className="flex items-center justify-center w-9 h-9 rounded-full bg-red-100 text-red-600 
+                              hover:bg-red-600 hover:text-white transition"
+                            title="Xóa bản nháp"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        )}
+                        <Link href={`/venue/location/mylocation/${loc.id}`}>
+                          <div className="flex items-center justify-center w-9 h-9 rounded-full bg-violet-100 text-violet-600 
+                        group-hover:bg-violet-600 group-hover:text-white transition">
+                            <ChevronRight size={18} />
+                          </div>
+                        </Link>
+                      </div>
                     </div>
                   );
                 })
@@ -347,6 +393,54 @@ export default function MyLocationPage() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.show && deleteModal.venue && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl max-w-md w-full p-6 relative">
+            <button
+              onClick={handleCancelDelete}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+            >
+              <X size={20} />
+            </button>
+
+            <div className="flex items-start gap-4 mb-4">
+              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                <AlertTriangle className="text-red-600" size={24} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                  Xóa địa điểm nháp
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Bạn có chắc muốn xóa <strong>{deleteModal.venue.name}</strong>?
+                </p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Hành động này không thể hoàn tác.
+                </p>
+              </div>
+            </div>
+
+            <div className="flex gap-3 justify-end mt-6">
+              <button
+                onClick={handleCancelDelete}
+                disabled={deleting}
+                className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={deleting}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+              >
+                {deleting ? 'Đang xóa...' : 'Xóa'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
