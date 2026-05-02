@@ -21,7 +21,11 @@ export default function EditProfileModal({
   userProfile,
   onUpdate,
 }: EditProfileModalProps) {
-  const [activeTab, setActiveTab] = useState<'profile' | 'password'>('profile');
+  // Auto switch to password tab for Admin/Staff
+  const isAdminOrStaff = userProfile.role === 'ADMIN' || userProfile.role === 'STAFF';
+  const [activeTab, setActiveTab] = useState<'profile' | 'password'>(
+    isAdminOrStaff ? 'password' : 'profile'
+  );
 
   const [formData, setFormData] = useState({
     businessName: userProfile.venueOwnerProfile?.businessName || '',
@@ -58,7 +62,7 @@ export default function EditProfileModal({
 
   useEffect(() => {
     if (isOpen) {
-      setActiveTab('profile');
+      setActiveTab(isAdminOrStaff ? 'password' : 'profile');
 
       setFormData({
         businessName: userProfile.venueOwnerProfile?.businessName || '',
@@ -80,7 +84,7 @@ export default function EditProfileModal({
       setBackFile(null);
       setError('');
     }
-  }, [isOpen, userProfile]);
+  }, [isOpen, userProfile, isAdminOrStaff]);
 
   const handleFrontFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -263,7 +267,7 @@ export default function EditProfileModal({
               </h2>
               <p className="text-purple-100 text-sm mt-1">
                 {activeTab === 'profile'
-                  ? 'Cập nhật thông tin venue owner của bạn'
+                  ? 'Cập nhật thông tin cá nhân của bạn'
                   : 'Thay đổi mật khẩu đăng nhập'}
               </p>
             </div>
@@ -281,16 +285,18 @@ export default function EditProfileModal({
         </div>
 
         <div className="flex border-b border-gray-200 bg-gray-50">
-          <button
-            onClick={() => setActiveTab('profile')}
-            className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === 'profile'
-                ? 'text-purple-600 border-b-2 border-purple-600 bg-white'
-                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
-              }`}
-            disabled={isSubmitting}
-          >
-            Thông tin cá nhân
-          </button>
+          {!isAdminOrStaff && (
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`flex-1 px-6 py-4 text-sm font-semibold transition-all duration-200 cursor-pointer ${activeTab === 'profile'
+                  ? 'text-purple-600 border-b-2 border-purple-600 bg-white'
+                  : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+                }`}
+              disabled={isSubmitting}
+            >
+              Thông tin cá nhân
+            </button>
+          )}
           <button
             onClick={() => setActiveTab('password')}
             className={`flex-1 px-6 py-4 cursor-pointer text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${activeTab === 'password'

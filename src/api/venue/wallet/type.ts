@@ -40,9 +40,9 @@ export type TransactionDirection = 'IN' | 'OUT';
 export type TransactionType = 
     | 'ADS_ORDER' 
     | 'VENUE_SUBSCRIPTION' 
-    | 'REFUND' 
-    | 'DEPOSIT' 
-    | 'WITHDRAW';
+    | 'WALLET_TOPUP'
+    | 'VENUE_SETTLEMENT_PAYOUT'
+    | string;
 
 export type WalletTransaction = {
     transactionId: number;

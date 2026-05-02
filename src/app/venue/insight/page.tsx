@@ -101,7 +101,7 @@ export default function InsightPage() {
 
           // Nếu không có quyền truy cập hoặc hết hạn (0 ngày)
           if (!venueInsightAccess?.hasAccess || (venueInsightAccess.daysRemaining !== null && venueInsightAccess.daysRemaining <= 0)) {
-            setSubscriptionMessage('Gói VENUE_INSIGHT của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng.');
+            setSubscriptionMessage('Gói chiến lược tăng trưởng của bạn đã hết hạn. Vui lòng gia hạn để tiếp tục sử dụng.');
             setShowSubscriptionModal(true);
           }
         }

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SidebarConfig, IconName } from '@/types/sidebar';
 import { useState, useEffect } from 'react';
+import { formatVietnamPhone } from '@/utils/formatPhone';
 import {
   Menu,
   X,
@@ -471,7 +472,7 @@ export default function ManagementLayout({
                             <div>
                               <p className="text-gray-500 text-xs">Số điện thoại</p>
                               <p className="text-gray-700 font-medium">
-                                {userProfile?.phoneNumber || 'Chưa cập nhật'}
+                                {formatVietnamPhone(userProfile?.phoneNumber)}
                               </p>
                             </div>
                           </div>
@@ -493,16 +494,30 @@ export default function ManagementLayout({
 
                       {/* Actions */}
                       <div className="p-2 space-y-1">
-                        <button
-                          onClick={() => {
-                            setShowProfileMenu(false);
-                            setShowEditModal(true);
-                          }}
-                          className="w-full flex cursor-pointer items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-purple-50 rounded-lg transition-all duration-200 font-medium text-sm"
-                        >
-                          <User className="w-4 h-4" />
-                          <span>Chỉnh sửa hồ sơ</span>
-                        </button>
+                        {userProfile?.role !== 'ADMIN' && userProfile?.role !== 'STAFF' && (
+                          <button
+                            onClick={() => {
+                              setShowProfileMenu(false);
+                              setShowEditModal(true);
+                            }}
+                            className="w-full flex cursor-pointer items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-purple-50 rounded-lg transition-all duration-200 font-medium text-sm"
+                          >
+                            <User className="w-4 h-4" />
+                            <span>Chỉnh sửa hồ sơ</span>
+                          </button>
+                        )}
+                        {(userProfile?.role === 'ADMIN' || userProfile?.role === 'STAFF') && (
+                          <button
+                            onClick={() => {
+                              setShowProfileMenu(false);
+                              setShowEditModal(true);
+                            }}
+                            className="w-full flex cursor-pointer items-center gap-3 px-3 py-2.5 text-gray-700 hover:bg-purple-50 rounded-lg transition-all duration-200 font-medium text-sm"
+                          >
+                            <User className="w-4 h-4" />
+                            <span>Đổi mật khẩu</span>
+                          </button>
+                        )}
                         <button
                           onClick={handleLogout}
                           className="w-full flex cursor-pointer items-center gap-3 px-3 py-2.5 text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200 font-medium text-sm"

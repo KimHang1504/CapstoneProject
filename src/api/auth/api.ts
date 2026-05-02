@@ -63,3 +63,17 @@ export const resetPassword = (payload: ResetPasswordRequest) => {
     payload
   );
 };
+
+export const sendRegistrationOtp = (payload: { email: string }) => {
+  return apiClient.post<ApiResponse<null>>(
+    "/api/Auth/send-registration-otp",
+    payload
+  );
+};
+
+export const verifyRegistrationOtp = (payload: VerifyOtpRequest) => {
+  return apiClient.post<ApiResponse<null>>(
+    "/api/Auth/verify-registration-otp",
+    payload
+  );
+};
