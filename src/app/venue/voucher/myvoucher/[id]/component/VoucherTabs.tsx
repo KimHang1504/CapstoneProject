@@ -5,6 +5,7 @@ import { VoucherDetail } from "@/api/venue/vouchers/type";
 import VoucherItemsPage from "@/app/venue/voucher/myvoucher/[id]/items/page";
 import HistoryExchange from "@/app/venue/voucher/myvoucher/[id]/component/HistoryExchange";
 import Image from "next/image";
+import { formatCurrency, formatCurrencyVND } from "@/utils/formatCurrency";
 
 type Props = {
     voucher: VoucherDetail;
@@ -83,7 +84,7 @@ export default function VoucherTabs({ voucher }: Props) {
                         {/* Discount */}
                         <p className="text-xl font-semibold text-yellow-800">
                             {voucher.discountType === "FIXED_AMOUNT"
-                                ? `Giảm ${voucher.discountAmount?.toLocaleString()} VND`
+                                ? `Giảm ${formatCurrencyVND(voucher.discountAmount)}`
                                 : `Giảm ${voucher.discountPercent}%`}
                         </p>
 
@@ -125,7 +126,7 @@ export default function VoucherTabs({ voucher }: Props) {
                                     Giá trị voucher
                                 </p>
                                 <p className="font-semibold">
-                                    {voucher.voucherPrice?.toLocaleString()} VND
+                                    {formatCurrencyVND(voucher.voucherPrice)}
                                 </p>
                             </div>
 

@@ -7,6 +7,7 @@ import WithdrawModal from "@/app/venue/wallet/components/WithdrawModal";
 import TopupModal from "@/app/venue/wallet/components/TopupModal";
 import { Wallet as WalletIcon, ArrowDownCircle, ArrowDownRight, ArrowUpRight, History, ChevronLeft, ChevronRight, QrCode, Search, Filter, ChevronDown } from "lucide-react";
 import { getMappingLabel } from "@/app/venue/mapping";
+import { formatCurrency, formatCurrencyShort } from "@/utils/formatCurrency";
 
 const STATUS_MAP: Record<string, { label: string; cls: string }> = {
   PENDING: { label: "Đang chờ", cls: "bg-amber-100 text-amber-600" },
@@ -155,7 +156,7 @@ export default function WalletPage() {
             <span className="text-sm sm:text-base opacity-80">Số dư ví</span>
           </div>
           <p className="text-3xl sm:text-4xl font-bold relative">
-            {wallet?.balance.toLocaleString("vi-VN")}
+            {formatCurrency(wallet?.balance, { showSymbol: false })}
             <span className="text-base sm:text-lg font-normal ml-1 opacity-80">₫</span>
           </p>
         </div>
@@ -339,7 +340,7 @@ export default function WalletPage() {
                           <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
                             <p className={`font-bold text-base ${isIncoming ? 'text-emerald-600' : 'text-rose-600'
                               }`}>
-                              {isIncoming ? '+' : '-'}{Math.abs(item.balanceChange).toLocaleString("vi-VN")} ₫
+                              {isIncoming ? '+' : '-'}{formatCurrencyShort(Math.abs(item.balanceChange))}
                             </p>
                             <p className="text-xs text-gray-400 mt-1">
                               {getMappingLabel("paymentMethod", item.paymentMethod)}
@@ -419,7 +420,7 @@ export default function WalletPage() {
                         <div className="flex-1 min-w-0 w-full">
                           <div className="flex items-center justify-between gap-2">
                             <p className="font-bold text-gray-900 text-lg">
-                              {item.amount.toLocaleString("vi-VN")} ₫
+                              {formatCurrencyShort(item.amount)}
                             </p>
                             <span className={`inline-block text-xs px-2.5 py-1 rounded-full font-medium ${s.cls}`}>
                               {s.label}

@@ -2,6 +2,7 @@ import { getSettlementList } from "@/api/venue/settlement/api";
 import { SettlementItem } from "@/api/venue/settlement/type";
 import SettlementFilter from "@/app/venue/voucher/settlement/components/SettlementFilter";
 import Link from "next/link";
+import { formatCurrency } from "@/utils/formatCurrency";
 
 type Props = {
     searchParams: {
@@ -14,9 +15,6 @@ type Props = {
         orderBy?: "asc" | "desc";
     };
 };
-
-const formatCurrency = (value: number) =>
-    `${new Intl.NumberFormat("vi-VN").format(value)} đ`;
 
 const formatDateTime = (value: string | null) => {
     if (!value) return "--";

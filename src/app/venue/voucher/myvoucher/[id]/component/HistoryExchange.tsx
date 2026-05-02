@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getVoucherExchanges } from "@/api/venue/vouchers/api";
 import { VoucherExchangeItem } from "@/api/venue/vouchers/type";
+import { formatVietnamPhone } from "@/utils/formatPhone";
 
 type Props = {
   voucherId: number;
@@ -42,20 +43,6 @@ export default function HistoryExchange({ voucherId }: Props) {
     } finally {
       setLoading(false);
     }
-  };
-
-  const formatVietnamPhone = (phone: string) => {
-    if (!phone) return "-";
-
-    // bỏ hết ký tự không phải số
-    const digits = phone.replace(/\D/g, "");
-
-    // format theo nhóm 3-4-3 (VN mobile phổ biến 10 số)
-    if (digits.length === 10) {
-      return `${digits.slice(0, 3)} ${digits.slice(3, 7)} ${digits.slice(7)}`;
-    }
-
-    return phone;
   };
 
   const getUsedAtText = (item: VoucherExchangeItem) => {
