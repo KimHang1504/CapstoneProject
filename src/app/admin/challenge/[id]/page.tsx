@@ -217,6 +217,9 @@ export default async function ChallengeDetailPage({ params }: Props) {
 
             {/* RULES */}
             {challenge.ruleData && (
+                ((challenge.ruleData.hash_tags && challenge.ruleData.hash_tags.length > 0) || 
+                 challenge.ruleData.has_image || 
+                 (challenge.ruleData.venue_id && challenge.ruleData.venue_id.length > 0)) && (
                 <div className="bg-white rounded-2xl shadow p-6">
 
                     <h2 className="text-xl font-semibold mb-4">
@@ -254,6 +257,7 @@ export default async function ChallengeDetailPage({ params }: Props) {
                     </div>
 
                 </div>
+                )
             )}
 
 
@@ -268,7 +272,15 @@ export default async function ChallengeDetailPage({ params }: Props) {
 
                     <div className="space-y-4">
 
-                        {challenge.instructions.map((ins: string, index: number) => (
+                        {challenge.instructions
+                            .filter((ins: string) => {
+                                // Ẩn instruction "Phải có hashtag:" nếu không có hashtag nào
+                                if (ins.includes('Phải có hashtag') || ins.includes('hashtag:')) {
+                                    return challenge.ruleData?.hash_tags && challenge.ruleData.hash_tags.length > 0;
+                                }
+                                return true;
+                            })
+                            .map((ins: string, index: number) => (
 
                             <div
                                 key={index}
