@@ -593,7 +593,7 @@ export interface Report {
   id: number;
   reporterId: number;
   reporterName: string;
-  targetType: 'POST' | 'REVIEW' | 'USER' | 'VENUE' | 'COMMENT';
+  targetType: 'POST' | 'REVIEW' | 'USER' | 'VENUE' | 'COMMENT' | 'VOUCHER_ITEM';
   reportTypeDescription: string;
   targetId: number;
   evidenceSnapshot: EvidenceSnapshot;

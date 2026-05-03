@@ -365,7 +365,7 @@ export default function VenueDashboardPage() {
       {/* Revenue Chart */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
         <div className="flex items-center justify-between gap-3 mb-4 flex-wrap">
-          <SectionTitle icon={TrendingUp}>Doanh thu từ hoa hồng Voucher</SectionTitle>
+          <SectionTitle icon={TrendingUp}>Doanh thu từ Voucher</SectionTitle>
           {/* Date range — compact row */}
           <div className="flex items-center gap-1.5 shrink-0">
             <MiniDatePicker
