@@ -312,7 +312,7 @@ export default function SettlementFilter({ defaultValues }: Props) {
                     className="inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-md border border-violet-200 bg-white px-5 font-medium text-slate-700 transition hover:bg-violet-50"
                 >
                     <RotateCcw className="h-4 w-4" />
-                    Reset
+                    Đặt lại
                 </button>
             </div>
         </div>
