@@ -1,4 +1,5 @@
 import {
+  CommissionResponse,
   GetSettlementListParams,
   SettlementDetail,
   SettlementDetailResponse,
@@ -47,4 +48,12 @@ export const getSettlementDetail = async (
   );
 
   return res.data;
+};
+
+export const getCommissionPercent = async (): Promise<number> => {
+  const res = await apiClient.get<CommissionResponse>(
+    "/api/VenueSettlement/commission"
+  );
+
+  return Number(res.data.configValue);
 };

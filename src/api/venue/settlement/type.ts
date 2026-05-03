@@ -69,3 +69,13 @@ export type SettlementDetail = {
 };
 
 export type SettlementDetailResponse = ApiResponse<SettlementDetail>;
+
+export type CommissionConfig = {
+  id: number;
+  configKey: string;
+  configValue: string; // "15"
+  description: string;
+  updatedAt: string;
+};
+
+export type CommissionResponse = ApiResponse<CommissionConfig>;
