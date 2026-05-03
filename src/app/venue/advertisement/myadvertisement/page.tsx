@@ -49,7 +49,7 @@ export default function AdvertisementPage() {
   const pending = ads.filter((ad) => ad.status === "PENDING").length;
   const draft = ads.filter((ad) => ad.status === "DRAFT").length;
   const rejected = ads.filter((ad) => ad.status === "REJECTED").length;
-console.log ("rejected ads", rejected);
+  console.log("rejected ads", rejected);
 
   const filteredAds = useMemo(() => {
     return ads
@@ -73,6 +73,10 @@ console.log ("rejected ads", rejected);
     placement === "ALL"
       ? ads.length
       : ads.filter((ad) => ad.placementType === placement).length;
+
+  const handleDelete = (id: number) => {
+    setAds((prev) => prev.filter((ad) => ad.id !== id));
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-purple-50 to-pink-50 p-6">
@@ -141,8 +145,8 @@ console.log ("rejected ads", rejected);
                   key={p.value}
                   onClick={() => setActivePlacement(p.value)}
                   className={`px-4 py-2 text-sm cursor-pointer ${activePlacement === p.value
-                      ? "text-purple-600 border-b-2 border-purple-600"
-                      : "text-gray-500"
+                    ? "text-purple-600 border-b-2 border-purple-600"
+                    : "text-gray-500"
                     }`}
                 >
                   {p.label} ({countByPlacement(p.value)})
@@ -160,7 +164,11 @@ console.log ("rejected ads", rejected);
           ) : (
             <div className="grid grid-cols-4 gap-6">
               {filteredAds.map((ad) => (
-                <AdvertisementCard key={ad.id} ad={ad} />
+                <AdvertisementCard
+                  key={ad.id}
+                  ad={ad}
+                  onDeleted={handleDelete}
+                />
               ))}
             </div>
           )}

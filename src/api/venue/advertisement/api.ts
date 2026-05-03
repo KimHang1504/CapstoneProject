@@ -81,8 +81,8 @@ export const getAdsOrderTransactions = async (
 // Soft delete advertisement
 export const softDeleteAdvertisement = async (
   id: number
-): Promise<ApiResponse<{ message: string }>> => {
-  return apiClient.delete<ApiResponse<{ message: string }>>(
+): Promise<ApiResponse<boolean>> => {
+  return apiClient.delete<ApiResponse<boolean>>(
     `/api/Advertisement/${id}/soft-delete`
   );
 };
@@ -104,3 +104,4 @@ export const getPaymentQrInfo = async (
     `/api/Payment/qr-info/${transactionId}`
   );
 };
+

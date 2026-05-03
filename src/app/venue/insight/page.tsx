@@ -158,6 +158,10 @@ export default function InsightPage() {
     }
   };
 
+  const formatMonth = (month: number) => {
+    return `Tháng ${month}`;
+  };
+
   return (
     <>
       <SubscriptionExpiredModal
@@ -277,14 +281,14 @@ export default function InsightPage() {
                         </p>
                       </div>
 
-                        <Image
-                          src="/AI.jpg"
-                          alt="AI"
-                          width={50}
-                          height={50}
-                          className="rounded-xl"
-                        />
-                    
+                      <Image
+                        src="/AI.jpg"
+                        alt="AI"
+                        width={50}
+                        height={50}
+                        className="rounded-xl"
+                      />
+
                     </div>
 
                     {/* Content */}
@@ -421,35 +425,50 @@ export default function InsightPage() {
                 {/* Mood Trends + Categories */}
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-                  {/* Mood Trends - Line Chart */}
-                  {inner.moodTrendsByMonth.length > 0 && (
-                    <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                      <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng</SectionTitle>
-                      <div className="h-64">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <LineChart data={inner.moodTrendsByMonth}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                            <XAxis dataKey="monthName" tick={{ fontSize: 11 }} />
-                            <YAxis tick={{ fontSize: 11 }} />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Legend wrapperStyle={{ fontSize: '11px' }} />
-                            {inner.moodTrendsByMonth[0]?.moods.slice(0, 4).map((mood: { moodName: string }, idx: number) => (
-                              <Line
-                                key={mood.moodName}
-                                type="monotone"
-                                dataKey={(data: MoodTrend) => data.moods.find(m => m.moodName === mood.moodName)?.count || 0}
-                                name={mood.moodName}
-                                stroke={CHART_COLORS[idx % CHART_COLORS.length]}
-                                strokeWidth={2}
-                                dot={{ r: 4 }}
-                                activeDot={{ r: 6 }}
-                              />
-                            ))}
-                          </LineChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  )}
+{/* Mood Trends - Line Chart */}
+{inner.moodTrendsByMonth.length > 0 && (
+  <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+    <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng</SectionTitle>
+
+    <div className="h-64">
+      <ResponsiveContainer width="100%" height="100%">
+        <LineChart
+          data={inner.moodTrendsByMonth.map(item => ({
+            ...item,
+            monthLabel: `Tháng ${item.month}`, // 👈 format tại đây
+          }))}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+
+          {/* 👇 dùng monthLabel thay vì monthName */}
+          <XAxis dataKey="monthLabel" tick={{ fontSize: 11 }} />
+
+          <YAxis tick={{ fontSize: 11 }} />
+
+          <Tooltip content={<CustomTooltip />} />
+          <Legend wrapperStyle={{ fontSize: '11px' }} />
+
+          {inner.moodTrendsByMonth[0]?.moods.slice(0, 4).map(
+            (mood: { moodName: string }, idx: number) => (
+              <Line
+                key={mood.moodName}
+                type="monotone"
+                dataKey={(data: MoodTrend) =>
+                  data.moods.find(m => m.moodName === mood.moodName)?.count || 0
+                }
+                name={mood.moodName}
+                stroke={CHART_COLORS[idx % CHART_COLORS.length]}
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            )
+          )}
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+  </div>
+)}
 
                   {/* Top Categories */}
                   <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">

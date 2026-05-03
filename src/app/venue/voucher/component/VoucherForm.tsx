@@ -11,6 +11,7 @@ import {
   Wand2,
 } from "lucide-react";
 import Tiptap from "@/components/Tiptap";
+import { getCommissionPercent } from "@/api/venue/settlement/api";
 
 type Props = {
   initialData?: CreateVoucherRequest;
@@ -63,6 +64,10 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const [commission, setCommission] = useState<number | null>(null);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingPayload, setPendingPayload] = useState<CreateVoucherRequest | null>(null);
 
   //lỗi onblur
 
@@ -361,6 +366,23 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
     }
   };
 
+  const buildPayload = (): CreateVoucherRequest => {
+    return {
+      ...form,
+      venueLocationIds: selectedLocationIds,
+      discountAmount:
+        form.discountType === "FIXED_AMOUNT"
+          ? form.discountAmount
+          : null,
+      discountPercent:
+        form.discountType === "PERCENTAGE"
+          ? form.discountPercent
+          : null,
+      startDate: new Date(form.startDate).toISOString(),
+      endDate: new Date(form.endDate).toISOString(),
+    };
+  };
+
   const handleSubmit = async () => {
 
     if (!form.title.trim()) {
@@ -556,14 +578,44 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
     try {
       setLoading(true);
-      await onSubmit(payload);
+
+      // 1. Gọi API commission
+      const res = await getCommissionPercent();
+      console.log("Commission percent:", res);
+      const percent = res;
+
+      // 2. build payload
+      const payload = buildPayload();
+
+      // 3. lưu lại để confirm sau
+      setCommission(percent);
+      setPendingPayload(payload);
+      setShowConfirm(true);
+
+    } catch (err) {
+      toast.error("Không lấy được phí hoa hồng");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleConfirmSubmit = async () => {
+    if (!pendingPayload) return;
+
+    try {
+      setLoading(true);
+      await onSubmit(pendingPayload);
+
+      setShowConfirm(false);
+      setPendingPayload(null);
 
       if (!isEdit) {
         setForm(defaultForm);
         setSelectedLocationIds([]);
       }
-    } catch (error: any) {
-      toast.error(error instanceof Error ? error.message : "Có lỗi xảy ra, vui lòng thử lại");
+
+    } catch (err) {
+      toast.error("Tạo voucher thất bại");
     } finally {
       setLoading(false);
     }
@@ -998,6 +1050,39 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           onClose={() => setOpenLocationModal(false)}
         />
       )}
+
+      {showConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-2xl p-6 w-[400px] shadow-xl">
+            <h3 className="text-lg font-semibold mb-2">
+              Xác nhận tỉ lệ hoa hồng
+            </h3>
+
+            <p className="text-sm text-gray-600 mb-4">
+              Hệ thống sẽ thu <span className="font-semibold text-red-500">
+                {commission}%
+              </span> hoa hồng cho mỗi giao dịch. Bạn có muốn tiếp tục?
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+              >
+                Hủy
+              </button>
+
+              <button
+                onClick={handleConfirmSubmit}
+                className="px-4 py-2 rounded-lg bg-violet-600 text-white"
+              >
+                Đồng ý
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
