@@ -15,12 +15,22 @@ import {
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { MapPin, Megaphone, CalendarDays } from "lucide-react";
+import { MapPin, Megaphone, CalendarDays, FileX2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import BackButton from "@/components/BackButton";
 import StatusDropdown from "../components/StatusDropdown";
 import { getMappingLabel } from "@/app/admin/mapping";
+
+// Status options for display
+const statusOptions = [
+    { value: "", label: "Tất cả trạng thái" },
+    { value: "PENDING", label: "Đang chờ duyệt" },
+    { value: "APPROVED", label: "Đã duyệt" },
+    { value: "REJECTED", label: "Bị từ chối" },
+    { value: "ACTIVE", label: "Đang hoạt động" },
+    { value: "INACTIVE", label: "Không hoạt động" },
+];
 
 export default function AdvertisementAllList() {
     const [data, setData] = useState<Advertisement[]>([]);
@@ -127,6 +137,22 @@ export default function AdvertisementAllList() {
                         <div key={i} className="h-60 bg-gray-200 animate-pulse rounded-xl" />
                     ))}
                 </div>
+            ) : data.length === 0 ? (
+                // EMPTY STATE
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="relative mb-6">
+                        <div className="absolute inset-0 bg-gradient-to-r from-violet-400 to-pink-400 blur-2xl opacity-20 rounded-full" />
+                        <FileX2 className="w-20 h-20 text-gray-300 relative" strokeWidth={1.5} />
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                        Không có quảng cáo
+                    </h3>
+                    <p className="text-sm text-gray-500 max-w-md">
+                        {statusFilter 
+                            ? `Không tìm thấy quảng cáo nào với trạng thái "${statusOptions.find(opt => opt.value === statusFilter)?.label}"`
+                            : "Chưa có quảng cáo nào trong hệ thống"}
+                    </p>
+                </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {data.map((ad) => (
@@ -161,17 +187,14 @@ export default function AdvertisementAllList() {
                                                     ? "bg-blue-100 text-blue-600"
                                                     : ad.status === "INACTIVE"
                                                         ? "bg-gray-200 text-gray-600"
-                                                        : ad.status === "DRAFT"
-                                                            ? "bg-slate-200 text-slate-600"
-                                                            : "bg-red-100 text-red-500"
+                                                        : "bg-red-100 text-red-500"
                                         }`}
                                 >
                                     {ad.status === "PENDING" ? "Đang chờ duyệt"
                                         : ad.status === "APPROVED" ? "Đã duyệt"
                                             : ad.status === "ACTIVE" ? "Đang hoạt động"
                                                 : ad.status === "INACTIVE" ? "Không hoạt động"
-                                                    : ad.status === "DRAFT" ? "Nháp"
-                                                        : "Bị từ chối"}
+                                                    : "Bị từ chối"}
                                 </span>
 
                                 {/* TITLE */}
