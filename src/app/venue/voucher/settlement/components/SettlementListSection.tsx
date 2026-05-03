@@ -8,7 +8,7 @@ type Props = {
     searchParams: {
         page?: string;
         size?: string;
-        status?: "PENDING" | "PAID" | "CANCELLED";
+        status?: "PENDING" | "PAID" | "CANCELLED" | "DISPUTED";
         fromDate?: string;
         toDate?: string;
         sortBy?: "createdAt" | "updatedAt";
@@ -23,6 +23,11 @@ const formatDateTime = (value: string | null) => {
         dateStyle: "short",
         timeStyle: "short",
     }).format(new Date(value));
+};
+
+const calcCommissionRate = (gross: number, commission: number) => {
+    if (!gross) return 0;
+    return Number(((commission / gross) * 100).toFixed(2));
 };
 
 const getStatusMeta = (status: SettlementItem["status"]) => {
@@ -41,6 +46,11 @@ const getStatusMeta = (status: SettlementItem["status"]) => {
             return {
                 label: "Đã huỷ",
                 className: "bg-red-50 text-red-700 border-red-200",
+            };
+        case "DISPUTED":
+            return {
+                label: "tranh chấp",
+                className: "bg-amber-50 text-amber-700 border-amber-200",
             };
         default:
             return {
@@ -121,6 +131,7 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                     <th className="px-5 py-4 font-semibold">Tổng tiền</th>
                                     <th className="px-5 py-4 font-semibold">Hoa hồng</th>
                                     <th className="px-5 py-4 font-semibold">Thực nhận</th>
+                                    <th className="px-5 py-4 font-semibold">Tỷ lệ hoa hồng</th>
                                     <th className="px-5 py-4 font-semibold">Trạng thái</th>
                                     <th className="px-5 py-4 font-semibold">Đã dùng lúc</th>
                                     <th className="px-5 py-4 font-semibold">Có thể đối soát</th>
@@ -167,6 +178,9 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                             <td className="px-5 py-4 font-semibold text-violet-700">
                                                 {formatCurrency(item.netAmount)}
                                             </td>
+                                            <td className="px-5 py-4 font-medium text-slate-700">
+                                                {calcCommissionRate(item.grossAmount, item.commissionAmount)}%
+                                            </td>
 
                                             <td className="px-5 py-4 min-w-45">
                                                 <span
@@ -197,14 +211,19 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                             </td>
 
                                             <td className="px-5 py-4 text-slate-600">
-                                                {item.paidAt
-                                                    ? formatDateTime(item.paidAt)
-                                                    : (
-                                                        <span className="inline-flex items-center px-2 py-1 text-xs text-rose-600">
-                                                            Đã hủy
-                                                        </span>
-                                                    )
-                                                }
+                                                {item.status === "PAID" && item.paidAt ? (
+                                                    formatDateTime(item.paidAt)
+                                                ) : item.status === "CANCELLED" ? (
+                                                    <span className="inline-flex items-center px-2 py-1 text-xs text-rose-600">
+                                                        Đã hủy
+                                                    </span>
+                                                ) : item.status === "PENDING" ? (
+                                                    <span className="inline-flex items-center px-2 py-1 text-xs text-violet-600">
+                                                        Đang chờ đối soát
+                                                    </span>
+                                                ) : (
+                                                    <span className="text-slate-400 text-xs">--</span>
+                                                )}
                                             </td>
                                         </tr>
                                     );
