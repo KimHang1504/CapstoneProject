@@ -11,7 +11,7 @@ export type SettlementSummary = {
 
 export type SettlementSummaryResponse = ApiResponse<SettlementSummary>;
 
-export type SettlementStatus = "PENDING" | "PAID" | "CANCELLED";
+export type SettlementStatus = "PENDING" | "PAID" | "CANCELLED" | "DISPUTED";
 
 export type SettlementItem = {
   settlementId: number;

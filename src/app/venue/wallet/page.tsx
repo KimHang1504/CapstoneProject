@@ -148,7 +148,7 @@ export default function WalletPage() {
       <div className="w-full space-y-5">
 
         {/* Balance Cards */}
-        <div className="relative overflow-hidden bg-linear-to-br from-violet-500 to-purple-600 rounded-2xl p-6 sm:p-8 text-white shadow-lg">
+        <div className="relative overflow-hidden bg-purple-400 rounded-2xl p-6 sm:p-8 text-white shadow-lg">
           <div className="absolute -right-4 -top-4 w-24 h-24 rounded-full bg-white/10" />
           <div className="absolute -right-2 -bottom-6 w-32 h-32 rounded-full bg-white/10" />
           <div className="flex items-center gap-2 mb-3 relative">
@@ -173,14 +173,14 @@ export default function WalletPage() {
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <button
               onClick={() => setShowTopup(true)}
-              className="flex-1 cursor-pointer sm:flex-none flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-4 sm:px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
+              className="flex-1 cursor-pointer sm:flex-none flex items-center justify-center gap-2 bg-[#655a7c] hover:bg-[#513d7c] text-[#fdf1e3] px-4 sm:px-5 py-2.5 rounded-md text-sm font-medium transition shadow-sm"
             >
               <QrCode size={16} />
               Nạp tiền
             </button>
             <button
               onClick={() => setShowWithdraw(true)}
-              className="flex-1 cursor-pointer sm:flex-none flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white px-4 sm:px-5 py-2.5 rounded-xl text-sm font-medium transition shadow-sm"
+              className="flex-1 cursor-pointer sm:flex-none flex items-center justify-center gap-2 bg-purple-500 hover:bg-[#892db7] text-white px-4 sm:px-5 py-2.5 rounded-md text-sm font-medium transition shadow-sm"
             >
               <ArrowDownCircle size={16} />
               Rút tiền
