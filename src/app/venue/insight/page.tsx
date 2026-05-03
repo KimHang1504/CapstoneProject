@@ -77,7 +77,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         <p className="font-medium text-gray-900">{label}</p>
         {payload.map((entry: any, index: number) => (
           <p key={index} className="text-sm" style={{ color: entry.color }}>
-            {entry.name}: {entry.value}
+            {entry.value} {entry.name}
           </p>
         ))}
       </div>
@@ -200,7 +200,7 @@ export default function InsightPage() {
                   <button
                     key={opt.value}
                     onClick={() => setTimeframe(opt.value)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition
                 ${timeframe === opt.value
                         ? 'bg-violet-600 text-white shadow-sm'
                         : 'bg-white border border-gray-200 text-gray-600 hover:border-violet-300'}`}
@@ -355,8 +355,8 @@ export default function InsightPage() {
                           <BarChart data={inner.topSearches.slice(0, 5)} layout="vertical" margin={{ left: 10, right: 10 }}>
                             <XAxis type="number" tick={{ fontSize: 11 }} />
                             <YAxis dataKey="keyword" type="category" width={80} tick={{ fontSize: 11 }} />
-                            <Tooltip content={<CustomTooltip />} />
-                            <Bar dataKey="count" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
+                            <Tooltip content={<CustomTooltip  />} />
+                            <Bar dataKey="count" name="lượt" fill="#8b5cf6" radius={[0, 4, 4, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
                       )}
@@ -365,7 +365,7 @@ export default function InsightPage() {
 
                   {/* Hot Moods */}
                   <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                    <SectionTitle icon={Smile}>Tâm trạng nổi bật</SectionTitle>
+                    <SectionTitle icon={Smile}>Tâm trạng nổi bật hiện tại</SectionTitle>
                     <div className="h-56">
                       {inner.hotMoods.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center px-4">
@@ -381,7 +381,7 @@ export default function InsightPage() {
                             <XAxis dataKey="moodName" tick={false} />
                             <YAxis tick={{ fontSize: 11 }} />
                             <Tooltip content={<CustomTooltip />} />
-                            <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                            <Bar dataKey="count" name="thành viên" radius={[4, 4, 0, 0]}>
                               {inner.hotMoods.map((entry: HotMood, index: number) => (
                                 <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
                               ))}
@@ -414,7 +414,7 @@ export default function InsightPage() {
                             <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-20} textAnchor="end" height={60} />
                             <YAxis tick={{ fontSize: 11 }} />
                             <Tooltip content={<CustomTooltip />} />
-                            <Bar dataKey="checkInCount" fill="#10b981" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="checkInCount" name="lượt check-in" fill="#10b981" radius={[4, 4, 0, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
                       )}

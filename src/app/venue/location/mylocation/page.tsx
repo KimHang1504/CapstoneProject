@@ -325,7 +325,7 @@ export default function MyLocationPage() {
                 ref={inputRef}
                 placeholder="Tìm kiếm địa điểm..."
                 className="flex-1 bg-transparent outline-none text-sm 
-               placeholder:text-purple-300"
+               placeholder:text-gray-400"
                 onKeyDown={e => e.key === 'Enter' && handleSearch()}
               />
 
@@ -333,10 +333,7 @@ export default function MyLocationPage() {
               <button
                 onClick={handleSearch}
                 className="flex cursor-pointer items-center gap-1 px-3 py-1.5 
-               rounded-lg text-xs font-semibold text-white
-               bg-linear-to-r from-[#8093F1] to-pink-400
-               hover:from-[#6f82e8] hover:to-pink-500
-               active:scale-[0.97]
+               rounded-lg text-xs font-semibold bg-purple-500 text-white
                transition-all shadow-sm hover:shadow-md"
               >
                 Tìm

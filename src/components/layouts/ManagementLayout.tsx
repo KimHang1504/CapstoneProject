@@ -399,9 +399,9 @@ export default function ManagementLayout({
                   <h1 className="text-2xl font-bold text-slate-900 tracking-tight leading-tight">
                     {dashboardTitle}
                   </h1>
-                  <p className="text-sm text-slate-500 mt-1 line-clamp-1">
+                  {/* <p className="text-sm text-slate-500 mt-1 line-clamp-1">
                     {headerDescription}
-                  </p>
+                  </p> */}
                 </div>
 
                 {/* Right side - Actions */}
