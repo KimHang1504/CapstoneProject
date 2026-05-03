@@ -85,6 +85,7 @@ export interface AdvertisementListItem {
     updatedAt: string;
     venueLocationCount: number;
     activeVenueAd: any | null;
+    isDeleted: boolean;
 }
 
 //package quảng cáo
