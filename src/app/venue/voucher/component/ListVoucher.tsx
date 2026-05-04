@@ -2,8 +2,10 @@
 
 import { Voucher } from "@/api/venue/vouchers/type";
 import Link from "next/link";
-import { Calendar, Tag, Package} from "lucide-react";
-import { useState } from "react";
+import { Calendar, Tag, Package, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { deleteVoucher } from "@/api/venue/vouchers/api";
+import { toast } from "sonner";
 
 type Props = {
   vouchers: Voucher[];
@@ -11,19 +13,48 @@ type Props = {
 };
 
 const STATUS_CONFIG = {
-  DRAFTED: { label: "Nháp", color: "bg-purple-100 text-purple-600" },
-  PENDING: { label: "Chờ duyệt", color: "bg-pink-100 text-pink-600" },
+  DRAFTED: { label: "Nháp", color: "bg-gray-100 text-gray-500" },
+  PENDING: { label: "Chờ duyệt", color: "bg-yellow-100 text-yellow-600" },
   APPROVED: { label: "Đã duyệt", color: "bg-indigo-100 text-indigo-600" },
   REJECTED: { label: "Từ chối", color: "bg-rose-100 text-rose-600" },
-  ACTIVE: { label: "Hoạt động", color: "bg-fuchsia-100 text-fuchsia-600" },
-  ENDED: { label: "Kết thúc", color: "bg-gray-100 text-gray-500" },
+  ACTIVE: { label: "Hoạt động", color: "bg-green-100 text-green-600" },
+  ENDED: { label: "Kết thúc", color: "bg-pink-100 text-pink-600" },
 };
 
 export default function ListVoucher({ vouchers, loading }: Props) {
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
+  const [localVouchers, setLocalVouchers] = useState<Voucher[]>(vouchers);
+
+  useEffect(() => {
+    setLocalVouchers(vouchers);
+  }, [vouchers]);
 
   const handleImageError = (voucherId: number) => {
     setImageErrors(prev => new Set(prev).add(voucherId));
+  };
+
+  const handleDelete = (id: number) => {
+    toast("Bạn có chắc muốn xóa voucher này không?", {
+      action: {
+        label: "Xóa",
+        onClick: async () => {
+          const deletePromise = deleteVoucher(id);
+
+          toast.promise(deletePromise, {
+            loading: "Đang xóa voucher...",
+            success: () => {
+              window.location.reload();
+              return "Xóa voucher thành công";
+            },
+            error: (err) => err.message || "Xóa thất bại",
+          });
+        },
+      },
+      cancel: {
+        label: "Hủy",
+        onClick: () => { },
+      }
+    });
   };
 
   if (loading) {
@@ -82,6 +113,19 @@ export default function ListVoucher({ vouchers, loading }: Props) {
                 <span className={`text-xs font-medium px-2 py-1 rounded-full ${statusConfig.color}`}>
                   {statusConfig.label}
                 </span>
+
+                {v.status === "DRAFTED" && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(v.id);
+                    }}
+                    className="p-1.5 rounded-lg hover:bg-red-50 text-red-500 hover:text-red-600 transition"
+                    title="Xóa voucher"
+                  >
+                    <Trash2 size={16} />
+                  </button>
+                )}
               </div>
 
               {/* Title */}
