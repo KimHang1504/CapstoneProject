@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
@@ -52,6 +52,40 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
     businessLicense: null,
     existingBusinessLicenseUrl: initialData?.existingBusinessLicenseUrl || "",
   }))
+
+  // Sync initialData vào formData khi initialData thay đổi (mode edit)
+  useEffect(() => {
+    if (mode === 'edit' && initialData) {
+      setFormData({
+        name: initialData.name || "",
+        description: initialData.description || "",
+        selectedCategories: initialData.selectedCategories || [],
+        address: initialData.address || "",
+        latitude: initialData.latitude || 0,
+        longitude: initialData.longitude || 0,
+        email: initialData.email || "",
+        phoneNumber: initialData.phoneNumber || "",
+        websiteUrl: initialData.websiteUrl || "",
+        priceMin: initialData.priceMin ?? 0,
+        priceMax: initialData.priceMax ?? null,
+
+        coverImage: null,
+        interiorImage: [],
+        fullPageMenuImage: [],
+
+        selectedMoods: Array.from(new Set(initialData.selectedMoods || [])),
+        selectedStyles:
+          Array.isArray(initialData.selectedStyles)
+            ? initialData.selectedStyles[0] ?? null
+            : initialData.selectedStyles ?? null,
+        existingCoverUrl: initialData.existingCoverUrl || "",
+        existingInteriorUrls: initialData.existingInteriorUrls || [],
+        existingMenuUrls: initialData.existingMenuUrls || [],
+        businessLicense: null,
+        existingBusinessLicenseUrl: initialData.existingBusinessLicenseUrl || "",
+      })
+    }
+  }, [mode, initialData])
 
   const CurrentStep = steps[step - 1]
 
