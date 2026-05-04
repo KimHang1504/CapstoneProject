@@ -28,8 +28,6 @@ const statusOptions = [
     { value: "PENDING", label: "Đang chờ duyệt" },
     { value: "APPROVED", label: "Đã duyệt" },
     { value: "REJECTED", label: "Bị từ chối" },
-    { value: "ACTIVE", label: "Đang hoạt động" },
-    { value: "INACTIVE", label: "Không hoạt động" },
 ];
 
 export default function AdvertisementAllList() {
@@ -52,7 +50,9 @@ export default function AdvertisementAllList() {
             setLoading(true);
             const res = await getAllAdvertisements(status);
             if (res.code === 200) {
-                setData(res.data);
+                // Filter out DRAFT status advertisements
+                const filteredData = res.data.filter((ad: Advertisement) => ad.status !== 'DRAFT');
+                setData(filteredData);
             }
         } finally {
             setLoading(false);
@@ -187,14 +187,20 @@ export default function AdvertisementAllList() {
                                                     ? "bg-blue-100 text-blue-600"
                                                     : ad.status === "INACTIVE"
                                                         ? "bg-gray-200 text-gray-600"
-                                                        : "bg-red-100 text-red-500"
+                                                        : ad.status === "REJECTED"
+                                                            ? "bg-red-100 text-red-500"
+                                                            : ad.status === "DRAFT"
+                                                                ? "bg-slate-100 text-slate-700"
+                                                                : "bg-gray-100 text-gray-600"
                                         }`}
                                 >
                                     {ad.status === "PENDING" ? "Đang chờ duyệt"
                                         : ad.status === "APPROVED" ? "Đã duyệt"
                                             : ad.status === "ACTIVE" ? "Đang hoạt động"
                                                 : ad.status === "INACTIVE" ? "Không hoạt động"
-                                                    : "Bị từ chối"}
+                                                    : ad.status === "REJECTED" ? "Bị từ chối"
+                                                        : ad.status === "DRAFT" ? "Nháp"
+                                                            : ad.status}
                                 </span>
 
                                 {/* TITLE */}

@@ -18,9 +18,7 @@ const statusOptions: StatusOption[] = [
   { value: "PENDING", label: "Đang chờ duyệt" },
   { value: "APPROVED", label: "Đã duyệt" },
   { value: "REJECTED", label: "Bị từ chối" },
-  { value: "ACTIVE", label: "Đang hoạt động" },
-  { value: "INACTIVE", label: "Không hoạt động" },
-  // DRAFT status is excluded from admin view
+  // DRAFT, ACTIVE, INACTIVE statuses are excluded from admin view
 ];
 
 export default function StatusDropdown({ value, onChange }: StatusDropdownProps) {
