@@ -296,7 +296,7 @@ export default function LocationDetailPage() {
 
                     <div className="flex justify-end gap-3">
                         {/* SUBMIT */}
-                        {canSubmitForApproval && (
+                        {canSubmitForApproval && !isPending && (
                             <button
                                 onClick={handleSubmitForApproval}
                                 disabled={isPending}
@@ -307,12 +307,7 @@ export default function LocationDetailPage() {
                                     }`}
                             >
                                 <Send size={18} />
-                                {isPending
-                                    ? 'Đang chờ duyệt'
-                                    : location.status === 'INACTIVE'
-                                        ? 'Gia hạn'
-                                        : 'Gửi duyệt'
-                                }
+                                {location.status === 'INACTIVE' ? 'Gia hạn' : 'Gửi duyệt'}
                             </button>
                         )}
 
@@ -513,12 +508,20 @@ export default function LocationDetailPage() {
 
 
                         {location.categories?.length ? (
-                            <div className="flex gap-2 flex-wrap">
+                            <div className="flex flex-wrap gap-2">
                                 {location.categories.map(cat => (
                                     <span
                                         key={cat.id}
-                                        className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full text-sm"
+                                        className="
+                                        inline-flex items-center
+                                        text-xs font-semibold
+                                        px-2 py-1
+                                        bg-transparent
+                                    text-violet-600
+                                        transition
+                                    "
                                     >
+                                        <span className="text-violet-500 mr-1">#</span>
                                         {cat.name}
                                     </span>
                                 ))}
@@ -533,7 +536,7 @@ export default function LocationDetailPage() {
                                     moods.map(mood => (
                                         <div key={mood.id} className="group relative inline-block">
                                             <span
-                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#95cfff] px-4 py-1 text-sm font-medium text-white"
+                                                className="inline-flex items-center gap-1.5 rounded-xl bg-[#c6abf0] px-4 py-1 text-sm font-medium text-white"
                                             >
                                                 {mood.name}
                                                 <Info size={12} className="opacity-80" />
@@ -563,7 +566,7 @@ export default function LocationDetailPage() {
                                     personalities.map(personality => (
                                         <div key={personality.id} className="group relative inline-block">
                                             <span
-                                                className="inline-flex items-center gap-1.5 rounded-2xl bg-[#c493f7] px-4 py-1 text-sm font-medium text-white"
+                                                className="inline-flex items-center gap-1.5 rounded-xl bg-[#8fd7d6] px-4 py-1 text-sm font-medium text-white"
                                             >
                                                 {personality.name}
                                                 <Info size={12} className="opacity-80" />
