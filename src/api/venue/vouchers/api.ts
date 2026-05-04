@@ -37,6 +37,12 @@ export const getVoucherDetail = (voucherId: number) => {
   );
 };
 
+export const deleteVoucher = (voucherId: number) => {
+  return apiClient.delete<ApiResponse<null>>(
+    `/api/venue-vouchers/${voucherId}`
+  );
+};
+
 export const submitVoucher = (voucherId: number) => {
   return apiClient.post<ApiResponse<null>>(
     `/api/venue-vouchers/${voucherId}/submit`
