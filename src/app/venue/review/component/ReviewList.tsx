@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { ReportType, Review, ReviewReply } from "@/api/venue/review/type"
 import {
     createReviewReportByOwner,
+    deleteReply,
     getReportTypes,
     replyReview,
     updateReply,
@@ -15,7 +16,7 @@ import { toast } from "sonner"
 type Props = {
     reviews: Review[]
     isLoading?: boolean
-    onReplySuccess?: (reviewId: number, reply: ReviewReply) => void
+    onReplySuccess?: (reviewId: number, reply: ReviewReply | null) => void
     canInteractReview: boolean
 }
 
@@ -111,6 +112,27 @@ export default function ReviewList({
         }
     }
 
+    const handleDeleteReply = async (reviewId: number) => {
+        try {
+            setLoading(true)
+
+            const res = await deleteReply(reviewId)
+
+            toast.success(res.message)
+
+            onReplySuccess?.(reviewId, null)
+
+
+            setActiveAction({ id: null, type: null })
+            setContent("")
+        } catch (err) {
+            toast.error("Xoá phản hồi thất bại", {
+                description: (err as Error).message,
+            })
+        } finally {
+            setLoading(false)
+        }
+    }
     // ===== Loading =====
     if (isLoading) {
         return (
@@ -218,15 +240,24 @@ export default function ReviewList({
                                             {review.reviewReply.content}
                                         </p>
 
-                                        <button
-                                            onClick={() => {
-                                                setActiveAction({ id: review.id, type: "edit" })
-                                                setContent(review.reviewReply!.content)
-                                            }}
-                                            className="text-xs text-blue-500 hover:underline cursor-pointer"
-                                        >
-                                            Chỉnh sửa
-                                        </button>
+                                        <div className="flex gap-3 mt-1">
+                                            <button
+                                                onClick={() => {
+                                                    setActiveAction({ id: review.id, type: "edit" })
+                                                    setContent(review.reviewReply!.content)
+                                                }}
+                                                className="text-xs text-blue-500 hover:underline cursor-pointer"
+                                            >
+                                                Chỉnh sửa
+                                            </button>
+
+                                            <button
+                                                onClick={() => handleDeleteReply(review.id)}
+                                                className="text-xs text-red-500 hover:underline cursor-pointer"
+                                            >
+                                                Xoá
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
 
