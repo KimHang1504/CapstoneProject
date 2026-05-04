@@ -108,7 +108,11 @@ export default function OpeningHoursModal({ locationId, openingHours, onClose, o
                       <input
                         type="checkbox"
                         checked={!schedule.isClosed}
-                        onChange={(e) => updateDay(day.value, 'isClosed', !e.target.checked)}
+                        onChange={(e) => {
+                          const isClosed = !e.target.checked;
+
+                          updateDay(day.value, 'isClosed', isClosed);
+                        }}
                         className="w-4 h-4 text-violet-600"
                       />
                     </td>
@@ -118,7 +122,21 @@ export default function OpeningHoursModal({ locationId, openingHours, onClose, o
                         format="HH:mm"
                         changeOnScroll
                         needConfirm={false}
-                        defaultValue={dayjs(schedule.openTime, 'HH:mm')}
+                        value={
+                          schedule.isClosed
+                            ? null
+                            : dayjs(schedule.openTime, 'HH:mm')
+                        }
+                        disabled={schedule.isClosed}
+                        onChange={(value) => {
+                          if (!value) return;
+
+                          updateDay(
+                            day.value,
+                            'openTime',
+                            value.format('HH:mm')
+                          );
+                        }}
                         onCalendarChange={(value) => {
                           if (!value || Array.isArray(value)) return;
 
@@ -137,7 +155,21 @@ export default function OpeningHoursModal({ locationId, openingHours, onClose, o
                         format="HH:mm"
                         changeOnScroll
                         needConfirm={false}
-                        defaultValue={dayjs(schedule.closeTime, 'HH:mm')}
+                        value={
+                          schedule.isClosed
+                            ? null
+                            : dayjs(schedule.closeTime, 'HH:mm')
+                        }
+                        disabled={schedule.isClosed}
+                        onChange={(value) => {
+                          if (!value) return;
+
+                          updateDay(
+                            day.value,
+                            'closeTime',
+                            value.format('HH:mm')
+                          );
+                        }}
                         onCalendarChange={(value) => {
                           if (!value || Array.isArray(value)) return;
                           updateDay(
