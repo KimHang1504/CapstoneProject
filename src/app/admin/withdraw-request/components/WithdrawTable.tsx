@@ -228,7 +228,7 @@ export default function WithdrawPage() {
                     status === "PENDING" ? "Chờ duyệt" :
                       status === "APPROVED" ? "Đã duyệt" :
                         status === "COMPLETED" ? "Hoàn thành" :
-                          status === "REJECTED" ? "Từ chối" : "Đã hủy"}
+                          "Từ chối"}
                 </span>
                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
               </button>
@@ -241,7 +241,6 @@ export default function WithdrawPage() {
                     { value: "APPROVED", label: "Đã duyệt", icon: CheckCircle },
                     { value: "COMPLETED", label: "Hoàn thành", icon: Check },
                     { value: "REJECTED", label: "Từ chối", icon: XCircle },
-                    { value: "CANCELLED", label: "Đã hủy", icon: Ban },
                   ].map((option) => {
                     const Icon = option.icon;
                     return (
