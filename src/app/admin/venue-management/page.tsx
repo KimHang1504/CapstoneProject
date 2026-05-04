@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { ChevronRight, Search, ChevronLeft, ChevronsLeft, ChevronsRight, MapPin, RefreshCw, X, Star, Phone, Mail, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -19,6 +19,9 @@ export default function MyLocationPage() {
     const [loading, setLoading] = useState(true);
 
     const [page, setPage] = useState(1);
+    
+    // Track the current request ID to prevent race conditions
+    const requestIdRef = useRef(0);
 
     // Stats from API
     const [stats, setStats] = useState({
@@ -29,8 +32,55 @@ export default function MyLocationPage() {
     });
 
     useEffect(() => {
-        fetchData();
+        // Increment request ID to invalidate previous requests
+        const currentRequestId = ++requestIdRef.current;
+
+        const loadData = async () => {
+            setLoading(true);
+
+            try {
+                const status = statusFilter === 'all' ? undefined : statusFilter;
+                const pageSize = 100;
+                let currentPage = 1;
+                let apiTotalPages = 1;
+                const allVenues: Venue[] = [];
+
+                do {
+                    const res = await getAllPendingVenues(currentPage, pageSize, status, undefined);
+                    
+                    // Check if this is still the latest request
+                    if (currentRequestId !== requestIdRef.current) {
+                        console.log('Request outdated, ignoring results');
+                        return;
+                    }
+                    
+                    allVenues.push(...res.data.items);
+                    apiTotalPages = res.data.totalPages;
+                    currentPage += 1;
+                } while (currentPage <= apiTotalPages && currentRequestId === requestIdRef.current);
+
+                // Only update state if this is still the latest request
+                if (currentRequestId === requestIdRef.current) {
+                    setData(allVenues);
+                    console.log('Fetched venues:', allVenues);
+                    setLoading(false);
+                }
+
+            } catch (error) {
+                if (currentRequestId === requestIdRef.current) {
+                    console.error('Error fetching venues:', error);
+                    setLoading(false);
+                }
+            }
+        };
+
+        loadData();
     }, [statusFilter]);
+
+    useEffect(() => {
+        fetchStats();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         setPage(1);
@@ -83,9 +133,6 @@ export default function MyLocationPage() {
             } while (currentPage <= apiTotalPages);
 
             setData(allVenues);
-
-            // Fetch stats for all statuses
-            await fetchStats();
             console.log('Fetched venues:', allVenues);
 
         } catch (error) {
@@ -117,7 +164,6 @@ export default function MyLocationPage() {
 
     const handleStatusChange = (status: StatusFilter) => {
         setStatusFilter(status);
-        setPage(1);
     };
 
     return (
@@ -139,7 +185,10 @@ export default function MyLocationPage() {
                             </div>
 
                             <button
-                                onClick={fetchData}
+                                onClick={() => {
+                                    fetchData();
+                                    fetchStats();
+                                }}
                                 disabled={loading}
                                 className="group px-4 py-2.5 cursor-pointer bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-violet-50 hover:border-violet-200 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow flex items-center gap-2"
                             >
