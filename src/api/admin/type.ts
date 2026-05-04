@@ -633,8 +633,28 @@ export type EvidenceSnapshot =
     targetId: number;
     capturedAt: string;
     data: UserData;
+  }
+  | {
+    targetType: "VOUCHER_ITEM";
+    targetId: number;
+    capturedAt: string;
+    data: VoucherItemData;
   };
 
+export interface VoucherItemData {
+  Id: number;
+  Status: string;
+  UsedAt: string | null;
+  ItemCode: string;
+  MemberId: number;
+  ExpiredAt: string;
+  VoucherId: number;
+  AcquiredAt: string;
+  MemberName: string;
+  VoucherTitle: string;
+  VoucherStatus: "ACTIVE" | "INACTIVE";
+  VoucherItemMemberId: number;
+}
 
 export interface PostData {
   Id: number;

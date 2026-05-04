@@ -9,7 +9,7 @@ import { getUserFromToken } from "@/utils/jwt";
 import { apiClient } from "@/lib/api-client";
 import { toast } from "sonner";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import { X, Mail, Loader2, KeyRound, Lock } from "lucide-react";
+import { X, Mail, Loader2, KeyRound, Lock, EyeOff, Eye } from "lucide-react";
 
 export default function LoginPage() {
     const nav = useRouter();
@@ -29,6 +29,10 @@ export default function LoginPage() {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [isResettingPassword, setIsResettingPassword] = useState(false);
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showNewPassword, setShowNewPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -70,7 +74,7 @@ export default function LoginPage() {
             } else if (role === "STAFF") {
                 nav.push("/venue/redeem");
             }
-            
+
         } catch (error: any) {
             toast.dismiss("login-loading");
             console.error("Error occurred while logging in:", error);
@@ -334,13 +338,23 @@ export default function LoginPage() {
                                     Quên mật khẩu?
                                 </button>
                             </div>
-                            <input
-                                type="password"
-                                placeholder="Nhập mật khẩu của bạn"
-                                className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#B388EB]"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Nhập mật khẩu của bạn"
+                                    className="w-full border border-gray-300 rounded-xl px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-[#B388EB]"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+                                >
+                                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                </button>
+                            </div>
                         </div>
 
                         <button
@@ -616,16 +630,22 @@ export default function LoginPage() {
                                     </label>
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
                                         <input
-                                            type="password"
+                                            type={showNewPassword ? "text" : "password"}
                                             value={newPassword}
                                             onChange={(e) => setNewPassword(e.target.value)}
-                                            className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none hover:border-gray-300"
+                                            className="w-full pl-11 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                                             placeholder="Nhập mật khẩu mới"
-                                            required
-                                            minLength={6}
-                                            disabled={isResettingPassword}
                                         />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+                                        >
+                                            {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
                                     </div>
                                     <p className="text-xs text-gray-500 mt-2">
                                         Mật khẩu phải có ít nhất 6 ký tự
@@ -638,16 +658,22 @@ export default function LoginPage() {
                                     </label>
                                     <div className="relative">
                                         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
                                         <input
-                                            type="password"
+                                            type={showConfirmPassword ? "text" : "password"}
                                             value={confirmPassword}
                                             onChange={(e) => setConfirmPassword(e.target.value)}
-                                            className="w-full pl-11 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all outline-none hover:border-gray-300"
+                                            className="w-full pl-11 pr-12 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                                             placeholder="Nhập lại mật khẩu mới"
-                                            required
-                                            minLength={6}
-                                            disabled={isResettingPassword}
                                         />
+
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 cursor-pointer"
+                                        >
+                                            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                                        </button>
                                     </div>
                                 </div>
 

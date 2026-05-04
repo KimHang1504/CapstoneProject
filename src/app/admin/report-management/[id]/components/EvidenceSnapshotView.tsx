@@ -4,6 +4,7 @@ import ReviewSnapshot from "./ReviewSnapshot";
 import VenueSnapshot from "./VenueSnapshot";
 import CommentSnapshot from "./CommentSnapshot";
 import UserSnapshot from "./UserSnapshot";
+import VoucherItemSnapshot from "./VoucherItemSnapshot";
 
 export default function EvidenceSnapshotView({
   snapshot,
@@ -33,6 +34,9 @@ export default function EvidenceSnapshotView({
 
     case "USER":
       return <UserSnapshot snapshot={snapshot} />;
+
+    case "VOUCHER_ITEM":
+      return <VoucherItemSnapshot snapshot={snapshot} />;
 
     default:
       return (
