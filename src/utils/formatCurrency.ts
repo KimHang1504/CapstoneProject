@@ -56,3 +56,9 @@ export const formatCurrencyShort = (value: number | null | undefined): string =>
 export const parseCurrency = (value: string): number => {
   return parseInt(value.replace(/[^\d]/g, '')) || 0;
 };
+
+export const formatCurrencyInput = (value: string) => {
+  if (!value) return "";
+  const number = value.replace(/\D/g, "");
+  return Number(number).toLocaleString("vi-VN");
+};

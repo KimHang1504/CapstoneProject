@@ -5,6 +5,7 @@ import { SubscriptionPackage, PackageType } from "@/api/admin/subscription/type"
 import { useState } from "react";
 import { toast } from "sonner";
 import { X, Pencil, Users, Building2, UserCircle } from "lucide-react";
+import { formatCurrencyInput } from "@/utils/formatCurrency";
 
 interface EditPackageModalProps {
   package: SubscriptionPackage;
@@ -163,13 +164,15 @@ export default function EditPackageModal({ package: pkg, onClose, onSuccess }: E
                 Giá (VNĐ) <span className="text-red-500">*</span>
               </label>
               <input
-                type="number"
-                min="0"
-                step="0.01"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                className={`w-full border ${errors.price ? 'border-red-300' : 'border-slate-300'} rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
-                placeholder="VD: 99000"
+                type="text"
+                value={formatCurrencyInput(formData.price)}
+                onChange={(e) => {
+                  const rawValue = e.target.value.replace(/\D/g, "");
+                  setFormData({ ...formData, price: rawValue });
+                }}
+                className={`w-full border ${errors.price ? "border-red-300" : "border-slate-300"
+                  } rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                placeholder="VD: 10.000"
               />
               {errors.price && (
                 <p className="text-xs text-red-600 mt-1.5">{errors.price}</p>

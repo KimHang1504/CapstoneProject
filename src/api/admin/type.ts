@@ -548,6 +548,7 @@ export interface Voucher {
   description: string;
 
   voucherPrice: number;
+  pointPrice: number;
 
   discountType: DiscountType;
   discountAmount: number | null;

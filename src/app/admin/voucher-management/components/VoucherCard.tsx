@@ -113,7 +113,7 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
         <div className="flex justify-between items-center mt-1 text-sm">
           <div className="flex items-center gap-2 text-violet-600 font-medium">
             <Coins className="w-4 h-4" />
-            {voucher.voucherPrice.toLocaleString("vi-VN")} đ
+            {voucher.pointPrice.toLocaleString("vi-VN")} điểm
           </div>
         </div>
 
