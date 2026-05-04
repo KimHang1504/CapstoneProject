@@ -10,6 +10,7 @@ export const MAPPING = {
         POPUP: "Popup",
     },
     adsOrderStatus: {
+        PENDING: "Đang chờ",
         COMPLETED: "Thành công",
         PAYMENT_FAILED: "Thất bại",
         CANCELLED: "Đã huỷ",
@@ -37,6 +38,7 @@ export const getMappingLabel = (
 
 export const STATUS_STYLE = {
     adsOrderStatus: {
+        PENDING: "bg-amber-100 text-amber-700",
         COMPLETED: "bg-green-100 text-green-700",
         PAYMENT_FAILED: "bg-red-100 text-red-700",
         CANCELLED: "bg-gray-100 text-gray-700",

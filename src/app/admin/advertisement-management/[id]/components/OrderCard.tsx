@@ -32,21 +32,22 @@ export function OrderCard({ orders }: any) {
               <div className="flex-1">
                 <p className="font-semibold text-slate-800 mb-1">{getMappingLabel("adPackageName", o.packageName)}</p>
                 {o.pricePaid != null && (
-                  <div className="flex items-center gap-1.5 text-green-600">
+                  <div className="flex items-center gap-1.5 text-green-600 mb-2">
                     <DollarSign className="w-4 h-4" />
-
                     <span className="text-lg font-bold">
                       {o.pricePaid.toLocaleString("vi-VN")} đ
                     </span>
                   </div>
                 )}
-                <div>
-                    Ngày tạo:{o.createdAt && new Date(o.createdAt).toLocaleDateString("vi-VN", {
+                {o.createdAt && (
+                  <p className="text-xs text-slate-500">
+                    Ngày tạo: {new Date(o.createdAt).toLocaleDateString("vi-VN", {
                       day: "2-digit",
                       month: "2-digit",
-                      year: "2-digit",
-                    })} 
-                </div>
+                      year: "numeric",
+                    })}
+                  </p>
+                )}
               </div>
               <span
                 className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusStyle(
