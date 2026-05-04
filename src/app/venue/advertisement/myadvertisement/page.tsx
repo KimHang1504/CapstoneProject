@@ -44,15 +44,17 @@ export default function AdvertisementPage() {
     fetchAds();
   }, []);
 
-  const total = ads.length;
-  const approved = ads.filter((ad) => ad.status === "APPROVED").length;
-  const pending = ads.filter((ad) => ad.status === "PENDING").length;
-  const draft = ads.filter((ad) => ad.status === "DRAFT").length;
-  const rejected = ads.filter((ad) => ad.status === "REJECTED").length;
+  const activeAds = ads.filter((ad) => !ad.isDeleted);
+  const total = activeAds.length;
+  const approved = activeAds.filter((ad) => ad.status === "APPROVED").length;
+  const pending = activeAds.filter((ad) => ad.status === "PENDING").length;
+  const draft = activeAds.filter((ad) => ad.status === "DRAFT").length;
+  const rejected = activeAds.filter((ad) => ad.status === "REJECTED").length;
   console.log("rejected ads", rejected);
 
   const filteredAds = useMemo(() => {
     return ads
+      .filter((ad) => !ad.isDeleted) // Ẩn ads đã xóa
       .filter((ad) => status === "ALL" || ad.status === status)
       .filter((ad) =>
         ad.title.toLowerCase().includes(searchKeyword.toLowerCase())
@@ -71,8 +73,8 @@ export default function AdvertisementPage() {
 
   const countByPlacement = (placement: string) =>
     placement === "ALL"
-      ? ads.length
-      : ads.filter((ad) => ad.placementType === placement).length;
+      ? activeAds.length
+      : activeAds.filter((ad) => ad.placementType === placement).length;
 
   const handleDelete = (id: number) => {
     setAds((prev) => prev.filter((ad) => ad.id !== id));

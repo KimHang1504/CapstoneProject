@@ -12,6 +12,16 @@ import { toast } from "sonner";
 import EvidenceSnapshotView from "./components/EvidenceSnapshotView";
 import { CheckCircle, Clock, XCircle } from "lucide-react";
 
+// Mapping targetType sang tiếng Việt
+const TARGET_TYPE_LABELS: Record<string, string> = {
+  POST: "Bài viết",
+  REVIEW: "Đánh giá",
+  USER: "Người dùng",
+  VENUE: "Địa điểm",
+  COMMENT: "Bình luận",
+  VOUCHER_ITEM: "Voucher"
+};
+
 export default function ReportDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -151,7 +161,7 @@ export default function ReportDetailPage() {
             label="Loại mục tiêu"
             value={
               <span className="px-2 py-1 bg-indigo-100 text-indigo-600 rounded-md text-xs">
-                {report.targetType}
+                {TARGET_TYPE_LABELS[report.targetType] || report.targetType}
               </span>
             }
           />

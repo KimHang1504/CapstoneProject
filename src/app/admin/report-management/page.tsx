@@ -20,7 +20,8 @@ import {
     FileText,
     MessageSquare,
     Star,
-    MapPin
+    MapPin,
+    Ticket
 } from "lucide-react";
 
 const PAGE_SIZE = 5;
@@ -219,7 +220,8 @@ export default function ReportPage() {
                                             targetType === "COMMENT" ? "Bình luận" :
                                                 targetType === "REVIEW" ? "Đánh giá" :
                                                     targetType === "USER" ? "Người dùng" :
-                                                        targetType === "VENUE" ? "Địa điểm" : targetType}
+                                                        targetType === "VENUE" ? "Địa điểm" :
+                                                            targetType === "VOUCHER_ITEM" ? "Voucher" : targetType}
                                 </span>
                                 <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${targetTypeDropdownOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -233,6 +235,7 @@ export default function ReportPage() {
                                         { value: "REVIEW", label: "Đánh giá", icon: Star },
                                         { value: "USER", label: "Người dùng", icon: User },
                                         { value: "VENUE", label: "Địa điểm", icon: MapPin },
+                                        { value: "VOUCHER_ITEM", label: "Voucher", icon: Ticket },
                                     ].map((option) => {
                                         const Icon = option.icon;
                                         return (
@@ -434,6 +437,7 @@ function TargetTypeBadge({ type }: { type: string }) {
         REVIEW: { label: "Đánh giá", icon: Star, color: "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border-amber-200" },
         USER: { label: "Người dùng", icon: User, color: "bg-gradient-to-r from-green-50 to-emerald-50 text-green-700 border-green-200" },
         VENUE: { label: "Địa điểm", icon: MapPin, color: "bg-gradient-to-r from-rose-50 to-pink-50 text-rose-700 border-rose-200" },
+        VOUCHER_ITEM: { label: "Voucher", icon: Ticket, color: "bg-gradient-to-r from-orange-50 to-amber-50 text-orange-700 border-orange-200" },
     };
 
     const style = config[type] || { label: type, icon: FileText, color: "bg-slate-50 text-slate-700 border-slate-200" };
