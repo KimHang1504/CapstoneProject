@@ -209,14 +209,16 @@ export default function ReviewList({
                                     {review.likeCount}
                                 </span>
 
-                                <button
-                                    onClick={() =>
-                                        setActiveAction({ id: review.id, type: "report" })
-                                    }
-                                    className="hover:text-red-500 cursor-pointer"
-                                >
-                                    Báo cáo
-                                </button>
+                                {canInteractReview && (
+                                    <button
+                                        onClick={() =>
+                                            setActiveAction({ id: review.id, type: "report" })
+                                        }
+                                        className="hover:text-red-500 cursor-pointer"
+                                    >
+                                        Báo cáo
+                                    </button>
+                                )}
 
                                 {!review.reviewReply && canInteractReview && (
                                     <button
