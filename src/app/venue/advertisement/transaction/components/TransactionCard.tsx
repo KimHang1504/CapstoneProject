@@ -167,10 +167,8 @@ export default function TransactionCard({ item }: { item: AdsOrderTransaction })
             <div className="text-left sm:text-right shrink-0 w-full sm:w-auto">
               {item.payment.amount > 0 && (
                 <p className={`text-xl sm:text-lg font-bold ${item.status === 'REFUNDED'
-                  ? 'text-sky-500'
-                  : item.status === 'COMPLETED'
-                    ? 'text-emerald-600'
-                    : 'text-gray-700'
+                  ? 'text-emerald-600'
+                  : 'text-rose-600'
                   }`}>
                   {getAmountDisplay(item.status, item.payment.amount)}
                 </p>
