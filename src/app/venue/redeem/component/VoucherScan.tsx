@@ -100,13 +100,13 @@ export default function VoucherScan({ venueLocationId }: Props) {
                 venueLocationId,
             });
 
-            setMessage("Redeem voucher thành công!");
+            setMessage("Sử dụng voucher thành công!");
             setValid(false);
             setCode("");
             setValidatedCode("");
         } catch (err: any) {
             setMessage(
-                err?.response?.data?.message || "Redeem thất bại"
+                err?.response?.data?.message || "Sử dụng voucher thất bại"
             );
         } finally {
             setLoading(false);

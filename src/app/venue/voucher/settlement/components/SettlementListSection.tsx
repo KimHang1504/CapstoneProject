@@ -49,7 +49,7 @@ const getStatusMeta = (status: SettlementItem["status"]) => {
             };
         case "DISPUTED":
             return {
-                label: "tranh chấp",
+                label: "Tranh chấp",
                 className: "bg-amber-50 text-amber-700 border-amber-200",
             };
         default:
@@ -216,6 +216,10 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                                 ) : item.status === "CANCELLED" ? (
                                                     <span className="inline-flex items-center px-2 py-1 text-xs text-rose-600">
                                                         Đã hủy
+                                                    </span>
+                                                ) : item.status === "DISPUTED" ? (
+                                                    <span className="inline-flex items-center px-2 py-1 text-xs text-amber-600">
+                                                        Đang tranh chấp
                                                     </span>
                                                 ) : item.status === "PENDING" ? (
                                                     <span className="inline-flex items-center px-2 py-1 text-xs text-violet-600">

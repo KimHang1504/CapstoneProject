@@ -88,8 +88,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
       case "voucherPrice":
         // if (value == null) return "Vui lòng nhập giá đổi";
-        if (value < 0) return "Giá đổi không được âm";
-        if (value > 100_000_000) return "Không vượt quá 100,000,000";
+        if (value <= 1000) return "Giá đổi phải lớn hơn 1000 VND";
+        if (value > 100_000_000) return "Không vượt quá 100,000,000 VND";
         return "";
 
       case "quantity": {
@@ -99,7 +99,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
 
         if (num <= 0) return "Số lượng phải > 0";
-        if (num > 100_000) return "Không vượt quá 100,000";
+        if (num > 200) return "Không vượt quá 200";
 
         return "";
       }
@@ -111,6 +111,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
 
         if (num <= 0) return "Phải > 0";
+        if (num >= 5) return "Không vượt quá 5";
 
         if (form.quantity != null && num > form.quantity)
           return "Không vượt quá số lượng";
@@ -124,7 +125,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         const num = Number(value);
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
         if (num <= 0) return "Phải > 0";
-        if (num > 365) return "Không vượt quá 365 ngày";
+        if (num > 14) return "Không vượt quá 14 ngày";
         return "";
 
       case "discountAmount": {
@@ -841,7 +842,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       {/* PRICE + QUANTITY */}
       <div className="grid grid-cols-2 gap-5">
         <FieldWrapper>
-          <label className={labelClass}>Giá đổi <span className="text-red-500">*</span></label>
+          <label className={labelClass}>Giá đổi (VND) <span className="text-red-500">*</span></label>
           <input
             type="number"
             value={form.voucherPrice ?? ""}
