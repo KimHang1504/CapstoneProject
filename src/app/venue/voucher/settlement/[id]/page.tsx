@@ -19,7 +19,7 @@ const formatDateTime = (value: string | null) => {
 const getStatusMeta = (status: string) => {
   switch (status) {
     case "PENDING":
-      return { label: "Chờ đối soát", color: "violet" };
+      return { label: "Chờ quyết toán", color: "violet" };
     case "PAID":
       return { label: "Đã thanh toán", color: "emerald" };
     case "CANCELLED":

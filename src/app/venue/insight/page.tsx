@@ -365,7 +365,7 @@ export default function InsightPage() {
 
                   {/* Hot Moods */}
                   <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-                    <SectionTitle icon={Smile}>Tâm trạng nổi bật hiện tại</SectionTitle>
+                    <SectionTitle icon={Smile}>Tâm trạng cá nhân nổi bật hiện tại</SectionTitle>
                     <div className="h-56">
                       {inner.hotMoods.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center px-4">
@@ -428,7 +428,7 @@ export default function InsightPage() {
 {/* Mood Trends - Line Chart */}
 {inner.moodTrendsByMonth.length > 0 && (
   <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
-    <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng</SectionTitle>
+    <SectionTitle icon={TrendingUp}>Xu hướng tâm trạng cặp đôi</SectionTitle>
 
     <div className="h-64">
       <ResponsiveContainer width="100%" height="100%">

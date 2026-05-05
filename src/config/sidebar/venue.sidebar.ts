@@ -79,7 +79,7 @@ export const venueSidebarConfig: SidebarConfig = {
           icon: 'Megaphone',
         },
         {
-          label: 'Lịch sử mua quảng cáo',
+          label: 'Lịch sử mua',
           href: '/venue/advertisement/transaction',
           icon: 'FileText',
         },
