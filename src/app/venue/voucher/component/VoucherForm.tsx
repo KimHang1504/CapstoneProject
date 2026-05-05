@@ -11,6 +11,7 @@ import {
   Wand2,
 } from "lucide-react";
 import Tiptap from "@/components/Tiptap";
+import MiniDatePicker from "@/components/MiniDatePicker";
 import { getCommissionPercent } from "@/api/venue/settlement/api";
 
 type Props = {
@@ -88,8 +89,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
       case "voucherPrice":
         // if (value == null) return "Vui lòng nhập giá đổi";
-        if (value < 0) return "Giá đổi không được âm";
-        if (value > 100_000_000) return "Không vượt quá 100,000,000";
+        if (value <= 1000) return "Giá đổi phải lớn hơn 1000 VND";
+        if (value > 100_000_000) return "Không vượt quá 100,000,000 VND";
         return "";
 
       case "quantity": {
@@ -98,8 +99,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         const num = Number(value);
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
 
-        if (num <= 0) return "Số lượng phải > 0";
-        if (num > 100_000) return "Không vượt quá 100,000";
+        if (num <= 0) return "Số lượng phải trên 0";
+        if (num > 200) return "Không vượt quá 200";
 
         return "";
       }
@@ -110,7 +111,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         const num = Number(value);
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
 
-        if (num <= 0) return "Phải > 0";
+        if (num <= 0) return "Phải trên 0";
+        if (num >= 5) return "Không vượt quá 5";
 
         if (form.quantity != null && num > form.quantity)
           return "Không vượt quá số lượng";
@@ -123,8 +125,8 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
         const num = Number(value);
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
-        if (num <= 0) return "Phải > 0";
-        if (num > 365) return "Không vượt quá 365 ngày";
+        if (num <= 0) return "Hạn sử dụng phải trên 0 ngày";
+        if (num > 14) return "Không vượt quá 14 ngày";
         return "";
 
       case "discountAmount": {
@@ -136,9 +138,9 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
 
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
 
-        if (num <= 0) return "Số tiền giảm phải > 0";
+        if (num <= 0) return "Số tiền giảm phải trên 0 VND";
 
-        if (num > 100_000_000) return "Không vượt quá 100,000,000";
+        if (num > 100_000_000) return "Không vượt quá 100,000,000 VND";
 
         return "";
       }
@@ -146,7 +148,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       case "discountPercent":
         if (form.discountType !== "PERCENTAGE") return "";
         if (value == null) return "Nhập % giảm";
-        if (value <= 0) return "Phải > 0";
+        if (value <= 0) return "Phải trên 0";
         if (value > 100) return "Không vượt quá 100%";
         return "";
 
@@ -841,7 +843,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       {/* PRICE + QUANTITY */}
       <div className="grid grid-cols-2 gap-5">
         <FieldWrapper>
-          <label className={labelClass}>Giá đổi <span className="text-red-500">*</span></label>
+          <label className={labelClass}>Giá đổi (VND) <span className="text-red-500">*</span></label>
           <input
             type="number"
             value={form.voucherPrice ?? ""}
@@ -963,20 +965,13 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
       {/* DATE */}
       <div className="grid grid-cols-2 gap-5">
         <FieldWrapper>
-          <label className={labelClass}>Ngày bắt đầu <span className="text-red-500">*</span></label>
-          <input
-            type="date"
+          <MiniDatePicker
+            label="Ngày bắt đầu"
             value={form.startDate}
-            onChange={(e) => handleChange("startDate", e.target.value)}
+            onChange={(e) => handleChange("startDate", e)}
             min={getMinStartDate()}
-            className={`
-                  w-full mt-2 border rounded-xl px-4 py-3 text-sm text-gray-800 bg-white
-                  focus:outline-none focus:ring-1 transition placeholder-gray-300
-                  ${errors.startDate
-                ? "border-red-500 focus:ring-red-500 focus:border-red-500"
-                : "border-violet-200 focus:ring-violet-400 focus:border-transparent"
-              }
-            `}
+            placeholder="DD/MM/YYYY"
+            error={!!errors.startDate}
           />
           {errors.startDate && (
             <p className="text-red-500 text-xs mt-1">
@@ -987,15 +982,15 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         </FieldWrapper>
 
         <FieldWrapper>
-          <label className={labelClass}>Ngày kết thúc <span className="text-red-500">*</span></label>
-          <input
-            type="date"
+          <MiniDatePicker
+            label="Ngày kết thúc"
             value={form.endDate}
-            onChange={(e) => handleChange("endDate", e.target.value)}
+            onChange={(e) => handleChange("endDate", e)}
             min={getMinEndDate()}
             max={getMaxEndDate()}
             disabled={!form.startDate}
-            className={`${inputClass} ${!form.startDate ? "opacity-50 cursor-not-allowed" : ""}`}
+            placeholder="DD/MM/YYYY"
+            error={!!errors.endDate}
           />
           {errors.endDate && (
             <p className="text-red-500 text-xs mt-1">

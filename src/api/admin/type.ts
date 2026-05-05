@@ -657,6 +657,10 @@ export interface VoucherItemData {
   VoucherItemMemberId: number;
 }
 
+export type DisableVoucherRequest = {
+  reason: string;
+};
+
 export interface PostData {
   Id: number;
   Status: "PUBLISHED" | "DRAFT" | string;

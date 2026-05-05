@@ -194,7 +194,7 @@ export default function Contact({ formData, setFormData }: Props) {
 
       setFormData((prev) => ({
         ...prev,
-        address: clean(displayName), // ✅ FIX HERE
+        address: clean(displayName),
         latitude: lat,
         longitude: lon,
       }))

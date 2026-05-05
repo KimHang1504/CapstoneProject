@@ -13,6 +13,7 @@ export default async function VoucherDetailPage({ params }: Props) {
     const { id } = await params;
     const res = await getVoucherDetail(id);
     const voucher = res.data;
+    console.log("Voucher detail:", voucher);
 
     const formatDate = (date: string) => {
         return new Date(date).toLocaleDateString('vi-VN');
