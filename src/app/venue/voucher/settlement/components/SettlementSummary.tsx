@@ -11,7 +11,7 @@ export default async function SettlementSummary() {
 
     const amountCards = [
         {
-            label: "Chờ đối soát",
+            label: "Chờ quyết toán",
             value: formatCurrency(s.pendingAmount),
             count: s.pendingCount,
             icon: Wallet,
@@ -49,7 +49,7 @@ export default async function SettlementSummary() {
 
             <div className="relative">
                 <h2 className="text-2xl font-bold text-slate-900">
-                    Đối soát voucher
+                    Quyết toán voucher
                 </h2>
                 <p className="mt-1 text-sm text-slate-500">
                     Tổng tiền nhận được từ voucher theo từng trạng thái.

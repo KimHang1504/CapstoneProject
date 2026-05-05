@@ -123,12 +123,12 @@ export default function VenueLocationForm({ mode, locationId, initialData }: Ven
       }
       // VALIDATE PRICE
       if (formData.priceMin !== null && formData.priceMin < 0) {
-        toast.error("Giá tối thiểu phải ≥ 0");
+        toast.error("Giá tối thiểu phải từ 0 VND trở lên");
         return;
       }
 
       if (formData.priceMax != null && formData.priceMax <= 0) {
-        toast.error("Giá tối đa phải > 0");
+        toast.error("Giá tối đa phải trên 0 VND");
         return;
       }
 

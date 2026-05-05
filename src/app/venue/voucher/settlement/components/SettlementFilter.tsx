@@ -217,7 +217,7 @@ function MiniDatePicker({
 // ── Main Component ───────────────────────────────────────────────
 const STATUS_OPTIONS = [
     { label: "Tất cả trạng thái", value: "" },
-    { label: "Chờ đối soát", value: "PENDING" },
+    { label: "Chờ quyết toán", value: "PENDING" },
     { label: "Đã thanh toán", value: "PAID" },
     { label: "Đã huỷ", value: "CANCELLED" },
 ];
