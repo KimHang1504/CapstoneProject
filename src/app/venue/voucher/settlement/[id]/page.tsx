@@ -54,7 +54,7 @@ export default async function Page({ params }: Props) {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">
-            Đối soát cho {data.voucherTitle}
+            Quyết toán cho {data.voucherTitle}
           </h1>
           <p className="text-sm text-slate-500">
             #{data.settlementId}

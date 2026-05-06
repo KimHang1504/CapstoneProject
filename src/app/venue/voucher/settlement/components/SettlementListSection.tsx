@@ -114,7 +114,7 @@ export default async function SettlementListSection({ searchParams }: Props) {
             {data.items.length === 0 ? (
                 <div className="rounded-3xl border border-dashed border-violet-200 bg-linear-to-br from-violet-50 to-pink-50 p-10 text-center">
                     <h3 className="text-lg font-semibold text-slate-800">
-                        Không có dữ liệu đối soát
+                        Không có dữ liệu quyêt toán
                     </h3>
                     <p className="mt-1 text-sm text-slate-500">
                         Hãy thử thay đổi bộ lọc hoặc khoảng thời gian tìm kiếm.
@@ -134,7 +134,7 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                     <th className="px-5 py-4 font-semibold">Tỷ lệ hoa hồng</th>
                                     <th className="px-5 py-4 font-semibold">Trạng thái</th>
                                     <th className="px-5 py-4 font-semibold">Đã dùng lúc</th>
-                                    <th className="px-5 py-4 font-semibold">Có thể đối soát</th>
+                                    <th className="px-5 py-4 font-semibold">Có thể quyết toán</th>
                                     <th className="px-5 py-4 font-semibold">Đã thanh toán</th>
                                 </tr>
                             </thead>
