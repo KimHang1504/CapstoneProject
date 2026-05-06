@@ -114,6 +114,7 @@ export default function AdvertisementCard({ ad, onDeleted }: Props) {
         </div>
 
         {/* Row 2 - DELETE CENTER */}
+        {ad.status === "DRAFT" && (
         <div className="mt-2 bg-red-50 rounded-lg py-2 flex justify-center">
           <button
             onClick={(e) => {
@@ -145,6 +146,7 @@ export default function AdvertisementCard({ ad, onDeleted }: Props) {
             Xóa
           </button>
         </div>
+        )}
       </div>
     </div>
   );

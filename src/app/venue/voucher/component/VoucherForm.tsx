@@ -112,7 +112,7 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
         if (Number.isNaN(num)) return "Giá trị không hợp lệ";
 
         if (num <= 0) return "Phải trên 0";
-        if (num >= 5) return "Không vượt quá 5";
+        // if (num >= 5) return "Không vượt quá 5";
 
         if (form.quantity != null && num > form.quantity)
           return "Không vượt quá số lượng";
