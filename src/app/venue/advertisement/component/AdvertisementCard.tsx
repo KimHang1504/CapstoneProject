@@ -115,37 +115,37 @@ export default function AdvertisementCard({ ad, onDeleted }: Props) {
 
         {/* Row 2 - DELETE CENTER */}
         {ad.status === "DRAFT" && (
-        <div className="mt-2 bg-red-50 rounded-lg py-2 flex justify-center">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
+          <div className="mt-2 bg-red-50 rounded-lg py-2 flex justify-center">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
 
-              toast("Xóa quảng cáo này?", {
-                description: "Hành động này không thể hoàn tác sau.",
-                action: {
-                  label: "Xóa",
-                  onClick: async () => {
-                    try {
-                      await softDeleteAdvertisement(ad.id);
-                      toast.success("Đã xóa quảng cáo");
-                      onDeleted?.(ad.id);
-                    } catch (err: any) {
-                      toast.error(err.message || "Xóa thất bại");
-                    }
+                toast("Xóa quảng cáo này?", {
+                  description: "Hành động này không thể hoàn tác sau.",
+                  action: {
+                    label: "Xóa",
+                    onClick: async () => {
+                      try {
+                        await softDeleteAdvertisement(ad.id);
+                        toast.success("Đã xóa quảng cáo");
+                        onDeleted?.(ad.id);
+                      } catch (err: any) {
+                        toast.error(err.message || "Xóa thất bại");
+                      }
+                    },
                   },
-                },
-                cancel: {
-                  label: "Hủy",
-                  onClick: () => { }, // optional
-                },
-              });
-            }}
-            className="flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-600 transition"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            Xóa
-          </button>
-        </div>
+                  cancel: {
+                    label: "Hủy",
+                    onClick: () => { }, // optional
+                  },
+                });
+              }}
+              className="flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-600 transition"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Xóa
+            </button>
+          </div>
         )}
       </div>
     </div>

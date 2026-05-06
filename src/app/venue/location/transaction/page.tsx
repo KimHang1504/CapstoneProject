@@ -10,6 +10,7 @@ const statusConfig: Record<string, { label: string; badge: string; dot: string }
   // PENDING_PAYMENT: { label: "Chờ thanh toán", badge: "bg-amber-50 text-amber-700 border-amber-200",       dot: "bg-amber-400" },
   REFUNDED: { label: "Đã hoàn tiền", badge: "bg-blue-50 text-blue-600 border-blue-200", dot: "bg-blue-400" },
   EXPIRED: { label: "Hết hạn", badge: "bg-rose-50 text-rose-600 border-rose-200", dot: "bg-rose-400" },
+  
 };
 
 const ITEMS_PER_PAGE = 5;
@@ -66,6 +67,8 @@ export default function SubscriptionTransactionPage() {
               // { label: "Chờ thanh toán", value: "PENDING_PAYMENT" },
               { label: "Đã hủy", value: "CANCELLED" },
               { label: "Đã hoàn tiền", value: "REFUNDED" },
+              { label: "Đã hết hạn ", value: "EXPIRED" },
+
             ].map((f) => (
               <button
                 key={f.value}
@@ -75,7 +78,8 @@ export default function SubscriptionTransactionPage() {
                   : "bg-white text-gray-500 border border-violet-100 hover:border-violet-300"
                   }`}
               >
-                {f.label} ({countByStatus(f.value)})
+                {f.label} 
+                {/* ({countByStatus(f.value)}) */}
               </button>
             ))}
           </div>
