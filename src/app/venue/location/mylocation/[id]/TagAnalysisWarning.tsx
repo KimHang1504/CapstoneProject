@@ -99,7 +99,7 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
     return (
         <div className="space-y-3">
             {/* Most Popular Tag Suggestion - card riêng biệt */}
-            {analysis.mostPopularTag && (
+            {/* {analysis.mostPopularTag && (
                 <div className="rounded-xl border border-blue-200 bg-blue-50">
                     <div className="py-3 px-4">
                         <div className="flex items-start gap-2.5">
@@ -124,7 +124,7 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
                         </div>
                     </div>
                 </div>
-            )}
+            )} */}
 
             {/* Warning box - chỉ hiển thị nếu có tags cần cảnh báo */}
             {hasWarnings && (
