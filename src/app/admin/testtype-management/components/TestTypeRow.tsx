@@ -1,6 +1,6 @@
 import { TestTypeRowProps } from "@/app/admin/testtype-management/types";
 import Link from "next/link";
-import { Edit2, Upload } from "lucide-react";
+import { Edit2, Trash2, Upload } from "lucide-react";
 
 export default function TestTypeRow({
   item,
@@ -9,6 +9,7 @@ export default function TestTypeRow({
   importingId,
   onStartEdit,
   onImportFile,
+  onDelete,
 }: TestTypeRowProps) {
   return (
     <tr className="border-b border-slate-100 hover:bg-violet-50/30 transition-colors duration-150">
@@ -51,11 +52,10 @@ export default function TestTypeRow({
 
       <td className="px-4 py-4">
         <span
-          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-            item.isActive
+          className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${item.isActive
               ? "bg-green-50 text-green-700 border border-green-200"
               : "bg-slate-50 text-slate-600 border border-slate-200"
-          }`}
+            }`}
         >
           {item.isActive ? "Hoạt động" : "Không hoạt động"}
         </span>
@@ -86,11 +86,10 @@ export default function TestTypeRow({
             />
 
             <span
-              className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 shadow-md ${
-                importingId === item.id
+              className={`inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 shadow-md ${importingId === item.id
                   ? "bg-slate-400 text-white cursor-not-allowed"
                   : "bg-linear-to-r from-violet-500 to-purple-500 text-white hover:shadow-lg"
-              }`}
+                }`}
             >
               {importingId === item.id ? (
                 <>
@@ -105,6 +104,14 @@ export default function TestTypeRow({
               )}
             </span>
           </label>
+          <button
+            onClick={() => onDelete(item.id)}
+            disabled={isCreating || editingId !== null}
+            className="group inline-flex cursor-pointer items-center gap-1.5 px-3 py-2 bg-red-50 text-red-600 text-sm font-medium rounded-lg hover:bg-red-100 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Trash2 size={14} />
+            <span>Xóa</span>
+          </button>
         </div>
       </td>
     </tr>

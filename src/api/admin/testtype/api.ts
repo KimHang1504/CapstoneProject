@@ -46,3 +46,9 @@ export const activateQuestionVersion = (id: number, version: number) => {
 export const updateTestType = (id: number, body: CreateTestTypeRequest) => {
   return apiClient.put<ApiResponse<TestType>>(`/api/TestType/${id}`, body);
 };
+
+export const deleteTestType = (id: number) => {
+  return apiClient.delete<ApiResponse<null>>(
+    `/api/TestType/${id}/delete`
+  );
+};
