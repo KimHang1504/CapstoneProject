@@ -22,6 +22,7 @@ export default function TestTypeTable({
   onSaveEdit,
   onCancelEdit,
   onImportFile,
+  onDelete,
 }: TestTypeTableProps) {
   return (
     <div className="bg-white rounded-lg border border-slate-200 overflow-hidden shadow-sm">
@@ -88,6 +89,7 @@ export default function TestTypeTable({
                         importingId={importingId}
                         onStartEdit={onStartEdit}
                         onImportFile={onImportFile}
+                        onDelete={onDelete}
                       />
                     );
                   })}

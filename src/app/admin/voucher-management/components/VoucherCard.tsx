@@ -176,7 +176,7 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
                     toast.success("Đã vô hiệu hóa voucher");
                     console.log("Voucher disabled:", voucher.id);
 
-                    // window.location.reload();
+                    window.location.reload();
                   } catch (error: any) {
                     toast.error(error.message || "Thất bại");
                     console.log("Error disabling voucher:", error);
