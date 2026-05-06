@@ -2,6 +2,7 @@
 
 import {
   createTestType,
+  deleteTestType,
   getAllTestTypes,
   importQuestionsForTestType,
   updateTestType,
@@ -11,6 +12,7 @@ import { useEffect, useState } from "react";
 import { TestTypeRowForm } from "./types";
 import TestTypeTable from "@/app/admin/testtype-management/components/TestTypeTable";
 import { RefreshCw, Plus, ListChecks } from "lucide-react";
+import { toast } from "sonner";
 
 const initialNewRow: TestTypeRowForm = {
   name: "",
@@ -76,6 +78,58 @@ export default function TestTypePage() {
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleDelete = (id: number) => {
+    toast.custom((t) => (
+      <div className="bg-white rounded-xl shadow-lg border border-red-300 p-4 w-[320px] space-y-3">
+        <h4 className="font-semibold text-gray-800 text-sm">
+          Xóa loại bài kiểm tra tính cách
+        </h4>
+
+        <p className="text-sm text-gray-600">
+          Bạn có chắc muốn xóa không?
+        </p>
+
+        <div className="flex justify-end gap-2">
+          <button
+            onClick={() => toast.dismiss(t)}
+            className="px-3 py-1.5 text-sm border border-gray-300 rounded-md"
+          >
+            Hủy
+          </button>
+
+          <button
+            onClick={async () => {
+              toast.dismiss(t);
+
+              const loadingId = toast.loading("Đang xóa...");
+
+              try {
+                const res = await deleteTestType(id);
+
+                await refreshList();
+
+                toast.success(
+                  res.message || "Xóa thành công",
+                  { id: loadingId }
+                );
+              } catch (error: any) {
+                console.error(error);
+
+                toast.error(
+                  error?.message || "Xóa thất bại",
+                  { id: loadingId }
+                );
+              }
+            }}
+            className="px-3 py-1.5 text-sm bg-red-500 text-white rounded-md hover:bg-red-600"
+          >
+            Xóa
+          </button>
+        </div>
+      </div>
+    ));
   };
 
   const validateRow = (row: TestTypeRowForm) => {
@@ -297,6 +351,7 @@ export default function TestTypePage() {
           onSaveEdit={handleSaveEdit}
           onCancelEdit={handleCancelEdit}
           onImportFile={handleImportFile}
+          onDelete={handleDelete}
         />
 
         {/* MESSAGES */}

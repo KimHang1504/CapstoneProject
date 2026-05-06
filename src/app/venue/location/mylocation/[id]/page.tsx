@@ -11,7 +11,7 @@ import { getMe } from '@/api/auth/api';
 import { UserProfile } from '@/api/auth/type';
 
 import ReviewSection from '@/app/venue/review/component/ReviewSection';
-import { XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info } from 'lucide-react';
+import { XCircle, Send, Pencil, Mail, Phone, Globe, MapPin, Edit2, Info, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { geocodeAddress } from '@/api/geocode/nominatim';
 import OpeningHoursModal from './OpeningHoursModal';
 import FieldDisplay from '@/components/fielddisplay/FieldDisplay';
@@ -294,6 +294,7 @@ export default function LocationDetailPage() {
                         </div>
                     </div>
 
+
                     <div className="flex justify-end gap-3">
                         {/* SUBMIT */}
                         {canSubmitForApproval && !isPending && (
@@ -323,6 +324,38 @@ export default function LocationDetailPage() {
                         </button>
                     </div>
                 </div>
+
+                {location.status === 'ACTIVE' && (
+                    <div className="mt-3 relative overflow-hidden rounded-xl border border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 px-4 py-3">
+
+                        {/* glow effect */}
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-200/30 rounded-full blur-2xl" />
+
+                        <div className="relative flex items-start gap-3">
+                            <div className="mt-0.5 text-emerald-600">
+                                <CheckCircle2 size={18} />
+                            </div>
+
+                            <div className="flex-1">
+                                <p className="text-sm font-semibold text-gray-900">
+                                    Địa điểm đã được kích hoạt
+                                </p>
+
+                                <p className="text-sm text-gray-600">
+                                    Kiểm tra Gmail để nhận thông tin tài khoản nhân viên và bắt đầu vận hành.
+                                </p>
+                            </div>
+
+                            <button
+                                onClick={() => window.open("https://mail.google.com/mail/u/0/#inbox", "_blank")}
+                                className="text-sm cursor-pointer font-medium text-emerald-600 hover:text-emerald-700"
+                            >
+                                Mở Gmail
+                                <ArrowRight size={14} />
+                            </button>
+                        </div>
+                    </div>
+                )}
 
 
                 {location.rejectionDetails?.length ? (
@@ -617,7 +650,12 @@ export default function LocationDetailPage() {
                         <div className="flex gap-3 items-center bg-white rounded-2xl p-4">
                             <Mail />
                             <FieldDisplay value={location.email} label="email" onEdit={handleEdit}>
-                                <p className="text-sm text-gray-700">{location.email}</p>
+                                <p
+                                    className="text-sm text-gray-700 max-w-[200px] truncate"
+                                    title={location.email}
+                                >
+                                    {location.email}
+                                </p>
                             </FieldDisplay>
                         </div>
 
@@ -631,7 +669,12 @@ export default function LocationDetailPage() {
                         <div className="flex gap-3 items-center bg-white rounded-2xl p-4">
                             <Globe />
                             <FieldDisplay value={location.websiteUrl} label="website" onEdit={handleEdit}>
-                                <p className="text-sm text-gray-700">{location.websiteUrl}</p>
+                                <p
+                                    className="text-sm text-gray-700 max-w-[200px] truncate"
+                                    title={location.websiteUrl}
+                                >
+                                    {location.websiteUrl}
+                                </p>
                             </FieldDisplay>
                         </div>
                     </div>
