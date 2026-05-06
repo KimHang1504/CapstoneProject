@@ -65,10 +65,6 @@ export function PostCardModeration({ post, onApprove, onReject }: any) {
             <span className="font-medium text-slate-800">
               {post.author.fullName}
             </span>
-            {" • "}
-            <span className="text-red-500">
-              {post.author.violationCount ?? 0} vi phạm
-            </span>
           </div>
         </div>
 

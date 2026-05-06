@@ -66,10 +66,6 @@ export function ReviewCardModeration({ review, onApprove, onReject }: any) {
             <span className="font-medium text-slate-800">
               {review.member.displayName}
             </span>
-            {" • "}
-            <span className="text-red-500">
-              {review.member.violationCount ?? 0} vi phạm
-            </span>
           </div>
         </div>
 
