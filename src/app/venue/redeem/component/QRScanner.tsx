@@ -7,6 +7,8 @@ type Props = {
     onScan: (code: string) => void;
 };
 
+
+
 export default function QRScanner({ onScan }: Props) {
     const scannerRef = useRef<Html5Qrcode | null>(null);
     const isRunningRef = useRef(false);
@@ -33,7 +35,13 @@ export default function QRScanner({ onScan }: Props) {
         scanner
             .start(
                 { facingMode: "environment" },
-                { fps: 10, qrbox: 250 },
+                {
+                    fps: 10,
+                    qrbox: (w: number, h: number) => {
+                        const size = Math.min(w, h) * 0.6;
+                        return { width: size, height: size };
+                    }
+                },
                 (decodedText) => {
                     console.log("📸 Quét thành công → nội dung QR:", decodedText);
 
@@ -77,6 +85,22 @@ export default function QRScanner({ onScan }: Props) {
             .then(() => {
                 console.log("✅ Camera đã mở → scanner bắt đầu hoạt động");
                 isRunningRef.current = true;
+                const reader = document.getElementById("reader");
+                if (reader) {
+                    const video = reader.querySelector("video") as HTMLVideoElement | null;
+                    const container = reader.querySelector("div") as HTMLDivElement | null;
+
+                    if (video) {
+                        video.style.width = "100%";
+                        video.style.height = "100%";
+                        video.style.objectFit = "cover"; // quan trọng nhất
+                    }
+
+                    if (container) {
+                        container.style.width = "100%";
+                        container.style.height = "100%";
+                    }
+                }
             })
             .catch((err) => {
                 console.error("❌ Không thể mở camera:", err);
@@ -123,5 +147,5 @@ export default function QRScanner({ onScan }: Props) {
         };
     }, [onScan]);
 
-    return <div id="reader" className="w-full aspect-square max-w-md mx-auto" />;
+    return <div id="reader" className="w-full h-full" />;
 }

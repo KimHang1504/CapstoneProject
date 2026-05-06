@@ -13,6 +13,7 @@ export type TestTypeRowProps = {
   importingId: number | null;
   onStartEdit: (item: TestType) => void;
   onImportFile: (id: number, file: File | null) => void;
+  onDelete: (id: number) => void;
 };
 
 export type TestTypeEditRowProps = {
@@ -50,4 +51,5 @@ export type TestTypeTableProps = {
   onSaveEdit: (id: number) => void;
   onCancelEdit: () => void;
   onImportFile: (id: number, file: File | null) => void;
+  onDelete: (id: number) => void;
 };

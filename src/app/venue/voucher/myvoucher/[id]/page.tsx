@@ -62,7 +62,9 @@ export default function VoucherDetailPage() {
                                                 ? "bg-gray-100 text-gray-600 border-gray-200"
                                                 : voucher.status === "ENDED"
                                                     ? "bg-slate-100 text-slate-600 border-slate-200"
-                                                    : "bg-rose-50 text-rose-600 border-rose-200"
+                                                    : voucher.status === "DISABLED"
+                                                        ? "bg-gray-100 text-amber-900 border-amber-200"
+                                                        : "bg-rose-50 text-rose-600 border-rose-200"
                                 }`}
                         >
                             {voucher.status === "ACTIVE" && "Đang chạy"}
@@ -71,6 +73,8 @@ export default function VoucherDetailPage() {
                             {voucher.status === "DRAFTED" && "Bản nháp"}
                             {voucher.status === "REJECTED" && "Từ chối"}
                             {voucher.status === "ENDED" && "Đã kết thúc"}
+                            {voucher.status === "DISABLED" && "Đã vô hiệu hóa"}
+
                         </span>
                     </div>
 
