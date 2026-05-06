@@ -134,7 +134,7 @@ export default function VoucherScan({ venueLocationId }: Props) {
     };
 
     return (
-        <div className="flex space-y-4 sm:space-y-5">
+        <div className="flex gap-2 space-y-4 sm:space-y-5">
             <div className="flex-1 flex flex-col justify-center">
                 {isScanning && (
                     <div className="flex flex-col gap-3">

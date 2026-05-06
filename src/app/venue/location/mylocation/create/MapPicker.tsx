@@ -63,7 +63,7 @@ export default function MapPicker({ latitude, longitude, onLocationChange }: Pro
     <div className="mt-4 h-96 w-full rounded-xl overflow-hidden border border-gray-200">
       <MapContainer
         center={[centerLat, centerLon]}
-        zoom={hasValidLocation ? 13 : 6}
+        zoom={hasValidLocation ? 20 : 15}
         style={{ height: "100%", width: "100%" }}
         scrollWheelZoom={true}
       >

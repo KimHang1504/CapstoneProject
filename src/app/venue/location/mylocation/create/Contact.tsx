@@ -2,6 +2,7 @@
 
 import { VenueFormData } from "@/app/venue/location/mylocation/create/Info"
 import { geocodeAddress, reverseGeocode } from "@/api/geocode/nominatim";
+import { geocodeAddressMapbox, reverseGeocodeMapbox } from "@/api/geocode/mapbox";
 import dynamic from "next/dynamic";
 import { MapPin, Phone, Mail, Globe, Loader2 } from "lucide-react";
 import { useState, useRef } from "react";
@@ -112,6 +113,7 @@ export default function Contact({ formData, setFormData }: Props) {
       setIsMapLoading(true);
       setMapError(null);
 
+      // const { lat, lon } = await geocodeAddress(value);
       const { lat, lon } = await geocodeAddress(value);
 
       setFormData(prev => ({
@@ -181,7 +183,8 @@ export default function Contact({ formData, setFormData }: Props) {
       setIsMapLoading(true)
       setMapError(null)
 
-      const { displayName } = await reverseGeocode(lat, lon)
+      // const { displayName } = await reverseGeocode(lat, lon)
+      const { displayName } = await reverseGeocodeMapbox(lat, lon);
 
       const clean = (str: string) =>
         str

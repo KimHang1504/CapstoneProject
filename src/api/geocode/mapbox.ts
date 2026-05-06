@@ -40,3 +40,44 @@ export async function searchMapbox(query: string, signal?: AbortSignal) {
     };
   });
 }
+
+export async function geocodeAddressMapbox(query: string, signal?: AbortSignal) {
+  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
+  const res = await fetch(
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+      query
+    )}.json?access_token=${token}&limit=1&language=vi&country=vn`,
+    { signal }
+  );
+
+  const data = await res.json();
+
+  if (!data.features?.length) {
+    throw new Error("No result");
+  }
+
+  const feature = data.features[0];
+
+  return {
+    lat: feature.center[1],
+    lon: feature.center[0],
+    displayName: feature.place_name,
+  };
+}
+
+export async function reverseGeocodeMapbox(lat: number, lon: number) {
+  const token = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+
+  const res = await fetch(
+    `https://api.mapbox.com/geocoding/v5/mapbox.places/${lon},${lat}.json?access_token=${token}&language=vi`
+  );
+
+  const data = await res.json();
+
+  const feature = data.features?.[0];
+
+  return {
+    displayName: feature?.place_name || "",
+  };
+}
