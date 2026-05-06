@@ -381,7 +381,11 @@ export default function VoucherForm({ initialData, onSubmit }: Props) {
           ? form.discountPercent
           : null,
       startDate: new Date(form.startDate).toISOString(),
-      endDate: new Date(form.endDate).toISOString(),
+      endDate: (() => {
+        const d = new Date(form.endDate);
+        d.setHours(d.getHours() - 7);
+        return d.toISOString();
+      })(),
     };
   };
 
