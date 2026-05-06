@@ -216,29 +216,20 @@ export default function InsightPage() {
             ) : inner && trend ? (
               <>
                 {/* Stats Overview */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   <div className="bg-gradient-to-br from-violet-50 to-white rounded-xl p-4 border border-violet-100">
                     <div className="flex items-center gap-2 mb-1">
                       <Search size={16} className="text-violet-600" />
-                      <span className="text-xs text-gray-500">Tìm kiếm</span>
+                      <span className="text-xs text-gray-500">Lượt tìm kiếm</span>
                     </div>
                     <p className="text-2xl font-bold text-gray-900">
                       {inner.topSearches.reduce((sum, s) => sum + s.count, 0)}
                     </p>
                   </div>
-                  <div className="bg-gradient-to-br from-pink-50 to-white rounded-xl p-4 border border-pink-100">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Smile size={16} className="text-pink-600" />
-                      <span className="text-xs text-gray-500">Tâm trạng</span>
-                    </div>
-                    <p className="text-2xl font-bold text-gray-900">
-                      {inner.hotMoods.reduce((sum, m) => sum + m.count, 0)}
-                    </p>
-                  </div>
                   <div className="bg-gradient-to-br from-emerald-50 to-white rounded-xl p-4 border border-emerald-100">
                     <div className="flex items-center gap-2 mb-1">
                       <CheckCircle size={16} className="text-emerald-600" />
-                      <span className="text-xs text-gray-500">Check-in</span>
+                      <span className="text-xs text-gray-500">Top Check-in</span>
                     </div>
                     <p className="text-2xl font-bold text-gray-900">
                       {inner.favoritesAndInteractions.totalCheckIns}
@@ -247,7 +238,7 @@ export default function InsightPage() {
                   <div className="bg-gradient-to-br from-sky-50 to-white rounded-xl p-4 border border-sky-100">
                     <div className="flex items-center gap-2 mb-1">
                       <BarChart2 size={16} className="text-sky-600" />
-                      <span className="text-xs text-gray-500">Danh mục</span>
+                      <span className="text-xs text-gray-500">Danh mục yêu thích</span>
                     </div>
                     <p className="text-2xl font-bold text-gray-900">
                       {inner.favoritesAndInteractions.topVenueCategories.length}
