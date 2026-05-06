@@ -32,6 +32,7 @@ export type VoucherStatus =
   | "APPROVED"
   | "REJECTED"
   | "ACTIVE"
+  | "DISABLED"
   | "ENDED";
 
 export type VoucherLocation = {
@@ -104,6 +105,7 @@ export type VoucherItemStatus =
   | "ACQUIRED"
   | "USED"
   | "EXPIRED"
+  | "ENDED"
   | "ENDED";
 
 export type VoucherItem = {

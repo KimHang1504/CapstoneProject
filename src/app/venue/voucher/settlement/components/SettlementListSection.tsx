@@ -34,7 +34,7 @@ const getStatusMeta = (status: SettlementItem["status"]) => {
     switch (status) {
         case "PENDING":
             return {
-                label: "Chờ đối soát",
+                label: "Chờ quyết toán",
                 className: "bg-violet-50 text-violet-700 border-violet-200",
             };
         case "PAID":
@@ -223,7 +223,7 @@ export default async function SettlementListSection({ searchParams }: Props) {
                                                     </span>
                                                 ) : item.status === "PENDING" ? (
                                                     <span className="inline-flex items-center px-2 py-1 text-xs text-violet-600">
-                                                        Đang chờ đối soát
+                                                        Đang chờ quyết toán
                                                     </span>
                                                 ) : (
                                                     <span className="text-slate-400 text-xs">--</span>

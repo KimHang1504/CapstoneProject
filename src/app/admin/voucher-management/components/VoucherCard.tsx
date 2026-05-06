@@ -1,6 +1,9 @@
+import { disableVoucher } from "@/api/admin/api";
 import { Voucher } from "@/api/admin/type";
-import { AlignLeft, CalendarDays, Coins, Hash, ListFilterIcon } from "lucide-react";
+import { AlignLeft, Ban, CalendarDays, Coins, Hash, ListFilterIcon } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 export default function VoucherCard({ voucher }: { voucher: Voucher }) {
   const getStatusColor = (status: string) => {
@@ -17,10 +20,16 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
         return "bg-amber-50 text-amber-600 border-amber-200";
       case "APPROVED":
         return "bg-green-50 text-green-600 border-green-200";
+      case "DISABLED":
+        return "bg-blue-50 text-blue-600 border-blue-200";
       default:
         return "bg-gray-100 text-gray-500 border-gray-200";
     }
   };
+
+  const [showDisable, setShowDisable] = useState(false);
+  const [reason, setReason] = useState("");
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="group flex gap-5 rounded-2xl p-5 bg-white border border-violet-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
@@ -66,6 +75,19 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
             {voucher.status === "DISABLED" && "Vô hiệu hóa"}
             {voucher.status === "APPROVED" && "Đã duyệt"}
           </span>
+          {(voucher.status === "APPROVED" || voucher.status === "ACTIVE") && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShowDisable(true);
+              }}
+              className="p-2 rounded-lg cursor-pointer bg-red-50 text-red-500 hover:bg-red-100 transition"
+              title="Vô hiệu hóa voucher"
+            >
+              <Ban className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
         {/* Code */}
@@ -118,6 +140,62 @@ export default function VoucherCard({ voucher }: { voucher: Voucher }) {
         </div>
 
       </div>
+      {showDisable && (
+        <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-5 w-[400px] space-y-4 shadow-xl">
+            <h3 className="font-semibold text-lg text-gray-800">
+              Vô hiệu hóa voucher
+            </h3>
+
+            <textarea
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Nhập lý do..."
+              className="w-full border rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-red-200"
+              rows={4}
+            />
+
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDisable(false)}
+                className="px-4 py-2 text-sm rounded-lg border"
+              >
+                Hủy
+              </button>
+
+              <button
+                disabled={!reason.trim() || loading}
+                onClick={async () => {
+                  try {
+                    setLoading(true);
+
+                    const res = await disableVoucher(voucher.id, { reason });
+
+                    console.log("Disable API response:", res);
+
+                    toast.success("Đã vô hiệu hóa voucher");
+                    console.log("Voucher disabled:", voucher.id);
+
+                    // window.location.reload();
+                  } catch (error: any) {
+                    toast.error(error.message || "Thất bại");
+                    console.log("Error disabling voucher:", error);
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                className={`px-4 py-2 text-sm rounded-lg text-white transition
+            ${!reason.trim() || loading
+                    ? "bg-gray-300 cursor-not-allowed"
+                    : "bg-red-500 hover:bg-red-600"
+                  }`}
+              >
+                {loading ? "Đang xử lý..." : "Xác nhận"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

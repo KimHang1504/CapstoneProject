@@ -1,5 +1,5 @@
 import { apiClient, ApiResponse } from "@/lib/api-client";
-import { Advertisement, AdvertisementAcceptRequest, AdvertisementDetail, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CommissionRevenueResponse, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
+import { Advertisement, AdvertisementAcceptRequest, AdvertisementDetail, AdvertisementRejectRequest, Challenge, ChallengeConfigResponse, ChallengePagination, ChallengeRequest, CommissionRevenueResponse, ConfigPagination, CreateReportTypeRequest, CreateSpecialEventRequest, DashboardRequest, DashboardStats, DisableVoucherRequest, LocationDetail, LocationPagination, LocationRequest, Recommendations, Report, ReportPagination, ReportType, ReportTypePagination, SpecialEvent, SpecialEventPagination, TransactionPagination, TransactionType, TransactionTypeToInt, UpdateConfigRequest, Venue, VenueApprovalRequest, VenueDetail, VenuePagination, Voucher, VoucherPagination, VoucherSearchRequest, WithdrawRequest, WithdrawRequestPagination } from "./type";
 
 //Dashboard
 export const getDashboardStats = (request: DashboardRequest) => {
@@ -210,6 +210,16 @@ export const approveVoucher = (id: number) => {
 export const rejectVoucher = (id: number, rejectReason: string) => {
     return apiClient.post(`/api/admin-vouchers/${id}/reject`, { rejectReason });
 }
+
+export const disableVoucher = (
+    voucherId: number,
+    data: DisableVoucherRequest
+) => {
+    return apiClient.post<ApiResponse<null>>(
+        `/api/admin-vouchers/${voucherId}/disable`,
+        data
+    );
+};
 
 export const getAdminVoucherCommissionRevenue = (
     fromDate: string,
