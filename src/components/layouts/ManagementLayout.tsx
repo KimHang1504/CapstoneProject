@@ -488,7 +488,7 @@ export default function ManagementLayout({
 
                         {/* Profile Info */}
                         <div className="p-4 space-y-3 border-b border-purple-100">
-                          {userProfile?.role !== 'ADMIN' && (
+                          {userProfile?.role !== 'ADMIN' && userProfile?.role !== 'STAFF' && (
                             <div className="flex items-start gap-2 text-sm">
                               <User className="w-4 h-4 text-purple-500 mt-0.5" />
                               <div>
