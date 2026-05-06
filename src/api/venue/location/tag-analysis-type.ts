@@ -20,13 +20,20 @@ export interface TagAnalysisSummary {
   impactMessage?: string | null;
 }
 
+export interface SuggestedTag {
+  tagName: string;
+  count: number;
+  matchRate: number;
+  message: string;
+}
+
 export interface VenueTagAnalysis {
   venueId: number;
   venueName: string;
-  overallMatchRate: number;
   totalReviews: number;
   tagAnalysis: TagAccuracyDetail[];
   summary: TagAnalysisSummary;
+  mostPopularTag?: SuggestedTag | null;
 }
 
 export interface GetVenueTagAnalysisResponse {
