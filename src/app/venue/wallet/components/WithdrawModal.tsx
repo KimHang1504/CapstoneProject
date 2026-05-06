@@ -36,6 +36,10 @@ export default function WithdrawModal({ onClose, onSuccess, balance }: Props) {
       toast.error(`Số dư không đủ. Bạn chỉ có ${balance.toLocaleString("vi-VN")} VND`);
       return;
     }
+
+    if (amount > MAX_WITHDRAW ) {
+      toast.error ("Số tiền không được vượt quá 50.000.000 VND")
+    }
     // 3. Check các field bank info (nếu muốn validate ở FE)
     if (!form.bankName) missingFields.push("Tên ngân hàng");
     if (!form.accountNumber) missingFields.push("Số tài khoản");
@@ -63,6 +67,33 @@ export default function WithdrawModal({ onClose, onSuccess, balance }: Props) {
       toast.error("Yêu cầu rút tiền thất bại");
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const MAX_WITHDRAW = 50_000_000;
+
+  const [errors, setErrors] = useState<{
+    amount?: string;
+  }>({});
+
+  const handleAmountBlur = () => {
+    const amount = Number(form.amount);
+
+    if (amount > MAX_WITHDRAW) {
+      setErrors((prev) => ({
+        ...prev,
+        amount: "Số tiền rút tối đa là 50.000.000 VND",
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, amount: undefined }));
+    }
+  };
+
+  const handleAmountChange = (value: string) => {
+    setForm((prev) => ({ ...prev, amount: value }));
+
+    if (errors.amount) {
+      setErrors((prev) => ({ ...prev, amount: undefined }));
     }
   };
 
@@ -94,8 +125,14 @@ export default function WithdrawModal({ onClose, onSuccess, balance }: Props) {
                 placeholder="0"
                 className="w-full border border-gray-200 rounded-xl px-4 py-2.5 pr-12 focus:outline-none focus:ring-2 focus:ring-violet-400 text-gray-900"
                 value={form.amount}
-                onChange={(e) => handleChange("amount", e.target.value)}
+                onChange={(e) => handleAmountChange(e.target.value)}
+                onBlur={handleAmountBlur}
               />
+              {errors.amount && (
+                <p className="text-xs text-red-500 mt-1">
+                  {errors.amount}
+                </p>
+              )}
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-gray-400 font-medium">₫</span>
             </div>
           </div>

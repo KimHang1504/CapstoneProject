@@ -9,12 +9,15 @@ import {
   AlertCircle,
   Sparkles,
   Target,
-  ListChecks
+  ListChecks,
+  Tag
 } from "lucide-react";
 
 import { buildVenueReviewImprovePrompt } from "@/api/ai/venue-review-improvement-prompt";
 import { Review, ReviewSummary } from "@/api/venue/review/type";
 import { generateText } from "@/utils/ai";
+import { VenueTagAnalysis } from "@/api/venue/location/tag-analysis-type";
+import { getVenueTagAnalysis } from "@/api/venue/location/tag-analysis-api";
 
 type Props = {
   venueId: number;
@@ -136,6 +139,9 @@ export default function ReviewImprovePanel({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ImproveResult | null>(null);
+  const [analysis, setAnalysis] = useState<VenueTagAnalysis | null>(null);
+
+
 
   const reviewContents = useMemo(() => {
     return reviews
@@ -213,8 +219,44 @@ export default function ReviewImprovePanel({
     fetchImprove();
   }, [fetchImprove]);
 
+  useEffect(() => {
+    const fetchTagAnalysis = async () => {
+      try {
+        const res = await getVenueTagAnalysis(venueId);
+        setAnalysis(res.data);
+      } catch (err) {
+        console.error("Fetch tag analysis error:", err);
+      }
+    };
+
+    fetchTagAnalysis();
+  }, [venueId]);
+
   return (
     <div className="space-y-4">
+      {/* Most Popular Tag Suggestion - card riêng biệt */}
+      {analysis?.mostPopularTag && (
+        <div className="rounded-xl border border-blue-200 bg-blue-50">
+          <div className="py-3 px-4">
+            <div className="flex items-start gap-2.5">
+              <Tag size={15} className="text-blue-500 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-semibold text-sm text-blue-900">
+                    Gợi ý tag phổ biến
+                  </span>
+                  <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium border border-blue-200">
+                    {analysis.mostPopularTag.tagName}
+                  </span>
+                </div>
+                <p className="text-xs text-blue-700 leading-relaxed">
+                  {analysis.mostPopularTag.message}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header Card */}
       <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 rounded-2xl p-5 shadow-sm border border-amber-200/50">
         <div className="flex items-center justify-between gap-3">
@@ -223,7 +265,7 @@ export default function ReviewImprovePanel({
               <Sparkles size={20} className="text-amber-500" />
             </div>
             <div>
-              <p className="text-base font-bold text-gray-900">AI Cải thiện cho Venue</p>
+              <p className="text-base font-bold text-gray-900">AI Cải thiện cho Chỉ địa điểm</p>
               <p className="text-xs text-gray-600 mt-0.5">
                 {reviewContents.length > 0
                   ? `Phân tích từ ${reviewContents.length} review`

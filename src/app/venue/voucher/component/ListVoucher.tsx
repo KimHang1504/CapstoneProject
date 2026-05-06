@@ -17,7 +17,7 @@ const STATUS_CONFIG = {
   PENDING: { label: "Chờ duyệt", color: "bg-yellow-100 text-yellow-600" },
   APPROVED: { label: "Đã duyệt", color: "bg-indigo-100 text-indigo-600" },
   REJECTED: { label: "Từ chối", color: "bg-rose-100 text-rose-600" },
-  DISABLED: { label: "Tạm dừng", color: "bg-blue-100 text-blue-600" },
+  DISABLED: { label: "Vô hiệu hóa", color: "bg-amber-900 text-white" },
   ACTIVE: { label: "Hoạt động", color: "bg-green-100 text-green-600" },
   ENDED: { label: "Kết thúc", color: "bg-pink-100 text-pink-600" },
 };

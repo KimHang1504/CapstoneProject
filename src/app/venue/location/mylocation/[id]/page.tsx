@@ -325,38 +325,6 @@ export default function LocationDetailPage() {
                     </div>
                 </div>
 
-                {location.status === 'ACTIVE' && (
-                    <div className="mt-3 relative overflow-hidden rounded-xl border border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 px-4 py-3">
-
-                        {/* glow effect */}
-                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-200/30 rounded-full blur-2xl" />
-
-                        <div className="relative flex items-start gap-3">
-                            <div className="mt-0.5 text-emerald-600">
-                                <CheckCircle2 size={18} />
-                            </div>
-
-                            <div className="flex-1">
-                                <p className="text-sm font-semibold text-gray-900">
-                                    Địa điểm đã được kích hoạt
-                                </p>
-
-                                <p className="text-sm text-gray-600">
-                                    Kiểm tra Gmail để nhận thông tin tài khoản nhân viên và bắt đầu vận hành.
-                                </p>
-                            </div>
-
-                            <button
-                                onClick={() => window.open("https://mail.google.com/mail/u/0/#inbox", "_blank")}
-                                className="text-sm cursor-pointer font-medium text-emerald-600 hover:text-emerald-700"
-                            >
-                                Mở Gmail
-                                <ArrowRight size={14} />
-                            </button>
-                        </div>
-                    </div>
-                )}
-
 
                 {location.rejectionDetails?.length ? (
                     <div className="mt-4 relative overflow-hidden rounded-xl border border-red-200 bg-red-50">
@@ -677,6 +645,37 @@ export default function LocationDetailPage() {
                                 </p>
                             </FieldDisplay>
                         </div>
+                        {location.status === 'ACTIVE' && (
+                            <div className="mt-3 relative overflow-hidden rounded-xl border border-emerald-200 bg-gradient-to-r from-emerald-50 via-white to-emerald-50 px-4 py-3">
+
+                                {/* glow effect */}
+                                <div className="absolute -top-10 -right-10 w-32 h-32 bg-emerald-200/30 rounded-full blur-2xl" />
+
+                                <div className="relative flex items-start gap-3">
+                                    <div className="mt-0.5 text-emerald-600">
+                                        <CheckCircle2 size={18} />
+                                    </div>
+
+                                    <div className="flex-1">
+                                        <p className="text-sm font-semibold text-gray-900">
+                                            Địa điểm đã được kích hoạt
+                                        </p>
+
+                                        <p className="text-sm text-gray-600">
+                                            Kiểm tra Gmail để nhận thông tin tài khoản nhân viên và bắt đầu vận hành.
+                                        </p>
+                                    </div>
+
+                                    {/* <button
+                                        onClick={() => window.open("https://mail.google.com/mail/u/0/#inbox", "_blank")}
+                                        className="text-sm cursor-pointer font-medium text-emerald-600 hover:text-emerald-700"
+                                    >
+                                        Mở Gmail
+                                        <ArrowRight size={14} />
+                                    </button> */}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
 
