@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { AlertTriangle, ChevronDown, ChevronUp, XCircle, TrendingDown, TrendingUp } from 'lucide-react';
+import { AlertTriangle, ChevronDown, ChevronUp, XCircle, TrendingDown, TrendingUp, Tag } from 'lucide-react';
 import { getVenueTagAnalysis } from '@/api/venue/location/tag-analysis-api';
 import { VenueTagAnalysis } from '@/api/venue/location/tag-analysis-type';
 
@@ -94,8 +94,41 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
     
     const ui = uiMap[messageType];
 
+    const hasWarnings = analysis.tagAnalysis.some(tag => tag.status === 'POOR' || tag.status === 'WARNING');
+
     return (
-        <div className={`relative overflow-hidden rounded-xl border ${ui.border}`}>
+        <div className="space-y-3">
+            {/* Most Popular Tag Suggestion - card riêng biệt */}
+            {analysis.mostPopularTag && (
+                <div className="rounded-xl border border-blue-200 bg-blue-50">
+                    <div className="py-3 px-4">
+                        <div className="flex items-start gap-2.5">
+                            <Tag size={15} className="text-blue-500 flex-shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                    <span className="font-semibold text-sm text-blue-900">
+                                        Gợi ý tag phổ biến
+                                    </span>
+                                    <span className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium border border-blue-200">
+                                        {analysis.mostPopularTag.tagName}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-blue-700 leading-relaxed">
+                                    {analysis.mostPopularTag.message}
+                                </p>
+                                <div className="mt-1.5 flex items-center gap-3 text-xs text-blue-600">
+                                    <span>{analysis.mostPopularTag.count}/{analysis.totalReviews} khách hàng</span>
+                                    <span className="font-semibold">{analysis.mostPopularTag.matchRate}%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Warning box - chỉ hiển thị nếu có tags cần cảnh báo */}
+            {hasWarnings && (
+            <div className={`relative overflow-hidden rounded-xl border ${ui.border}`}>
             <div className={`absolute left-0 top-0 h-full w-1 ${ui.accent}`} />
 
             <div className="py-3 px-4">
@@ -131,8 +164,6 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
 
                 {isExpanded && (
                     <div className="mt-3 pt-3 border-t border-gray-200 space-y-2.5">
-
-
                         {analysis.tagAnalysis
                             .filter(tag => tag.status === 'POOR' || tag.status === 'WARNING')
                             .map((tag, index) => (
@@ -181,6 +212,8 @@ export default function TagAnalysisWarning({ venueId }: TagAnalysisWarningProps)
                     </div>
                 )}
             </div>
+        </div>
+            )}
         </div>
     );
 }
