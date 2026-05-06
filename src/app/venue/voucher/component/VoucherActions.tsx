@@ -102,7 +102,7 @@ export default function VoucherActions({ voucher, onChanged }: Props) {
 
       {voucher.status === "REJECTED" && (
         <Link
-          href={`/venue/voucher/${voucher.id}/edit`}
+          href={`/venue/voucher/myvoucher/${voucher.id}/edit`}
           className="flex items-center gap-2 px-4 py-2 text-sm rounded-lg font-medium
           bg-gray-100 text-gray-700 border border-gray-200
           hover:bg-gray-200 hover:shadow-sm transition-all duration-200"
